@@ -1,4 +1,8 @@
- # GitHub Project Management Template
+ > **LAB-2 prototype (Product A — 桜水産市場, dữ liệu giả):** xem [`prototype/README.md`](prototype/README.md).
+> App: https://lab-wholesale-market-fup2.vercel.app/ · tài khoản demo, mật khẩu, kịch bản demo đều ở README đó.
+> Phần còn lại của file này là README của template quản lý dự án Sun* mà repo được dựng từ đó.
+
+# GitHub Project Management Template
 
 **Version 1.0** — Maintained by PEC (Process Elevation Consultant), Sun Asterisk
 

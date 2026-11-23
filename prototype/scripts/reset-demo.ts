@@ -12,6 +12,10 @@ async function main() {
   await syncDemoAccounts(admin);
   const { error } = await admin.rpc("reset_demo_business_data");
   if (error) throw new Error(`reset_demo_business_data failed: ${error.message}`);
+  const { data: corr } = await admin.from("correction_requests").select("id").eq("status", "APPROVED");
+  const { count: adj } = await admin.from("trade_adjustments").select("id", { count: "exact", head: true });
+  if ((corr ?? []).length !== 1 || adj !== 2) throw new Error(`seeded correction missing: approved=${(corr ?? []).length} adjustments=${adj}`);
+  console.log("Seeded 1 approved correction (REVERSE + DELTA, audited).");
   console.log("Sample business data re-seeded. Run npm run demo:verify to check the logins.");
 }
 

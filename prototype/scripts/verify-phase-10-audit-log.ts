@@ -23,7 +23,9 @@ async function main() {
     corrId = data as string;
     const ok = await head.rpc("approve_correction", { p_id: corrId });
     if (ok.error) return ok.error.message;
-    const { data: logs } = await admin.from("audit_logs").select("action, table_name, actor_id").or(`record_id.eq.${corrId},table_name.eq.trade_adjustments`);
+    // Only this correction's rows: the demo seed (0030) already holds another approved correction.
+    const adjIds = ((await admin.from("trade_adjustments").select("id").eq("correction_id", corrId)).data ?? []).map((a) => a.id);
+    const { data: logs } = await admin.from("audit_logs").select("action, table_name, actor_id").in("record_id", [corrId, ...adjIds]);
     const ins = (logs ?? []).find((l) => l.table_name === "correction_requests" && l.action === "INSERT");
     const upd = (logs ?? []).filter((l) => l.table_name === "correction_requests" && l.action === "UPDATE");
     const adj = (logs ?? []).filter((l) => l.table_name === "trade_adjustments").length;

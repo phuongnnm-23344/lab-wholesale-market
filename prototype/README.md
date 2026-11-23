@@ -9,7 +9,7 @@ Prototype chạy thật cho Product A (chợ bán buôn thủy sản 桜水産�
 | | |
 |---|---|
 | App (Vercel) | https://lab-wholesale-market-fup2.vercel.app/ — mở ra là trang đăng nhập |
-| Supabase project | https://supabase.com/dashboard/project/lgipmzzszzoddvzhrllh (project `Project-lab-NNMP`, quyền xem do chủ project cấp) |
+| Supabase project | https://supabase.com/dashboard/project/lgipmzzszzoddvzhrllh (project `Project-lab-NNMP`) — **chỉ thành viên được mời mới mở được**; giảng viên cần xem thì chủ project mời vào org (quyền Read-only). Không có quyền vẫn xem được toàn bộ schema / RLS / RPC trong `supabase/migrations/` |
 | Danh sách màn hình / tính năng bản chốt + phần mock | `project/04_screen/lab2-prototype-screen-feature-list.md` (nộp kèm, ngoài repo này) |
 
 ## Tài khoản demo (dùng được tới hết LAB-6)
@@ -34,13 +34,20 @@ Tài khoản demo được bảo vệ: trong app không đổi được vai / qu
 
 Giới hạn đã biết của bản thử (chấp nhận, ghi trong danh sách mock): PIN 4 số khóa 15 phút sau 5 lần sai **theo người được chuyển tới** — người đang đăng nhập trên máy chung có thể cố ý nhập sai để khóa PIN của người khác trong 15 phút (bản thật cần giới hạn thêm theo người nhập và thiết bị). Quyền **đọc** dữ liệu nghiệp vụ là toàn bộ nhân viên nội bộ đang hoạt động (giản lược); quyền **ghi / duyệt** được kiểm trong DB theo vai.
 
+## Kịch bản demo nên thử (~10 phút)
+
+1. `trade@` → 相対取引入力・確定 trên lô hôm nay (luồng chính), rồi 取引一覧 xem giao dịch vừa chốt.
+2. `stlhead@` → 修正申請一覧: đã có sẵn **1 修正申請 đã duyệt 2 cấp** (GD `T{hôm qua}-3-2`, đổi người mua sang 仲卸 + đơn giá) — GD gốc không bị sửa, sinh 2 dòng REVERSE / DELTA ghi vào ngày hôm nay. Muốn tự làm lại: `trade@` lập 修正申請 trên GD của ngày đã khóa → `stlhead@` duyệt cấp 1 → (nếu chênh ≥ 300.000 円) `opshead@` duyệt cấp 2.
+3. `settle@` → 日次照合表 hôm nay: thấy dòng điều chỉnh của 修正申請; ngày đã khóa không sửa trực tiếp được.
+4. `sysadm@` → 監査ログ: lọc `correction_requests` / `trade_adjustments` để thấy ai lập, ai duyệt, trước / sau.
+
 ## Nếu app báo lỗi kết nối DB
 
 Supabase free tier **tự tạm dừng (pause) project sau 7 ngày không dùng** → vào Supabase Dashboard → chọn project → **Resume project**, đợi 1–2 phút rồi tải lại trang. Mỗi tuần nên mở app một lần và chạy `npm run demo:verify`.
 
 ## Thao tác chỉ dùng được 1 lần (demo)
 
-Đúng luật nghiệp vụ "không ghi đè lịch sử", các thao tác sau không quay lại được; muốn demo lại → `npm run demo:reset` (khôi phục toàn bộ dữ liệu giả + mật khẩu/PIN/vai của tài khoản demo):
+Đúng luật nghiệp vụ "không ghi đè lịch sử", các thao tác sau không quay lại được; muốn demo lại → `npm run demo:reset` (khôi phục toàn bộ dữ liệu giả + mật khẩu/PIN/vai của tài khoản demo). Lưu ý: `demo:reset` là công cụ của người phụ trách (chạy local bằng secret key), **xóa cả 監査ログ của dữ liệu giả** rồi seed lại; trong app không có đường nào xóa / sửa 監査ログ (bảng append-only, chỉ có policy SELECT):
 - 日次締め (khóa ngày) và 期ロック (khóa kỳ) — không có chức năng mở khóa; sửa sau khóa đi qua 修正申請.
 - 奨励金計算: mỗi kỳ chỉ chạy 1 lần.
 - 規則版承認: năm tài chính 2026 (tới 2027-03-31) đã dùng 2/4 lần; sang năm tài chính mới quota về 0/4.
@@ -53,13 +60,13 @@ cp .env.local.example .env.local   # rồi tự điền giá trị (không commi
 npm run dev                        # http://localhost:3000 → trang đăng nhập
 ```
 
-Kiểm tra: `npm run typecheck`, `npm run lint`, `npm run build`. Kiểm tổng trên DB thật (cần `npm run dev` đang chạy): `APP_BASE_URL=http://localhost:3000 npm run verify:all` (9 bộ kiểm phase 02–10 + kiểm theo code review + 10 tài khoản demo).
+Kiểm tra: `npm run typecheck`, `npm run lint`, `npm run build`. Kiểm tổng trên DB thật (cần `npm run dev` đang chạy): `APP_BASE_URL=http://localhost:3000 npm run verify:all` (11 bộ: 9 bộ phase 02–10 + kiểm theo code review R01–R15 + 10 tài khoản demo). Quét secret trong bundle bản deploy: `APP_BASE_URL=<url> npm run check:bundle-secrets`.
 
 ## Dựng Supabase lần đầu (đã làm — giữ lại để tái lập)
 
 1. Tạo project; **Authentication → Sign In / Providers → tắt "Allow new users to sign up"**.
 2. `.env.local` từ `.env.local.example` (URL, publishable key, secret key, mật khẩu demo / PIN demo / mật khẩu tài khoản test).
-3. `npx supabase link --project-ref <ref>` rồi `npx supabase db push --remote` (29 migration trong `supabase/migrations/`).
+3. `npx supabase link --project-ref <ref>` rồi `npx supabase db push --remote` (30 migration trong `supabase/migrations/`).
 4. `npm run demo:accounts` → `npm run demo:reset` → `npm run demo:verify` (phải ra 10/10).
 
 ## Bảo mật (tóm tắt)
