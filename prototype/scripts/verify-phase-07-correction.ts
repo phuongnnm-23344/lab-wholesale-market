@@ -23,7 +23,8 @@ async function main() {
   let corr1 = "";
 
   r.push(await runCheck("K01", "取引担当 submits CORR on a closed-day trade; cannot approve own request", async () => {
-    const { data, error } = await submit(t1, Number(t1.qty) - 2, Number(t1.unit_price_jpy), t1.buyer_id);
+    // Price correction: closed-day trades are fully delivered, so qty cannot go below the delivered qty (review W11).
+    const { data, error } = await submit(t1, Number(t1.qty), Number(t1.unit_price_jpy) + 100, t1.buyer_id);
     if (error) return error.message;
     corr1 = data as string;
     return expectRejected(await trade.rpc("approve_correction", { p_id: corr1 }), "FORBIDDEN");
@@ -80,7 +81,7 @@ async function main() {
   let corrRace = "";
   r.push(await runCheck("K08", "Two simultaneous approvals → exactly one set of REVERSE/DELTA", async () => {
     const t5 = await t(5);
-    corrRace = (await submit(t5, Number(t5.qty) - 1, Number(t5.unit_price_jpy), t5.buyer_id)).data as string;
+    corrRace = (await submit(t5, Number(t5.qty), Number(t5.unit_price_jpy) + 50, t5.buyer_id)).data as string;
     const results = await Promise.all([1, 2].map(() => stlhead.rpc("approve_correction", { p_id: corrRace })));
     const okCount = results.filter((x) => x.data === "APPROVED").length;
     return okCount === 1 && (await adjustments(corrRace)).length === 2 ? null : `ok=${okCount}`;

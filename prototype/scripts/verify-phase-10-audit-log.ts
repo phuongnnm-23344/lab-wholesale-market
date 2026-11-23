@@ -18,7 +18,7 @@ async function main() {
   let corrId = "";
 
   r.push(await runCheck("A01", "A correction leaves INSERT (requester) + UPDATE (approver) + 2 adjustment rows in the audit log", async () => {
-    const { data, error } = await trade.rpc("submit_correction", { p_trade_id: t.id, p_new_qty: Number(t.qty) - 1, p_new_unit_price_jpy: Number(t.unit_price_jpy), p_new_buyer_id: t.buyer_id, p_reason: "テスト：監査" });
+    const { data, error } = await trade.rpc("submit_correction", { p_trade_id: t.id, p_new_qty: Number(t.qty), p_new_unit_price_jpy: Number(t.unit_price_jpy) + 10, p_new_buyer_id: t.buyer_id, p_reason: "テスト：監査" });
     if (error) return error.message;
     corrId = data as string;
     const ok = await head.rpc("approve_correction", { p_id: corrId });

@@ -10,7 +10,7 @@ export async function runIntegrityChecks(admin: SupabaseClient): Promise<CheckRe
   const results: CheckResult[] = [];
   const { data: ledger } = await admin.from("lot_quantity_ledger").select("id").limit(1).single();
   const { data: delivery } = await admin.from("deliveries").select("id").limit(1).single();
-  const { data: trade } = await admin.from("trades").select("id, qty").eq("status", "CONFIRMED").limit(1).single();
+  const { data: trade } = await admin.from("trades").select("id, qty, unit_price_jpy").eq("status", "CONFIRMED").limit(1).single();
   const { data: lockedDay } = await admin.from("business_days").select("business_date").eq("status", "LOCKED").limit(1).single();
   const { data: baibai } = await admin.from("participants").select("id").eq("buyer_no", "B01").single();
 
@@ -19,7 +19,8 @@ export async function runIntegrityChecks(admin: SupabaseClient): Promise<CheckRe
   results.push(await runCheck("C13", "DELETE on append-only deliveries fails (APPEND_ONLY)", async () =>
     delivery ? expectRejected(await admin.from("deliveries").delete().eq("id", delivery.id), "APPEND_ONLY") : "no seed row"));
   results.push(await runCheck("C14", "UPDATE qty of a CONFIRMED trade fails (TRADE_FROZEN or DAY_LOCKED)", async () =>
-    trade ? expectRejected(await admin.from("trades").update({ qty: Number(trade.qty) + 1 }).eq("id", trade.id), "TRADE_FROZEN", "DAY_LOCKED") : "no seed row"));
+    // qty and amount changed consistently, so the amount trigger (0025) passes and the freeze / day-lock rule is what refuses.
+    trade ? expectRejected(await admin.from("trades").update({ qty: Number(trade.qty) + 1, amount_jpy: Math.floor((Number(trade.qty) + 1) * Number(trade.unit_price_jpy)) }).eq("id", trade.id), "TRADE_FROZEN", "DAY_LOCKED") : "no seed row"));
   results.push(await runCheck("C15", "INSERT a lot on a LOCKED business day fails (DAY_LOCKED)", async () =>
     lockedDay ? expectRejected(await admin.from("lots").insert({
       lot_no: `PROBE-${Date.now()}`, business_date: lockedDay.business_date, shipper_name: "probe", species: "probe",
