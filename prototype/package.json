@@ -23,7 +23,8 @@
     "verify:phase09": "tsx --env-file=.env.local scripts/verify-phase-09-payment-incentive.ts",
     "verify:phase10": "tsx --env-file=.env.local scripts/verify-phase-10-audit-log.ts",
     "verify:review": "tsx --env-file=.env.local scripts/verify-review-fixes.ts",
-    "verify:all": "tsx --env-file=.env.local scripts/verify-all-phases.ts"
+    "verify:all": "tsx --env-file=.env.local scripts/verify-all-phases.ts",
+    "check:bundle-secrets": "tsx --env-file=.env.local scripts/check-production-bundle-secrets.ts"
   },
   "engines": {
     "node": ">=20.9"
