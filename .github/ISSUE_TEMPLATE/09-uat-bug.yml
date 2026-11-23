@@ -1,0 +1,91 @@
+# Version 1.0 _12/05/20256
+name: "[9] UAT Bug"
+description: Report a defect or unexpected behavior during User Acceptance Testing (UAT)
+title: "[UAT BUG] "
+labels: ["type:uatbug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### UAT Bug Report Guidelines
+        Please provide detailed information to help the development team identify and resolve the issue before the production release.
+
+  - type: input
+    id: related_story
+    attributes:
+      label: Related User Story
+      description: "Mandatory: Must start with a '#' followed by the ID (e.g., #123)."
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Overview
+      description: Summary of the defect and its context.
+      placeholder: |
+        - Target Version: [e.g., v1.1]
+        - Environment: [e.g., UAT / Staging]
+        - Customer/Stakeholder Ref: [Link or ID if applicable]
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: Select the severity based on the impact of the defect.
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: true
+
+  - type: dropdown
+    id: test_type
+    attributes:
+      label: Test Type
+      description: Select the type of testing that uncovered this bug.
+      options:
+        - Functional Test
+        - Layout Test
+        - Performance Test
+        - Stress Test
+        - Access Control & Security Test
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Reproduction Steps
+      description: How can we replicate this bug?
+      placeholder: |
+        Step 1:
+        Step 2:
+        Step 3:
+    validations:
+      required: true
+
+  - type: textarea
+    id: results
+    attributes:
+      label: Results & Evidence
+      description: What happened vs. what was expected?
+      placeholder: |
+        - Expected Behavior: [The system should...]
+        - Actual Result: [Currently, the system...]
+        - Evidence: [Link to screenshots, recordings, or logs]
+    validations:
+      required: true
+
+  - type: textarea
+    id: analysis
+    attributes:
+      label: Technical Analysis (Optional)
+      description: Preliminary analysis or suggested fix.
+      placeholder: |
+        - Root Cause: [Predicted or analyzed cause]
+        - Proposed Solution: [How to fix it]
+    validations:
+      required: false

@@ -1,0 +1,14 @@
+# Version 1.0 _12/05/20256
+name: "[14] Feedback"
+description: Initial log for customer feedback, to be triaged into Change Request, Production Bug or UAT Bug.
+title: "[FEEDBACK] "
+labels: ["type:feedback"]
+body:
+  - type: textarea
+    id: feedback_detail
+    attributes:
+      label: Brief or Related Information
+      description:
+      placeholder:
+    validations:
+      required: true

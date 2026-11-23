@@ -1,0 +1,36 @@
+# Version 1.0 _12/05/20256
+name: "[13] Operation"
+description: Technical work item for Operation tasks
+title: "[OPERATION] "
+labels: ["type:operation"]
+body:
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: Brief or Related Information
+      placeholder:
+    validations:
+      required: true
+
+  - type: textarea
+    id: output_document_links
+    attributes:
+      label: Operation Document Links
+      description: Provide the link to the Document.
+      placeholder: |
+        - Checklist: [Link]
+        - Process: [Link]
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Brief or Related Information
+      placeholder: |
+        - Documentation ver VI: [Link]
+        - Documentation ver JP: [Link]
+    validations:
+      required: false

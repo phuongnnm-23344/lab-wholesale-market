@@ -1,0 +1,59 @@
+# Version 1.0 _12/05/20256
+name: "[1] Epic - Business Objective"
+description: High-level business objective spanning multiple sprints (2-6 sprints)
+title: "[EPIC] "
+labels: ["type:epic"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Epic Guidelines
+        An Epic represents a large body of work that delivers significant business value.
+        It will be broken down into multiple User Stories.
+
+  - type: textarea
+    id: business_value
+    attributes:
+      label: Overview & Goal
+      description: What business problem does this Epic solve?
+      placeholder: |
+        As a [stakeholder]
+        I want [objective]
+        So that [business benefit]
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope & Features
+      description: High-level list of features/capabilities
+      placeholder: |
+        - Feature 1: User authentication system
+        - Feature 2: Dashboard analytics
+        - Feature 3: Reporting module
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What must be true for this Epic to be considered complete?
+      placeholder: |
+        - All child User Stories are completed
+        - Integration testing passed
+        - Performance benchmarks met
+        - Documentation completed
+        - Stakeholder sign-off received
+
+  - type: textarea
+    id: uepic_references
+    attributes:
+      label: References & Dependencies
+      placeholder: |
+        - Design: [Link Figma]
+        - Documentation ver VI: [Link]
+        - Documentation ver JP: [Link]
+    validations:
+      required: true

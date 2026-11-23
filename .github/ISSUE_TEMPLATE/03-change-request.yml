@@ -1,0 +1,59 @@
+# Version 1.0 _12/05/20256
+name: "[3] Change Request"
+description: Formal proposal to modify or expand previously approved requirements
+title: "[CHANGE REQUEST] "
+labels: ["type:changerequest"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Change Request Guidelines
+        A Change Request (CR) is a formal proposal to modify or expand the original
+        requirements, design, or scope of a project after they have been previously approved.
+
+  - type: textarea
+    id: change_request
+    attributes:
+      label: Overview
+      description: Express the requirement from user's perspective
+      placeholder: |
+        Current State: Describe the current business flow or feature before the change.
+        Proposed Change: Describe the adjustment or addition in detail.
+        Reason for Change: Identify the source of the request (customer, logic error, market change).
+        Impact Analysis: Assess how this change affects existing features, system architecture, or project deadlines.
+    validations:
+      required: true
+
+  - type: textarea
+    id: change_request_impact_range
+    attributes:
+      label: Impact Range
+      placeholder:
+    validations:
+      required: true
+
+  - type: textarea
+    id: change_request_references
+    attributes:
+      label: References & Dependencies
+      placeholder: |
+        - Design: [Link Figma]
+        - Documentation ver VI: [Link]
+        - Documentation ver JP: [Link]
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: technical_approach
+    attributes:
+      label: Technical Approach
+      options:
+        - label: Frontend
+        - label: Backend
+        - label: NativeApp (iOS)
+        - label: NativeApp (Android)
+        - label: NativeApp (MultiPF)
+        - label: AI
+        - label: Infrastructure
+    validations:
+      required: true

@@ -1,0 +1,19 @@
+# Version 1.0 _12/05/20256
+name: "[6] Test Design"
+description: Technical work item for QA
+title: "[TEST DESIGN] "
+labels: ["type:testdesign"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Test Design Guidelines
+        A Test Design task covers creating test cases and test scenarios for a feature.
+
+  - type: textarea
+    id: testcase_link
+    attributes:
+      label: Testcase Link
+      placeholder: Provide the link to the Testcase.
+    validations:
+      required: true

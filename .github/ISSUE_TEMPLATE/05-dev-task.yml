@@ -1,0 +1,59 @@
+# Version 1.0 _12/05/20256
+name: "[5] Dev Task"
+description: Technical work item for Developer
+title: "[DEV TASK] "
+labels: ["type:devtask"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🛠️ Task Guidelines
+        A Task is a specific piece of work that can be completed by one person in 1-3 days.
+        Tasks are typically created from User Stories.
+
+  - type: dropdown
+    id: task_type
+    attributes:
+      label: Task Type
+      options:
+        - Development - Frontend
+        - Development - Backend
+        - Development - NativeApp (iOS)
+        - Development - NativeApp (Android)
+        - Development - NativeApp (MultiPF)
+        - Development - AI
+        - Development - Infrastructure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: task_category
+    attributes:
+      label: Task Category
+      description: |
+        Use **Feature** for projects with hierarchical structures (Parent Dev Task contains multiple Child Dev Tasks).
+      options:
+        - Task
+        - Feature
+    validations:
+      required: true
+
+  - type: textarea
+    id: task_description
+    attributes:
+      label: Specification
+      description: What needs to be done?
+      placeholder: |
+        Clear description of the work to be performed.
+        Include specific requirements and expected outcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact_range
+    attributes:
+      label: Impact Range
+      description: Defines the boundaries and system components that could potentially be affected.
+      placeholder: |
+        Screen, API or Batch Name 1
+        Screen, API or Batch Name 2

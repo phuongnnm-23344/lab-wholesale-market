@@ -1,0 +1,84 @@
+# Version 1.0 _12/05/20256
+name: "[8] QA Bug"
+description: Report a defect discovered during internal testing
+title: "[QA BUG] "
+labels: ["type:qabug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### QA Bug Report Guidelines
+        Please provide accurate technical details to help the development team replicate and fix the issue efficiently.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Overview
+      description: Summary of the defect and environment details.
+      placeholder: |
+        - Environment: [e.g., Development / Staging]
+        - Target Version: [e.g., v1.0]
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: Select the severity based on the impact of the defect.
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: true
+
+  - type: dropdown
+    id: test_type
+    attributes:
+      label: Test Type
+      description: Select the type of testing that uncovered this bug.
+      options:
+        - Functional Test
+        - Layout Test
+        - Performance Test
+        - Stress Test
+        - Access Control & Security Test
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Reproduction Steps
+      description: Provide clear, numbered steps to reproduce the bug.
+      value: |
+        Step 1:
+        Step 2:
+        Step 3:
+    validations:
+      required: true
+
+  - type: textarea
+    id: results
+    attributes:
+      label: Results & Evidence
+      description: Comparison between expected and actual behavior.
+      placeholder: |
+        - **Expected Behavior:** [What should have happened]
+        - **Actual Result:** [What actually happened]
+        - **Evidence:** [Link to screenshots, screen recordings, or logs]
+    validations:
+      required: true
+
+  - type: textarea
+    id: analysis
+    attributes:
+      label: Preliminary Analysis (Optional)
+      description: Any initial technical findings or suggested fixes.
+      placeholder: |
+        - **Root Cause:** [Initial technical hypothesis]
+        - **Proposed Solution:** [If applicable]
+    validations:
+      required: false

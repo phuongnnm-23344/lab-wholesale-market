@@ -1,0 +1,20 @@
+# Version 1.0 _12/05/20256
+name: "[7] Test Execution"
+description: Technical work item for QA
+title: "[TEST EXECUTION] "
+labels: ["type:testexecution"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Test Execution Guidelines
+        A Test Execution task covers running test cases and reporting results.
+
+  - type: textarea
+    id: test_report_link
+    attributes:
+      label: Test Report Link
+      description: Provide the link to the Test Report.
+      placeholder:
+    validations:
+      required: true

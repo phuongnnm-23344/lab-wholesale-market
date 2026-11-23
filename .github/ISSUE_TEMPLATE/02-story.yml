@@ -1,0 +1,56 @@
+# Version 1.0 _12/05/20256
+name: "[2] Story - User Story"
+description: User-facing functionality that can be completed in one sprint
+title: "[STORY] "
+labels: ["type:story"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### User Story Guidelines
+        A User Story represents a specific user need or feature that delivers value.
+        It should be completable within one sprint.
+
+  - type: textarea
+    id: user_story
+    attributes:
+      label: Overview
+      description: Express the requirement from user's perspective
+      placeholder: |
+        Who is it for?
+        What is it expects from the system?
+        Why is it important? (Optional)
+    validations:
+      required: true
+
+  - type: textarea
+    id: user_story_acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      placeholder:
+
+  - type: textarea
+    id: user_story_references
+    attributes:
+      label: References & Dependencies
+      placeholder: |
+        - Design: [Link Figma]
+        - Documentation ver VI: [Link]
+        - Documentation ver JP: [Link]
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: technical_approach
+    attributes:
+      label: Technical Approach
+      options:
+        - label: Frontend
+        - label: Backend
+        - label: NativeApp (iOS)
+        - label: NativeApp (Android)
+        - label: NativeApp (MultiPF)
+        - label: AI
+        - label: Infrastructure
+    validations:
+      required: true

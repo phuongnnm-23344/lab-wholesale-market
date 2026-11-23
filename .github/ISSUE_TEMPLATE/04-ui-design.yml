@@ -1,0 +1,22 @@
+# Version 1.0 _12/05/20256
+name: "[4] UI Design"
+description: UI/UX design work item
+title: "[UI DESIGN] "
+labels: ["type:uidesign"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### UI Design Guidelines
+        A UI Design task covers the design and specification of user interface components.
+
+  - type: textarea
+    id: task_description
+    attributes:
+      label: Specification
+      description: What needs to be designed?
+      placeholder: |
+        Clear description of the work to be performed.
+        Include specific requirements and expected outcome.
+    validations:
+      required: true

@@ -1,0 +1,43 @@
+# Version 1.1 _02/10/2026
+name: "[11] Documentation"
+description: Technical work item for Documentation tasks
+title: "[DOCUMENTATION] "
+labels: ["type:documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Documentation Guidelines
+        Requirement Document and spec types: create this Issue as a **sub-issue of the Story**.
+
+  - type: dropdown
+    id: document_type
+    attributes:
+      label: Document Type
+      description: A matching label is added automatically when the Issue is created.
+      options:
+        - Requirement Document
+        - Screen Specification
+        - Database Design
+        - API Design
+        - Technical Design
+        - Function Specifications
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: Brief or Related Information
+      placeholder:
+    validations:
+      required: true
+
+  - type: textarea
+    id: output_document_link
+    attributes:
+      label: Output Document Link
+      description: Provide the link to the Document. Fill in once the file is created.
+      placeholder:

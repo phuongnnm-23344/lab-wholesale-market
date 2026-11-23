@@ -1,0 +1,71 @@
+# Version 1.0 _12/05/20256
+name: "[10] Production Bug"
+description: Report a defect or unexpected behavior in the live system
+title: "[PRODUCTION BUG] "
+labels: ["type:productionbug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Production Bug Report Guidelines
+        Please provide comprehensive data to ensure the technical team can initiate an immediate response (Hotfix).
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Production Bug Overview
+      description: Provide a high-level summary of the incident.
+      placeholder: |
+        - Customer Ref: [Link/ID to customer feedback or ticket]
+        - Impacted Version: [e.g., v2.0.5]
+        - User Impact: [Describe the extent of the impact: number of users affected, service downtime, etc.]
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: Select the severity based on business impact.
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+    validations:
+      required: true
+
+  - type: textarea
+    id: investigation_details
+    attributes:
+      label: Investigation Details
+      description: Technical evidence and reproduction steps.
+      placeholder: |
+        - Environment: [OS, Browser, Device]
+        - Steps to Reproduce:
+          1.
+          2.
+        - Evidence: [Link to Sentry/CloudWatch logs, screenshots, or screen recordings]
+    validations:
+      required: true
+
+  - type: textarea
+    id: result
+    attributes:
+      label: Result
+      placeholder: |
+        - Expected Behavior: [Business logic requirement]
+        - Actual Result: [Current error encountered by the user]
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical_analysis
+    attributes:
+      label: Technical Analysis (For Dev/Lead)
+      description: To be filled during or after the investigation.
+      placeholder: |
+        - Workaround: [Temporary solution for the customer]
+        - Root Cause: [Underlying technical failure]
+    validations:
+      required: false
