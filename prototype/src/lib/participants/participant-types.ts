@@ -43,4 +43,4 @@ export function daysUntil(isoDate: string, today: string | null): number | null 
   return Math.round((Date.parse(isoDate) - Date.parse(today)) / 86_400_000);
 }
 
-export const yen = (value: number) => `${value.toLocaleString("ja-JP")} 円`;
+export { formatYen as yen } from "@/lib/format/display-format";

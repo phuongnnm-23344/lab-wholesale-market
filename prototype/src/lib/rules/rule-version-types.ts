@@ -8,6 +8,10 @@ export const RULE_STATUS_LABELS: Record<string, string> = {
   DRAFT: "起票中", PENDING: "承認待ち", ACTIVE: "承認済（最新）", SUPERSEDED: "承認済（後続版あり）", CANCELLED: "取消",
 };
 
+export const RULE_STATUS_TONES: Record<string, "neutral" | "info" | "success" | "warning" | "danger"> = {
+  DRAFT: "neutral", PENDING: "warning", ACTIVE: "success", SUPERSEDED: "info", CANCELLED: "danger",
+};
+
 export const fiscalYearLabel = (isoDate: string) => {
   const [y, m] = isoDate.split("-").map(Number);
   return `${m >= 4 ? y : y - 1}年度`;

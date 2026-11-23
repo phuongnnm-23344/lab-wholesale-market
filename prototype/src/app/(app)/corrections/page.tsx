@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ScreenIdFooter } from "@/components/common/screen-id-footer";
 import { useApiResource } from "@/components/common/use-api-resource";
-import { CORRECTION_STATUS_LABELS } from "@/lib/corrections/correction-status-labels";
+import { PageHeader } from "@/components/ui/page-header";
+import { ListStates, StatusBadge } from "@/components/ui/status-states";
+import { CORRECTION_STATUS_LABELS, CORRECTION_STATUS_TONES } from "@/lib/corrections/correction-status-labels";
+import { formatDate, formatDateTime, formatYen } from "@/lib/format/display-format";
 
 type Row = {
   id: string; status: string; reason: string; requested_by: string | null; created_at: string;
@@ -12,32 +14,38 @@ type Row = {
   trades: { trade_no: string; business_date: string } | null;
 };
 
-// SC-08-02 修正申請一覧: filter by status; approvers open an item to decide.
+// 修正申請一覧: filter by status; approvers open an item to decide. New requests start from 取引確認票.
 export default function CorrectionListPage() {
   const [status, setStatus] = useState("");
   const { data, error } = useApiResource<{ corrections: Row[]; staff: Record<string, string> }>(`/api/corrections${status ? `?status=${status}` : ""}`);
+  const rows = data?.corrections ?? [];
 
   return (
-    <section className="card">
-      <h1 style={{ fontSize: 20, marginTop: 0 }}>修正申請一覧</h1>
-      <select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="状態">
-        <option value="">すべて</option>
-        {Object.entries(CORRECTION_STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-      </select>
-      {error && <p className="error-text" role="alert">{error}</p>}
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 8 }}>
-        <thead><tr><th align="left">申請日時</th><th align="left">取引</th><th align="right">差額</th><th align="left">理由</th><th align="left">申請者</th><th align="left">状態</th></tr></thead>
-        <tbody>{(data?.corrections ?? []).map((c) => (
-          <tr key={c.id} style={{ borderTop: "1px solid var(--border)" }}>
-            <td><Link href={`/corrections/${c.id}`}>{new Date(c.created_at).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}</Link></td>
-            <td>{c.trades?.trade_no}（{c.trades?.business_date}）</td>
-            <td align="right">{(Number(c.change.after.amount_jpy) - Number(c.change.before.amount_jpy)).toLocaleString("ja-JP")}</td>
-            <td>{c.reason}</td><td>{c.requested_by ? data?.staff[c.requested_by] : "—"}</td>
-            <td>{CORRECTION_STATUS_LABELS[c.status] ?? c.status}</td>
-          </tr>
-        ))}</tbody>
-      </table>
-      <ScreenIdFooter screenId="SC-08-02" trace="FT-08-02 / FR-NOTIFY-03（通知は試作対象外）" />
-    </section>
+    <>
+      <PageHeader title="修正申請" />
+      <div className="toolbar">
+        <label>状態{" "}
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="">すべて</option>
+            {Object.entries(CORRECTION_STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+          </select>
+        </label>
+        <span className="muted" style={{ fontSize: 13 }}>新しい申請は、取引確認票の「修正申請を作成」から行います。</span>
+      </div>
+      <ListStates loading={!data} error={error} empty={rows.length === 0} emptyText="該当する修正申請はありません。">
+        <table>
+          <thead><tr><th>申請日時</th><th>取引番号</th><th>取引日</th><th className="num">差額</th><th>理由</th><th>申請者</th><th>状態</th></tr></thead>
+          <tbody>{rows.map((c) => (
+            <tr key={c.id}>
+              <td><Link href={`/corrections/${c.id}`}>{formatDateTime(c.created_at)}</Link></td>
+              <td>{c.trades?.trade_no}</td><td>{formatDate(c.trades?.business_date)}</td>
+              <td className="num">{formatYen(Number(c.change.after.amount_jpy) - Number(c.change.before.amount_jpy))}</td>
+              <td>{c.reason}</td><td>{c.requested_by ? data?.staff[c.requested_by] : "—"}</td>
+              <td><StatusBadge tone={CORRECTION_STATUS_TONES[c.status]}>{CORRECTION_STATUS_LABELS[c.status] ?? c.status}</StatusBadge></td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </ListStates>
+    </>
   );
 }

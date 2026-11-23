@@ -1,42 +1,51 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { ScreenIdFooter } from "@/components/common/screen-id-footer";
 import { useApiResource } from "@/components/common/use-api-resource";
+import { PageHeader } from "@/components/ui/page-header";
+import { ListStates, StatusBadge } from "@/components/ui/status-states";
+import { useToast } from "@/components/ui/toast-provider";
 import { apiRequest } from "@/lib/http/api-client";
+import { formatDateTime } from "@/lib/format/display-format";
 
 type Session = { id: string; session_no: number; status: string; confirmed_at: string | null; same_person_reason: string | null };
 
-// SC-05-01 せり結果入力 (session list). The system records the FINAL results of the せり held on the floor only;
+// せり結果入力（回の一覧）. The system records the FINAL results of the せり held on the floor only;
 // there is no live bidding screen (相対取引 is the main flow — rule 1).
 export default function SeriSessionListPage() {
-  const router = useRouter();
+  const { showToast, toastAndGo } = useToast();
   const { data, error } = useApiResource<{ sessions: Session[] }>("/api/seri-sessions");
-  const [message, setMessage] = useState<string | null>(null);
+  const sessions = data?.sessions ?? [];
 
   async function openSession() {
     const res = await apiRequest<{ id: string }>("/api/seri-sessions", { method: "POST" });
-    if (!res.ok) return setMessage(res.message);
-    router.push(`/seri/${res.data.id}`);
+    if (!res.ok) return showToast(res.message, "error");
+    toastAndGo("新しい回を作成しました", `/seri/${res.data.id}`);
   }
 
   return (
-    <section className="card">
-      <h1 style={{ fontSize: 20, marginTop: 0 }}>せり結果（回ごと）</h1>
-      <button type="button" className="button-secondary" onClick={openSession}>新しい回の結果を入力</button>
-      {(error || message) && <p className="error-text" role="alert">{error ?? message}</p>}
-      <ul>
-        {(data?.sessions ?? []).map((s) => (
-          <li key={s.id}>
-            第{s.session_no}回 — {s.status === "CONFIRMED" ? "確定済" : "入力中"}
-            {s.same_person_reason ? "（入力者が確定：要確認）" : ""}{" "}
-            <Link href={`/seri/${s.id}`}>結果</Link>{s.status !== "CONFIRMED" && <> ・ <Link href={`/seri/${s.id}/confirm`}>確認・確定</Link></>}
-          </li>
-        ))}
-      </ul>
-      <ScreenIdFooter screenId="SC-05-01" trace="FT-05-01 / FR-SERI-01/02, FORM-SERI-01" />
-    </section>
+    <>
+      <PageHeader title="せり結果入力・確認" actions={<button type="button" className="button-primary" onClick={openSession}>新しい回の結果を入力</button>} />
+      <p className="muted">せり場で決まった最終結果のみを記録します。確定は入力者とは別の担当者が行います。</p>
+      <ListStates loading={!data} error={error} empty={sessions.length === 0} emptyText="本日のせりの回はまだありません。">
+        <table>
+          <thead><tr><th>回</th><th>状態</th><th>確定日時</th><th>操作</th></tr></thead>
+          <tbody>{sessions.map((s) => (
+            <tr key={s.id}>
+              <td>第{s.session_no}回</td>
+              <td>
+                {s.status === "CONFIRMED" ? <StatusBadge tone="success">確定済</StatusBadge> : <StatusBadge tone="warning">入力中</StatusBadge>}{" "}
+                {s.same_person_reason && <StatusBadge tone="danger">入力者が確定</StatusBadge>}
+              </td>
+              <td>{formatDateTime(s.confirmed_at)}</td>
+              <td>
+                <Link href={`/seri/${s.id}`}>結果</Link>
+                {s.status !== "CONFIRMED" && <>　<Link href={`/seri/${s.id}/confirm`}>確認・確定</Link></>}
+              </td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </ListStates>
+    </>
   );
 }

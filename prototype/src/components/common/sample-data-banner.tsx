@@ -1,4 +1,4 @@
-// Always visible: every record in this prototype is fictional sample data (DEC-028, mock M01).
+// Always visible but discreet: every record in this prototype is fictional sample data.
 export function SampleDataBanner() {
-  return <div className="sample-banner">サンプルデータ（架空）— 試作版のため実在の取引・人物ではありません</div>;
+  return <div className="sample-banner">サンプルデータ（架空）を表示しています</div>;
 }

@@ -1,3 +1,6 @@
+import { EmptyState, StatusBadge } from "@/components/ui/status-states";
+import { formatNumber, formatYen } from "@/lib/format/display-format";
+
 export type SeriResult = {
   id: string; trade_no: string; qty: number; unit_price_jpy: number; amount_jpy: number; status: string;
   lots: { lot_no: string; species: string; unit: string } | null;
@@ -12,15 +15,16 @@ export type SeriSessionDetail = {
 };
 
 export function SeriResultsTable({ results }: { results: SeriResult[] }) {
-  if (results.length === 0) return <p className="muted">結果はまだありません。</p>;
+  if (results.length === 0) return <EmptyState text="結果はまだありません。" />;
   return (
-    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-      <thead><tr><th align="left">番号</th><th align="left">ロット</th><th align="left">買受人</th><th align="right">数量</th><th align="right">単価</th><th align="right">金額</th><th align="left">状態</th></tr></thead>
+    <table>
+      <thead><tr><th>番号</th><th>ロット</th><th>買受人</th><th className="num">数量</th><th className="num">単価</th><th className="num">金額</th><th>状態</th></tr></thead>
       <tbody>{results.map((r) => (
-        <tr key={r.id} style={{ borderTop: "1px solid var(--border)" }}>
+        <tr key={r.id}>
           <td>{r.trade_no}</td><td>{r.lots?.lot_no} {r.lots?.species}</td><td>{r.participants?.buyer_no} {r.participants?.name}</td>
-          <td align="right">{r.qty}</td><td align="right">{Number(r.unit_price_jpy).toLocaleString("ja-JP")}</td>
-          <td align="right">{Number(r.amount_jpy).toLocaleString("ja-JP")}</td><td>{r.status === "CONFIRMED" ? "確定" : "仮"}</td>
+          <td className="num">{formatNumber(r.qty)} {r.lots?.unit}</td><td className="num">{formatYen(r.unit_price_jpy)}</td>
+          <td className="num">{formatYen(r.amount_jpy)}</td>
+          <td>{r.status === "CONFIRMED" ? <StatusBadge tone="success">確定</StatusBadge> : <StatusBadge tone="warning">仮</StatusBadge>}</td>
         </tr>
       ))}</tbody>
     </table>

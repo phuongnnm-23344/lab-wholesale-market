@@ -1,15 +1,29 @@
+/* Base look: calm navy / grey business UI. Components: ./ui-components.css */
 :root {
-  --bg: #f6f7f9;
+  --bg: #f3f5f8;
   --surface: #ffffff;
-  --text: #1c2430;
-  --muted: #5b6676;
-  --border: #d9dee5;
-  --primary: #0b5cad;
+  --surface-muted: #f7f9fb;
+  --text: #1f2933;
+  --muted: #5f6b7a;
+  --border: #d5dbe3;
+  --border-strong: #b8c2cf;
+  --navy: #1f3a5f;
+  --navy-dark: #152a46;
+  --primary: #1f4e8c;
+  --primary-hover: #183f72;
+  --primary-soft: #e8eff8;
   --primary-text: #ffffff;
   --danger: #b42318;
-  --sample-bg: #fff4d6;
-  --sample-text: #7a4b00;
-  --disabled: #9aa4b2;
+  --danger-hover: #912018;
+  --danger-soft: #fdecea;
+  --success: #1e6b3a;
+  --success-soft: #e6f4ea;
+  --warning: #8a5300;
+  --warning-soft: #fff4dc;
+  --disabled: #a3adb9;
+  --th-bg: #eef2f6;
+  --focus: #2f6fcf;
+  --radius: 4px;
 }
 
 * {
@@ -22,69 +36,142 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
-  font-size: 16px;
+  font-family: var(--font-noto-sans-jp), "Hiragino Kaku Gothic ProN", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+  font-size: 15px;
   line-height: 1.6;
 }
 
 a {
   color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+h2 {
+  font-size: 16px;
+  margin: 24px 0 8px;
+  padding-left: 8px;
+  border-left: 4px solid var(--navy);
+}
+
+h3 {
+  font-size: 15px;
+  margin: 16px 0 8px;
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+  color: inherit;
 }
 
-.sample-banner {
-  background: var(--sample-bg);
-  color: var(--sample-text);
-  text-align: center;
-  font-weight: 700;
-  padding: 4px 8px;
+input:where(:not([type="checkbox"], [type="radio"], [type="file"])),
+select,
+textarea {
+  min-height: 38px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  max-width: 100%;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--surface-muted);
+  color: var(--muted);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+th,
+td {
+  border: 1px solid var(--border);
+  padding: 7px 10px;
+  vertical-align: middle;
+}
+
+th {
+  background: var(--th-bg);
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: left;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+td[align="right"],
+th[align="right"],
+td.num,
+th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin: 0 0 12px;
+}
+
+legend {
+  font-weight: 600;
+  padding: 0 4px;
 }
 
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.button-primary {
-  background: var(--primary);
-  color: var(--primary-text);
-  border: none;
-  border-radius: 6px;
-  padding: 10px 16px;
-  min-height: 44px;
-  cursor: pointer;
-}
-
-.button-primary:disabled {
-  background: var(--disabled);
-  cursor: not-allowed;
-}
-
-.button-secondary {
-  background: transparent;
-  color: var(--primary);
-  border: 1px solid var(--primary);
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-
-.error-text {
-  color: var(--danger);
+  border-radius: var(--radius);
+  padding: 20px 24px;
 }
 
 .muted {
   color: var(--muted);
 }
 
-.screen-id-footer {
-  margin-top: 24px;
+.error-text {
+  color: var(--danger);
+}
+
+.sample-banner {
+  background: var(--warning-soft);
+  color: var(--warning);
   font-size: 12px;
-  color: var(--muted);
+  text-align: center;
+  padding: 2px 8px;
+  border-bottom: 1px solid #f0dfb8;
 }

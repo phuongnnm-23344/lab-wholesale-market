@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 import { SampleDataBanner } from "@/components/common/sample-data-banner";
+import { ToastProvider } from "@/components/ui/toast-provider";
+import { ErrorAlert, LoadingState } from "@/components/ui/status-states";
 import { AppHeader } from "./app-header";
 import { CurrentUserProvider, useCurrentUser } from "./current-user-context";
 import { SideNavigation } from "./side-navigation";
@@ -15,19 +17,19 @@ function ShellBody({ children }: { children: ReactNode }) {
     <>
       <SampleDataBanner />
       <AppHeader user={user} />
-      {state.status === "loading" && <p style={{ padding: 16 }}>読み込み中…</p>}
+      {state.status === "loading" && <div className="app-main"><LoadingState /></div>}
       {state.status === "error" && (
-        <div style={{ padding: 16 }}>
-          <p className="error-text" role="alert">{state.message}</p>
+        <div className="app-main">
+          <ErrorAlert message={state.message} />
           <SignOutButton />
         </div>
       )}
       {user && (
-        <div style={{ display: "grid", gridTemplateColumns: "minmax(180px, 240px) 1fr", gap: 16, padding: 16 }}>
-          <aside className="card">
+        <div className="app-layout">
+          <aside className="app-sidebar">
             <SideNavigation user={user} />
           </aside>
-          <main>{children}</main>
+          <main className="app-main">{children}</main>
         </div>
       )}
     </>
@@ -37,7 +39,9 @@ function ShellBody({ children }: { children: ReactNode }) {
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <CurrentUserProvider>
-      <ShellBody>{children}</ShellBody>
+      <ToastProvider>
+        <ShellBody>{children}</ShellBody>
+      </ToastProvider>
     </CurrentUserProvider>
   );
 }

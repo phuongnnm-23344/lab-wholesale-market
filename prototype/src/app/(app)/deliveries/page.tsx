@@ -1,61 +1,77 @@
 "use client";
 
 import { useState } from "react";
-import { ApiResultMessage, type ResultMessage } from "@/components/common/day-locked-notice";
-import { ScreenIdFooter } from "@/components/common/screen-id-footer";
+import { DayLockedNotice } from "@/components/common/day-locked-notice";
 import { TabletNumericPad } from "@/components/common/tablet-numeric-pad";
 import { useApiResource } from "@/components/common/use-api-resource";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState, ErrorAlert } from "@/components/ui/status-states";
+import { useToast } from "@/components/ui/toast-provider";
 import { apiRequest } from "@/lib/http/api-client";
+import { formatDate, formatNumber } from "@/lib/format/display-format";
 
 type Pending = { trade_id: string; trade_no: string; business_date: string; effective_qty: number; delivered_qty: number };
-const big = { minHeight: 56, fontSize: 20, padding: "8px 14px", borderRadius: 8 } as const;
 
-// SC-06-02 引渡し記録（タブレット）: search by 買受人番号, deliver part or 「残り全部」 (several deliveries per
-// trade, BR-DEL-03). SC-06-01 is merged here. Online only (offline = mock M04); 例外・争い = mock M16.
+// 引渡し記録（タブレット）: search by 買受人番号, deliver part or 「残り全部」 (several deliveries per
+// trade). Online only. Continuous work: after each record the toast confirms and the list refreshes.
 export default function DeliveryPage() {
+  const { showToast } = useToast();
   const [buyerNo, setBuyerNo] = useState("");
   const [query, setQuery] = useState<string | null>(null);
   const [qty, setQty] = useState<Record<string, string>>({});
-  const [message, setMessage] = useState<ResultMessage>(null);
+  const [locked, setLocked] = useState<string | null>(null);
   const { data, reload } = useApiResource<{ buyer: { name: string; buyer_no: string } | null; pending: Pending[] }>(
     query ? `/api/deliveries?buyerNo=${encodeURIComponent(query)}` : null);
 
   async function deliver(tradeId: string, allRemaining: boolean) {
     const body = allRemaining ? { tradeId, allRemaining: true } : { tradeId, qty: Number(qty[tradeId]) };
     const res = await apiRequest<{ delivered: number; effective: number; complete: boolean }>("/api/deliveries", { method: "POST", body });
-    setMessage(res.ok
-      ? { error: false, text: `記録しました（${res.data.delivered}/${res.data.effective}${res.data.complete ? "・引渡完了" : ""}）` }
-      : { error: true, text: res.message, status: res.status });
-    if (res.ok) reload();
+    setLocked(!res.ok && res.status === 423 ? res.message : null);
+    if (!res.ok) return showToast(res.message, "error");
+    showToast(`引渡しを記録しました（${formatNumber(res.data.delivered)} / ${formatNumber(res.data.effective)}${res.data.complete ? "・引渡完了" : ""}）`);
+    setQty((q) => ({ ...q, [tradeId]: "" }));
+    reload();
   }
 
   return (
-    <section className="card" style={{ display: "grid", gap: 12 }}>
-      <h1 style={{ fontSize: 22, margin: 0 }}>引渡し記録</h1>
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
+    <div className="tablet-screen">
+      <PageHeader title="引渡し記録" />
+      <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
         <div style={{ display: "grid", gap: 8 }}>
-          <label style={{ fontSize: 20 }}>買受人番号<br /><input value={buyerNo} onChange={(e) => setBuyerNo(e.target.value.toUpperCase())} style={{ ...big, width: 200 }} /></label>
-          <div style={{ display: "flex", gap: 8 }}>
-            {["N", "B"].map((p) => <button key={p} type="button" style={big} onClick={() => setBuyerNo(p)}>{p}</button>)}
-            <button type="button" className="button-primary" style={big} onClick={() => setQuery(buyerNo)}>検索</button>
+          <label style={{ fontWeight: 600 }}>買受人番号<br />
+            <input value={buyerNo} onChange={(e) => setBuyerNo(e.target.value.toUpperCase())} style={{ width: 220 }} />
+          </label>
+          <div className="page-actions">
+            {["N", "B"].map((p) => <button key={p} type="button" className="button-secondary button-large" onClick={() => setBuyerNo(p)}>{p}</button>)}
+            <button type="button" className="button-primary button-large" onClick={() => setQuery(buyerNo)}>検索</button>
           </div>
         </div>
         <TabletNumericPad onKey={(k) => setBuyerNo((v) => (k === "C" ? "" : k === "←" ? v.slice(0, -1) : v + k))} />
       </div>
-      {data?.buyer === null && <p className="error-text">該当する買受人がありません</p>}
-      {data?.buyer && <p style={{ margin: 0, fontSize: 18 }}>{data.buyer.buyer_no} {data.buyer.name} — 未引渡し {data.pending.length}件</p>}
-      {(data?.pending ?? []).map((t) => (
-        <div key={t.trade_id} className="card" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-          <strong>{t.trade_no}</strong>
-          <span>{t.business_date} 済 {t.delivered_qty} / {t.effective_qty}</span>
-          <input inputMode="decimal" placeholder="数量" value={qty[t.trade_id] ?? ""} style={{ ...big, width: 120 }}
-            onChange={(e) => setQty((q) => ({ ...q, [t.trade_id]: e.target.value }))} />
-          <button type="button" style={big} disabled={!(Number(qty[t.trade_id]) > 0)} onClick={() => deliver(t.trade_id, false)}>記録</button>
-          <button type="button" className="button-primary" style={big} onClick={() => deliver(t.trade_id, true)}>残り全部</button>
-        </div>
-      ))}
-      <ApiResultMessage message={message} />
-      <ScreenIdFooter screenId="SC-06-02" trace="FT-06-01..03 / FR-DEL-01/02/05, BR-DEL-03（オフライン・例外登録は試作対象外）" />
-    </section>
+      {locked && <DayLockedNotice detail={locked} />}
+      {data?.buyer === null && <ErrorAlert message="該当する買受人がありません。" />}
+      {data?.buyer && (
+        <>
+          <h2>{data.buyer.buyer_no} {data.buyer.name} — 未引渡し {data.pending.length}件</h2>
+          {data.pending.length === 0 ? <EmptyState text="未引渡しの取引はありません。" /> : (
+            <table>
+              <thead><tr><th>取引番号</th><th>取引日</th><th className="num">引渡済 / 数量</th><th>今回の数量</th><th>操作</th></tr></thead>
+              <tbody>{data.pending.map((t) => (
+                <tr key={t.trade_id}>
+                  <td>{t.trade_no}</td><td>{formatDate(t.business_date)}</td>
+                  <td className="num">{formatNumber(t.delivered_qty)} / {formatNumber(t.effective_qty)}</td>
+                  <td><input inputMode="decimal" aria-label={`${t.trade_no}の数量`} value={qty[t.trade_id] ?? ""} style={{ width: 120 }}
+                    onChange={(e) => setQty((q) => ({ ...q, [t.trade_id]: e.target.value }))} /></td>
+                  <td className="page-actions">
+                    <button type="button" className="button-secondary button-large" disabled={!(Number(qty[t.trade_id]) > 0)} onClick={() => deliver(t.trade_id, false)}>記録</button>
+                    <button type="button" className="button-primary button-large" onClick={() => deliver(t.trade_id, true)}>残り全部</button>
+                  </td>
+                </tr>
+              ))}</tbody>
+            </table>
+          )}
+        </>
+      )}
+    </div>
   );
 }

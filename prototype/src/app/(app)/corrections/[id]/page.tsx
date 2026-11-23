@@ -3,11 +3,16 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { ScreenIdFooter } from "@/components/common/screen-id-footer";
 import { useApiResource } from "@/components/common/use-api-resource";
+import { ConfirmButton } from "@/components/ui/confirm-button";
+import { FormField } from "@/components/ui/form-field";
+import { PageHeader } from "@/components/ui/page-header";
+import { ErrorAlert, LoadingState, StatusBadge } from "@/components/ui/status-states";
+import { useToast } from "@/components/ui/toast-provider";
 import type { CurrentUser } from "@/lib/auth/app-role-types";
+import { CORRECTION_STATUS_LABELS, CORRECTION_STATUS_TONES } from "@/lib/corrections/correction-status-labels";
 import { apiRequest } from "@/lib/http/api-client";
-import { CORRECTION_STATUS_LABELS } from "@/lib/corrections/correction-status-labels";
+import { formatDate, formatNumber, formatYen } from "@/lib/format/display-format";
 
 type Side = { qty: number; unit_price_jpy: number; buyer_id: string; amount_jpy: number };
 type Detail = {
@@ -16,47 +21,75 @@ type Detail = {
   staff: Record<string, string>; me: CurrentUser;
 };
 
-// SC-08-03 修正申請承認・却下: before / after side by side; approve (MFA = mock M02) or reject with reason.
+// 修正申請の詳細・承認・却下: before / after side by side. Approve or reject (reason required);
+// after a decision the approver returns to the list of requests.
 export default function CorrectionDecisionPage() {
   const { id } = useParams<{ id: string }>();
-  const { data, error, reload } = useApiResource<Detail>(`/api/corrections/${id}`);
+  const { data, error } = useApiResource<Detail>(`/api/corrections/${id}`);
+  const { showToast, toastAndGo } = useToast();
   const [rejectReason, setRejectReason] = useState("");
-  const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
-  if (error) return <p className="error-text" role="alert">{error}</p>;
-  if (!data) return <p>読み込み中…</p>;
+  if (error) return <><PageHeader title="修正申請" /><ErrorAlert message={error} /></>;
+  if (!data) return <><PageHeader title="修正申請" /><LoadingState /></>;
   const { correction: c, buyers, staff, me } = data;
   const pending = c.status === "SUBMITTED" || c.status === "FIRST_APPROVED";
   const canDecide = pending && (me.authorities.includes("STL_HEAD") || me.authorities.includes("OPS_HEAD"));
+  const name = (uid: string | null) => (uid ? staff[uid] ?? "—" : "—");
 
   async function act(kind: "approve" | "reject") {
     const res = await apiRequest<{ status: string }>(`/api/corrections/${id}/${kind}`, { method: "POST", body: kind === "reject" ? { reason: rejectReason } : {} });
-    setMessage(res.ok ? { error: false, text: `処理しました：${CORRECTION_STATUS_LABELS[res.data.status] ?? res.data.status}` } : { error: true, text: res.message });
-    if (res.ok) reload();
+    if (!res.ok) return showToast(res.message, "error");
+    toastAndGo(kind === "reject" ? "修正申請を却下しました" : `承認しました（${CORRECTION_STATUS_LABELS[res.data.status] ?? res.data.status}）`, "/corrections");
   }
   const row = (label: string, s: Side) => (
-    <tr><td>{label}</td><td>{buyers[s.buyer_id]}</td><td align="right">{s.qty}</td><td align="right">{Number(s.unit_price_jpy).toLocaleString("ja-JP")}</td><td align="right">{Number(s.amount_jpy).toLocaleString("ja-JP")}</td></tr>
+    <tr><th>{label}</th><td>{buyers[s.buyer_id]}</td><td className="num">{formatNumber(s.qty)}</td><td className="num">{formatYen(s.unit_price_jpy)}</td><td className="num">{formatYen(s.amount_jpy)}</td></tr>
   );
 
   return (
-    <section className="card" style={{ display: "grid", gap: 10 }}>
-      <h1 style={{ fontSize: 20, margin: 0 }}>修正申請 — {CORRECTION_STATUS_LABELS[c.status]}</h1>
-      <p style={{ margin: 0 }}>取引 <Link href={`/trades/${c.target_trade_id}`}>{c.trades?.trade_no}</Link>（{c.trades?.business_date}）・理由：{c.reason}</p>
-      <table><thead><tr><th /><th align="left">買受人</th><th align="right">数量</th><th align="right">単価</th><th align="right">金額</th></tr></thead>
-        <tbody>{row("訂正前", c.change.before)}{row("訂正後", c.change.after)}</tbody></table>
-      <p className="muted" style={{ margin: 0 }}>申請：{c.requested_by ? staff[c.requested_by] : "—"} ／ 一次承認：{c.approver1 ? staff[c.approver1] : "—"} ／ 二次承認：{c.approver2 ? staff[c.approver2] : "—"}</p>
-      {c.reject_reason && <p>却下理由：{c.reject_reason}</p>}
+    <>
+      <PageHeader title="修正申請の詳細" actions={<Link href="/corrections" className="button-secondary">一覧へ戻る</Link>} />
+      <table className="detail-table">
+        <tbody>
+          <tr><th>状態</th><td><StatusBadge tone={CORRECTION_STATUS_TONES[c.status]}>{CORRECTION_STATUS_LABELS[c.status]}</StatusBadge></td></tr>
+          <tr><th>対象取引</th><td><Link href={`/trades/${c.target_trade_id}`}>{c.trades?.trade_no}</Link>（{formatDate(c.trades?.business_date)}）</td></tr>
+          <tr><th>理由</th><td>{c.reason}</td></tr>
+          <tr><th>申請者／一次承認／二次承認</th><td>{name(c.requested_by)} ／ {name(c.approver1)} ／ {name(c.approver2)}</td></tr>
+          {c.reject_reason && <tr><th>却下理由</th><td>{c.reject_reason}</td></tr>}
+        </tbody>
+      </table>
+      <h2>訂正内容</h2>
+      <table>
+        <thead><tr><th /><th>買受人</th><th className="num">数量</th><th className="num">単価</th><th className="num">金額</th></tr></thead>
+        <tbody>{row("訂正前", c.change.before)}{row("訂正後", c.change.after)}</tbody>
+      </table>
       {data.adjustments.length > 0 && (
-        <ul>{data.adjustments.map((a) => <li key={a.id}>{a.business_date} {a.kind === "REVERSE" ? "取消行" : "差額行"} {buyers[a.buyer_id] ?? a.buyer_id} 数量 {a.qty_delta} 金額 {Number(a.amount_delta_jpy).toLocaleString("ja-JP")}</li>)}</ul>
+        <>
+          <h2>反映された取消・差額</h2>
+          <table>
+            <thead><tr><th>計上日</th><th>区分</th><th>買受人</th><th className="num">数量</th><th className="num">金額</th></tr></thead>
+            <tbody>{data.adjustments.map((a) => (
+              <tr key={a.id}>
+                <td>{formatDate(a.business_date)}</td>
+                <td>{a.kind === "REVERSE" ? <StatusBadge tone="danger">取消</StatusBadge> : <StatusBadge tone="info">差額</StatusBadge>}</td>
+                <td>{buyers[a.buyer_id] ?? a.buyer_id}</td><td className="num">{formatNumber(a.qty_delta)}</td><td className="num">{formatYen(a.amount_delta_jpy)}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </>
       )}
       {canDecide && (
-        <div style={{ display: "grid", gap: 8, maxWidth: 420 }}>
-          <button type="button" className="button-primary" onClick={() => act("approve")}>承認する（MFAは試作では省略）</button>
-          <input placeholder="却下理由（必須）" value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} />
-          <button type="button" className="button-secondary" disabled={!rejectReason.trim()} onClick={() => act("reject")}>却下する</button>
-        </div>
+        <>
+          <h2>承認・却下</h2>
+          <div className="form-grid">
+            <FormField label="却下理由" hint="却下する場合のみ必須">
+              <input value={rejectReason} maxLength={200} onChange={(e) => setRejectReason(e.target.value)} />
+            </FormField>
+          </div>
+          <div className="form-actions">
+            <button type="button" className="button-primary" onClick={() => act("approve")}>承認する</button>
+            <ConfirmButton label="却下する" disabled={!rejectReason.trim()} message="この修正申請を却下します。よろしいですか？" confirmLabel="却下する" onConfirm={() => act("reject")} />
+          </div>
+        </>
       )}
-      {message && <p className={message.error ? "error-text" : undefined} role="status">{message.text}</p>}
-      <ScreenIdFooter screenId="SC-08-03" trace="FT-08-02..04 / FR-CORR-02/03, 07-03, D.4（承認者は申請者と別人）" />
-    </section>
+    </>
   );
 }

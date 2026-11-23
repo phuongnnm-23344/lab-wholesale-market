@@ -9,4 +9,4 @@ export type PeriodDetail = {
   period: PeriodRow; payables: PayableRow[]; results: IncentiveRow[]; ruleVersionNo: number | null; runAt: string | null;
   me: { role: string; authorities: string[] };
 };
-export const yen = (n: number) => `${Number(n).toLocaleString("ja-JP")}`;
+export { formatYen as yen } from "@/lib/format/display-format";

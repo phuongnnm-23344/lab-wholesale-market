@@ -35,18 +35,18 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
-      <label style={{ display: "grid", gap: 4 }}>
+      <label style={{ display: "grid", gap: 4, fontSize: 14, fontWeight: 600 }}>
         メールアドレス
         <input type="email" autoComplete="username" required value={email}
-          onChange={(e) => setEmail(e.target.value)} style={{ padding: 8 }} />
+          onChange={(e) => setEmail(e.target.value)} />
       </label>
-      <label style={{ display: "grid", gap: 4 }}>
+      <label style={{ display: "grid", gap: 4, fontSize: 14, fontWeight: 600 }}>
         パスワード
         <input type="password" autoComplete="current-password" required value={password}
-          onChange={(e) => setPassword(e.target.value)} style={{ padding: 8 }} />
+          onChange={(e) => setPassword(e.target.value)} />
       </label>
-      {error && <p className="error-text" role="alert" style={{ margin: 0 }}>{error}</p>}
-      <button type="submit" className="button-primary" disabled={submitting}>
+      {error && <div className="alert alert-error" role="alert">{error}</div>}
+      <button type="submit" className="button-primary" disabled={submitting} style={{ width: "100%", marginTop: 4 }}>
         {submitting ? "ログイン中…" : "ログイン"}
       </button>
     </form>
