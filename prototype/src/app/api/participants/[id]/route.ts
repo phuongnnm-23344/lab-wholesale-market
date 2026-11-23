@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole, requireUser } from "@/lib/auth/require-role";
-import { apiError } from "@/lib/http/api-error-response";
+import { apiError, isUuid, notFound } from "@/lib/http/api-error-response";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { parseJsonBody } from "@/lib/http/parse-json-body";
 import { participantSchema } from "@/lib/validators/participant-schemas";
@@ -17,6 +17,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/participant
   const auth = await requireUser();
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const { data, error } = await auth.supabase.from("participants").select(DETAIL_COLUMNS).eq("id", id).maybeSingle();
   if (error) return mapRpcError(error);
   if (!data) return apiError(404, "NOT_FOUND", "対象が見つかりません");
@@ -28,6 +29,7 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/participan
   const auth = await requireRole(["SETTLE"], ["STL_HEAD"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const body = await parseJsonBody(request, participantSchema);
   if (!body.ok) return body.response;
   const p = body.data;

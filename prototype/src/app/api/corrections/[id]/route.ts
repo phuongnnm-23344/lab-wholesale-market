@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth/require-role";
-import { apiError } from "@/lib/http/api-error-response";
+import { apiError, isUuid, notFound } from "@/lib/http/api-error-response";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { lookupStaffNames } from "@/lib/services/staff-name-lookup";
 
@@ -11,6 +11,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/corrections
   const auth = await requireUser();
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const sb = auth.supabase;
   const { data: corr, error } = await sb.from("correction_requests")
     .select("id, status, reason, reject_reason, requested_by, approver1, approver2, created_at, change, target_trade_id, trades(trade_no, business_date, channel)")

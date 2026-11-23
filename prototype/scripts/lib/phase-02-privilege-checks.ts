@@ -25,7 +25,7 @@ export const ALLOWED_AUTHENTICATED_FUNCTIONS = [
   "approve_rule_version", "cancel_rule_version", "create_rule_version", "return_rule_version",
   "rule_version_quota_used", "save_rate_rows", "submit_rule_version",
   // phase 09
-  "import_payments", "lock_period", "period_payables", "preview_incentives", "run_incentive_calc",
+  "import_payments", "lock_period", "void_payment_batch", "period_payables", "preview_incentives", "run_incentive_calc",
 ].sort();
 
 const names = (signatures: string[]) => signatures.map((s) => s.split("(")[0]).sort();

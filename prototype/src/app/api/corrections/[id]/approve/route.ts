@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isUuid, notFound } from "@/lib/http/api-error-response";
 import { requireRole } from "@/lib/auth/require-role";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 
@@ -10,6 +11,7 @@ export async function POST(_request: Request, ctx: RouteContext<"/api/correction
   const auth = await requireRole([], ["STL_HEAD", "OPS_HEAD"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const { data, error } = await auth.supabase.rpc("approve_correction", { p_id: id });
   if (error) return mapRpcError(error);
   return NextResponse.json({ status: data });

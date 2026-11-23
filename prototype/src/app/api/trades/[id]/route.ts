@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth/require-role";
-import { apiError } from "@/lib/http/api-error-response";
+import { apiError, isUuid, notFound } from "@/lib/http/api-error-response";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { lookupStaffNames } from "@/lib/services/staff-name-lookup";
 
@@ -12,6 +12,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/trades/[id]
   const auth = await requireUser();
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const sb = auth.supabase;
   const { data: trade, error } = await sb.from("trades")
     .select("id, trade_no, business_date, channel, qty, unit_price_jpy, amount_jpy, status, over_limit_reason, created_by, confirmed_by, confirmed_at, seri_session_id, lots(lot_no, species, unit, shipper_name), participants(name, buyer_no, kind)")

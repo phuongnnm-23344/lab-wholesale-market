@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isUuid, notFound } from "@/lib/http/api-error-response";
 import { requireRole } from "@/lib/auth/require-role";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { parseJsonBody } from "@/lib/http/parse-json-body";
@@ -12,6 +13,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/rule-versio
   const auth = await requireRole(["RULE"], ["STL_HEAD"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const body = await parseJsonBody(request, ruleActionSchema);
   if (!body.ok) return body.response;
   const { action, reason } = body.data;

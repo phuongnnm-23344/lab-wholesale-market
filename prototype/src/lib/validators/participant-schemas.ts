@@ -8,10 +8,12 @@ export type ParticipantKind = (typeof PARTICIPANT_KINDS)[number];
 export const participantSchema = z.object({
   kind: z.enum(PARTICIPANT_KINDS),
   name: z.string().trim().min(1).max(100),
-  buyerNo: z.string().trim().max(20).regex(/^[A-Za-z0-9-]*$/).default(""),
+  buyerNo: z.string().trim().toUpperCase().regex(/^([A-Z0-9]{1,10})?$/, "英大文字・数字 1〜10桁").default(""),
   email: z.union([z.literal(""), z.string().trim().email().max(200)]).default(""),
   depositJpy: z.number().int().min(0).max(1_000_000_000),
   status: z.enum(["ACTIVE", "SUSPENDED"]),
+}).refine((p) => !(["NAKAOROSHI", "BAIBAI"].includes(p.kind) && p.buyerNo === ""), {
+  path: ["buyerNo"], message: "仲卸・売買参加者は買受人番号が必須です",
 });
 
 const validityRange = { validFrom: isoDate, validTo: isoDate };

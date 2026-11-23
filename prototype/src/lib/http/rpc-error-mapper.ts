@@ -24,6 +24,18 @@ const BUSINESS_ERRORS: Record<string, [number, string]> = {
   OVER_DELIVERY: [409, "引渡し数量が取引数量を超えます"],
   QUOTA_EXCEEDED: [409, "年度内の発効回数上限（4回）に達しています"],
   RATE_LOCKED: [409, "起票中（DRAFT）以外の版の交付率は変更できません"],
+  DUPLICATE_FILE: [409, "このファイルはすでに取り込まれています（取消後のみ再取込できます）"],
+};
+
+// Postgres data / constraint errors (S1): client mistakes → 4xx, never 500.
+const PG_CLIENT_ERRORS: Record<string, [number, string, string]> = {
+  "22P02": [422, "INVALID_FORMAT", "入力の形式が正しくありません"],
+  "22008": [422, "INVALID_DATE", "日付が正しくありません"],
+  "23502": [422, "VALIDATION", "必須項目が不足しています"],
+  "23503": [422, "VALIDATION", "参照先が存在しません"],
+  "23514": [422, "VALIDATION", "入力内容が制約に違反しています"],
+  "23505": [409, "DUPLICATE", "同じ内容がすでに登録されています"],
+  "40P01": [409, "RETRY", "同時に操作が行われました。もう一度お試しください"],
 };
 
 // Codes whose technical detail (lot no., remaining qty, limit) is safe and useful to show.
@@ -37,7 +49,8 @@ export function mapRpcError(error: { code?: string; message: string }): NextResp
     const message = SHOW_DETAIL.has(businessCode) && detail ? `${known[1]}（${detail}）` : known[1];
     return apiError(known[0], businessCode, message);
   }
-  if (error.code === "23505") return apiError(409, "DUPLICATE", "同じ番号がすでに登録されています");
+  const pg = error.code ? PG_CLIENT_ERRORS[error.code] : undefined;
+  if (pg) return apiError(pg[0], pg[1], pg[2]);
   if (error.code === "42501") return apiError(403, "FORBIDDEN", "この操作の権限がありません");
   console.error("RPC error", error.code);
   return serverError();

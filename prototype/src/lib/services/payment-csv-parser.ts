@@ -7,6 +7,14 @@ export type CsvLineError = { line: number; reason: string };
 
 const MAX_LINES = 2000;
 
+// W6: Date.parse accepts 2026-02-31; compare the parts back after building a UTC date.
+function isRealDate(text: string): boolean {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+  if (!m) return false;
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+  return d.getUTCFullYear() === +m[1] && d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3];
+}
+
 export function parsePaymentCsv(text: string): { rows: ParsedPaymentRow[]; errors: CsvLineError[] } {
   const lines = text.replace(/^﻿/, "").split(/\r?\n/).filter((l) => l.trim() !== "");
   const rows: ParsedPaymentRow[] = [];
@@ -24,7 +32,7 @@ export function parsePaymentCsv(text: string): { rows: ParsedPaymentRow[]; error
     const [buyerNo, paidOn, amountText] = cells;
     if (cells.some((c) => /^[=+\-@]/.test(c))) return errors.push({ line, reason: "数式のような値は取り込めません" });
     if (!/^[A-Z0-9]{1,10}$/.test(buyerNo)) return errors.push({ line, reason: "買受人番号が不正です" });
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(paidOn) || Number.isNaN(Date.parse(paidOn))) return errors.push({ line, reason: "入金日は YYYY-MM-DD です" });
+    if (!isRealDate(paidOn)) return errors.push({ line, reason: "入金日は実在する日付（YYYY-MM-DD）にしてください" });
     const amount = Number(amountText);
     if (!Number.isInteger(amount) || amount <= 0 || amount > 10_000_000_000) return errors.push({ line, reason: "金額が不正です" });
     rows.push({ line, buyer_no: buyerNo, paid_on: paidOn, amount });

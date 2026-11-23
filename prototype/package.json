@@ -22,6 +22,7 @@
     "verify:phase08": "tsx --env-file=.env.local scripts/verify-phase-08-rule-versions.ts",
     "verify:phase09": "tsx --env-file=.env.local scripts/verify-phase-09-payment-incentive.ts",
     "verify:phase10": "tsx --env-file=.env.local scripts/verify-phase-10-audit-log.ts",
+    "verify:review": "tsx --env-file=.env.local scripts/verify-review-fixes.ts",
     "verify:all": "tsx --env-file=.env.local scripts/verify-all-phases.ts"
   },
   "engines": {

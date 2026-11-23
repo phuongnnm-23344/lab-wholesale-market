@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/require-role";
-import { apiError } from "@/lib/http/api-error-response";
+import { apiError, isUuid, notFound } from "@/lib/http/api-error-response";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { parseJsonBody } from "@/lib/http/parse-json-body";
 import { incentiveActionSchema } from "@/lib/validators/lot-and-trade-schemas";
@@ -12,6 +12,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/periods/[id
   const auth = await requireRole(["SETTLE"], ["STL_HEAD"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const sb = auth.supabase;
   const { data: period, error } = await sb.from("payment_periods").select("id, period_code, start_date, end_date, due_date, status").eq("id", id).maybeSingle();
   if (error) return mapRpcError(error);
@@ -34,6 +35,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/periods/[id
   const auth = await requireRole(["SETTLE"], ["STL_HEAD"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const body = await parseJsonBody(request, incentiveActionSchema);
   if (!body.ok) return body.response;
   const fn = { preview: "preview_incentives", run: "run_incentive_calc", lock: "lock_period" }[body.data.action];

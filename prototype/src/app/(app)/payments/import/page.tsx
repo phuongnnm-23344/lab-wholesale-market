@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ScreenIdFooter } from "@/components/common/screen-id-footer";
+import { PaymentBatchList } from "@/components/payments/payment-batch-list";
 
 type ImportResult = { imported: number; errors: { line: number; reason: string; buyer_no?: string }[] };
 
@@ -12,6 +13,7 @@ export default function PaymentImportPage() {
   const [csv, setCsv] = useState("");
   const [result, setResult] = useState<ImportResult | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [imports, setImports] = useState(0);
 
   async function pick(file: File | undefined) {
     setResult(null);
@@ -25,6 +27,7 @@ export default function PaymentImportPage() {
   async function importFile() {
     const res = await fetch("/api/payments/import", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fileName, csv }) });
     const json = await res.json().catch(() => ({}));
+    if (res.ok) setImports((n) => n + 1);
     if (res.ok || res.status === 422) return setResult(json as ImportResult);
     setMessage(json?.error?.message ?? `エラー（${res.status}）`);
   }
@@ -43,6 +46,7 @@ export default function PaymentImportPage() {
           <ul>{result.errors.map((e, i) => <li key={i} className="error-text">{e.line}行目 {e.buyer_no ?? ""}：{e.reason}</li>)}</ul>
         </div>
       )}
+      <PaymentBatchList reloadKey={imports} />
       <ScreenIdFooter screenId="SC-09-01" trace="FT-09-01, FT-09-03 / B.5, FIG-013（形式は仮：E-01）" />
     </section>
   );

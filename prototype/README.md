@@ -32,6 +32,8 @@ PIN đổi người trên máy chung (màn 利用者切替, chỉ vai hiện tr�
 
 Tài khoản demo được bảo vệ: trong app không đổi được vai / quyền / trạng thái / PIN. Supabase Auth **không chặn được** việc người đăng nhập tự đổi mật khẩu của mình → nếu tài khoản demo không vào được: báo người phụ trách chạy `npm run demo:reset`.
 
+Giới hạn đã biết của bản thử (chấp nhận, ghi trong danh sách mock): PIN 4 số khóa 15 phút sau 5 lần sai **theo người được chuyển tới** — người đang đăng nhập trên máy chung có thể cố ý nhập sai để khóa PIN của người khác trong 15 phút (bản thật cần giới hạn thêm theo người nhập và thiết bị). Quyền **đọc** dữ liệu nghiệp vụ là toàn bộ nhân viên nội bộ đang hoạt động (giản lược); quyền **ghi / duyệt** được kiểm trong DB theo vai.
+
 ## Nếu app báo lỗi kết nối DB
 
 Supabase free tier **tự tạm dừng (pause) project sau 7 ngày không dùng** → vào Supabase Dashboard → chọn project → **Resume project**, đợi 1–2 phút rồi tải lại trang. Mỗi tuần nên mở app một lần và chạy `npm run demo:verify`.
@@ -51,13 +53,13 @@ cp .env.local.example .env.local   # rồi tự điền giá trị (không commi
 npm run dev                        # http://localhost:3000 → trang đăng nhập
 ```
 
-Kiểm tra: `npm run typecheck`, `npm run lint`, `npm run build`. Kiểm tổng trên DB thật (cần `npm run dev` đang chạy): `APP_BASE_URL=http://localhost:3000 npm run verify:all` (9 bộ kiểm phase 02–10 + 10 tài khoản demo).
+Kiểm tra: `npm run typecheck`, `npm run lint`, `npm run build`. Kiểm tổng trên DB thật (cần `npm run dev` đang chạy): `APP_BASE_URL=http://localhost:3000 npm run verify:all` (9 bộ kiểm phase 02–10 + kiểm theo code review + 10 tài khoản demo).
 
 ## Dựng Supabase lần đầu (đã làm — giữ lại để tái lập)
 
 1. Tạo project; **Authentication → Sign In / Providers → tắt "Allow new users to sign up"**.
 2. `.env.local` từ `.env.local.example` (URL, publishable key, secret key, mật khẩu demo / PIN demo / mật khẩu tài khoản test).
-3. `npx supabase link --project-ref <ref>` rồi `npx supabase db push --remote` (23 migration trong `supabase/migrations/`).
+3. `npx supabase link --project-ref <ref>` rồi `npx supabase db push --remote` (29 migration trong `supabase/migrations/`).
 4. `npm run demo:accounts` → `npm run demo:reset` → `npm run demo:verify` (phải ra 10/10).
 
 ## Bảo mật (tóm tắt)

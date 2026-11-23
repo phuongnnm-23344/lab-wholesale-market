@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/require-role";
-import { serverError } from "@/lib/http/api-error-response";
+import { isUuid, notFound, serverError } from "@/lib/http/api-error-response";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { parseJsonBody } from "@/lib/http/parse-json-body";
 import { setAuthUserBanned } from "@/lib/services/account-admin-service";
@@ -14,6 +14,7 @@ export async function PATCH(request: Request, ctx: RouteContext<"/api/accounts/[
   const auth = await requireRole(["SYSADM"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const body = await parseJsonBody(request, updateAccountSchema);
   if (!body.ok) return body.response;
   const a = body.data;

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isUuid, notFound } from "@/lib/http/api-error-response";
 import { requireRole } from "@/lib/auth/require-role";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { parseJsonBody } from "@/lib/http/parse-json-body";
@@ -12,6 +13,7 @@ export async function POST(request: Request, ctx: RouteContext<"/api/seri-sessio
   const auth = await requireRole(["TRADE"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const body = await parseJsonBody(request, seriConfirmSchema);
   if (!body.ok) return body.response;
   const { data, error } = await auth.supabase.rpc("confirm_seri_session", {

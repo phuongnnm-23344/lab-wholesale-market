@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-const qty = z.number().positive().max(100_000);
+// W2: at most 2 decimals (DB column numeric(12,2)); otherwise amount ≠ floor(qty × price).
+const qty = z.number().positive().max(100_000)
+  .refine((v) => Math.abs(v * 100 - Math.round(v * 100)) < 1e-9, "小数点以下2桁まで");
 const text = (max: number) => z.string().trim().min(1).max(max);
 const ids = z.array(z.string().uuid()).min(1).max(100);
 

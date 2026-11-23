@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth/require-role";
-import { apiError } from "@/lib/http/api-error-response";
+import { apiError, isUuid, notFound } from "@/lib/http/api-error-response";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { lookupStaffNames } from "@/lib/services/staff-name-lookup";
 
@@ -11,6 +11,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/lots/[id]">
   const auth = await requireUser();
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const sb = auth.supabase;
   const [lot, ledger, inspections, qty] = await Promise.all([
     sb.from("lots").select("id, lot_no, business_date, shipper_name, species, unit, qty_received, status, provisional_by, registered_by").eq("id", id).maybeSingle(),

@@ -8,7 +8,7 @@ const SCRIPTS = [
   "verify-phase-02-db-security", "verify-phase-03-party-account-pin", "verify-phase-04-lot-intake",
   "verify-phase-05-aitai-seri", "verify-phase-06-delivery-close", "verify-phase-07-correction",
   "verify-phase-08-rule-versions", "verify-phase-09-payment-incentive", "verify-phase-10-audit-log",
-  "verify-demo-accounts",
+  "verify-review-fixes", "verify-demo-accounts",
 ];
 
 if (!process.env.APP_BASE_URL) console.warn("APP_BASE_URL is not set: HTTP route checks will FAIL.");

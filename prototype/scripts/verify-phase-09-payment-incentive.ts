@@ -3,6 +3,7 @@
 // test vector 100 % match, CORR between run and lock caught next run (n4), DELTA per PRM-043 (old version, no
 // re-judging 完納), lock opens next period (n5). Test accounts only; demo data re-seeded at start and end.
 
+import { createHash } from "node:crypto";
 import { AppHttpSession } from "./lib/app-http-session";
 import { resetDemoData } from "./lib/demo-sessions-and-lookups";
 import { incentiveFor, paidOnTime, payableOf, periodAmounts, periods } from "./lib/phase-09-incentive-expectations";
@@ -44,7 +45,7 @@ async function main() {
     const onTime = new Date(Date.parse(`${p2.due_date}T00:00:00Z`) - 3 * 86_400_000).toISOString().slice(0, 10);
     const csv = ["買受人番号,入金日,金額", ...pay.map((x) => `${x.buyer_no},${onTime},${x.payable_jpy}`), `Z99,${onTime},1000`, "N01,2026/11/01,=1+1"].join("\n");
     const parsed = parsePaymentCsv(csv);
-    const { data, error } = await settle.rpc("import_payments", { p_file_name: "テスト入金.csv", p_rows: parsed.rows });
+    const { data, error } = await settle.rpc("import_payments", { p_file_name: "テスト入金.csv", p_rows: parsed.rows, p_file_sha256: createHash("sha256").update(csv).digest("hex") });
     if (error) return error.message;
     return data.imported === pay.length && data.errors.length === 1 && parsed.errors.length === 1 ? null : `imported=${data.imported} dbErr=${data.errors.length} csvErr=${parsed.errors.length}`;
   }));

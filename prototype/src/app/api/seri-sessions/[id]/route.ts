@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth/require-role";
-import { apiError } from "@/lib/http/api-error-response";
+import { apiError, isUuid, notFound } from "@/lib/http/api-error-response";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { lookupStaffNames } from "@/lib/services/staff-name-lookup";
 
@@ -11,6 +11,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/seri-sessio
   const auth = await requireUser();
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const { data: session, error } = await auth.supabase.from("seri_sessions")
     .select("id, session_no, status, business_date, entered_by, confirmed_by, confirmed_at, same_person_reason")
     .eq("id", id).maybeSingle();

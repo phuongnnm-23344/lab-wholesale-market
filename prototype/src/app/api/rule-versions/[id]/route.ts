@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/require-role";
-import { apiError } from "@/lib/http/api-error-response";
+import { apiError, isUuid, notFound } from "@/lib/http/api-error-response";
 import { mapRpcError } from "@/lib/http/rpc-error-mapper";
 import { parseJsonBody } from "@/lib/http/parse-json-body";
 import { lookupStaffNames } from "@/lib/services/staff-name-lookup";
@@ -15,6 +15,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/rule-versio
   const auth = await requireRole(["RULE"], ["STL_HEAD"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const sb = auth.supabase;
   const { data: version, error } = await sb.from("rule_versions")
     .select("id, version_no, effective_from, status, note, maker_id, checker_id, approved_at, rollback_of").eq("id", id).maybeSingle();
@@ -38,6 +39,7 @@ export async function PUT(request: Request, ctx: RouteContext<"/api/rule-version
   const auth = await requireRole(["RULE"]);
   if (!auth.ok) return auth.response;
   const { id } = await ctx.params;
+  if (!isUuid(id)) return notFound();
   const body = await parseJsonBody(request, rateRowsSchema);
   if (!body.ok) return body.response;
   const { error } = await auth.supabase.rpc("save_rate_rows", { p_version_id: id, p_rows: body.data.rows });
