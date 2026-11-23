@@ -1,0 +1,48 @@
+{
+  "name": "prototype",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "demo:accounts": "tsx --env-file=.env.local scripts/create-demo-accounts.ts",
+    "demo:reset": "tsx --env-file=.env.local scripts/reset-demo.ts",
+    "demo:verify": "tsx --env-file=.env.local scripts/verify-demo-accounts.ts",
+    "demo:check-readme": "tsx --env-file=.env.local scripts/check-readme-demo-password.ts",
+    "db:status": "tsx --env-file=.env.local scripts/check-db-schema-status.ts",
+    "verify:phase02": "tsx --env-file=.env.local scripts/verify-phase-02-db-security.ts",
+    "verify:phase03": "tsx --env-file=.env.local scripts/verify-phase-03-party-account-pin.ts",
+    "verify:phase04": "tsx --env-file=.env.local scripts/verify-phase-04-lot-intake.ts",
+    "verify:phase05": "tsx --env-file=.env.local scripts/verify-phase-05-aitai-seri.ts",
+    "verify:phase06": "tsx --env-file=.env.local scripts/verify-phase-06-delivery-close.ts",
+    "verify:phase07": "tsx --env-file=.env.local scripts/verify-phase-07-correction.ts",
+    "verify:phase08": "tsx --env-file=.env.local scripts/verify-phase-08-rule-versions.ts",
+    "verify:phase09": "tsx --env-file=.env.local scripts/verify-phase-09-payment-incentive.ts",
+    "verify:phase10": "tsx --env-file=.env.local scripts/verify-phase-10-audit-log.ts",
+    "verify:all": "tsx --env-file=.env.local scripts/verify-all-phases.ts"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.2",
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}

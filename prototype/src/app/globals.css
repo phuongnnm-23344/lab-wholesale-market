@@ -1,0 +1,90 @@
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --text: #1c2430;
+  --muted: #5b6676;
+  --border: #d9dee5;
+  --primary: #0b5cad;
+  --primary-text: #ffffff;
+  --danger: #b42318;
+  --sample-bg: #fff4d6;
+  --sample-text: #7a4b00;
+  --disabled: #9aa4b2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", Meiryo, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--primary);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.sample-banner {
+  background: var(--sample-bg);
+  color: var(--sample-text);
+  text-align: center;
+  font-weight: 700;
+  padding: 4px 8px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.button-primary {
+  background: var(--primary);
+  color: var(--primary-text);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.button-primary:disabled {
+  background: var(--disabled);
+  cursor: not-allowed;
+}
+
+.button-secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.error-text {
+  color: var(--danger);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.screen-id-footer {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted);
+}
