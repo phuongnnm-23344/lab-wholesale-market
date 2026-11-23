@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { DateTextInput } from "@/components/ui/date-text-input";
 import { FormField } from "@/components/ui/form-field";
 import { useToast } from "@/components/ui/toast-provider";
 import { apiRequest } from "@/lib/http/api-client";
@@ -37,10 +38,10 @@ export function QualificationRegistrationForm({ participantId, mode, onSaved }: 
           <input id="q-no" required value={number} onChange={(e) => setNumber(e.target.value)} />
         </FormField>
         <FormField label="有効開始日" required htmlFor="q-from">
-          <input id="q-from" type="date" required value={validFrom} onChange={(e) => setValidFrom(e.target.value)} />
+          <DateTextInput id="q-from" required value={validFrom} onChange={setValidFrom} />
         </FormField>
         <FormField label="有効終了日" required htmlFor="q-to">
-          <input id="q-to" type="date" required value={validTo} onChange={(e) => setValidTo(e.target.value)} />
+          <DateTextInput id="q-to" required value={validTo} onChange={setValidTo} />
         </FormField>
         {mode === "approval" && (
           <FormField label="参加上限（円）" required htmlFor="q-limit">

@@ -2,6 +2,7 @@
 
 import { Fragment, useState } from "react";
 import { useApiResource } from "@/components/common/use-api-resource";
+import { DateTextInput } from "@/components/ui/date-text-input";
 import { PageHeader } from "@/components/ui/page-header";
 import { ListStates, StatusBadge } from "@/components/ui/status-states";
 import { formatDate, formatDateTime } from "@/lib/format/display-format";
@@ -43,9 +44,9 @@ export default function AuditLogPage() {
           {Object.entries(ACTION_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
         </select></label>
         <label>レコード <input value={filters.record} onChange={(e) => set("record", e.target.value)} style={{ width: 160 }} /></label>
-        <label>業務日 <input type="date" value={filters.from} onChange={(e) => set("from", e.target.value)} /></label>
+        <label>業務日 <DateTextInput value={filters.from} onChange={(v) => set("from", v)} label="業務日（から）" /></label>
         <span>〜</span>
-        <input type="date" aria-label="業務日（まで）" value={filters.to} onChange={(e) => set("to", e.target.value)} />
+        <DateTextInput value={filters.to} onChange={(v) => set("to", v)} label="業務日（まで）" />
       </div>
       <p className="muted" style={{ fontSize: 13 }}>行をクリックすると変更前・変更後の内容を表示します。監査ログは追記のみで、修正・削除はできません。</p>
       <ListStates loading={!data} error={error} empty={logs.length === 0} emptyText="該当する記録はありません。">

@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 
-// One row of a 2-column label / input form (.form-grid). `required` adds the 「必須」 badge.
-export function FormField({ label, required, hint, htmlFor, children }: {
-  label: string; required?: boolean; hint?: string; htmlFor?: string; children: ReactNode;
+// One row of a 2-column label / input form (.form-grid). `required` adds the 「必須」 badge;
+// `error` is shown in red right under the input it concerns.
+export function FormField({ label, required, hint, htmlFor, error, children }: {
+  label: string; required?: boolean; hint?: ReactNode; htmlFor?: string; error?: string | null; children: ReactNode;
 }) {
   return (
     <>
@@ -13,6 +14,7 @@ export function FormField({ label, required, hint, htmlFor, children }: {
       <div className="form-control">
         {children}
         {hint && <span className="form-hint">{hint}</span>}
+        {error && <span className="field-error" role="alert">{error}</span>}
       </div>
     </>
   );

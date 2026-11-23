@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { SampleDataBanner } from "@/components/common/sample-data-banner";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { ErrorAlert, LoadingState } from "@/components/ui/status-states";
@@ -12,11 +12,12 @@ import { SignOutButton } from "./sign-out-button";
 function ShellBody({ children }: { children: ReactNode }) {
   const state = useCurrentUser();
   const user = state.status === "ready" ? state.user : null;
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <>
       <SampleDataBanner />
-      <AppHeader user={user} />
+      <AppHeader user={user} onToggleMenu={() => setMenuOpen((o) => !o)} />
       {state.status === "loading" && <div className="app-main"><LoadingState /></div>}
       {state.status === "error" && (
         <div className="app-main">
@@ -26,8 +27,8 @@ function ShellBody({ children }: { children: ReactNode }) {
       )}
       {user && (
         <div className="app-layout">
-          <aside className="app-sidebar">
-            <SideNavigation user={user} />
+          <aside className={`app-sidebar${menuOpen ? " is-open" : ""}`}>
+            <SideNavigation user={user} onNavigate={() => setMenuOpen(false)} />
           </aside>
           <main className="app-main">{children}</main>
         </div>

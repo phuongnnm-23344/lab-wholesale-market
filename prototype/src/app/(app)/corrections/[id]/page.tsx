@@ -85,7 +85,8 @@ export default function CorrectionDecisionPage() {
             </FormField>
           </div>
           <div className="form-actions">
-            <button type="button" className="button-primary" onClick={() => act("approve")}>承認する</button>
+            <ConfirmButton danger={false} label="承認する" confirmLabel="承認する" onConfirm={() => act("approve")}
+              message={`この修正申請を承認します。${c.status === "FIRST_APPROVED" || Math.abs(c.change.after.amount_jpy - c.change.before.amount_jpy) < 300000 ? "承認すると、元の取引に対する取消・差額が本日の業務日に記録され、元に戻せません。" : "一次承認として記録され、二次承認を待ちます。"}本番ではこの操作の直前に多要素認証を行います（試作では省略）。`} />
             <ConfirmButton label="却下する" disabled={!rejectReason.trim()} message="この修正申請を却下します。よろしいですか？" confirmLabel="却下する" onConfirm={() => act("reject")} />
           </div>
         </>

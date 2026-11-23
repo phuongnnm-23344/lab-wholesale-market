@@ -7,6 +7,7 @@ import { useApiResource } from "@/components/common/use-api-resource";
 import { LotAndBuyerFields } from "@/components/trades/lot-and-buyer-fields";
 import { SeriResultsTable, type SeriSessionDetail } from "@/components/trades/seri-results-table";
 import { useSaleOptions } from "@/components/trades/use-sale-options";
+import { enterMovesToNextField } from "@/components/ui/enter-moves-to-next-field";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorAlert, LoadingState, StatusBadge } from "@/components/ui/status-states";
 import { useToast } from "@/components/ui/toast-provider";
@@ -20,6 +21,7 @@ export default function SeriEntryPage() {
   const { lots, buyers } = useSaleOptions();
   const { showToast } = useToast();
   const [form, setForm] = useState({ lotId: "", buyerId: "", qty: "", price: "" });
+  const [formKey, setFormKey] = useState(0);
   const session = detail.data?.session;
 
   async function handleSubmit(event: FormEvent) {
@@ -29,7 +31,8 @@ export default function SeriEntryPage() {
     });
     if (!res.ok) return showToast(res.message, "error");
     showToast("結果を追加しました（仮）");
-    setForm({ ...form, buyerId: "", qty: "", price: "" });
+    setForm({ lotId: "", buyerId: "", qty: "", price: "" });
+    setFormKey((k) => k + 1);
     detail.reload();
   }
 
@@ -52,10 +55,10 @@ export default function SeriEntryPage() {
       </p>
       <SeriResultsTable results={detail.data?.results ?? []} />
       {open && (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} onKeyDown={enterMovesToNextField}>
           <h2>結果を追加</h2>
           <div className="form-grid">
-            <LotAndBuyerFields lots={lots} buyers={buyers} {...form} onChange={(f, v) => setForm((x) => ({ ...x, [f]: v }))} />
+            <LotAndBuyerFields key={formKey} lots={lots} buyers={buyers} {...form} onChange={(f, v) => setForm((x) => ({ ...x, [f]: v }))} />
           </div>
           <div className="form-actions"><button type="submit" className="button-primary">結果を追加</button></div>
         </form>

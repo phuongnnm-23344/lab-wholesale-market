@@ -36,11 +36,13 @@ async function main() {
     expectRejected(await deliver(seedTrade.id, 1, false, trade), "FORBIDDEN")));
   r.push(await runCheck("G04", "照合事務局 without 照合部門長 cannot close the day (FORBIDDEN)", async () =>
     expectRejected(await settle.rpc("close_business_day", { p_day: day }), "FORBIDDEN")));
-  r.push(await runCheck("G05", "日次照合表 total (read as settle@) = sum of confirmed trades of the day", async () => {
+  r.push(await runCheck("G05", "日次照合表 total (read as settle@) = confirmed trades + correction lines of the day", async () => {
     const { data } = await settle.from("v_daily_settlement").select("amount_total_jpy").eq("business_date", day);
     const viaSettle = (data ?? []).reduce((s, x) => s + Number(x.amount_total_jpy), 0);
     const { data: trades } = await admin.from("trades").select("amount_jpy").eq("business_date", day).eq("status", "CONFIRMED");
-    const direct = (trades ?? []).reduce((s, x) => s + Number(x.amount_jpy), 0);
+    // + correction lines dated on this day (the demo seed holds one approved correction since 0030)
+    const { data: adj } = await admin.from("trade_adjustments").select("amount_delta_jpy").eq("business_date", day);
+    const direct = (trades ?? []).reduce((s, x) => s + Number(x.amount_jpy), 0) + (adj ?? []).reduce((s, x) => s + Number(x.amount_delta_jpy), 0);
     return viaSettle === direct && viaSettle === (await settlementTotal(admin, day)) ? null : `${viaSettle} vs ${direct}`;
   }));
   r.push(await runCheck("G06", "Close is refused while a せり session is unconfirmed (CONFLICT)", async () => {

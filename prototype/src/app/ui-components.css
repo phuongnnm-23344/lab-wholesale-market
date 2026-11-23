@@ -24,9 +24,15 @@
 .nav-group { margin-top: 10px; }
 .nav-group-title { padding: 4px 20px; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.06em; }
 .app-main { padding: 16px 28px 40px; min-width: 0; }
-@media (max-width: 860px) {
+/* Tablet / narrow screens (shared tablets at the dock): the menu folds behind the 「メニュー」 button. */
+.app-header .menu-toggle { display: none; }
+.app-header .menu-toggle { background: transparent; color: #fff; border-color: rgba(255, 255, 255, 0.6); }
+.nav-count { display: inline-block; margin-left: 6px; min-width: 20px; padding: 0 6px; border-radius: 10px; background: var(--warning); color: #fff; font-size: 12px; font-weight: 700; text-align: center; }
+@media (max-width: 1100px) {
+  .app-header .menu-toggle { display: inline-flex; }
   .app-layout { grid-template-columns: 1fr; }
-  .app-sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  .app-sidebar { display: none; border-right: none; border-bottom: 1px solid var(--border); }
+  .app-sidebar.is-open { display: block; }
   .app-main { padding: 12px 16px 32px; }
 }
 
@@ -75,8 +81,8 @@
 .alert-info { background: var(--primary-soft); color: var(--primary); border-color: #c5d6ec; }
 .alert-warning { background: var(--warning-soft); color: var(--warning); border-color: #f0dbab; }
 
-.toast-region { position: fixed; bottom: 24px; right: 24px; z-index: 50; display: grid; gap: 8px; max-width: min(420px, calc(100vw - 40px)); }
-.toast { padding: 12px 16px; border-radius: var(--radius); box-shadow: 0 4px 14px rgba(15, 30, 50, 0.18); font-size: 14px; font-weight: 600; border-left: 5px solid; background: var(--surface); }
+.toast-region { position: fixed; top: 96px; left: 50%; transform: translateX(-50%); z-index: 50; display: grid; gap: 8px; width: min(640px, calc(100vw - 32px)); }
+.toast { padding: 16px 22px; border-radius: var(--radius); box-shadow: 0 6px 20px rgba(15, 30, 50, 0.25); font-size: 17px; font-weight: 700; border-left: 8px solid; background: var(--surface); line-height: 1.5; }
 .toast-success { border-color: var(--success); color: var(--success); }
 .toast-error { border-color: var(--danger); color: var(--danger); }
 
@@ -85,9 +91,14 @@
 .confirm-dialog p { margin: 0 0 16px; }
 
 .detail-table th { width: 180px; }
-.tablet-screen input, .tablet-screen select { min-height: 52px; font-size: 18px; }
-.numeric-pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 8px; margin: 8px 0; }
-.numeric-pad button { min-height: 60px; font-size: 22px; border: 1px solid var(--border-strong); border-radius: var(--radius); background: var(--surface); cursor: pointer; }
+.tablet-screen input, .tablet-screen select { min-height: 60px; font-size: 24px; font-weight: 600; border-width: 2px; border-color: var(--navy); }
+.tablet-screen .button-large { min-height: 64px; font-size: 22px; border-width: 2px; }
+.tablet-screen .button-secondary.button-large { border-color: var(--navy); color: var(--navy); }
+.numeric-pad { display: grid; grid-template-columns: repeat(3, 104px); gap: 10px; margin: 8px 0; }
+.numeric-pad button { min-height: 88px; font-size: 32px; font-weight: 700; border: 2px solid var(--navy); border-radius: 6px; background: #fff; color: var(--navy); cursor: pointer; }
+.numeric-pad button:active { background: var(--primary-soft); }
 .login-page { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
 .login-card { width: min(400px, 100%); }
 .login-card h1 { font-size: 18px; margin: 0 0 4px; text-align: center; }
+.field-error { color: var(--danger); font-size: 13px; font-weight: 600; }
+.toast-link { margin-left: 8px; font-size: 15px; white-space: nowrap; text-decoration: underline; }

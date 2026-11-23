@@ -4,23 +4,24 @@ import Link from "next/link";
 import { useState } from "react";
 import { useApiResource } from "@/components/common/use-api-resource";
 import { PageHeader } from "@/components/ui/page-header";
+import { DateTextInput } from "@/components/ui/date-text-input";
 import { ListStates, StatusBadge } from "@/components/ui/status-states";
-import { formatDate, formatNumber, formatYen } from "@/lib/format/display-format";
+import { formatDate, formatNumber, formatTime, formatYen } from "@/lib/format/display-format";
 import { CHANNEL_LABELS } from "@/lib/validators/lot-and-trade-schemas";
 
 type TradeListRow = {
   id: string; trade_no: string; channel: string; qty: number; unit_price_jpy: number; amount_jpy: number;
-  status: string; lots: { lot_no: string; species: string; unit: string } | null;
+  status: string; confirmed_at: string | null; lots: { lot_no: string; species: string; unit: string } | null;
   participants: { name: string; buyer_no: string } | null;
 };
 
-// 取引一覧・検索. Default filter = 相対 (rule 1: 相対取引 is the main flow).
+// 取引一覧・検索. Default filter = 相対 (rule 1: 相対取引 is the main flow). Newest first.
 export default function TradeListPage() {
   const [channel, setChannel] = useState("AITAI");
   const [date, setDate] = useState("");
   const query = new URLSearchParams({ channel, ...(date && { date }) });
   const { data, error } = useApiResource<{ date: string; trades: TradeListRow[] }>(`/api/trades?${query}`);
-  const rows = data?.trades ?? [];
+  const rows = [...(data?.trades ?? [])].sort((a, b) => (b.confirmed_at ?? "9").localeCompare(a.confirmed_at ?? "9"));
   const total = rows.reduce((s, t) => s + (t.status === "CONFIRMED" ? Number(t.amount_jpy) : 0), 0);
 
   return (
@@ -32,14 +33,15 @@ export default function TradeListPage() {
             <option value="AITAI">相対</option><option value="SERI">せり</option><option value="ALL">すべて</option>
           </select>
         </label>
-        <label>業務日 <input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
+        <label>業務日 <DateTextInput value={date} onChange={setDate} label="業務日" /></label>
         <span className="muted">表示中の業務日：{formatDate(data?.date)}</span>
       </div>
       <ListStates loading={!data} error={error} empty={rows.length === 0} emptyText="この条件の取引はありません。">
         <table>
-          <thead><tr><th>取引番号</th><th>種別</th><th>ロット</th><th>買受人</th><th className="num">数量</th><th className="num">単価</th><th className="num">金額</th><th>状態</th></tr></thead>
+          <thead><tr><th>時刻</th><th>取引番号</th><th>種別</th><th>ロット</th><th>買受人</th><th className="num">数量</th><th className="num">単価</th><th className="num">金額</th><th>状態</th></tr></thead>
           <tbody>{rows.map((t) => (
             <tr key={t.id}>
+              <td>{formatTime(t.confirmed_at)}</td>
               <td><Link href={`/trades/${t.id}`}>{t.trade_no}</Link></td><td>{CHANNEL_LABELS[t.channel]}</td>
               <td>{t.lots?.lot_no} {t.lots?.species}</td><td>{t.participants?.buyer_no} {t.participants?.name}</td>
               <td className="num">{formatNumber(t.qty)} {t.lots?.unit}</td><td className="num">{formatYen(t.unit_price_jpy)}</td>

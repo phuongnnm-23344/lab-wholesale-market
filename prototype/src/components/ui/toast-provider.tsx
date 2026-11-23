@@ -1,12 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 
 type ToastKind = "success" | "error";
-type Toast = { id: number; kind: ToastKind; text: string };
+export type ToastLink = { href: string; label: string };
+type Toast = { id: number; kind: ToastKind; text: string; link?: ToastLink };
 type ToastApi = {
-  showToast: (text: string, kind?: ToastKind) => void;
+  // `link` adds e.g. 「詳細を見る」 to what was just saved (used when the form stays open).
+  showToast: (text: string, kind?: ToastKind, link?: ToastLink) => void;
   // Success after a save: keep the message across the navigation, then go to the next screen.
   toastAndGo: (text: string, href: string) => void;
 };
@@ -37,10 +40,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = useCallback((text: string, kind: ToastKind = "success") => {
+  const showToast = useCallback((text: string, kind: ToastKind = "success", link?: ToastLink) => {
     const id = Date.now() + Math.random();
-    setToasts((list) => [...list, { id, kind, text }]);
-    setTimeout(() => setToasts((list) => list.filter((t) => t.id !== id)), kind === "error" ? 5000 : 3000);
+    setToasts((list) => [...list, { id, kind, text, link }]);
+    setTimeout(() => setToasts((list) => list.filter((t) => t.id !== id)), kind === "error" || link ? 7000 : 5000);
   }, []);
 
   const toastAndGo = useCallback((text: string, href: string) => {
@@ -59,7 +62,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div className="toast-region" aria-live="polite">
         {toasts.map((t) => (
-          <div key={t.id} className={`toast toast-${t.kind}`} role={t.kind === "error" ? "alert" : "status"}>{t.text}</div>
+          <div key={t.id} className={`toast toast-${t.kind}`} role={t.kind === "error" ? "alert" : "status"}>
+            {t.text}
+            {t.link && <> <Link href={t.link.href} className="toast-link">{t.link.label} →</Link></>}
+          </div>
         ))}
       </div>
     </ToastContext.Provider>

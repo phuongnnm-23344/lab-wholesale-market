@@ -10,10 +10,11 @@ import { apiRequest } from "@/lib/http/api-client";
 import { SAMPLE_SHIPPERS, SAMPLE_SPECIES, type LotListResponse } from "@/lib/lots/lot-types";
 
 // ロット本登録（受付台・PC）: complete a 仮受付 lot or register a new one. Writes the 受入 ledger row.
-// Success → toast + ロット一覧; error → toast, input kept.
+// Continuous entry (DEC-033): after saving the form stays open and is cleared, the 仮受付 list refreshes,
+// focus returns to the first field; the toast links to the lot just registered. Error → toast, input kept.
 export default function LotRegistrationPage() {
-  const { data } = useApiResource<LotListResponse>("/api/lots?status=PROVISIONAL");
-  const { showToast, toastAndGo } = useToast();
+  const { data, reload } = useApiResource<LotListResponse>("/api/lots?status=PROVISIONAL");
+  const { showToast } = useToast();
   const [lotId, setLotId] = useState("");
   const [shipper, setShipper] = useState(SAMPLE_SHIPPERS[0]);
   const [species, setSpecies] = useState(SAMPLE_SPECIES[0]);
@@ -36,7 +37,11 @@ export default function LotRegistrationPage() {
       method: "POST", body: { lotId: lotId || undefined, shipperName: shipper, species, unit, qty: Number(qty) },
     });
     if (!res.ok) return showToast(res.message, "error");
-    toastAndGo("ロットを本登録しました", "/lots");
+    showToast(`本登録しました：${shipper}／${species} ${qty}${unit}`, "success", { href: `/lots/${res.data.id}`, label: "詳細を見る" });
+    setLotId("");
+    setQty("");
+    reload();
+    document.getElementById("f-prov")?.focus();
   }
 
   return (

@@ -39,10 +39,15 @@ export default function DeliveryPage() {
       <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "flex-start" }}>
         <div style={{ display: "grid", gap: 8 }}>
           <label style={{ fontWeight: 600 }}>買受人番号<br />
-            <input value={buyerNo} onChange={(e) => setBuyerNo(e.target.value.toUpperCase())} style={{ width: 220 }} />
+            <input value={buyerNo} placeholder="例：N01" onChange={(e) => setBuyerNo(e.target.value.toUpperCase())}
+              onKeyDown={(e) => { if (e.key === "Enter") setQuery(buyerNo); }} style={{ width: 240 }} />
           </label>
           <div className="page-actions">
-            {["N", "B"].map((p) => <button key={p} type="button" className="button-secondary button-large" onClick={() => setBuyerNo(p)}>{p}</button>)}
+            {["N", "B"].map((p) => (
+              <button key={p} type="button" aria-pressed={buyerNo.startsWith(p)} className={`button-large ${buyerNo.startsWith(p) ? "button-primary" : "button-secondary"}`} onClick={() => setBuyerNo(p)}>
+                {p === "N" ? "N（仲卸）" : "B（売買参加者）"}
+              </button>
+            ))}
             <button type="button" className="button-primary button-large" onClick={() => setQuery(buyerNo)}>検索</button>
           </div>
         </div>

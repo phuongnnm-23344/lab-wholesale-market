@@ -30,3 +30,11 @@ export function formatDateTime(value: string | null | undefined): string {
     timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit",
   });
 }
+
+// Time of day (JST) for lists: "05:12". Empty when not confirmed yet.
+export function formatTime(value: string | null | undefined): string {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo", hour: "2-digit", minute: "2-digit" });
+}

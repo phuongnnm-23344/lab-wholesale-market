@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useApiResource } from "@/components/common/use-api-resource";
 import { SeriResultsTable, type SeriSessionDetail } from "@/components/trades/seri-results-table";
+import { ConfirmButton } from "@/components/ui/confirm-button";
 import { FormField } from "@/components/ui/form-field";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorAlert, InfoAlert, LoadingState } from "@/components/ui/status-states";
@@ -63,7 +64,8 @@ export default function SeriConfirmPage() {
             )}
           </div>
           <div className="form-actions">
-            <button type="button" className="button-primary" disabled={samePerson && !reason.trim()} onClick={confirm}>この回の結果を確定する</button>
+            <ConfirmButton danger={false} label="この回の結果を確定する" confirmLabel="確定する" disabled={samePerson && !reason.trim()} onConfirm={confirm}
+              message={`第${session.session_no}回の結果 ${data.results.length}件を確定します。確定するとロットの残数量から差し引かれ、取消は修正申請で行います。`} />
             <Link href={`/seri/${id}`} className="button-secondary">キャンセル</Link>
           </div>
         </>

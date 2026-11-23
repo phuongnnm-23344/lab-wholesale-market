@@ -61,7 +61,8 @@ export default function RuleVersionReviewPage() {
             </FormField>
           </div>
           <div className="form-actions">
-            {v.status === "PENDING" && <button type="button" className="button-primary" onClick={() => act("approve")}>承認する</button>}
+            {v.status === "PENDING" && <ConfirmButton danger={false} label="承認する" confirmLabel="承認する" onConfirm={() => act("approve")}
+              message={`第${v.version_no}版を承認します。発効日（${formatDate(v.effective_from)}）から適用され、年度（発効日基準）に4回までの承認枠を1回使います。本番ではこの操作の直前に多要素認証を行います（試作では省略）。`} />}
             {v.status === "PENDING" && <button type="button" className="button-secondary" disabled={!reason.trim()} onClick={() => act("return")}>差し戻す</button>}
             <ConfirmButton label="取り消す（発効前のみ）" disabled={!reason.trim()} message="この規則版を取り消します。よろしいですか？" confirmLabel="取り消す" onConfirm={() => act("cancel")} />
           </div>

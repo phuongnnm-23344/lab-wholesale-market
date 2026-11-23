@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useCurrentUser } from "@/components/app-shell/current-user-context";
 import { useApiResource } from "@/components/common/use-api-resource";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState, ErrorAlert, LoadingState, StatusBadge } from "@/components/ui/status-states";
@@ -21,14 +22,19 @@ type TradeDetail = {
 export default function TradeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data, error } = useApiResource<TradeDetail>(`/api/trades/${id}`);
+  const me = useCurrentUser();
+  const user = me.status === "ready" ? me.user : null;
+  const canEnter = user?.role === "TRADE";
+  const canRequestFix = Boolean(user && (["TRADE", "DELIVERY", "SETTLE"].includes(user.role) || user.authorities.some((a) => a === "STL_HEAD" || a === "OPS_HEAD")));
   if (error) return <><PageHeader title="取引確認票" /><ErrorAlert message={error} /></>;
   if (!data) return <><PageHeader title="取引確認票" /><LoadingState /></>;
   const { trade: t, staff } = data;
   const who = (uid: string | null) => (uid ? staff[uid] ?? "—" : "—");
+  // After confirming, the next natural step is the next entry — 修正申請 stays a quiet, separate link.
   const actions = (
     <>
       <Link href="/trades" className="button-secondary">一覧へ戻る</Link>
-      {t.status === "CONFIRMED" && <Link href={`/corrections/new?tradeId=${id}`} className="button-primary">修正申請を作成</Link>}
+      {canEnter && <Link href="/trades/new" className="button-primary">続けて入力</Link>}
     </>
   );
 
@@ -50,6 +56,9 @@ export default function TradeDetailPage() {
       </table>
 
       <h2>訂正履歴（取消・差額）</h2>
+      {t.status === "CONFIRMED" && canRequestFix && (
+        <p style={{ fontSize: 13 }}>内容に誤りがある場合：<Link href={`/corrections/new?tradeId=${id}`}>この取引の修正申請を作成する</Link>（承認後に取消・差額として記録されます）</p>
+      )}
       {data.adjustments.length === 0 ? <EmptyState text="訂正はありません。" /> : (
         <table>
           <thead><tr><th>計上日</th><th>区分</th><th>買受人</th><th className="num">数量</th><th className="num">金額</th></tr></thead>
