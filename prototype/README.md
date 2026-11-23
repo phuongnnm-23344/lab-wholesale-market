@@ -8,7 +8,7 @@ Prototype chạy thật cho Product A (chợ bán buôn thủy sản 桜水産�
 
 | | |
 |---|---|
-| App (Vercel) | `<VERCEL_URL — điền sau khi deploy>` — mở ra là trang đăng nhập |
+| App (Vercel) | https://lab-wholesale-market-fup2.vercel.app/ — mở ra là trang đăng nhập |
 | Supabase project | https://supabase.com/dashboard/project/lgipmzzszzoddvzhrllh (project `Project-lab-NNMP`, quyền xem do chủ project cấp) |
 | Danh sách màn hình / tính năng bản chốt + phần mock | `project/04_screen/lab2-prototype-screen-feature-list.md` (nộp kèm, ngoài repo này) |
 
