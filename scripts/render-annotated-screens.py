@@ -20,20 +20,20 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from annotated_screens import incentive_rule, lot_trade, party_delivery_settle  # noqa: E402
+from annotated_screens import delivery, incentive_rule, lot_trade, party, settle  # noqa: E402
 
 # screen id -> (feature folder, render function taking the output path)
 SCREENS = {
-    "SC-01-02": ("party", party_delivery_settle.sc_01_02),
+    "SC-01-02": ("party", party.sc_01_02),
     "SC-03-01": ("lot", lambda out: lot_trade.render("SC-03-01", out)),
     "SC-03-05": ("lot", lambda out: lot_trade.render("SC-03-05", out)),
     "SC-04-01": ("trade", lambda out: lot_trade.render("SC-04-01", out)),
     "SC-05-02": ("trade", lambda out: lot_trade.render("SC-05-02", out)),
-    "SC-06-02": ("delivery", party_delivery_settle.sc_06_02),
-    "SC-06-04": ("delivery", party_delivery_settle.sc_06_04),
-    "SC-06-05": ("delivery", party_delivery_settle.sc_06_05),
-    "SC-07-02": ("settle", party_delivery_settle.sc_07_02),
-    "SC-08-03": ("settle", party_delivery_settle.sc_08_03),
+    "SC-06-02": ("delivery", delivery.sc_06_02),
+    "SC-06-04": ("delivery", delivery.sc_06_04),
+    "SC-06-05": ("delivery", delivery.sc_06_05),
+    "SC-07-02": ("settle", settle.sc_07_02),
+    "SC-08-03": ("settle", settle.sc_08_03),
     "SC-09-04": ("incentive", incentive_rule.sc_09_04),
     "SC-10-04": ("rule", incentive_rule.sc_10_04),
 }
