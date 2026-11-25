@@ -20,11 +20,11 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 | [`specs/`](specs/) | **HOW** — Screen Specification · Function Specifications · Technical Design trong `specs/{feature}/`; Database Design · API Design trong `specs/system-design/`; tài liệu dùng chung trong `specs/_common/` | `BM-2-901-50` … `BM-2-901-54` | Kế thừa | PL (BrSE, Tech Lead, Dev) | [`specs/_index.md`](specs/_index.md) |
 | [`architecture/`](architecture/) | Kiến trúc to-be: thành phần hệ thống, luồng dữ liệu chính, điểm tích hợp | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/_index.md`](architecture/_index.md) |
 | [`architecture/adr/`](architecture/adr/) | ADR: bối cảnh · quyết định · phương án đã bỏ · hệ quả | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/adr/_index.md`](architecture/adr/_index.md) |
-| [`wireframes/`](wireframes/) | 画面一覧 / 画面遷移 (70 màn 第1期), wireframe to-be cho 10 màn cốt lõi + 4 màn bổ sung | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
+| [`wireframes/`](wireframes/) | 画面一覧 / 画面遷移 (70 màn 第1期), wireframe to-be cho 10 màn cốt lõi + 5 màn bổ sung | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
 | `AI-report.md` | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa | — | **Mới** (yêu cầu đề) | PL | *(viết ở P4)* |
 | [`prototype/`](prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](prototype/README.md) |
 
-Nhóm thư mục mức repo khác (`.github/`, `docs/`, `scripts/`, `webhook/`) là phần của template quản lý dự án Sun* — xem từ mục "GitHub Project Management Template" trở xuống.
+Nhóm thư mục mức repo khác (`.github/`, `docs/`, `webhook/`, các script `*.sh` trong `scripts/`) là phần của template quản lý dự án Sun*; script của bộ thiết kế LAB-4 ở mục 5 — xem từ mục "GitHub Project Management Template" trở xuống.
 
 ## 2. Quy ước của dự án theo QC-01
 
@@ -44,7 +44,7 @@ Nhóm thư mục mức repo khác (`.github/`, `docs/`, `scripts/`, `webhook/`) 
 | 3 | §2: viết trên nhánh `ver/{tên}` mở từ `main`, merge lên `main` khi release | Nhánh `ver/lab-4` mở từ `main` (bản LAB-2 `0a99d10`), merge lên `main` lúc nộp LAB-4 | Đúng quy tắc; "release" ở đây là lúc nộp bài |
 | 4 | §4: Screen ID dạng `{tiền tố}_{TÊN}` | Giữ `SC-xx-yy` | Truy vết LAB-1 → LAB-2 → LAB-4 → task LAB-5 bằng một ID |
 | 5 | §2: tên bản mẫu `sample-AUTH_DB.md`, `sample-AUTH_FUNC.md`, `sample-AUTH_LOGIN_TECH.md` | Giữ tên thật trong `spec-standards/03-specs/02-samples/` (`sample-AUTH_DATABASE.md`, `sample-AUTH_FUNCTIONS.md`, `sample-AUTH_LOGIN_DETAIL.md`) | Ràng buộc 5: không sửa khuôn/bản mẫu tại chỗ. Cây ở QC-01 §2 và bộ bản mẫu thật đang lệch nhau ở repo chuẩn |
-| 8 | BM-2-901-50 §4: Index và Khoá ngoại viết dạng bảng | Database Design viết **một dòng** cho bảng chỉ có index / FK đơn giản; dạng bảng khi có partial / unique nhiều cột / FK có tên riêng, ON DELETE (quy ước ở `MKT_DB.md` §4.0) | 58 bảng, phần lớn chỉ có PK + 1–3 FK — bảng rỗng nhiều dòng làm file dài mà không thêm thông tin; nội dung tương đương khuôn (Gate 1 recheck n-07) |
+| 8 | BM-2-901-50 §4: Index và Khoá ngoại viết dạng bảng | Database Design viết Index / Khoá ngoại theo **một dòng** (mặc định) hoặc **dạng bảng như khuôn** — hai cách chứa cùng thông tin (tên index, cột, unique, điều kiện partial; FK, `ON DELETE`), cách viết ở một bảng **không mang nghĩa**. Danh sách bảng đang viết dạng bảng và cú pháp một dòng: `MKT_DB.md` §4.0 | 60 bảng, phần lớn chỉ có PK + 1–3 FK — bảng nhiều dòng làm file dài mà không thêm thông tin; các bảng viết trước khi có quy ước giữ nguyên dạng bảng, không chuyển (Gate 1 recheck n-07, D-03) |
 | 6 | Bản mẫu chỉ có một cho mỗi loại | Screen Specification dùng `sample-LOGIN_SPEC.md` (bản mẫu của `BM-2-901-51`); không copy `BM-01-spec-template.md` và `sample-AD_LOGIN_SPEC.md` | Dự án dùng khuôn ISO `BM-2-901-51`; BM-01 là khuôn thứ hai cho cùng việc, chuẩn chưa chốt bỏ cái nào |
 | 7 | §4, §5 ràng buộc 1: Database Design `{DB_ID}_DB.md` — **một file một nhóm bảng** | Database Design chia 9 file theo cụm (`IAM_AUDIT_DB.md`, `PARTY_DB.md`, `RULE_DB.md`, `CLOSE_DB.md`, `LOT_DB.md`, `TRADE_DB.md`, `ADJUST_DB.md`, `BILLING_DB.md`, `INCENTIVE_DB.md`) — đúng quy định; **thêm một file tổng `MKT_DB.md`** không phải một nhóm bảng: nguyên tắc chung, quy ước + enum dùng chung, ERD tổng quan, view công bố, bảng lệch to-be ↔ prototype, kết quả parity, điểm mở. Tất cả đặt ở gốc `database-design/` vì bảng của mỗi cụm được nhiều feature dùng (ràng buộc 3) | Quy ước và enum dùng chung cho cả 58 bảng — chép vào 9 file là trái DRY và dễ lệch; bảng lệch / parity là yêu cầu của đề LAB-4 cho cả schema, không thuộc cụm nào. Người dùng chốt tách file (PREMISE L4-D04) |
 
@@ -63,12 +63,29 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 | `BM-2-901-54-function-specifications-template.md` + `sample-AUTH_FUNCTIONS.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
 | `BM-2-901-63-requirement-document-template.md` + `sample-REQ-2609-01.md` | `requirements/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
 | `log-convention.md` | `specs/_common/` | Kế thừa, thêm mục 4 áp dụng cho dự án | `72c1dda` | |
+| `api-conventions.md`, `api-list.md`, `error-codes.md` | `specs/_common/` | **Mới** — khuôn BM-2-901-52 trỏ tới ba file này nhưng repo chuẩn chưa có (ISS-36) | — | P3: body lỗi theo prototype (khác ví dụ `errors[]` của khuôn — lý do ở `api-conventions.md` quy ước 3) |
+| `render-annotated-screens.py` + `annotated_screens/` | `scripts/` | Mới | — | Dựng ảnh đánh số cho Screen Specification (mục 5) |
 | Các `_index.md` | mỗi thư mục | Kế thừa quy định QC-01 §3 | — | |
 | `PREMISE.md` | gốc | Mới | — | |
 | Khuôn kiến trúc, khuôn ADR | `architecture/` | Mới | — | *(P2-A)* |
 | Khuôn 画面一覧 / 画面遷移 / wireframe | `wireframes/` | Mới | — | *(P2-C)* |
 | `AI-report.md` | gốc | Mới | — | *(P4)* |
 | Tài liệu spec theo từng feature | `specs/{feature}/`, `specs/system-design/` | Viết theo khuôn kế thừa | — | *(P2-B, P3)* |
+
+## 5. Script của bộ thiết kế
+
+### Script dựng ảnh annotated (Screen Specification)
+
+Ảnh đánh số `specs/{feature}/screen-specification/assets/{SCREEN_ID}_annotated.png` được dựng từ wireframe to-be (không từ ảnh prototype). Số đỏ trên ảnh = cột ID / No ở §4.1 của Screen Specification, khớp 1-1. Wireframe đổi item thì sửa dữ liệu bố cục trong `scripts/annotated_screens/*.py` rồi chạy lại.
+
+| Việc | Lệnh (chạy ở gốc repo) |
+|---|---|
+| Dựng cả 12 màn | `python scripts/render-annotated-screens.py` |
+| Dựng một vài màn | `python scripts/render-annotated-screens.py SC-05-02 SC-03-05` |
+| Xem danh sách màn + đường dẫn ảnh | `python scripts/render-annotated-screens.py --list` |
+
+- Phụ thuộc: Python 3.10+, Pillow, font tiếng Nhật (Meiryo / Yu Gothic trên Windows, Hiragino trên macOS, Noto Sans CJK trên Linux) — hoặc đặt biến `ANNOT_FONT_REGULAR` / `ANNOT_FONT_BOLD` trỏ tới file font.
+- Mã nguồn: `scripts/render-annotated-screens.py` (danh sách màn → thư mục feature) · `scripts/annotated_screens/` (`lot_trade.py`, `party_delivery_settle.py`, `incentive_rule.py`: dữ liệu bố cục từng màn; `common.py`: tìm font).
 
 ---
 
