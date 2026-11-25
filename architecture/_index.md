@@ -8,4 +8,4 @@ Quy ước dùng lại của chuẩn: frontmatter `id/title/type/version/updated
 
 | ID | Tên tài liệu | Feature | Version | Updated by | Updated | Link |
 |---|---|---|---|---|---|---|
-| ARCH-001 | Kiến trúc to-be Product A (第1期) | Toàn hệ thống | 0.1.0 | phuongnnm-23344 | 2026-11-25 | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| ARCH-001 | Kiến trúc to-be Product A (第1期) | Toàn hệ thống | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [ARCHITECTURE.md](ARCHITECTURE.md) |

@@ -3,7 +3,7 @@ id: ADR-008
 title: Offline có giới hạn tại bến — PWA + hàng đợi cho 3 thao tác, PIN offline gắn thiết bị, đường giấy
 type: adr
 status: proposed
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-002, ADR-004, ADR-005, DEC-004, NFR-AVL-02, PRM-085, PRM-111, PRM-112, PRM-119, L4-A05, L4-A07, E-18, E-21, FB-CUS-232]
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-002, ADR-004, ADR-005, DEC-004, NFR-AVL-02, PRM-085, PRM
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 | 2026-11-25 | PL đề xuất | — |
+| **Proposed** — chờ Gate 1 recheck | 2026-11-25 | PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -35,8 +35,9 @@ related: [ARCH-001, ADR-002, ADR-004, ADR-005, DEC-004, NFR-AVL-02, PRM-085, PRM
 
 4. Mỗi bản ghi offline có `client_record_id` (UUID sinh trên máy — khóa idempotent), id thiết bị, id người (qua PIN), thời điểm thiết bị. Server nhận lại cùng id → trả kết quả cũ, không ghi đôi.
 5. Đồng bộ theo thứ tự tạo, từng bản ghi qua **cùng hàm nghiệp vụ** như online (kiểm vai, SL, ngày mở). 業務日 do server xác định (ADR-005).
-6. Bản ghi bị từ chối (SL lô sẽ âm, ngày đã khóa, lô đã đổi trạng thái…) **không bị ép ghi, không ghi đè** — vào danh sách đối chiếu **SC-03-07 オフライン同期・照合** cho người có quyền xử lý (ghi vào ngày mở bằng 後入力, hoặc hủy có lý do).
-7. Thiết bị gửi heartbeat khi online (thời điểm đồng bộ cuối, số bản ghi chờ). Checklist 日次締め liệt kê thiết bị còn bản ghi chờ (PRM-119). Bản ghi đồng bộ sau khi ngày đã khóa → SC-03-07, không vào ngày đã khóa.
+6. Bản ghi bị từ chối (SL lô sẽ âm, ngày đã khóa, lô đã đổi trạng thái…) **không bị ép ghi, không ghi đè** — vào danh sách đối chiếu **SC-03-07 オフライン同期・照合** (要確認) cho người có quyền xử lý. Hai lối ra, dùng chung với ADR-005 §2.8: (a) **lập 修正申請 phạm vi `LATE_ENTRY`** (điền sẵn nội dung bản ghi + ngày gốc) → 照合部門長 決裁 → ghi vào ngày đang mở, giữ ngày GD thật; hoặc (b) **không phản ánh** — đóng bản ghi có lý do (audit).
+7. Thiết bị gửi heartbeat khi online (thời điểm đồng bộ cuối, số bản ghi chờ). Checklist 日次締め liệt kê thiết bị còn bản ghi chờ (PRM-119). Bản ghi đồng bộ sau khi ngày đã khóa → SC-03-07, không vào ngày đã khóa. Thiết bị hỏng / mất → 「端末回収不能」 (ADR-005 §2.6): ra khỏi checklist, thu hồi phiên + bản băm PIN offline; bản ghi về sau của máy đó vào SC-03-07.
+7a. **Dữ liệu tra cứu offline có giờ:** khi mất mạng, SC-06-02 tìm trong dữ liệu GD tải về lần cuối; màn hiện 「取引データ hh:mm 時点」 cạnh ô tìm và 「この時刻以降の取引は表示されません」 để người giao không tưởng người mua không có hàng [Customer giả lập, 2026-11-25 — #2].
 
 ### 2.3 PIN offline
 
@@ -51,7 +52,7 @@ related: [ARCH-001, ADR-002, ADR-004, ADR-005, DEC-004, NFR-AVL-02, PRM-085, PRM
     1. Người giao ghi **phiếu giấy 争いのある引渡し確認票** (in sẵn số sê-ri, có trong bộ FORM): GD, SL, nội dung tranh chấp, người nhận phía mua.
     2. 配送部門責任者 xác nhận tại chỗ bằng **chữ ký tay** — vẫn áp quy tắc không tự xác nhận lần giao do mình ghi (PRM-111).
     3. Khi có mạng: người giao nhập ngoại lệ ở SC-06-04 kèm số phiếu + bản scan (scan ở PC — E-21).
-    4. 配送部門責任者 (đúng người đã ký) mở SC-06-05, đối chiếu bản scan, **xác nhận trong hệ thống có MFA**. Bản ghi hiện "xác nhận trên giấy lúc hh:mm, nhập lúc hh:mm".
+    4. 配送部門責任者 mở SC-06-05, đối chiếu bản scan, **xác nhận trong hệ thống có MFA**. Mặc định là người đã ký; người ký nghỉ ca / nghỉ phép thì **một 配送部門責任者 khác** (hoặc 代行) xác nhận được với **lý do bắt buộc** + đối chiếu scan, audit ghi rõ hai tên [Customer giả lập, 2026-11-25 — #16]. Quy tắc cấm tự xác nhận lần giao do mình ghi vẫn áp. Bản ghi hiện "xác nhận trên giấy lúc hh:mm, nhập lúc hh:mm".
     5. Chưa nhập bù trước 日次締め → hiện ở checklist; giao chưa xác nhận đi tiếp sang ngày sau theo quy tắc giao còn dư.
 
 ```mermaid
@@ -97,7 +98,7 @@ flowchart TD
 
 ## 5. Truy vết
 
-NFR-AVL-02, NFR-SEC-01, NFR-SEC-03, BR-PERM-01, BR-LOT-02, BR-DEL-03, CAP-HUMAN-01, OBJ-01; DEC-004; PRM-027, PRM-085, PRM-111, PRM-112, PRM-119; E-05, E-18, E-21; L4-A05, L4-A07; as-built D16, D17; M03, M04, M16, M22; FB-CUS-232.
+NFR-AVL-02, NFR-SEC-01, NFR-SEC-03, BR-PERM-01, BR-LOT-02, BR-DEL-03, CAP-HUMAN-01, OBJ-01; DEC-004; PRM-027, PRM-085, PRM-111, PRM-112, PRM-119; E-05, E-18, E-21; L4-A05, L4-A07; as-built D16, D17; M03, M04, M16, M22; FB-CUS-232; Gate 1 M-05; khách #1, #2, #16.
 
 ---
 
@@ -106,3 +107,4 @@ NFR-AVL-02, NFR-SEC-01, NFR-SEC-03, BR-PERM-01, BR-LOT-02, BR-DEL-03, CAP-HUMAN-
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu; đường giấy cho giao có tranh chấp khi mất mạng (FB-CUS-232) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: bản ghi bị từ chối vì ngày đã khóa đi chung đường 修正申請 LATE_ENTRY với ADR-005 §2.8 (M-05); 「端末回収不能」 (khách #1); giờ dữ liệu offline ở SC-06-02 (khách #2); 配送部門責任者 khác người ký xác nhận phiếu giấy có lý do (khách #16) | 2026-11-25 | phuongnnm-23344 | |

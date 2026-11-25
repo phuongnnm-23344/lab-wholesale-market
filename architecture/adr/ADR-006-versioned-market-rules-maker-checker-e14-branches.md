@@ -3,7 +3,7 @@ id: ADR-006
 title: Quy chế có version theo ngày hiệu lực, maker-checker, quota 4 lần / năm TC, rollback hai nhánh E-14
 type: adr
 status: proposed
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-004, ADR-005, ADR-007, GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, PRM-042, PRM-126, L4-A03, L4-A04, OPEN-L4-01, OPEN-L4-03, R-L4-01, E-14, FB-CUS-226, FB-CUS-227]
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-004, ADR-005, ADR-007, GOV-RULE-01, NFR-OPS-02, FR-INC-0
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1; mục 2.5 chờ workshop E-14 | 2026-11-25 | PL đề xuất | — |
+| **Proposed** — chờ Gate 1 recheck; mục 2.5 và phương án F, G chờ workshop E-14 | 2026-11-25 | PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -38,12 +38,14 @@ related: [ARCH-001, ADR-004, ADR-005, ADR-007, GOV-RULE-01, NFR-OPS-02, FR-INC-0
 
 ### 2.3 Quota
 
-6. Đếm số version **APPROVED có ngày hiệu lực trong năm TC** (4月→3月), trừ version go-live và CANCELLED. Kiểm ở hàm duyệt của checker, trong transaction, khóa dòng năm TC để tránh hai người duyệt cùng lúc vượt quota.
+6. Đếm số version loại `CHANGE` + `ROLLBACK` ở trạng thái **`APPROVED`, `ACTIVE` hoặc `SUPERSEDED`** có ngày hiệu lực trong năm TC (4月→3月) — version đã có hiệu lực rồi bị thay vẫn tính; trừ version go-live (`BASELINE`) và `CANCELLED`. Kiểm ở hàm duyệt của checker, trong transaction, khóa dòng năm TC để tránh hai người duyệt cùng lúc vượt quota.
 7. Version mới khi đã đủ 4 → **chặn** (cả hai nhánh E-14).
+7a. **Hủy version đã `APPROVED` trước ngày hiệu lực** cũng là maker-checker: maker (ルール管理者) đề nghị hủy kèm lý do → checker 照合部門長 決裁 + MFA (không phải người đã đề nghị). Version hủy → `CANCELLED`, không tính lượt.
 
 ### 2.4 Rollback
 
-8. Rollback = version mới **chép nội dung** của version cũ được chọn, ghi `rollback_of`; cùng vòng đời maker-checker, cùng ràng buộc ngày hiệu lực tương lai. Không có thao tác "kích hoạt lại" version cũ.
+8. Rollback = version mới **chép nội dung** của version cũ được chọn, ghi `rollback_of`; cùng vòng đời maker-checker, cùng ràng buộc ngày hiệu lực tương lai (phương án hiện chọn — xem phương án F, G ở §3 cho workshop E-14). Không có thao tác "kích hoạt lại" version cũ.
+8a. **Đường sửa tiền thưởng của kỳ đã khóa tính theo tỷ lệ sai:** version sai đã được duyệt vẫn là version "đúng" của kỳ đó với engine (ADR-007), nên engine **không tự sinh** DELTA khi phát hiện tỷ lệ sai. Đường sửa duy nhất là **修正申請 phạm vi `INCENTIVE`** từng người × kỳ (lý do, version tham chiếu, số tiền; duyệt 2 cấp) → dòng DELTA gắn `correction_id` ở 期ロック kế tiếp (ADR-007 §2.5).
 
 ### 2.5 Rollback khi đã đủ 4 lượt — hai nhánh, chờ E-14
 
@@ -52,7 +54,7 @@ related: [ARCH-001, ADR-004, ADR-005, ADR-007, GOV-RULE-01, NFR-OPS-02, FR-INC-0
 | Hành vi | Rollback cũng bị chặn khi đủ 4 | Cho rollback; **vẫn đếm** (lượt thứ 5+) và hiện ở báo cáo cho ban lãnh đạo |
 | Điều kiện | — | Lý do bắt buộc; checker 照合部門長 **+ 運用部門長 決裁 có MFA**; tự gửi thông báo cho ban lãnh đạo |
 | Version mới thứ 5 | Chặn | Chặn |
-| Rủi ro | **R-L4-01**: version thứ 4 sai tỷ lệ chạy tới hết tháng 3, mỗi kỳ xử lý bằng DELTA, kiểm toán dễ bắt chỗ trả sai | Thiệt hại giới hạn tới ngày 1 tháng sau; đổi lại quy tắc 4 lần có ngoại lệ phải giải trình với kiểm toán |
+| Rủi ro | **R-L4-01**: version thứ 4 sai tỷ lệ chạy tới hết tháng 3. Engine coi version đã duyệt là đúng nên **không tự sinh DELTA**; mỗi kỳ khóa với tỷ lệ sai phải sửa bằng **修正申請 INCENTIVE từng người × kỳ, duyệt 2 cấp** (§2.4-8a) — tới ~170 người × tối đa 11 kỳ; bỏ sót là trả sai mà không có dòng nào báo | Thiệt hại giới hạn tới ngày 1 tháng sau (các kỳ đã khóa trước đó vẫn phải sửa bằng 修正申請 INCENTIVE); đổi lại quy tắc 4 lần có ngoại lệ phải giải trình với kiểm toán |
 
 9. Hai nhánh **không** làm thành công tắc cấu hình: sau workshop chỉ cài một nhánh. Code đặt toàn bộ khác biệt trong **một hàm chính sách** `can_approve_rule_version(...)`, nên đổi nhánh là sửa một hàm + test, không đổi bảng.
 10. Phát hiện version sai **trước** ngày hiệu lực → hủy (CANCELLED, không tính lượt) — đường này có ở cả hai nhánh và nên là cách xử lý chính; vì vậy màn duyệt hiện bảng tỷ lệ cũ / mới cạnh nhau và ví dụ tính cho vài mức tiền.
@@ -85,6 +87,8 @@ stateDiagram-v2
 | C. Tham số tiền để ở file cấu hình | Đổi nhanh | Mất maker-checker, mất quota → trái luật 5 (PRM-126 đã loại) | Bỏ |
 | D. E-14 thành công tắc cấu hình | Không phải chờ workshop | Quy tắc quản trị đổi được bằng một dòng cấu hình → trái tinh thần GOV-RULE-01; khách đã đồng ý không làm vậy (PREMISE §6) | Bỏ |
 | E. Rollback = kích hoạt lại version cũ | Ít bản ghi | Phá chuỗi thời gian (một version có hai khoảng hiệu lực), khó audit | Bỏ |
+| F. **Rollback hồi tố về đầu kỳ chưa 期ロック, chỉ cho phần bảng tỷ lệ** | Kỳ chưa khóa chưa có kết quả thưởng nào bị đóng băng → không trái vế "không làm biến dạng dữ liệu đã chốt" của GOV-RULE-01; TBL-RATE-01 chỉ ghi 発効日 "có thể đặt ngày tương lai" và rollback "truy được", **không bắt** rollback ở tương lai; thiệt hại của tỷ lệ sai giảm còn các kỳ **đã khóa** | Gói version hiện trộn bảng tỷ lệ với tham số có tác dụng theo ngày (ngưỡng 2 cấp, giờ nhận lô) → phải tách phần tỷ lệ ra mới lùi ngày được; 期のお支払額 không đổi (tỷ lệ chỉ dùng lúc 期ロック) nên an toàn, nhưng thông báo / 試算 đã gửi phải ghi "theo tỷ lệ cũ" | **Đưa ra workshop E-14** như phương án nên cân nhắc nhất; chưa chọn vì đụng cách đếm 4 lần và cách khách hiểu "ngày hiệu lực" |
+| G. Tách gói: **bảng tỷ lệ theo kỳ** (hiệu lực = kỳ, cho phép áp cho kỳ chưa khóa) / **tham số vận hành theo ngày** (hiệu lực ngày 1 tương lai) — hai loại version | Mỗi loại có quy tắc ngày hiệu lực đúng bản chất; là điều kiện để làm F | Đếm quota phải nói rõ một lượt = một version loại nào; thêm một vòng đời version | **Đưa ra workshop E-14** cùng F |
 
 ## 4. Hệ quả
 
@@ -93,7 +97,7 @@ stateDiagram-v2
 - Sửa lệch D01, D06, D07, D09 của prototype trong cùng một mô hình.
 
 **Tiêu cực / rủi ro**
-- R-L4-01 còn mở tới khi có E-14; nhánh N1 nặng hậu quả hơn — cần trình rủi ro rõ ở workshop.
+- R-L4-01 còn mở tới khi có E-14; nhánh N1 nặng hậu quả hơn — cần trình rủi ro rõ ở workshop, kèm phương án F / G và khối lượng 修正申請 INCENTIVE thật nếu chọn N1.
 - Hiệu lực chỉ ngày 1 tháng: tham số không phải tiền mà cần đổi gấp phải chờ hoặc chuyển sang file cấu hình (Q-ARCH-09).
 
 **Việc kéo theo**
@@ -102,7 +106,7 @@ stateDiagram-v2
 
 ## 5. Truy vết
 
-Luật 5; GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, RACI-01; PRM-042, PRM-126; E-08, E-12, E-13, E-14, E-16, E-17; L4-A03, L4-A04 (3); PREMISE §3.1, §6 (OPEN-L4-01, OPEN-L4-03, R-L4-01); as-built D01, D06, D07, D09; M13, M15; FB-CUS-218..220, FB-CUS-226, FB-CUS-227.
+Luật 5; GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, RACI-01; PRM-042, PRM-126; E-08, E-12, E-13, E-14, E-16, E-17; L4-A03, L4-A04 (3); PREMISE §3.1, §6 (OPEN-L4-01, OPEN-L4-03, R-L4-01); as-built D01, D06, D07, D09; M13, M15; FB-CUS-218..220, FB-CUS-226, FB-CUS-227; TBL-RATE-01; Gate 1 M-04, m-09.
 
 ---
 
@@ -111,3 +115,4 @@ Luật 5; GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, RACI-01; 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu; E-14 vẽ hai nhánh, chưa chốt | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Sửa theo Expert Gate 1: thêm phương án F (rollback hồi tố về đầu kỳ chưa khóa, chỉ bảng tỷ lệ) và G (tách gói tỷ lệ theo kỳ / tham số theo ngày) cho workshop E-14; đường sửa tiền thưởng kỳ đã khóa bằng 修正申請 INCENTIVE (§2.4-8a); viết lại rủi ro N1 / R-L4-01 cho đúng (M-04); quota đếm APPROVED / ACTIVE / SUPERSEDED, hủy version APPROVED theo maker-checker (m-09) | 2026-11-25 | phuongnnm-23344 | |

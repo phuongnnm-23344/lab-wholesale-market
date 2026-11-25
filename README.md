@@ -31,7 +31,7 @@ Nhóm thư mục mức repo khác (`.github/`, `docs/`, `scripts/`, `webhook/`) 
 | Điểm QC-01 để dự án chọn | Dự án chọn |
 |---|---|
 | Kiểu tên nhánh version (§2) | Theo **milestone / phase** của khóa học: `ver/lab-4`, `ver/lab-5`, … — không trộn kiểu version sản phẩm |
-| Chia `specs/{screen-or-feature}/` (§2 ghi chú) | Theo **feature** (cụm nghiệp vụ, kebab-case tiếng Anh). Danh sách feature chốt ở P2-C, ghi vào `specs/_index.md` |
+| Chia `specs/{screen-or-feature}/` (§2 ghi chú) | Theo **feature** (cụm nghiệp vụ, kebab-case tiếng Anh), trùng tên module ở `architecture/ARCHITECTURE.md` §2. Danh sách feature và feature của 10 màn cốt lõi đã chốt ở [`specs/_index.md`](specs/_index.md) (Gate 1 m-03) |
 | Screen ID | Giữ ID màn hình của LAB-1 (`SC-xx-yy`) để truy được về 画面一覧 LAB-1 và prototype LAB-2; tên file `SC-xx-yy_SPEC.md`. *Lệch quy tắc §4 (`{tiền tố}_{TÊN}` viết HOA) — xem §3* |
 | Nguồn khuôn `_templates/` | `spec-standards` nhánh `main`, commit `72c1dda` (2026-11-05). Hai thư mục `_templates/` copy cùng một lượt |
 
@@ -45,6 +45,7 @@ Nhóm thư mục mức repo khác (`.github/`, `docs/`, `scripts/`, `webhook/`) 
 | 4 | §4: Screen ID dạng `{tiền tố}_{TÊN}` | Giữ `SC-xx-yy` | Truy vết LAB-1 → LAB-2 → LAB-4 → task LAB-5 bằng một ID |
 | 5 | §2: tên bản mẫu `sample-AUTH_DB.md`, `sample-AUTH_FUNC.md`, `sample-AUTH_LOGIN_TECH.md` | Giữ tên thật trong `spec-standards/03-specs/02-samples/` (`sample-AUTH_DATABASE.md`, `sample-AUTH_FUNCTIONS.md`, `sample-AUTH_LOGIN_DETAIL.md`) | Ràng buộc 5: không sửa khuôn/bản mẫu tại chỗ. Cây ở QC-01 §2 và bộ bản mẫu thật đang lệch nhau ở repo chuẩn |
 | 6 | Bản mẫu chỉ có một cho mỗi loại | Screen Specification dùng `sample-LOGIN_SPEC.md` (bản mẫu của `BM-2-901-51`); không copy `BM-01-spec-template.md` và `sample-AD_LOGIN_SPEC.md` | Dự án dùng khuôn ISO `BM-2-901-51`; BM-01 là khuôn thứ hai cho cùng việc, chuẩn chưa chốt bỏ cái nào |
+| 7 | §4, §5 ràng buộc 1: Database Design `{DB_ID}_DB.md` — **một file một nhóm bảng** | Database Design chia 9 file theo cụm (`IAM_AUDIT_DB.md`, `PARTY_DB.md`, `RULE_DB.md`, `CLOSE_DB.md`, `LOT_DB.md`, `TRADE_DB.md`, `ADJUST_DB.md`, `BILLING_DB.md`, `INCENTIVE_DB.md`) — đúng quy định; **thêm một file tổng `MKT_DB.md`** không phải một nhóm bảng: nguyên tắc chung, quy ước + enum dùng chung, ERD tổng quan, view công bố, bảng lệch to-be ↔ prototype, kết quả parity, điểm mở. Tất cả đặt ở gốc `database-design/` vì bảng của mỗi cụm được nhiều feature dùng (ràng buộc 3) | Quy ước và enum dùng chung cho cả 58 bảng — chép vào 9 file là trái DRY và dễ lệch; bảng lệch / parity là yêu cầu của đề LAB-4 cho cả schema, không thuộc cụm nào. Người dùng chốt tách file (PREMISE L4-D04) |
 
 Link tương đối bên trong các file bản mẫu (`../01-templates/…`) trỏ theo cấu trúc của repo chuẩn nên không mở được trong repo này — giữ nguyên theo ràng buộc 5.
 

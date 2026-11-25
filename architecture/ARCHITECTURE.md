@@ -3,7 +3,7 @@ id: ARCH-001
 title: Kiến trúc to-be Product A (第1期)
 type: architecture
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [DOC-PREMISE-001, ADR-001, ADR-002, ADR-003, ADR-004, ADR-005, ADR-006, ADR-007, ADR-008, ADR-009, ADR-010, DEC-002, DEC-004, DEC-005, DEC-009, DEC-012, L4-D01]
@@ -27,7 +27,7 @@ Không phải phạm vi của tài liệu: bảng / cột chi tiết (Database D
 | 受付 / 仮受付 / 本登録 | Tiếp nhận lô / tiếp nhận tạm ở bến / đăng ký chính thức ở quầy |
 | 目利き・下見 | Đánh giá chất lượng, độ tươi bằng mắt — chỉ người làm, hệ thống ghi lại |
 | 引渡し | Giao hàng cho người mua (nhiều lần / GD) |
-| 業務日 / 日次締め | Ngày nghiệp vụ (bắt đầu 02:00 JST) / khóa ngày nghiệp vụ |
+| 業務日 / 日次締め | Ngày nghiệp vụ: [D 01:00, D+1 01:00) JST — bắt đầu từ giờ nhận lô (01:00, tham số quy chế), chốt GD từ 02:00 / khóa ngày nghiệp vụ |
 | 期 / 期ロック | Kỳ thanh toán (tháng dương lịch theo 業務日) / khóa kỳ |
 | 修正申請 / 当日訂正 / 取消 | Yêu cầu điều chỉnh sau khi khóa ngày (có duyệt) / sửa trong ngày chưa khóa / hủy GD trong ngày chưa khóa |
 | 完納奨励金 | Tiền thưởng cho người trả đủ, đúng hạn tiền của kỳ |
@@ -46,7 +46,7 @@ Ký hiệu ID theo PREMISE §0. `Q-ARCH-xx` là câu hỏi mới phát sinh ở 
 | DR | RTO ≤ 4h, RPO ≤ 15 phút | NFR-AVL-03, PRM-082 |
 | Tải | 180 TK, 60 đồng thời (thiết kế cho ~230 TK, ~77 đồng thời × burst 2 × dư 1,5); 350–600 lô, 700–1.200 GD / ngày | FIG-LOAD-01, PRM-083 |
 | Hiệu năng | Tìm kiếm thường p95 ≤ 2s; báo cáo / batch xuất xong trước 11:00 | NFR-PERF-01, PRM-084 |
-| Lưu trữ | Dữ liệu nghiệp vụ online 7 năm; ảnh / chứng từ online 3 năm rồi lưu lạnh | DR-RET-01 |
+| Lưu trữ | Dữ liệu nghiệp vụ online 7 năm; chứng từ theo loại: 受入票・取引票・照合表 online 7 năm, ảnh / chứng cứ tranh chấp và hồ sơ migration online 3 năm rồi lưu lạnh; xóa vật lý sau hạn phải có duyệt | DR-RET-01, TBL-ATTACH-01, B.7 |
 | Mạng hiện trường | Mất mạng ngắn 3–5 lần / tuần mùa cao điểm; chốt GD bắt buộc online | NFR-AVL-02, DEC-004, PRM-085 |
 | Bảo mật | MFA cho quản trị và người có quyền duyệt; khóa tạm khi sai nhiều lần; TLS; secret tách khỏi source; APPI | NFR-SEC-01, NFR-SEC-03, NFR-SEC-04, 09-06 |
 | Nền tảng | AWS Tokyo managed, tài khoản đứng tên khách, IaC, dev / stg / prod | DEC-002, PRM-080, L4-D01 |
@@ -109,7 +109,8 @@ flowchart LR
   JOB --> DB
   JOB --> S3
   JOB --> SES --> EXT
-  APP -. "PDF phiếu" .-> PC --> PRN
+  APP -. "PDF phiếu" .-> PC
+  PC --> PRN
   PC -. "tải CSV IF-ACC-01 ra / 入金 CSV vào" .-> ACC
   DB -. "sao chép backup" .-> BK
   S3 -. "sao chép" .-> BK
@@ -121,9 +122,9 @@ flowchart LR
 |---|---|---|---|
 | CloudFront + WAF | TLS, chặn tấn công phổ biến, giới hạn tần suất đăng nhập / PIN | Rule set managed + rate-based rule; có thể giới hạn IP chợ cho màn quản trị (Q-ARCH-06) | NFR-SEC-03, NFR-SEC-04 |
 | ALB + ECS Fargate (app) | Chạy Next.js (trang + route handler API) | ≥ 2 task trên 2 AZ, auto scaling theo CPU; deploy rolling, không deploy trong 01:00–10:00 | NFR-AVL-01, PRM-081 |
-| ECS task theo lịch (job) | Mở 業務日 02:00, worker outbox email, xuất batch, báo cáo, nhắc hạn | Cùng image với app, entrypoint khác; EventBridge Scheduler cron múi giờ Asia/Tokyo | M10, NFR-OPS-01 |
+| ECS task theo lịch (job) | Lưới an toàn mở 業務日 lúc 01:00 (ngày kế tiếp thường do hàm 日次締め mở — ADR-005), worker outbox email, xuất batch, báo cáo, nhắc hạn, danh sách chứng từ đến hạn xóa | Cùng image với app, entrypoint khác; EventBridge Scheduler cron múi giờ Asia/Tokyo | M10, NFR-OPS-01 |
 | RDS for PostgreSQL Multi-AZ | Dữ liệu nghiệp vụ, hàm nghiệp vụ, trigger, RLS | Multi-AZ DB instance, PITR 35 ngày, mã hóa KMS, maintenance window 20:00–24:00 | NFR-AVL-01, NFR-AVL-03, ADR-009 |
-| S3 | Đính kèm, CSV xuất / nhập (bản gốc), PDF, archive | Versioning, mã hóa, chặn public; lifecycle chứng từ 3 năm → lưu lạnh | DR-RET-01, TBL-ATTACH-01 |
+| S3 | Đính kèm, CSV xuất / nhập (bản gốc), PDF, archive | Versioning, mã hóa, chặn public; lifecycle **theo tag loại chứng từ**: 受入票・取引票・照合表 7 năm online, tranh chấp / migration 3 năm → Glacier; **không tự xóa** — danh sách đến hạn → 決裁 + MFA → xóa (ADR-009 §2.2-9) | DR-RET-01, TBL-ATTACH-01, B.7 |
 | Amazon SES | Email cho người tham gia bên ngoài và nội bộ | Domain đã xác thực (SPF / DKIM / DMARC); bounce / complaint về app | BR-NOTIFY-01, PRM-073 |
 | Secrets Manager + KMS | Mật khẩu DB, khóa ký phiên, khóa SES | Xoay vòng định kỳ; không có secret trong repo / image | NFR-SEC-04 |
 | CloudWatch + giám sát SaaS | Health, lỗi batch / xuất, lỗi gửi email, sự kiện bảo mật | Alarm → on-call; NOTIFY-02 Critical ≤ 5 phút | NFR-OPS-01, FR-NOTIFY-02 |
@@ -151,7 +152,7 @@ flowchart LR
   J --> I
   E -. "trong ngày chưa khóa" .-> K["当日訂正 / 取消<br/>lý do, REVERSE / DELTA"]
   I --> L["Xuất IF-ACC-01 CSV<br/>đóng băng lúc tạo"]
-  I -. "sau khi khóa" .-> M["修正申請 → duyệt 1–2 cấp<br/>REVERSE / DELTA vào ngày mở sớm nhất"]
+  I -. "sau khi khóa" .-> M["修正申請 → duyệt 1–2 cấp<br/>REVERSE / DELTA ghi sổ ngày mở sớm nhất<br/>kỳ = kỳ của GD gốc"]
 ```
 
 Mũi tên đậm là luồng chính. せり đi chung các bước sau 確定 với 相対 nhưng có thêm bước xác nhận bởi người thứ hai (PRM-115). Lô còn số lượng khi khóa ngày → 持ち越し sang 業務日 sau cùng mã lô (PRM-110, E-12).
@@ -160,18 +161,18 @@ Mũi tên đậm là luồng chính. せり đi chung các bước sau 確定 v�
 
 ```mermaid
 flowchart LR
-  T["GD 確定 + REVERSE / DELTA<br/>gán kỳ theo 業務日 của GD gốc"] --> P["期のお支払額<br/>thuế theo suất, 1 lần / người × kỳ × suất"]
+  T["GD 確定 + REVERSE / DELTA<br/>gán kỳ theo 業務日 của GD gốc<br/>chỉ khi kỳ gốc còn OPEN"] --> P["期のお支払額<br/>thuế theo suất, 1 lần / người × kỳ × suất"]
   R["入金 CSV từ kế toán<br/>chặn file trùng SHA-256"] --> Q["Phân bổ tiền vào kỳ<br/>FIFO · 請求番号 khi có E-02"]
-  P --> X{"完納?<br/>đủ tiền trước 支払期日<br/>không ân hạn"}
+  P --> X{"完納?<br/>đủ tiền trước 支払期日<br/>không ân hạn · thiếu nhỏ nghi phí → 要確認"}
   Q --> X
-  X --> V["Xem trước kết quả<br/>hiện tiền đã gán vào kỳ nào"]
+  X --> V["試算 · chạy nhiều lần<br/>hiện tiền đã gán vào kỳ nào"]
   V --> W["期ロック · 照合部門長 + MFA<br/>tính chính thức + đóng băng<br/>theo version quy chế của kỳ"]
   W --> Y["Kết quả 奨励金 + dòng 端数調整<br/>→ batch IF-ACC-01"]
   W --> Z["Email kết quả cho người tham gia"]
-  W -. "kỳ đã khóa bị sửa sau đó" .-> D2["DELTA ở kỳ sau<br/>không hồi tố 完納"]
+  W -. "kỳ đã khóa bị sửa sau đó" .-> D2["DELTA ghi ở kỳ đang khóa<br/>cho mọi kỳ đã khóa bị đổi, kể cả năm TC trước<br/>完納 chỉ đổi qua 修正申請 KANNO"]
 ```
 
-Chi tiết tính: ADR-007 và Technical Design 完納奨励金 (P3).
+Điều chỉnh (REVERSE / DELTA) mang hai ngày: **ngày áp** (ghi sổ ngày, 精算, IF-ACC-01) và **kỳ của GD gốc**. Kỳ gốc còn OPEN → vào 期のお支払額 kỳ đó; kỳ gốc đã khóa → không vào kỳ đang mở, chỉ đi DELTA — một đồng chênh chỉ đếm một lần. Khi khóa kỳ N, engine tính lại **mọi kỳ đã khóa có đầu vào đổi sau khi khóa, không giới hạn năm TC**; giới hạn năm TC chỉ áp cho việc trừ dần delta âm (CARRY → `CARRY_EXPIRED`). Chi tiết tính và test vector: ADR-007 §2.3–§2.7, `specs/system-design/database-design/INCENTIVE_DB.md`; Technical Design 完納奨励金 (P3).
 
 ### 4.3 Đường đi của một thao tác ghi
 
@@ -205,7 +206,7 @@ Ba lớp tách nhau, kiểm trong DB (ADR-003):
 | Quyền duyệt | Người được giao | 照合部門長, 運用部門長, 配送部門責任者 + 代行者 có ngày bắt đầu / kết thúc (PRM-129) | Hành động duyệt; cấm tự duyệt thứ mình lập / ghi |
 | Tư cách tham gia | Người tham gia (không đăng nhập ở 第1期) | **許可** cho 仲卸 · **承認** cho 売買参加者 (+ 参加上限) · đăng ký chợ cho 卸売業者 · đăng ký tại điểm cho 買出人 | **Lúc chốt GD** (BR-PERM-01), không phải lúc nhập |
 
-許可 và 承認 là **hai bảng, hai vòng đời, hai căn cứ** (luật 2): trường, trạng thái (有効 / 一時停止 / 失効 / 再審査 — FIG-010), người 決裁 khác nhau; không có bảng "giấy phép chung" có cột loại. Duyệt nội bộ trên màn và tài liệu dùng chữ 決裁 / 確認, không dùng 承認, để khỏi lẫn với 承認 của 売買参加者 (PRM-121).
+許可 và 承認 là **hai bảng, hai vòng đời, hai căn cứ, hai thủ tục** (luật 2); không có bảng "giấy phép chung" có cột loại. Khác nhau ở thủ tục và trường (ADR-003 §2.2): **許可** đăng ký / gia hạn có **審査** + điều kiện 許可, 照合部門長 起案 → **運用部門長 決裁**; **承認** là 届出 + **照合部門長 確認** (một người, không 審査), có **参加上限** đổi bằng sự kiện có lịch sử (không sửa đè). Trạng thái tư cách (有効 / 一時停止 / 失効 / 再審査 — FIG-010) nằm ở từng 許可 / 承認, không ở mức người tham gia. Duyệt nội bộ trên màn và tài liệu dùng chữ 決裁 / 確認, không dùng 承認, để khỏi lẫn với 承認 của 売買参加者 (PRM-121; tên màn SC-08-03 / SC-10-04 đổi theo L4-D03).
 
 ## 6. Người quyết định cuối (human-in-the-loop)
 
@@ -216,24 +217,26 @@ Hệ thống **chỉ ghi** quyết định của người; không OCR ký hiệu
 | 目利き・下見 | ROLE-JUDGE | Ghi grade / ghi chú + người + thời điểm; chỉ lô 下見済 mới 公開 | — | FR-LOT-02, PRM-117 |
 | Kết quả せり | せり人 quyết tại sàn; người xác nhận khác người nhập | Ghi kết quả; trùng người → bắt lý do, gắn cờ 要確認 | — | FR-SERI-01/02, PRM-115 |
 | Vượt 参加上限 (売買参加者) | Người chốt GD | Cảnh báo + bắt lý do, không chặn cứng | — | PRM-046, L4-A04 (1) |
-| 修正申請 cấp 1 / cấp 2 | 照合部門長 / 運用部門長 (ngưỡng tiền trong quy chế) | Sinh REVERSE / DELTA, bản gốc giữ nguyên | Có | FR-CORR-02, PRM-120 |
+| 修正申請 cấp 1 / cấp 2 | 照合部門長 / 運用部門長 (ngưỡng = tiền thay đổi lớn nhất của một người mua, trong quy chế; đổi 買受人, KANNO, INCENTIVE luôn 2 cấp) | Sinh REVERSE / DELTA, bản gốc giữ nguyên | Có | FR-CORR-02, PRM-055, PRM-120 |
 | Giao có tranh chấp | 配送部門責任者, không phải người đã ghi lần giao đó | Ghi xác nhận; mất mạng → đường giấy (ADR-008) | Có | CAP-HUMAN-01, PRM-111 |
-| 日次締め / 期ロック | 照合部門長 (hoặc 代行) | Checklist trước khóa; khóa không mở lại | Có | BR-CLOSE-01, PRM-119 |
+| 日次締め / 期ロック | 照合部門長 (hoặc 代行) | Checklist trước khóa (gồm 「端末回収不能」 cho máy hỏng / mất); 期ロック chốt các dòng 要確認 (vd. nghi trừ phí chuyển khoản) với lý do; khóa không mở lại | Có (luôn hỏi lại mã) | BR-CLOSE-01, PRM-119, ADR-005 §2.5–2.6, ADR-007 §2.6 |
 | Duyệt quy chế / rollback | Checker 照合部門長 (+ 運用部門長 ở nhánh N2) | maker ≠ checker | Có | GOV-RULE-01, ADR-006 |
 | 一時停止 / 失効 / phục hồi tư cách | 運用部門長 決裁 | Đổi trạng thái có lịch sử, gửi email | Có | PRM-121, PREMISE §3.2 |
+| Đăng ký / gia hạn 許可 · 承認 | 許可: 運用部門長 決裁 sau 審査 · 承認: 照合部門長 確認 | Ghi sự kiện có lịch sử | Có | PRM-121, ADR-003 §2.2 |
+| Xóa vật lý chứng từ hết hạn lưu | 運用部門長 決裁 | Chỉ xóa dòng có trong danh sách đến hạn, ghi người duyệt | Có (luôn hỏi lại mã) | B.7, ADR-009 §2.2-9 |
 
 ## 7. Không ghi đè lịch sử, khóa ngày / kỳ, quy chế có version
 
 ### 7.1 Append-only + REVERSE / DELTA (ADR-004)
 
-- GD đã 確定 bị đóng băng; mọi thay đổi sinh **REVERSE** (đảo dòng cũ, gắn người mua cũ) + **DELTA** (dòng mới, gắn người mua mới). Một cơ chế cho cả 当日訂正 / 取消 (trước khóa ngày, chỉ cần lý do) và 修正申請 (sau khóa ngày, duyệt 1–2 cấp).
+- GD đã 確定 bị đóng băng; mọi thay đổi sinh **REVERSE** (đảo dòng cũ, gắn người mua cũ) + **DELTA** (dòng mới, gắn người mua mới). Một cơ chế cho cả 当日訂正 / 取消 (trước khóa ngày, chỉ cần lý do) và 修正申請 (sau khóa ngày, duyệt 1–2 cấp). 修正申請 có 4 phạm vi: `TRADE` · `KANNO` · `INCENTIVE` · `LATE_ENTRY` (ADR-004 §2.2).
 - Sổ số lượng lô, giao hàng, điều chỉnh, 入金, kết quả thưởng, 監査ログ: chỉ INSERT, trigger chặn UPDATE / DELETE. Không có cờ tắt audit, không có hàm reset ở production (sửa D19, M24).
 
 ### 7.2 Khóa ngày, khóa kỳ (ADR-005)
 
-- 業務日 mở bằng job 02:00 JST theo lịch chợ; lô nhận từ 01:00 (tham số quy chế) gắn vào 業務日 sáng đó; chốt GD từ 02:00 (PRM-116, sửa D22).
-- 日次締め khóa vĩnh viễn ngày đó ở mức DB (trigger `DAY_LOCKED`); không có chức năng mở khóa (Q-ARCH-02). Sửa sau khóa đi 修正申請, chênh lệch ghi vào **ngày chưa khóa sớm nhất** (PRM-120).
-- 期 = tháng dương lịch theo 業務日 của GD gốc (GD 01:30 ngày 1 thuộc kỳ trước — L4-A04 (2)). 期ロック đóng băng kết quả kỳ; sửa sau đó → DELTA ở kỳ sau.
+- **Một định nghĩa 業務日:** D = [D 01:00, D+1 01:00) JST, 01:00 = giờ nhận lô trong quy chế (E-16); chốt GD từ 02:00 (PRM-116). Hàm 日次締め mở luôn 業務日 chợ kế tiếp; job 01:00 là lưới an toàn (sửa D22, Gate 1 M-01). Ví dụ biên: lô nhận 01:30 ngày 1 thuộc 業務日 ngày 1 → kỳ mới.
+- 日次締め khóa vĩnh viễn ngày đó ở mức DB (trigger `DAY_LOCKED`); không có chức năng mở khóa (Q-ARCH-02). Checklist 11 mục (ADR-005 §2.5); máy hỏng / mất → 「端末回収不能」 (照合部門長 + lý do + MFA) để ngày không bị kẹt. Sửa sau khóa đi 修正申請, chênh lệch ghi vào **ngày chưa khóa sớm nhất** (PRM-120). GD / lô / lần giao **mới** của ngày đã khóa (紙伝票後入力, offline trễ) đi 修正申請 `LATE_ENTRY`, ghi vào ngày mở nhưng giữ **ngày GD thật** (ADR-005 §2.8).
+- 期 = tháng dương lịch theo 業務日 của GD gốc (`trade_date`). Điều chỉnh vào kỳ gốc nếu kỳ gốc còn OPEN; kỳ gốc đã 期ロック → DELTA ghi ở kỳ đang khóa (mọi kỳ đã khóa, không giới hạn năm TC — ADR-007 §2.4).
 
 ### 7.3 Quy chế có version, maker-checker, rollback — hai nhánh E-14 (ADR-006)
 
@@ -248,16 +251,16 @@ flowchart TD
   K -- "Rollback về version cũ" --> Q2{"Đã dùng 4 lượt?"}
   Q2 -- "Chưa" --> OK
   Q2 -- "Đủ 4" --> WS{"Workshop E-14<br/>ban lãnh đạo quyết"}
-  WS -- "N1 · chặn" --> N1["Chặn rollback<br/>version sai chạy tới hết tháng 3<br/>mỗi kỳ xử lý bằng DELTA<br/>R-L4-01"]
+  WS -- "N1 · chặn" --> N1["Chặn rollback<br/>version sai chạy tới hết tháng 3<br/>sửa tiền: 修正申請 INCENTIVE<br/>từng người × kỳ · R-L4-01"]
   WS -- "N2 · không chặn<br/>(ý kiến khách [Giả lập])" --> N2["Lý do bắt buộc · checker 照合部門長<br/>+ 運用部門長 決裁 MFA<br/>tự báo ban lãnh đạo · vẫn đếm, hiện ở báo cáo<br/>hiệu lực ngày 1 tháng tương lai"]
 ```
 
-Kỳ đã khóa không bị version mới hay rollback chạm vào (FB-CUS-227). Hai nhánh **không** làm thành công tắc cấu hình — workshop chọn một, code cài một (PREMISE §6 OPEN-L4-01).
+Kỳ đã khóa không bị version mới hay rollback chạm vào (FB-CUS-227); tiền thưởng của kỳ đã khóa tính theo tỷ lệ sai chỉ sửa được bằng 修正申請 `INCENTIVE` (ADR-006 §2.4-8a). Hai nhánh **không** làm thành công tắc cấu hình — workshop chọn một, code cài một (PREMISE §6 OPEN-L4-01). Workshop còn được trình hai phương án F (rollback hồi tố về đầu kỳ chưa khóa, chỉ bảng tỷ lệ) và G (tách gói tỷ lệ theo kỳ / tham số theo ngày) — ADR-006 §3. Đếm quota: version `CHANGE` + `ROLLBACK` ở `APPROVED` / `ACTIVE` / `SUPERSEDED`; hủy version `APPROVED` trước hiệu lực cũng maker-checker.
 
 ## 8. Hiện trường: PIN, offline, máy in
 
 - **Máy dùng chung:** đăng nhập một lần cho thiết bị, đổi người bằng mã nhân viên + PIN 4 số; MFA step-up trước hành động ở PREMISE §3.2, hiệu lực **10 phút** cùng người cùng thiết bị; tài khoản SYS-ADMIN MFA ngay khi đăng nhập (ADR-002). Người không dùng điện thoại riêng nhận mã bằng **token phần cứng TOTP** cá nhân (FB-CUS-231).
-- **Offline (ADR-008):** chỉ 仮受付, ghi 引渡し, 紙伝票後入力 có hàng đợi cục bộ; chốt 相対 / xác nhận せり / mọi duyệt bắt buộc online. Màn hình báo đang mất mạng + số bản ghi chưa đồng bộ; đồng bộ lỗi vào SC-03-07, không ghi đè; khóa ngày đếm thiết bị còn bản ghi chưa đồng bộ.
+- **Offline (ADR-008):** chỉ 仮受付, ghi 引渡し, 紙伝票後入力 có hàng đợi cục bộ; chốt 相対 / xác nhận せり / mọi duyệt bắt buộc online. Màn hình báo đang mất mạng + số bản ghi chưa đồng bộ; tra cứu offline ở SC-06-02 hiện giờ của dữ liệu tải về (「取引データ hh:mm 時点」); đồng bộ lỗi vào SC-03-07, không ghi đè (ngày đã khóa → 修正申請 `LATE_ENTRY`); khóa ngày đếm thiết bị còn bản ghi chưa đồng bộ, trừ máy đã 「端末回収不能」.
 - **Đường giấy:** 相対 lúc mất mạng → 紙伝票 rồi 後入力; giao có tranh chấp lúc mất mạng → phiếu giấy có chữ ký 配送部門責任者, nhập bù + đính kèm bản scan, xác nhận lại trong hệ thống có MFA (FB-CUS-232).
 - **Máy in:** server sinh PDF theo mẫu FORM, PC bàn GD in thẳng không xem trước (§9).
 
@@ -271,7 +274,7 @@ Các lựa chọn dưới đây đã chốt ở LAB-1 (PRM / DEC), không phải
 | 入金 CSV | Vào | Tải lên file xuất từ phần mềm kế toán; lưu bản gốc ở S3; chặn file trùng bằng SHA-256; ánh xạ mã đối tác → người tham gia; hủy batch do người khác người import, kỳ chưa khóa | Dòng không khớp vào danh sách chờ 照合, không tự đoán | DEC-009, M07, E-02 |
 | Email | Ra | Ghi outbox trong cùng transaction nghiệp vụ → worker gửi qua SES; gửi lại tối đa 3 lần; lỗi hẳn → danh sách in ở quầy hôm sau + danh sách "chưa gửi được" cho 照合 | Không SMS / FAX / LINE; đổi địa chỉ email chỉ do nhân viên chợ theo giấy yêu cầu, có lịch sử | BR-NOTIFY-01, PRM-073, L4-A08, M09 |
 | Máy in hiện trường | Ra | PDF sinh ở server theo mẫu FORM (取引確認票, 引渡し票, danh sách sắp hết hạn, danh sách email lỗi); PC bàn GD dùng chính sách in thẳng của Chrome / Edge (kiosk printing) | Model máy in, loại giấy chờ khảo sát hiện trường (PRM-095, E-05) — Q-ARCH-05 | PRM-114, PRM-118, M05 |
-| Lịch chợ – ngân hàng | Nội bộ | SC-10-05; 支払期日 rơi 休市日 lùi về 営業日 trước; 臨時休市 / 臨時開市 đổi trong ngày, không tính quota | — | M10, FB-CUS-239 |
+| Lịch chợ – ngân hàng | Nội bộ | SC-10-05; 支払期日 (ngày 10) rơi **ngày ngân hàng nghỉ** → lùi về **ngày ngân hàng mở trước** (`PAYMENT_DUE_RULE` = `PREV_BANK_DAY`, giả định — Q-ARCH-11; vd. 2028-06-10 thứ Bảy chợ mở → 2028-06-09); 臨時休市 / 臨時開市 đổi trong ngày, không tính quota | — | M10, PRM-054, FB-CUS-239 |
 | Migration (một lần) | Vào | ECS task một lần: nạp master + khoản còn mở + chi tiết 2 năm TC + 2 kỳ thưởng từ file khách → bảng tạm → kiểm → nạp; báo cáo đối chiếu 100% để ký lúc cutover | Không có cột `is_sample`; dữ liệu cũ hơn để ở file khách, chỉ đọc | DEC-005, PRM-125, M01 |
 | Ngân hàng | — | **N/A** — chuyển khoản ngân hàng ngoài phạm vi | — | SCOPE-OUT-05 |
 
@@ -294,11 +297,11 @@ Các lựa chọn dưới đây đã chốt ở LAB-1 (PRM / DEC), không phải
 | NFR-AVL-03 RTO 4h / RPO 15' | PITR (log 5 phút); Multi-AZ; bản sao backup sang Osaka + IaC dựng lại; diễn tập khôi phục trước go-live | ADR-009 |
 | NFR-PERF-01/02 | Truy vấn luôn có khoảng 業務日 + phân trang + index; thiết kế cho ~77 đồng thời × 2 × 1,5; test tải trước go-live | ADR-009 (M23) |
 | NFR-SEC-01 MFA | Step-up trước hành động §3.2; SYS-ADMIN MFA khi đăng nhập; token phần cứng cho người không dùng điện thoại riêng | ADR-002 |
-| NFR-SEC-03 | Timeout theo loại máy (PC ~30', tablet ~5'); khóa PIN theo người + theo thiết bị; log bất thường | ADR-002, ADR-008 |
+| NFR-SEC-03 | Timeout theo loại máy (PC ~30', tablet ~5'); step-up MFA hết khi idle > 3', hành động không quay lại được luôn hỏi lại mã; khóa PIN theo người + theo thiết bị; log bất thường | ADR-002, ADR-008 |
 | NFR-SEC-04 | TLS ở CloudFront / ALB / RDS; Secrets Manager; backup mã hóa | ADR-009 |
 | NFR-OPS-01 | CloudWatch + SaaS: health, batch, lỗi email, sự kiện bảo mật | §3 |
 | NFR-OPS-02 | Đổi quy chế bằng version mới, không sửa lịch sử | ADR-006 |
-| DR-RET-01 7 năm | DB online 7 năm, `audit_logs` chia theo năm TC; S3 lifecycle chứng từ 3 năm → lưu lạnh | ADR-009 |
+| DR-RET-01 7 năm | DB online 7 năm, `audit_logs` chia theo năm TC; chứng từ theo loại TBL-ATTACH-01 (7 năm / 3 năm → lạnh), xóa vật lý có duyệt (B.7) | ADR-009 |
 | 09-06 APPI | Mã hóa at-rest / in-transit; quyền đọc theo ma trận; xuất dữ liệu cá nhân có MFA + audit | ADR-002, ADR-003 |
 
 ## 12. Prototype LAB-2 → to-be
@@ -313,9 +316,10 @@ Các lựa chọn dưới đây đã chốt ở LAB-1 (PRM / DEC), không phải
 | ~70 hàm `security definer`, `assert_caller`, trigger append-only / ngày mở / đóng băng / audit | Giữ mô hình; sửa nội dung theo bảng lệch | Giữ | D19 (bỏ cờ seeding) | ADR-004 |
 | `trade_status` PROVISIONAL / CONFIRMED, chốt thẳng | Trạng thái theo FIG-012, ghi người + thời điểm từng bước | Sửa | D10 | ADR-004 |
 | Mọi điều chỉnh qua `correction_requests` | Thêm 当日訂正 / 取消 cùng cơ chế REVERSE / DELTA | Sửa | D11, M17 | ADR-004 |
-| `current_business_date()` = ngày OPEN lớn nhất, không job | Job 02:00 + lịch chợ; lô từ 01:00 gắn 業務日 sáng đó | Thay | D22, M10 | ADR-005 |
+| `current_business_date()` = ngày OPEN lớn nhất, không job | Một định nghĩa 業務日 [01:00, 01:00); 日次締め mở ngày kế tiếp + job 01:00 dự phòng + lịch chợ | Thay | D22, M10 | ADR-005 |
 | Quy chế chỉ có 1 bảng tỷ lệ; quota đếm cả go-live; ngưỡng 300.000 hằng số | 2 bảng tỷ lệ + tham số; quota bỏ go-live; ngưỡng là tham số (tạm 100.000) | Sửa | D01, D06, D07, D09, M13, M15 | ADR-006 |
-| Thưởng tính trên số 税込, 1 thuế suất, 期日 ngày 10 cố định, gán tiền theo cửa sổ ngày | Bậc theo 適格金額 税抜, thuế theo suất + 端数調整, 期日 theo quy chế + lịch, bảng phân bổ FIFO, delta âm mang sang tới hết năm TC | Sửa | D02–D05, D23, M08, M21 | ADR-007 |
+| Thưởng tính trên số 税込, 1 thuế suất, 期日 ngày 10 cố định, gán tiền theo cửa sổ ngày | Bậc theo 適格金額 税抜, thuế theo suất + 端数調整, 期日 theo quy chế + lịch ngân hàng, bảng phân bổ FIFO, delta âm mang sang tới hết năm TC | Sửa | D02–D05, D23, M08, M21 | ADR-007 |
+| Tính lại **mọi kỳ LOCKED** trước kỳ đang khóa; gán điều chỉnh vào kỳ theo ngày GD gốc | Giữ nguyên hai hành vi này (to-be 0.1.x từng làm kém: chỉ cùng năm TC, gán theo ngày áp) | Giữ | N15, N16 | ADR-007 |
 | PIN online, khóa theo người đích; không offline | PIN offline gắn thiết bị; khóa theo người + thiết bị; hàng đợi 3 thao tác + SC-03-07 | Thay | D17, M03, M04, M22 | ADR-008 |
 | Không backup / PITR / giám sát; view quét toàn lịch sử | PITR, Multi-AZ, Osaka, giám sát; truy vấn có khoảng ngày | Thay | D24, M14, M23 | ADR-009 |
 | `is_sample`, `seed_demo_*`, `reset_demo_business_data` | Không có ở production; migration thật | Bỏ | D19, D20, M01, M24 | ADR-004 |
@@ -329,14 +333,16 @@ Các câu đã có (E-01..E-21, OPEN-L4-01..03) không lặp lại; dưới đâ
 |---|---|---|---|---|
 | Q-ARCH-01 | RTO 4h / RPO 15' có áp cho sự cố **cả region Tokyo** không, hay chỉ sự cố trong region? | Có — sao chép backup + log PITR sang Osaka, dựng lại bằng IaC | Không cần → bỏ dòng Osaka, giảm chút phí lưu trữ; cần chạy chờ nóng ở Osaka → tăng phí cloud đáng kể, ngoài TCO hiện tại | IT khách |
 | Q-ARCH-02 | Có cần mở lại ngày đã khóa trong trường hợp khóa nhầm không? | Không có chức năng mở khóa; sửa bằng 修正申請 | Cần → thêm luồng mở khóa có 運用部門長 決裁 + MFA + audit, ~0,2–0,3 MM | 運用部門, 照合部門 |
-| Q-ARCH-03 | Số người cần token phần cứng (không dùng điện thoại riêng)? Khách mua token? | ~nửa trong 12–13 người có quyền duyệt; khách mua (PRM-088) | Nhiều hơn → chỉ tăng chi phí mua token của khách; không đổi thiết kế | IT khách (E-15) |
+| Q-ARCH-03 | Số người cần token phần cứng (không dùng điện thoại riêng)? Khách mua token? Ai giữ runbook cấp / thu / thay pin token (pin ~3–5 năm, hệ thống 7 năm)? | ~nửa trong 12–13 người có quyền duyệt; khách mua (PRM-088); IT khách giữ runbook, thay token theo lô | Nhiều hơn → chỉ tăng chi phí mua token của khách; không đổi thiết kế | IT khách (E-15) |
 | Q-ARCH-04 | Thời gian PIN offline còn hiệu lực trên thiết bị (N giờ) | 12 giờ, trong file cấu hình | Ngắn hơn → người ca đêm phải đăng nhập online lại giữa ca | IT khách (E-18) |
 | Q-ARCH-05 | Model máy in, cách nối (USB / mạng) ở bàn GD và bến | In từ PC bàn GD; tablet bến in qua máy in mạng gần nhất | Máy in chỉ nối được với tablet / cần in nhiệt → thêm agent in cục bộ, CR theo CR-10 | 運用部門 (E-05, PRM-095) |
 | Q-ARCH-06 | Màn quản trị (SYS-ADMIN, RULE-ADMIN) có giới hạn theo IP mạng chợ được không? | Có, qua WAF | Không → chỉ dựa vào MFA | IT khách |
-| Q-ARCH-07 | Chứng từ sau 7 năm xóa hay giữ? Khôi phục lưu lạnh "最大2営業日" hay "2日以内"? | Xóa sau 7 năm theo lifecycle; mục tiêu khôi phục ≤ 1 ngày làm việc (đáp ứng cả hai cách đọc) | Phải giữ lâu hơn → chỉ đổi lifecycle | 照合部門, kiểm toán (DR-RET-01) |
-| Q-ARCH-08 | Delta âm còn lại cuối năm TC xử lý thế nào? | Không mang sang năm mới; ra danh sách cho 照合部門 xử lý tay | Khách muốn mang tiếp → đổi Technical Design 完納奨励金 | 照合部門, 財務 |
+| Q-ARCH-07 | (a) B.7 ghi 「添付書類は3年間」, TBL-ATTACH-01 ghi 受入票・取引票・照合表 7 năm — dự án theo TBL-ATTACH-01, đúng không? (b) Sau hạn lưu, chính sách của khách là xóa (có duyệt) hay giữ? (c) Khôi phục lưu lạnh "最大2営業日" hay "2日以内"? | (a) theo TBL-ATTACH-01; (b) **không tự xóa** — danh sách đến hạn → 運用部門長 決裁 + MFA → xóa (B.7); (c) mục tiêu ≤ 1 ngày làm việc (đáp ứng cả hai cách đọc) | (a) chỉ đổi lifecycle theo tag; (b) giữ lâu hơn → không xóa, chỉ thêm phí lưu | 照合部門, kiểm toán (DR-RET-01, B.7) |
+| Q-ARCH-08 | Phần delta âm còn lại cuối năm TC **thu bằng cách nào** (trừ vào khoản phải trả khác, yêu cầu người tham gia nộp lại, hay xóa sổ có duyệt)? | Delta âm trừ dần (CARRY) vào thưởng các kỳ sau tới hết năm TC của kỳ ghi nhận; phần âm còn lại cuối năm ghi dòng `CARRY_EXPIRED` và hiện ở RPT-07 để 照合部門 xử lý — cách thu ghi lại trên dòng đó (người, ngày, cách) | Thu ngoài hệ thống mà không ghi lại → mất dấu (luật 4); muốn trừ vào khoản khác → thêm bút toán ở IF-ACC-01, đổi Technical Design 完納奨励金 | 照合部門, 財務 |
 | Q-ARCH-09 | Mọi nội dung quy chế (kể cả tham số không phải bảng tỷ lệ) đều hiệu lực từ ngày 1 tháng? | Có — một version, một ngày hiệu lực, trùng ranh giới kỳ | Cần đổi tham số giữa tháng → ngày hiệu lực theo từng tham số, phức tạp hơn | 運用部門 |
 | Q-ARCH-10 | Khách có IdP doanh nghiệp (vd. Microsoft Entra ID) muốn dùng cho PC văn phòng không? | Không — tài khoản do hệ thống quản lý | Có → SSO cho PC văn phòng là cải tiến tách giá; máy dùng chung vẫn PIN | IT khách |
+| Q-ARCH-11 | 支払期日 (ngày 10) rơi ngày ngân hàng nghỉ thì lùi về ngày nào: ngày **ngân hàng** mở trước, hay ngày **chợ** mở trước? | Ngày ngân hàng mở trước (`PREV_BANK_DAY`) — hạn chuyển khoản theo ngân hàng; test vector 2028-06-10 (thứ Bảy, chợ mở) → 2028-06-09 | Theo ngày chợ → đổi giá trị `PAYMENT_DUE_RULE` (tham số quy chế), không đổi bảng | 経理部 |
+| Q-ARCH-12 | 完納奨励金 xuất ở IF-ACC-01 với 税区分 nào (giảm giá bán có thuế 8% / 10%, hay ngoài thuế)? Hệ số 110/100 của BR-INC-01 giữ cố định bất kể thuế suất hàng (8%) — đúng ý khách? | 110/100 cố định theo BR-INC-01 / 13-06; 税区分 tạm theo ánh xạ 仕訳 (chờ E-01, E-06) | Khác → chỉ đổi `journal_mappings`, không đổi công thức | 経理部 (E-01, E-06) |
 
 ---
 
@@ -345,3 +351,4 @@ Các câu đã có (E-01..E-21, OPEN-L4-01..03) không lặp lại; dưới đâ
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu: module, thành phần AWS Tokyo, luồng ngày / kỳ, đường ghi, phân quyền 3 lớp, human-in-the-loop, append-only, khóa ngày / kỳ, quy chế 2 nhánh E-14, hiện trường, tích hợp, điểm mở rộng, NFR, mapping prototype → to-be, Q-ARCH-01..10 | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: một định nghĩa 業務日, job 01:00 dự phòng (M-01); hai trục thời gian, kỳ khóa chỉ đi DELTA, tính lại mọi kỳ đã khóa (C-01, C-02 — §4.2, §7.2); 支払期日 theo ngày ngân hàng + Q-ARCH-11 (M-03); N1 sửa tiền bằng 修正申請 INCENTIVE, phương án F / G (M-04); 「端末回収不能」, LATE_ENTRY (M-05); khác biệt thủ tục 許可 / 承認 (M-07); lưu chứng từ theo loại, không tự xóa, Q-ARCH-07 viết lại (M-08); Q-ARCH-08 hỏi cách thu (m-05); step-up idle (m-06); Q-ARCH-12 税区分 (m-07); mermaid §3 tách link (m-08); bảng §12 thêm N15 / N16 | 2026-11-25 | phuongnnm-23344 | |

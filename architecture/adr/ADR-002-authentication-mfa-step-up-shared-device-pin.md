@@ -3,7 +3,7 @@ id: ADR-002
 title: Xác thực thay Supabase Auth — phiên server-side, MFA step-up, PIN trên máy dùng chung
 type: adr
 status: proposed
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112, PRM-113, NFR-SEC-01, NFR-SEC-03, SEC-IAM-02, FB-CUS-228, FB-CUS-229, FB-CUS-230, FB-CUS-231]
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 | 2026-11-25 | PL đề xuất | — |
+| **Proposed** — chờ Gate 1 recheck | 2026-11-25 | PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -38,6 +38,7 @@ related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112
 
 5. **Step-up** trước các hành động ở PREMISE §3.2 (duyệt 修正申請, 日次締め, 期ロック, xác nhận giao có tranh chấp, checker / rollback quy chế, đổi tư cách người tham gia, xuất CSV kế toán / dữ liệu cá nhân / 監査ログ, mở khóa PIN người khác).
 6. **Hiệu lực: 10 phút**, gắn với bộ (người, thiết bị, phiên). Đổi người bằng PIN, timeout, hay đăng xuất → hết hiệu lực ngay. Chọn mức thấp của khoảng 10–15 phút vì máy dùng chung ở khu đông người. Giá trị nằm trong file cấu hình.
+6a. **Step-up còn hết hiệu lực khi không thao tác quá 3 phút** (file cấu hình) — timeout phiên PC (~30 phút) dài hơn hiệu lực MFA nên người đã MFA rời bàn thì người khác không bấm duyệt được trong 10 phút còn lại. **Hành động không quay lại được luôn hỏi lại mã** dù step-up còn hiệu lực: 日次締め, 期ロック, duyệt / rollback quy chế, duyệt xóa vật lý chứng từ.
 7. Tài khoản SYS-ADMIN: MFA ngay khi đăng nhập, và step-up lại sau 10 phút như trên.
 8. **Phương thức (theo thứ tự ưu tiên của người dùng, mỗi người đăng ký ít nhất một):**
 
@@ -45,7 +46,7 @@ related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112
 |---|---|---|---|
 | a | App TOTP trên điện thoại riêng | Người **tự nguyện** dùng điện thoại riêng | Không bắt buộc; công ty không cấp điện thoại |
 | b | **Token phần cứng TOTP (OATH, dạng móc khóa có màn hình số)** cấp riêng từng người | **Người không dùng điện thoại riêng** (FB-CUS-231) | Khách mua (PRM-088); gắn với đúng một tài khoản lúc cấp; người giữ token như giữ con dấu; dùng được ở cả tablet bến lẫn PC vì chỉ cần gõ 6 số — không cần cổng USB / NFC |
-| c | Email OTP tới hộp thư công ty | Dự phòng khi quên token | Chỉ dùng được ở PC văn phòng có mở được hộp thư; không dùng ở bến |
+| c | **Mã dự phòng dùng một lần** do SYS-ADMIN cấp (MFA của người quản trị, audit), hết hạn trong ngày | Dự phòng khi quên / mất token | Không dùng email OTP: hộp thư thường mở sẵn trên chính PC đó → còn một yếu tố. Không có quản trị trực → chuyển việc cho **代行者** |
 
 9. **Không mượn máy người khác:** mã chỉ có giá trị cho tài khoản sở hữu phương thức; không có "mã chung" hay mã cho nhóm. Mất token → SYS-ADMIN thu hồi ngay (MFA của người quản trị, có audit), cấp token dự phòng trong tủ khóa của phòng IT; trong lúc chờ, việc duyệt chuyển cho **代行者** (PRM-129) chứ không nới MFA.
 10. Lần đăng ký phương thức MFA đầu tiên và lần đổi phương thức: làm tại PC văn phòng, có SYS-ADMIN xác nhận, ghi audit.
@@ -54,6 +55,8 @@ related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112
 
 11. Sai PIN 5 lần → khóa 15 phút, đếm **cả theo người lẫn theo thiết bị** (sửa M22); sai mật khẩu / mã MFA nhiều lần → khóa tạm + sự kiện bảo mật gửi giám sát (NFR-SEC-03).
 12. Mở khóa / đặt lại PIN ban đêm: 運用部門長 hoặc 配送部門責任者, có MFA (PRM-111, PRM-112).
+12a. **Vòng đời token phần cứng** (runbook IT, Q-ARCH-03): nạp seed TOTP qua KMS (không lưu bản rõ, không gửi email); đồng bộ lệch giờ (cửa sổ ±1 bước, đo lệch khi xác thực); pin token ~3–5 năm trong khi hệ thống chạy 7 năm → lịch thay token theo lô và báo khách chi phí mua thay.
+12b. **ルール管理者 (maker bảng tỷ lệ) có tính là 「管理者アカウント」 của NFR-SEC-01 không** — nếu có thì MFA ngay khi đăng nhập như SYS-ADMIN. Đưa vào E-15; giả định tạm: không (maker không tự kích hoạt được version, checker có MFA).
 
 ### 2.4 Người tham gia bên ngoài
 
@@ -77,7 +80,7 @@ related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112
 - Người không có điện thoại riêng có phương thức riêng (token) — đóng FB-CUS-231.
 
 **Tiêu cực / rủi ro**
-- Khách mua và quản lý token (~12–13 cái + dự phòng); cần thủ tục cấp / thu hồi (Q-ARCH-03).
+- Khách mua và quản lý token (~12–13 cái + dự phòng); cần thủ tục cấp / thu hồi / thay pin (Q-ARCH-03, §2.3-12a).
 - Tự viết xác thực → bắt buộc test bảo mật (đã có trong phạm vi SCOPE-06).
 - Nếu E-15 trả lời "MFA mọi lần đăng nhập" → đổi luồng đăng nhập, ±0,1–0,2 MM.
 
@@ -88,7 +91,7 @@ related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112
 
 ## 5. Truy vết
 
-NFR-SEC-01, NFR-SEC-03, SEC-IAM-02, FR-IAM-01/02, PRM-088, PRM-089, PRM-111..113, PRM-126, PRM-129, E-15, L4-A07, L4-A08, PREMISE §3.2; as-built D17, D21; M02, M03, M22; FB-CUS-228..231.
+NFR-SEC-01, NFR-SEC-03, SEC-IAM-02, FR-IAM-01/02, PRM-088, PRM-089, PRM-111..113, PRM-126, PRM-129, E-15, L4-A07, L4-A08, PREMISE §3.2; as-built D17, D21; M02, M03, M22; FB-CUS-228..231; Gate 1 m-06.
 
 ---
 
@@ -97,3 +100,4 @@ NFR-SEC-01, NFR-SEC-03, SEC-IAM-02, FR-IAM-01/02, PRM-088, PRM-089, PRM-111..113
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu; chốt hiệu lực MFA 10 phút; phương thức token phần cứng cho người không dùng điện thoại riêng (FB-CUS-231) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 m-06: step-up hết khi idle > 3 phút, hành động không quay lại được luôn hỏi lại mã; bỏ email OTP, thay bằng mã dự phòng một lần do SYS-ADMIN cấp; runbook vòng đời token; ルール管理者 có MFA khi đăng nhập không → E-15 | 2026-11-25 | phuongnnm-23344 | |
