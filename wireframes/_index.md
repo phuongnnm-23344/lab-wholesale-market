@@ -15,7 +15,7 @@ Nhóm tài liệu **mới, không có trong QC-01** (chuẩn đã bỏ `screen-m
 | ID | Tên tài liệu | Feature | Version | Updated by | Updated | Link |
 |---|---|---|---|---|---|---|
 | WF-SCREEN-LIST-001 | 画面一覧・画面遷移 — 第1期 (70 màn) | Toàn hệ thống | 0.2.2 | phuongnnm-23344 | 2026-11-25 | [SCREEN-LIST.md](SCREEN-LIST.md) |
-| WF-COMMON-001 | Khung màn và trạng thái dùng chung | Toàn hệ thống | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [_common-layout.md](_common-layout.md) |
+| WF-COMMON-001 | Khung màn và trạng thái dùng chung | Toàn hệ thống | 0.2.1 | phuongnnm-23344 | 2026-11-25 | [_common-layout.md](_common-layout.md) |
 | WF-SC-03-01 | ロット本登録（受付台・PC） | Lô | 0.2.1 | phuongnnm-23344 | 2026-11-25 | [link](SC-03-01-lot-main-registration-wireframe.md) |
 | WF-SC-03-05 | 目利き・下見結果入力 | Lô | 0.2.1 | phuongnnm-23344 | 2026-11-25 | [link](SC-03-05-mekiki-inspection-result-entry-wireframe.md) |
 | WF-SC-04-01 | 相対取引入力・確定 | 相対取引 | 0.2.2 | phuongnnm-23344 | 2026-11-25 | [link](SC-04-01-aitai-trade-entry-confirm-wireframe.md) |

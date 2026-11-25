@@ -2,7 +2,7 @@
 id: WF-COMMON-001
 title: Khung màn và trạng thái dùng chung cho wireframe
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SCREEN-LIST.md, ADR-002, ADR-005, ADR-008, PREMISE §3.2, L4-A05, L4-A07]
@@ -85,7 +85,7 @@ Mọi wireframe trong thư mục này dùng chung khung và các khối trạng 
 |---|---|---|---|---|---|
 | C-20 | Đang tải | Gọi API > 300 ms | Khung xương (skeleton) trong vùng nội dung, nút chính mờ | — | NFR-PERF-01 |
 | C-21 | Rỗng | Không có dữ liệu | Khung nét đứt + câu nói rõ vì sao rỗng và việc kế tiếp (vd. 「本日の販売公開ロットはありません。ロット一覧で公開してください →」) | Liên kết sang màn liên quan | — |
-| C-22 | Lỗi nhập | Validate phía client / 400 | Chữ đỏ **ngay dưới ô sai** + viền đỏ; con trỏ về ô sai đầu tiên. Không chỉ dùng toast | Sửa ô | FB LAB-2 #4 |
+| C-22 | Lỗi nhập | Validate phía client / 422 (`E-CMN-007` hoặc mã feature — DEC-052, `specs/_common/api-conventions.md`) | Chữ đỏ **ngay dưới ô sai** + viền đỏ; con trỏ về ô sai đầu tiên. Không chỉ dùng toast | Sửa ô | FB LAB-2 #4 |
 | C-23 | Lỗi nghiệp vụ | 409 (`CONFLICT:` SL đổi, chốt trùng, quota) | Hộp lỗi trên form, nói nguyên nhân + số thật (vd. 「残数量が 12kg に変わりました」) | Nạp lại số, thử lại | ADR-004 |
 | C-24 | **Ngày đã khóa (423)** = SC-00-05 | API trả 423 `DAY_LOCKED` / kỳ đã 期ロック | Banner vàng: 「2027/08/02 は締め済みのため直接修正できません。訂正は修正申請で行います。」 + nút 「修正申請を作成 →」 (SC-08-01, mang theo mã GD). Form khóa chỉ đọc. **Nếu 423 xảy ra khi đang nhập** (ngày bị khóa giữa chừng): không xóa nội dung đã gõ; nút mang sẵn nội dung đó sang SC-08-01 (vd. SC-04-05 — khách #5) | → SC-08-01 | BR-CLOSE-01, FT-08-04, ADR-005 |
 | C-25 | Không có quyền | 403 hoặc vai không có ô ghi | Trường hiện chỉ đọc; nút ghi ẩn (không hiện nút mờ gây hiểu lầm); vào thẳng URL → trang 「この画面を表示する権限がありません」 | — | TBL-ROLE-01, L4-A06 |
@@ -104,3 +104,4 @@ Thứ tự khi bấm hành động duyệt: kiểm điều kiện (client) → C
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu: khung PC / tablet, item C-1..C-13, trạng thái C-20..C-31 (gồm 423, mất mạng, MFA 10 phút theo ADR-002) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: 承認待ち → 決裁待ち / 確認待ち ở C-11, C-27 (M-06, khách #19); C-13 chữ 「ホーム」 thay 「≡」 + C-14 ホーム tablet 4–6 nút cố định có số đếm (Q-WF-02, #32); C-5, C-30 bàn số to trên tablet (#23, #24); C-30 hết hiệu lực khi idle 3 phút, hành động không quay lại được luôn hỏi lại mã (m-06, ADR-002); C-24 giữ nội dung khi 423 giữa chừng (#5) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | Expert Gate 3 G3-m06: C-22 đổi mã lỗi 400 → 422 (`E-CMN-007` / mã feature) theo DEC-052 | 2026-11-25 | phuongnnm-23344 | |

@@ -2,28 +2,29 @@
 id: DOC-AI-REPORT-001
 title: Báo cáo cách dùng AI trong LAB-4
 type: report
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
-related: [PREMISE.md, README.md]
+related: [PREMISE.md, README.md, AI-report-evidence/README.md]
 ---
 
 # Báo cáo cách dùng AI trong LAB-4
 
 Bộ thiết kế trong repo này (PREMISE, kiến trúc, 10 ADR, 10 Database Design, 15 wireframe, 12 Screen Specification, 7 Function Specifications, 15 Technical Design, 42 API Design) do AI viết gần như toàn bộ, người làm bài điều phối, ra quyết định và duyệt. Báo cáo này ghi lại AI được dùng thế nào, review ra sao, sai ở đâu và còn yếu chỗ nào.
 
-Mọi con số dưới đây lấy từ file ghi chép của workspace làm bài (không nằm trong repo nộp, đường dẫn tính từ gốc workspace):
+Mọi con số dưới đây lấy từ ghi chép làm việc; bản sao nằm trong [`AI-report-evidence/`](AI-report-evidence/README.md) (README của thư mục ghi nguồn gốc từng file). Các file này có câu trả lời của **khách giả lập** (agent AI đóng vai khách), đã gắn nhãn `[Customer giả lập, ngày]` / `[Giả lập]`.
 
-- Báo cáo review của Expert: `project/07_feedbacks/expert-review-lab4-gate1-261125.md`, `…-gate1-recheck-261125.md`, `…-gate2-261125.md`, `…-gate2-close-and-wireframes-261125.md`.
-- Góp ý / trả lời của Customer: `project/07_feedbacks/customer-feedback-lab4-premise-261125.md`, `…-wireframes-261125.md`, `…-p3-questions-261125.md`.
-- Sổ theo dõi feedback: `project/07_feedbacks/feedback-list.md`; quyết định: `project/01_management/decision.md`; câu hỏi khách: `project/02_requirements/qa.md`.
-- Nhật ký tiến độ: `plans/lab/Lab 4/progress-lab4.md` (mục "Ghi chú cho AI-report" (1)–(17)); brief chung: `plans/lab/Lab 4/p3-shared-brief.md`, `wireframe-html-shared-brief.md`; ghi chú gộp: `p3-consolidation-notes.md`, `wireframe-html-consolidation-notes.md`.
+- Báo cáo review của Expert: [`expert-review/`](AI-report-evidence/expert-review/) — Gate 1, Gate 1 recheck, Gate 2, Gate 2 đóng + wireframe HTML, Gate 3.
+- Góp ý / trả lời của Customer (giả lập): [`customer-feedback/`](AI-report-evidence/customer-feedback/) — PREMISE, wireframe, câu hỏi P3.
+- Sổ theo dõi feedback (trích dòng LAB-4): [`logs/feedback-list-lab4-excerpt.md`](AI-report-evidence/logs/feedback-list-lab4-excerpt.md); nhật ký quyết định (trích): [`logs/decision-lab4-excerpt.md`](AI-report-evidence/logs/decision-lab4-excerpt.md).
+- Ghi chú tiến độ cho báo cáo này (1)–(18): [`logs/progress-lab4-ai-report-notes.md`](AI-report-evidence/logs/progress-lab4-ai-report-notes.md); brief chung và ghi chú gộp khi chạy song song: [`briefs/`](AI-report-evidence/briefs/).
 
 ## 1. History of change
 
 | No | Version | Action | Mục | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Bản đầu (LAB-4 P4) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Đầu bài, 3.1, 3.2 | Expert Gate 3: nguồn số liệu trỏ vào `AI-report-evidence/` trong gói nộp (G3-M02); §3.2 tách điểm người dùng quyết / PL quyết cho khớp PREMISE §5 và nhật ký quyết định, thêm L4-D08 (G3-M01); §3.1 thêm dòng Gate 3 | 2026-11-25 | phuongnnm-23344 | |
 
 ## 2. Cách tổ chức AI và viết prompt
 
@@ -45,7 +46,7 @@ Mỗi lượt PL bắt đầu bằng việc đọc `CLAUDE.md` (7 luật bất d
 
 - **Phạm vi + tiêu chí rõ, kết quả có định dạng cố định.** Prompt cho PL luôn có: việc gì, file nào được sửa, file nào chỉ đọc, tiêu chí xong, và báo cáo cuối theo khuôn (file đã đổi · dòng cần thêm vào index · mã lỗi mới · câu hỏi mới · mâu thuẫn phát hiện · `Status`). Prompt cho Expert do người dùng chỉ định phạm vi và tiêu chí ở từng gate (mục tiêu học tập LAB-4 + RFP + 7 luật + spec-standards).
 - **Brief chung trước khi chạy song song.** P3 (spec) và wireframe HTML chia cho 3 luồng AI chạy cùng lúc. Mỗi lần có một file brief chung (`p3-shared-brief.md`, `wireframe-html-shared-brief.md`): bối cảnh, chuẩn tài liệu, nội dung bắt buộc, ngôn ngữ, **quyền sở hữu file** (luồng nào sửa file nào, file chung chỉ PL gộp), cấm commit. Prompt từng luồng chỉ thêm phạm vi màn của luồng đó.
-- **Quyết định dùng chung viết trước khi sửa.** Sửa Gate 1 có một brief quyết định D1–D13 (định nghĩa 業務日, cách tính lại kỳ đã khóa, checklist 日次締め…) làm nguồn duy nhất cho 5 nơi phải đồng bộ (PREMISE, ADR, DB, wireframe, test vector) — `progress-lab4.md` ghi chú (4).
+- **Quyết định dùng chung viết trước khi sửa.** Sửa Gate 1 có một brief quyết định D1–D13 (định nghĩa 業務日, cách tính lại kỳ đã khóa, checklist 日次締め…) làm nguồn duy nhất cho 5 nơi phải đồng bộ (PREMISE, ADR, DB, wireframe, test vector) — ghi chú (4) trong `AI-report-evidence/logs/progress-lab4-ai-report-notes.md`.
 - **Không để AI đoán chỗ chưa chốt.** Điều khách chưa trả lời thì ghi thành câu hỏi + tiền đề tạm + ảnh hưởng nếu sai (luật 7) vào `qa.md`; Customer giả lập trả lời thì dùng làm giả định có nhãn nguồn, không viết như đã chốt.
 
 ### 2.3 Skill và công cụ đã dùng
@@ -72,19 +73,24 @@ Mỗi lượt PL bắt đầu bằng việc đọc `CLAUDE.md` (7 luật bất d
 | Gate 1 kiểm diff | Chỉ phần diff vừa sửa | **RELEASE** (cho sang P3) | 5 Minor mới (D-01..D-05) | Sửa trong P3 |
 | Gate 2 | 12 Screen Spec, 7 FUNC, 15 TECH, 42 API, `_common/` | RELEASE CÓ ĐIỀU KIỆN | 0 Critical · 4 Major · 9 Minor | Sửa hết + áp 31 câu trả lời của khách (FB-EXP-275..287, FB-CUS-297..309) |
 | Gate 2 đóng + wireframe HTML | Diff sửa Gate 2; 15 wireframe HTML, PDF, ảnh spec | Phần 1 **RELEASE**; Phần 2 RELEASE CÓ ĐIỀU KIỆN | 1 + 7 Minor | Sửa 7, để 1 cho LAB-5 (FB-EXP-288..295) |
+| Gate 3 | Toàn bộ bộ nộp: README §4, PREMISE, AI-report, toàn bộ thiết kế (kiểm bằng máy: khuôn so byte với chuẩn, version index ↔ file, link, chuỗi chép nguyên văn RFP) | RELEASE CÓ ĐIỀU KIỆN | 0 Critical · 3 Major · 10 Minor | Sửa 2 Major (dòng quyết định phạm vi, bằng chứng vào gói) + 9 Minor; G3-m07 (trạng thái ADR) chờ người dùng; G3-M03 (mật khẩu demo của prototype) phải xong trước khi public repo ở LAB-5 (FB-EXP-296..308) |
 
 Expert không chỉ đọc: Gate 2 đóng có kiểm bằng máy (quét badge của cả 15 HTML so với cột ID của 12 SPEC, chạy lại bộ kiểm API, tính lại số thuế 8% và số ngày 失効まで). Gate 1 recheck tính lại cả 11 test vector 完納奨励金.
 
 ### 3.2 Người tham gia ở đâu
 
-Người làm bài không review từng dòng. Tôi giữ quyền quyết ở những điểm đổi phạm vi, đổi cấu trúc hoặc chọn hướng:
+Người làm bài không review từng dòng. Tôi giữ quyền quyết ở những điểm đổi phạm vi, đổi cấu trúc hoặc chọn hướng; phần còn lại PL (AI) tự quyết và ghi lại để Expert soát. Cột "Người quyết" ở PREMISE §5 và nhật ký quyết định ghi đúng ai quyết điểm nào.
+
+**Người dùng quyết:**
 
 - **Đầu LAB-4** (plan §0): ngôn ngữ (bản gốc tiếng Việt), số màn (10 màn spec đầy đủ, vì đề chỉ yêu cầu "màn hình cốt lõi"), chuẩn tài liệu duy nhất (`spec-standards/03-specs`), nơi nộp, tiêu chí cho Expert.
 - **Tiền đề:** L4-D01 kiến trúc to-be trên AWS Tokyo, prototype chỉ là bản thử; L4-D02 danh sách 10 màn, SC-01-02 tách khối 許可 / 承認.
-- **Sau Gate 1:** tách Database Design theo cụm (M-09, L4-D04 / DEC-046); nhãn duyệt nội bộ không dùng chữ 承認 (L4-D03 / DEC-047); thêm wireframe SC-03-02 theo góp ý khách #22 (L4-D05); để mở E-14 tới workshop, thiết kế vẽ hai nhánh (L4-D06).
-- **Sau Gate 2:** Screen Specification 12 màn (L4-D07 / DEC-056) và **không mở rộng thêm** tới 70 màn.
+- **Sau Gate 1:** tách Database Design thành 9 file theo cụm + file tổng (M-09, L4-D04 / DEC-046); nhãn duyệt nội bộ không dùng chữ 承認 (L4-D03 / DEC-047 — người dùng giao việc sửa M-06); thêm wireframe SC-03-02 theo góp ý khách #22 (L4-D05 / DEC-049); để mở E-14 tới workshop, thiết kế vẽ hai nhánh (L4-D06 / DEC-050).
+- **Sau Gate 2:** **không mở rộng** Screen Specification tới 70 màn / 99 chức năng — phần còn lại để LAB-5 xử lý qua DEP-01..17 (L4-D08 / DEC-058).
 - **Wireframe:** đưa mẫu PDF phong cách, duyệt pilot SC-04-01 trước khi cho làm 14 màn còn lại, quyết ảnh spec chỉ lấy biến thể A.
-- **Commit / push:** cho commit local trên `ver/lab-4`; push và merge `main` phải hỏi riêng.
+- **Commit / push / bản dịch:** cho commit local trên `ver/lab-4`, push và merge `main` phải hỏi riêng; bản tiếng Nhật làm đầy đủ, đặt trong `ja/`.
+
+**PL quyết** (theo finding của Expert, không đổi phạm vi đã chốt): Screen Specification 12 màn = 10 màn đại diện + SC-06-04, SC-06-05 vì xác nhận giao có tranh chấp là điểm người quyết cuối (L4-D07 / DEC-056, theo Expert G2-m05); gia hạn 許可 giữ thủ tục LAB-1 (DEC-051); hợp đồng API chung, mã lỗi chung, kiểu ID tài liệu khi gộp P3 (DEC-052..054).
 
 **Customer là giả lập.** 3 lượt góp ý / trả lời (22 điểm về PREMISE, 32 góp ý + 5 câu trả lời về wireframe, 31 câu hỏi P3: đồng ý 20 · điều chỉnh 5 · không đồng ý 3 · không phải câu của khách 3) đều do một agent AI đóng vai khách. Câu trả lời của nó được ghi nhãn `[Customer giả lập, ngày]` và chỉ dùng làm giả định có căn cứ; những câu cần 経理部 / 経営陣 thật vẫn để mở trong `qa.md`.
 
@@ -111,12 +117,12 @@ Người làm bài không review từng dòng. Tôi giữ quyền quyết ở nh
 
 ### 4.1 Chỗ tôi tin là làm hiệu quả
 
-- **Tách người viết / người chấm / người dùng.** Ba vai riêng làm lỗi lộ sớm: 2 Critical ở Gate 1 là lỗi PL đã tự kiểm mà không thấy. Gate 1 có 23 finding, Gate 2 còn 13, đợt cuối 8 Minor và không còn Critical / Major.
+- **Tách người viết / người chấm / người dùng.** Ba vai riêng làm lỗi lộ sớm: 2 Critical ở Gate 1 là lỗi PL đã tự kiểm mà không thấy. Gate 1 có 23 finding, Gate 2 còn 13, Gate 2 đóng còn 8 Minor; Gate 3 (cả gói nộp) 0 Critical, 3 Major đều nằm ở tài liệu nộp kèm và bảo mật repo, không ở nội dung thiết kế.
 - **Brief chung + chia quyền sở hữu file khi chạy song song.** Từ sửa Gate 1 trở đi không còn xung đột ghi giữa các luồng; mâu thuẫn còn lại đều do *thiếu quy ước*, không phải do ghi đè nhau.
 - **Kiểm bằng cách mô tả lại độc lập** (parity check) thay vì để người viết tự xác nhận — bắt được trôi lệch mà đọc lại không thấy.
 - **Một nguồn → nhiều đầu ra bằng một lệnh**: wireframe HTML sinh PDF + PNG + ảnh spec; Mermaid sinh PNG. Đổi wireframe không phải vẽ lại ảnh tay, số trên ảnh luôn khớp cột ID.
 - **Mọi điểm chưa chốt thành câu hỏi có ảnh hưởng estimate** (luật 7), mọi câu trả lời giả lập có nhãn nguồn — người đọc biết chỗ nào là quyết định, chỗ nào là giả định.
-- **Sổ feedback + nhật ký tiến độ** giữ mạch qua nhiều phiên; con số trong báo cáo này truy được về file.
+- **Sổ feedback + nhật ký tiến độ** giữ mạch qua nhiều phiên; con số trong báo cáo này truy được về file trong `AI-report-evidence/`.
 
 ### 4.2 Chỗ chưa tốt, khi làm thật phải cải thiện
 

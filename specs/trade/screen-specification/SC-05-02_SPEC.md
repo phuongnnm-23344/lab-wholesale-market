@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-05-02
 feature: trade
 feature_id: TRD
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-TRD-005, API-TRD-006, API-TRD-007, SPEC-TRADE_DB-001]
@@ -24,6 +24,7 @@ related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFI
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-05-02 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-TRD-05: hai nút 5.1 「差し戻し（番号誤り）」 / 5.2 「取消（資格なし・不成立）」; Q-TRD-02 | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-05-02.html` (WF 0.2.3); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.1.3 | Update | Expert Gate 3 G3-m05: thêm §6.1 Trạng thái màn (tổng hợp từ §5 Event), ghi chú cũ thành §6.2 | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -137,6 +138,26 @@ related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFI
 ---
 
 ## 6. Other Notes
+
+### 6.1 Trạng thái màn
+
+Tổng hợp từ §5 Event; mã `C-xx` định nghĩa ở `wireframes/_common-layout.md`. Phân quyền theo vai ở §4.4.
+
+| Trạng thái | Hiển thị / hành vi |
+|---|---|
+| Phiên đang xác nhận | Chọn sẵn dòng `confirmable = true`; dòng `false` ở [5]; `viewerIsEntrant` → [7] + nhãn vàng [1] |
+| Phiên đã 確定 | Chỉ đọc; [1] 「確定済（{tên} {HH:MM}）」; [9][10] ẩn |
+| Không có dòng chờ | C-21 「確認待ちの結果はありません」 + liên kết SC-05-01 |
+| Dòng 取消予定 | Nhãn 「取消予定」 (5.2), liệt kê ở C-31 |
+| Chờ xác nhận | C-31 tổng số dòng + tiền |
+| Lưu xong | C-12 toast; `CONFIRMED` → chỉ đọc; còn dòng 差し戻し → ở lại |
+| Lỗi nhập (422 `E-TRD-007`, `008`, `014`) | Viền đỏ dòng trong `detail.tradeNos` / C-22 dưới [7] |
+| Xung đột (409 `E-TRD-013`, `018`; 422 `E-TRD-015`, `016`) | C-23 + nạp lại; không dòng nào được ghi |
+| Ngày đã khóa (423 `E-CMN-003`) | C-24 → SC-08-01 (`LATE_ENTRY`) |
+| Không có quyền / lỗi server | C-25 / C-26 |
+| Offline | C-28; [9][10] khóa, lựa chọn + lý do giữ nguyên |
+
+### 6.2 Ghi chú khác
 
 - **Truy vết:** FR-SERI-01, FR-SERI-02, FT-05-02, FT-01-05, FORM-SERI-01, BR-PERM-01, BR-LOT-02, CAP-HUMAN-01, PRM-046, PRM-115, ACT-03, L4-A04 (1), L4-A05, M19, M20, S2, ADR-003, FIG-012; luật 1, 2, 3, 4; khách #9 (FB-CUS-268).
 - **Dòng không xác nhận được (Q-TRD-05 [Customer giả lập, 2026-11-25]):** 確認者 chọn — 5.1 差し戻し khi nghi gõ nhầm số (入力者 sửa đúng số người thắng theo せり原票, lịch sử giữ số cũ / mới / người sửa, BR-PERM-01 kiểm lại lúc xác nhận lượt sau) hoặc 5.2 取消 khi số đúng mà người đó không có tư cách (`CANCELLED`, `CANCEL`, lý do 「資格なし・不成立（{nguyên nhân}）」, người hủy = 確認者, **không** trừ SL, lô vẫn / trở lại 販売公開中 — khách #9). Không nút đổi người mua, không đôn người trả giá thứ 2 (luật 3). Bản ghi giữ, không xóa (luật 4). `5.x` là item con của [5] (cùng vùng ảnh annotated, không đánh số lại).

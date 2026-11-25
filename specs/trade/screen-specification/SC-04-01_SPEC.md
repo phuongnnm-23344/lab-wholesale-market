@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-04-01
 feature: trade
 feature_id: TRD
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-LOT-003, API-TRD-001, API-TRD-002, API-TRD-003, API-TRD-004, SPEC-TRADE_DB-001]
@@ -24,6 +24,7 @@ related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONF
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-04-01 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-TRD-02: hiện 使用額 税込 / 税抜; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-04-01.html` (WF 0.2.2); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.1.3 | Update | Expert Gate 3 G3-m05: thêm §6.1 Trạng thái màn (tổng hợp từ §5 Event), ghi chú cũ thành §6.2 | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -143,6 +144,28 @@ Client kiểm ngay ở ô; server (API-TRD-002) kiểm lại **tất cả** lúc
 ---
 
 ## 6. Other Notes
+
+### 6.1 Trạng thái màn
+
+Tổng hợp từ §5 Event; mã `C-xx` định nghĩa ở `wireframes/_common-layout.md`. Phân quyền theo vai ở §4.4.
+
+| Trạng thái | Hiển thị / hành vi |
+|---|---|
+| Mới mở | Con trỏ ở [1]; [10] nạp từ API-TRD-003 |
+| Không có lô 販売公開中 | C-21 「販売公開中のロットがありません」 + liên kết SC-03-03 |
+| Tư cách người mua | [4] hiện đúng chữ 許可 / 承認; đỏ khi không hợp lệ (server vẫn quyết) |
+| Nghi trùng trong 3 phút | Dialog [15] |
+| Vượt 参加上限 | Dialog [13] (+ [14]) chọn lý do; không chặn cứng |
+| Đang gửi | [8] mờ, không bấm đúp được |
+| Lưu xong | C-12 toast; in thẳng; giữ [1], xóa [3]–[7] |
+| In thất bại | [12]; GD vẫn 確定 |
+| Lỗi nhập (422 `E-TRD-003`..`006`, `E-TRD-008`) | C-22 dưới ô liên quan |
+| Xung đột / trước giờ chốt (409 `E-TRD-001`, `002`, `012`) | C-23; [2] cập nhật 残 |
+| Ngày đã khóa (423 `E-CMN-003`) | C-24, giữ nội dung |
+| Không có quyền / lỗi server / timeout | C-25 / C-26, giữ nội dung; timeout không tự gửi lại |
+| Offline | C-28: form khóa, 「紙伝票で継続してください」; có mạng lại → C-29 kèm kết quả lần bấm cuối |
+
+### 6.2 Ghi chú khác
 
 - **Truy vết:** FR-AITAI-01, FR-AITAI-02, FT-04-01..04, FT-01-05, FT-01-09, FT-03-04, BR-PERM-01, BR-LOT-02, NFR-USE-01, PRM-046, PRM-053, PRM-114, PRM-116, FIG-012, DEC-033, ADR-003, ADR-004, ADR-008, L4-A04 (1), L4-A05; luật 1, 2, 3, 4; FB LAB-2 #1, #3, #5, #6, #7; khách #10 (FB-CUS-269), #11 (FB-CUS-270); bảng lệch D08 / M19 (hạn mức theo kỳ), D10 (FIG-012).
 - **Không chặn cứng 参加上限:** người chốt tự quyết lúc cao điểm, lý do ghi ở `trades.over_limit_reason_code` / `over_limit_note`; 照合 soát ở 要確認 SC-07-01.

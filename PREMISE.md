@@ -2,10 +2,10 @@
 id: DOC-PREMISE-001
 title: Tiền đề thiết kế LAB-4 (PREMISE)
 type: premise
-version: "0.6.2"
+version: "0.6.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
-related: [DEC-002, DEC-004, DEC-005, DEC-008, DEC-028, DEC-029, DEC-031, DEC-032, DEC-033, PRM-042, PRM-046, PRM-110, PRM-126, PRM-127]
+related: [DEC-002, DEC-004, DEC-005, DEC-008, DEC-028, DEC-029, DEC-031, DEC-032, DEC-033, DEC-046, DEC-047, DEC-048, DEC-049, DEC-050, DEC-051, DEC-056, DEC-058, PRM-042, PRM-046, PRM-110, PRM-126, PRM-127]
 ---
 
 # Tiền đề thiết kế LAB-4 (PREMISE)
@@ -23,7 +23,7 @@ Tài liệu này ghi những quyết định đặt thêm sau LAB-1 (estimate + 
 | `SC-xx-yy` / `FT-xx-yy` | ID màn hình / chức năng của 画面一覧 và 機能詳細一覧 LAB-1 |
 | `M01`–`M24` | Phần prototype LAB-2 làm giả hoặc giản lược (danh sách mock bản 1.2) |
 | `L4-Axx` | Giả định mới đặt ở LAB-4 (mục 3) |
-| `L4-Dxx` | Quyết định người dùng chốt ở LAB-4 (mục 5) |
+| `L4-Dxx` | Quyết định đã chốt ở LAB-4 (mục 5; cột "Người quyết" ghi người dùng hay PL) |
 | **[Giả lập]** | Tiền đề dựa trên câu trả lời của khách hàng giả lập (agent đóng vai khách) — là giả định có căn cứ, **không phải** khách thật đã xác nhận. Khách thật chỉ có RFP |
 | Độ chắc | `RFP` = RFP đã quy định · `KH-GL` = khách giả lập **[Giả lập]** · `PL` = Sun* tự đặt, chưa ai xác nhận |
 
@@ -178,6 +178,7 @@ Bảy luật của dự án được giữ ở mọi nơi thiết kế: 相対�
 | L4-D05 | 2026-11-25 | **Bổ sung L4-D02: wireframe 10 + 5 màn** — thêm wireframe **SC-03-02 仮受付** (tablet bến; chỉ wireframe, không Screen Specification đầy đủ), làm ở P3 [Customer giả lập, 2026-11-25 — #22] | Không thêm (giữ 10 + 4) | Người dùng | FB-CUS-281; PERSONA-DOCK-01, NFR-USE-01 |
 | L4-D06 | 2026-11-25 | **E-14 để mở tới workshop**: Technical Design vẽ hai nhánh N1 / N2; phương án F (rollback hồi tố về đầu kỳ chưa khóa) và G (tách gói) **chỉ là tư liệu** trong ADR-006 §3 kèm ghi chú ảnh hưởng effort — không thiết kế chi tiết; LAB-5 tách issue làm rõ riêng | Chọn trước F hoặc G | Người dùng | OPEN-L4-01, ADR-006, DEC-048 |
 | L4-D07 | 2026-11-25 | **Mở rộng L4-D02: Screen Specification đầy đủ cho 12 màn** = 10 màn đại diện + **SC-06-04 引渡し例外登録, SC-06-05 争いのある引渡し完了確認** (ngoài 10 màn). Lý do: luật 3 — xác nhận giao **có tranh chấp** là một điểm người quyết cuối (CAP-HUMAN-01, PRM-111), và hai màn dùng chung Function / Technical Design của delivery (DELIVERY_FUNC, DEL_EXCEPTION_DISPUTE_TECH) nên tách ra không bớt được việc. Các câu "10 màn cốt lõi" giữ nghĩa *màn đại diện*; số Screen Specification thực tế là 12. Không đổi giá (nằm trong buffer DEC-048) | Giữ đúng 10 màn, SC-06-04 / 05 chỉ ở mức wireframe | PL (giao việc sửa Gate 2 G2-m05) | Expert Gate 2 G2-m05; luật 3; CAP-HUMAN-01, PRM-111, FR-DEL-01..05 |
+| L4-D08 | 2026-11-25 | **Không mở rộng Screen Specification tới 70 màn / 99 chức năng.** Screen Specification dừng ở 12 màn (L4-D02 + L4-D07); 58 màn còn lại chỉ ở mức dòng trong 画面一覧 (`wireframes/SCREEN-LIST.md`); phần 12 màn gọi tới mà chưa đặc tả ghi thành DEP-01..17 ở `specs/_index.md`. LAB-5 xử lý phần này qua cột "Phần spec chưa thành issue" khi tách issue | Mở rộng Screen Specification tới cả cụm hoặc đủ 70 màn | Người dùng | Đề LAB-4 chỉ yêu cầu "các màn hình cốt lõi"; giới hạn thời gian; DEC-058 |
 
 Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 2026-11-25 (đồng ý 5, đồng ý có điều chỉnh 4, trong đó một điểm con không đồng ý ở L4-A04 (3)); góp ý đã áp ở bản 0.3.0 — xem §3, §3.1, §3.2, §6 **[Giả lập]**.
 
@@ -203,3 +204,4 @@ Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 20
 | 6 | 0.6.0 | Update | Sửa theo Expert Gate 1 recheck: nguồn MFA cấp mới / gia hạn ở §3.2 (N-03); nhãn [PL 0.5.0] cho phần PL thêm ở L4-A04 (2), L4-A09 (n-08); thêm L4-D05 (wireframe SC-03-02 ở P3), L4-D06 (E-14 để mở, F / G là tư liệu) theo quyết định người dùng | 2026-11-25 | phuongnnm-23344 | |
 | 7 | 0.6.1 | Update | Gộp P3: §3.2 thêm 確認 đổi 参加上限 (`LIMIT_CHANGE`) vào danh sách hỏi MFA — khớp PARTY_DB 4.15 (`mfa_verified_at` bắt buộc khi có `decided_by`) và spec PTY_APPROVAL_LIFECYCLE; chọn theo DB vì chặt hơn và 参加上限 là thông số tiền. Q-PTY-07 giữ để khách xác nhận | 2026-11-25 | phuongnnm-23344 | |
 | 8 | 0.6.2 | Update | Gate 2 + khách P3: §3.2 dòng 参加上限 theo Q-PTY-06 / Q-PTY-07 (chỉ 照合部門長, một bước, MFA); §3.1 thêm tham số `PARTICIPATION_LIMIT_TAX_CODE` (Q-TRD-02); thêm L4-D07 (Screen Specification 12 màn = 10 đại diện + SC-06-04, SC-06-05 — G2-m05); §3.2 giữ nguyên ★ cho checker quy chế / hủy version đã duyệt (G2-M01 sửa spec theo PREMISE, không đổi PREMISE) | 2026-11-25 | phuongnnm-23344 | |
+| 9 | 0.6.3 | Update | Expert Gate 3 G3-M01, G3-m10: thêm L4-D08 (không mở rộng Screen Specification tới 70 màn — người dùng quyết, DEC-058); §0 ghi L4-D gồm cả quyết định của PL (L4-D07); frontmatter `related` thêm DEC-046..051, DEC-056, DEC-058 | 2026-11-25 | phuongnnm-23344 | |

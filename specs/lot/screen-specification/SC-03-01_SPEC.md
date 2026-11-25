@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-03-01
 feature: lot
 feature_id: LOT
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-03-01, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001, API-LOT-001, API-LOT-002, API-LOT-003, API-LOT-005, API-LOT-006, SPEC-LOT_DB-001]
@@ -24,6 +24,7 @@ related: [WF-SC-03-01, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001, 
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-03-01 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-LOT-01: tìm theo 仮番号, lô 取消 giữ số; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-03-01.html` (WF 0.2.1); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.1.3 | Update | Expert Gate 3 G3-m05: thêm §6.1 Trạng thái màn (tổng hợp từ §5 Event), ghi chú cũ thành §6.2 | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -141,6 +142,27 @@ Kiểm ở client (ngay khi rời ô / bấm [9]) **và** ở server (API-LOT-00
 ---
 
 ## 6. Other Notes
+
+### 6.1 Trạng thái màn
+
+Tổng hợp từ §5 Event; mã `C-xx` định nghĩa ở `wireframes/_common-layout.md`. Phân quyền theo vai ở §4.4.
+
+| Trạng thái | Hiển thị / hành vi |
+|---|---|
+| Đang tải | C-20 khi API mở màn > 300 ms |
+| Không có 仮受付 | [1] C-21 「仮受付待ちはありません」; dòng 「新規ロット」 vẫn chọn được |
+| Có bản ghi chưa đồng bộ | [12] hiện số N (`unsyncedCount` > 0) → SC-03-07 |
+| Lỗi nhập | C-22 dưới ô sai đầu tiên, không gọi API (mã lỗi ở §4.2) |
+| Đang gửi | [9] mờ khi chờ API-LOT-002 |
+| Lưu xong | C-12 toast; xóa [4]–[8], nạp lại [1], [11] |
+| Nghi trùng (409 `E-LOT-007`) | Dialog [13]; không chặn — [登録する] gửi lại `confirmDuplicate=true` |
+| Xung đột (409 `E-LOT-006`) | C-23; nạp lại [1] |
+| Ngày đã khóa (423 `E-CMN-003`) | C-24: form chỉ đọc, giữ nội dung; nút 「修正申請を作成 →」 sang SC-08-01 `LATE_ENTRY` |
+| Không có quyền (403) | C-25 |
+| Lỗi server / timeout 10 s | C-26; giữ nội dung, bấm lại được |
+| Offline | C-28, [9] khóa, giữ nội dung (PC này không lưu offline — L4-A05); có mạng lại → C-29 |
+
+### 6.2 Ghi chú khác
 
 - **Truy vết:** FR-LOT-01, FORM-LOT-01, BR-LOT-02, FT-03-01, FT-03-06, FT-10-06, PRM-116, E-16, E-21, DEC-033, ADR-005, ADR-008; khách #27 (FB-CUS-286), #28 (FB-CUS-287 để sau); Gate 1 M-01 (業務日 từ giờ nhận lô), m-11 (số lẻ theo đơn vị); bảng lệch D15 (mã 出荷者 thay text).
 - **Sổ SL:** 本登録 ghi một dòng `RECEIVE` = SL xác nhận vào `lot_quantity_ledger`; 仮受付 **không** ghi sổ (lô chưa bán được). Chi tiết: [LOT_REGISTER_TECH](../technical-design/LOT_REGISTER_TECH.md) §5 (chú thích enum `ATTR_FIX` đã sửa ở MKT_DB 0.3.2).

@@ -24,7 +24,7 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 | [`AI-report.md`](AI-report.md) | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa, tự đánh giá | Frontmatter + History theo quy ước chuẩn | **Mới** (yêu cầu đề) | PL | — |
 | [`prototype/`](prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](prototype/README.md) |
 
-Nhóm thư mục mức repo khác (`.github/`, `docs/`, `webhook/`, các script `*.sh` trong `scripts/`) là phần của template quản lý dự án Sun*; script của bộ thiết kế LAB-4 ở mục 5 — xem từ mục "GitHub Project Management Template" trở xuống.
+Nhóm thư mục mức repo khác (`.github/`, `webhook/`, các script `*.sh` trong `scripts/`) là phần của template quản lý dự án Sun*; script của bộ thiết kế LAB-4 ở mục 5 — xem từ mục "GitHub Project Management Template" trở xuống. Template gốc còn có `docs/` (đặc tả chuyển trạng thái) và `scripts/bootstrap-project.sh`; bản copy trong repo này **không kèm** hai thứ đó, nên các chỗ nhắc tới chúng ở phần README template bên dưới không mở được (giữ nguyên chữ của template).
 
 ## 2. Quy ước của dự án theo QC-01
 
@@ -41,15 +41,15 @@ Nhóm thư mục mức repo khác (`.github/`, `docs/`, `webhook/`, các script 
 |---|---|---|---|
 | 1 | §1: spec nằm trong Management Repository riêng, **không** để trong repo code | Spec đặt chung repo với `prototype/` | Bài lab: một repo để reviewer xem prototype và thiết kế cạnh nhau, đối chiếu thiết kế với bảng dữ liệu thật của LAB-2. Dự án thật sẽ tách hai repo, trỏ nhau qua README |
 | 2 | §2: chỉ có `requirements/`, `specs/` là nhóm chuẩn | Thêm `architecture/`, `wireframes/` và hai file `PREMISE.md`, `AI-report.md` ở gốc | §1 cho phép thêm nhóm cùng cấp nếu có dòng trong README; đề LAB-4 yêu cầu các nhóm này |
-| 3 | §2: viết trên nhánh `ver/{tên}` mở từ `main`, merge lên `main` khi release | Nhánh `ver/lab-4` mở từ `main` (bản LAB-2 `0a99d10`), merge lên `main` lúc nộp LAB-4 | Đúng quy tắc; "release" ở đây là lúc nộp bài |
+| 3 | §2: viết trên nhánh `ver/{tên}` mở từ `main`, merge lên `main` khi release | Nhánh `ver/lab-4` mở từ `main` (bản LAB-2 `0a99d10`), merge lên `main` lúc nộp LAB-4 | Đúng quy tắc về nhánh; "release" ở đây là lúc nộp bài. **Lệch một điểm:** QC-01 chỉ cho `ver/{tên}` nhận thay đổi từ `feature/spec-{slug}` / `cr/{slug}` **qua PR**; bài lab một người làm nên commit thẳng lên `ver/lab-4`, không mở `feature/spec-*` + PR — dự án thật làm theo QC-01 |
 | 4 | §4: Screen ID dạng `{tiền tố}_{TÊN}` | Giữ `SC-xx-yy` | Truy vết LAB-1 → LAB-2 → LAB-4 → task LAB-5 bằng một ID |
 | 5 | §2: tên bản mẫu `sample-AUTH_DB.md`, `sample-AUTH_FUNC.md`, `sample-AUTH_LOGIN_TECH.md` | Giữ tên thật trong `spec-standards/03-specs/02-samples/` (`sample-AUTH_DATABASE.md`, `sample-AUTH_FUNCTIONS.md`, `sample-AUTH_LOGIN_DETAIL.md`) | Ràng buộc 5: không sửa khuôn/bản mẫu tại chỗ. Cây ở QC-01 §2 và bộ bản mẫu thật đang lệch nhau ở repo chuẩn |
-| 8 | BM-2-901-50 §4: Index và Khoá ngoại viết dạng bảng | Database Design viết Index / Khoá ngoại theo **một dòng** (mặc định) hoặc **dạng bảng như khuôn** — hai cách chứa cùng thông tin (tên index, cột, unique, điều kiện partial; FK, `ON DELETE`), cách viết ở một bảng **không mang nghĩa**. Danh sách bảng đang viết dạng bảng và cú pháp một dòng: `MKT_DB.md` §4.0 | 60 bảng, phần lớn chỉ có PK + 1–3 FK — bảng nhiều dòng làm file dài mà không thêm thông tin; các bảng viết trước khi có quy ước giữ nguyên dạng bảng, không chuyển (Gate 1 recheck n-07, D-03) |
 | 6 | Bản mẫu chỉ có một cho mỗi loại | Screen Specification dùng `sample-LOGIN_SPEC.md` (bản mẫu của `BM-2-901-51`); không copy `BM-01-spec-template.md` và `sample-AD_LOGIN_SPEC.md` | Dự án dùng khuôn ISO `BM-2-901-51`; BM-01 là khuôn thứ hai cho cùng việc, chuẩn chưa chốt bỏ cái nào |
-| 7 | §4, §5 ràng buộc 1: Database Design `{DB_ID}_DB.md` — **một file một nhóm bảng** | Database Design chia 9 file theo cụm (`IAM_AUDIT_DB.md`, `PARTY_DB.md`, `RULE_DB.md`, `CLOSE_DB.md`, `LOT_DB.md`, `TRADE_DB.md`, `ADJUST_DB.md`, `BILLING_DB.md`, `INCENTIVE_DB.md`) — đúng quy định; **thêm một file tổng `MKT_DB.md`** không phải một nhóm bảng: nguyên tắc chung, quy ước + enum dùng chung, ERD tổng quan, view công bố, bảng lệch to-be ↔ prototype, kết quả parity, điểm mở. Tất cả đặt ở gốc `database-design/` vì bảng của mỗi cụm được nhiều feature dùng (ràng buộc 3) | Quy ước và enum dùng chung cho cả 58 bảng — chép vào 9 file là trái DRY và dễ lệch; bảng lệch / parity là yêu cầu của đề LAB-4 cho cả schema, không thuộc cụm nào. Người dùng chốt tách file (PREMISE L4-D04) |
+| 7 | §4, §5 ràng buộc 1: Database Design `{DB_ID}_DB.md` — **một file một nhóm bảng** | Database Design chia 9 file theo cụm (`IAM_AUDIT_DB.md`, `PARTY_DB.md`, `RULE_DB.md`, `CLOSE_DB.md`, `LOT_DB.md`, `TRADE_DB.md`, `ADJUST_DB.md`, `BILLING_DB.md`, `INCENTIVE_DB.md`) — đúng quy định; **thêm một file tổng `MKT_DB.md`** không phải một nhóm bảng: nguyên tắc chung, quy ước + enum dùng chung, ERD tổng quan, view công bố, bảng lệch to-be ↔ prototype, kết quả parity, điểm mở. Tất cả đặt ở gốc `database-design/` vì bảng của mỗi cụm được nhiều feature dùng (ràng buộc 3) | Quy ước và enum dùng chung cho cả 60 bảng — chép vào 9 file là trái DRY và dễ lệch; bảng lệch / parity là yêu cầu của đề LAB-4 cho cả schema, không thuộc cụm nào. Người dùng chốt tách file (PREMISE L4-D04) |
+| 8 | BM-2-901-50 §4: Index và Khoá ngoại viết dạng bảng | Database Design viết Index / Khoá ngoại theo **một dòng** (mặc định) hoặc **dạng bảng như khuôn** — hai cách chứa cùng thông tin (tên index, cột, unique, điều kiện partial; FK, `ON DELETE`), cách viết ở một bảng **không mang nghĩa**. Danh sách bảng đang viết dạng bảng và cú pháp một dòng: `MKT_DB.md` §4.0 | 60 bảng, phần lớn chỉ có PK + 1–3 FK — bảng nhiều dòng làm file dài mà không thêm thông tin; các bảng viết trước khi có quy ước giữ nguyên dạng bảng, không chuyển (Gate 1 recheck n-07, D-03) |
 | 9 | BM-2-901-51 §4.1: cột `ID` theo section chữ (`A`, `B`…) và item `1.0`, tham chiếu dạng `A-2` | Cột `ID` / `No` = **số item của wireframe to-be** (`[1]`, `[2]`…); chữ `A/B/C` chỉ là nhóm hiển thị; khung chung dùng `C-xx` của `wireframes/_common-layout.md` | Truy vết một số duy nhất từ wireframe (Gate 1, khách đã góp ý theo số) → Screen Specification → ảnh annotated → issue LAB-5; đánh số lại theo khuôn sẽ làm gãy mọi tham chiếu `[n]` trong feedback và ADR |
-| 10 | BM-2-901-51: không có mục phân quyền theo vai; §6 chỉ là ghi chú chung | Thêm **§4.4 Phân quyền theo vai** (bảng vai × item: hiện / ẩn / chỉ đọc / thao tác) và các mục §6.x (trạng thái, offline, câu hỏi mở) | Đề LAB-4 bắt buộc "phân quyền hiển thị theo vai" và trạng thái (rỗng, lỗi, 423, chờ duyệt, offline) cho mỗi màn; giữ nguyên các mục của khuôn, chỉ thêm mục |
-| 11 | BM-2-901-51 §3: `_layout.png` xuất từ Figma / Draw.io / XD | Không có Figma; ảnh `{SCREEN_ID}_annotated.png` = **biến thể A** (màn chính) của `wireframes/html/{SCREEN_ID}.html`, render bằng `scripts/render-wireframes.py --spec` (mục 5); các biến thể khác (dialog, lỗi, vai khác) ở `wireframes/pdf/wireframes-all.pdf` / `wireframes/png/{SCREEN_ID}.png`, badge không có trên ảnh A được liệt kê dưới ảnh trong SPEC. Ảnh as-is của prototype để ở `wireframes/assets/` | Dự án chưa có file thiết kế; wireframe HTML là nguồn hình to-be duy nhất (thay wireframe Markdown + script vẽ khối từ LAB-4 bản HTML). Ảnh dựng lại được bằng một lệnh nên số trên ảnh luôn khớp cột `No` / ID §4.1 |
+| 10 | BM-2-901-51: không có mục phân quyền theo vai; §6 chỉ là ghi chú chung | Thêm **§4.4 Phân quyền theo vai** (bảng vai × item: hiện / ẩn / chỉ đọc / thao tác) và các mục §6.x (trạng thái, offline, câu hỏi mở). **Vị trí trong 12 file:** phân quyền theo vai ở **§4.4** (SC-03-01, SC-03-05, SC-04-01, SC-05-02, SC-09-04, SC-10-04) hoặc **§6.2** (SC-01-02, SC-06-02, SC-06-04, SC-06-05, SC-07-02, SC-08-03); trạng thái màn ở **§6.1** ở cả 12 file (bảng tổng hợp; chi tiết từng nhánh ở §5 Event + `C-xx`). Hai vị trí phân quyền do ba luồng viết song song, nội dung cùng dạng bảng vai × item — LAB-5 có thể thống nhất về §4.4 | Đề LAB-4 bắt buộc "phân quyền hiển thị theo vai" và trạng thái (rỗng, lỗi, 423, chờ duyệt, offline) cho mỗi màn; giữ nguyên các mục của khuôn, chỉ thêm mục |
+| 11 | BM-2-901-51 §3: `_layout.png` xuất từ Figma / Draw.io / XD | Không có Figma; ảnh `{SCREEN_ID}_annotated.png` = **biến thể A** (màn chính) của `wireframes/html/{SCREEN_ID}.html`, render bằng `scripts/render-wireframes.py --spec` (mục 5); các biến thể khác (dialog, lỗi, vai khác) ở `wireframes/pdf/wireframes-all.pdf` / `wireframes/png/{SCREEN_ID}.png`, badge không có trên ảnh A được liệt kê dưới ảnh trong SPEC. Ảnh as-is của prototype để ở `wireframes/assets/` | Dự án chưa có file thiết kế; wireframe HTML là nguồn hình to-be duy nhất — từ bản HTML, wireframe HTML thay cho cách cũ (wireframe Markdown + script vẽ khối). Ảnh dựng lại được bằng một lệnh nên số trên ảnh luôn khớp cột `No` / ID §4.1 |
 
 Link tương đối bên trong các file bản mẫu (`../01-templates/…`) trỏ theo cấu trúc của repo chuẩn nên không mở được trong repo này — giữ nguyên theo ràng buộc 5.
 
@@ -61,15 +61,16 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 
 ```
 README.md                         bảng điều hướng (QC-01 §1) — file này
-PREMISE.md                        tiền đề LAB-4: thêm / bỏ so với LAB-1, giả định, hướng đi đã chốt (L4-D01..D07)
+PREMISE.md                        tiền đề LAB-4: thêm / bỏ so với LAB-1, giả định, hướng đi đã chốt (L4-D01..D08)
 AI-report.md                      cách dùng AI trong LAB-4
+AI-report-evidence/               bằng chứng của AI-report: báo cáo Expert / Customer LAB-4, trích sổ feedback, trích nhật ký quyết định, brief, ghi chú gộp (README riêng)
 requirements/
   _index.md                       bảng tra (0 tài liệu — REQ theo Story viết ở LAB-5)
   _templates/                     BM-2-901-63 + sample-REQ-2609-01
 architecture/
   _index.md                       bảng tra (1 tài liệu)
   ARCHITECTURE.md                 kiến trúc to-be: module, luồng dữ liệu, điểm tích hợp, NFR
-  adr/_index.md + ADR-001..010    10 quyết định kiến trúc
+  adr/_index.md + ADR-001..010    10 quyết định kiến trúc (ADR-001 Accepted; 002..010 Proposed — PL đề xuất, đã qua gate Expert, người dùng chưa chốt riêng; lý do ở `adr/_index.md`)
 wireframes/
   _index.md                       bảng tra (17 tài liệu)
   SCREEN-LIST.md                  画面一覧 / 画面遷移 — 70 màn 第1期
@@ -108,7 +109,8 @@ Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specificatio
 | Cấu trúc QC-01: `requirements/`, `specs/{feature}/{screen-specification,function-specifications,technical-design}/`, `specs/system-design/{database-design,api-design}/`, `_index.md` mỗi thư mục, `assets/` cạnh tài liệu, frontmatter + History (SemVer), "N/A + lý do" | toàn repo | **Kế thừa nguyên** | Điểm QC-01 để dự án chọn: §2 |
 | `log-convention.md` | `specs/_common/` | **Kế thừa, có thêm** | Thêm mục 4 "Áp dụng cho dự án" |
 | Các `_index.md` | mỗi thư mục | **Kế thừa quy định** QC-01 §3, nội dung mới | `architecture/`, `adr/`, `wireframes/` dùng cùng dạng bảng tra cho nhóm mới |
-| Screen Specification 12 file | `specs/{feature}/screen-specification/` | **Viết theo khuôn, có điều chỉnh** | Ngoại lệ #9 (cột ID = số item wireframe, `C-xx`), #10 (thêm §4.4 phân quyền theo vai, §6.x trạng thái / offline / câu hỏi mở), #11 (ảnh = biến thể A của wireframe HTML, không Figma) |
+| 7 `specs/{feature}/README.md` | `specs/{feature}/` | **Kế thừa quy định** QC-01 §3, nội dung mới | Trang điều hướng của feature (không phải tài liệu thiết kế, nên không có dòng trong `specs/_index.md` — đúng QC-01) |
+| Screen Specification 12 file | `specs/{feature}/screen-specification/` | **Viết theo khuôn, có điều chỉnh** | Ngoại lệ #9 (cột ID = số item wireframe, `C-xx`), #10 (thêm phân quyền theo vai ở §4.4 hoặc §6.2, trạng thái màn ở §6.1, offline / câu hỏi mở ở §6.x — danh sách theo file ở #10), #11 (ảnh = biến thể A của wireframe HTML, không Figma) |
 | Function Specifications 7 file, Technical Design 15 file | `specs/{feature}/` | **Viết theo khuôn** | Technical Design: Mermaid giữ làm nguồn, PNG `{DESIGN_ID}_sequence.png` sinh từ đó (khuôn §2 đòi ảnh) |
 | Database Design 10 file | `specs/system-design/database-design/` | **Viết theo khuôn, có điều chỉnh** | Ngoại lệ #7 (thêm file tổng `MKT_DB.md`), #8 (Index / FK viết một dòng) |
 | API Design 42 file | `specs/system-design/api-design/{feature}/` | **Viết theo khuôn** | Body lỗi theo prototype, khác ví dụ `errors[]` của khuôn — lý do ở `api-conventions.md` quy ước 3 |
@@ -119,11 +121,12 @@ Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specificatio
 | `wireframes/` (画面一覧, `_common-layout.md`, 15 wireframe MD, `html/` + `_shared/`, `png/`, `pdf/wireframes-all.pdf`, `assets/`) | `wireframes/` | **Tạo mới theo đề** | Chuẩn đã bỏ `screen-map`; phong cách HTML theo mẫu PDF người dùng đưa (đề khác, chỉ lấy phong cách) |
 | `render-wireframes.py`, `export-mermaid-png.py`, `check-api-spec-consistency.py` | `scripts/` | **Tạo mới** | Mục 5. Script `*.sh` cùng thư mục là của template quản lý dự án |
 | `AI-report.md` | gốc | **Tạo mới theo đề** | |
+| `AI-report-evidence/` | gốc | **Tạo mới** | Bản sao bằng chứng cho số liệu của AI-report (Expert G3-M02); nguồn gốc từng file ở `AI-report-evidence/README.md`. Có giữ thư mục này khi public repo ở LAB-5 hay không: quyết ở LAB-5 |
 
 ### 4.3 Phạm vi Screen Specification: 12 màn, không phải 70
 
 - **12 màn có Screen Specification đầy đủ** (field, validation, trạng thái, phân quyền theo vai, Event, API): 10 màn đại diện của 10 cụm nghiệp vụ (PREMISE **L4-D02**: SC-01-02, 03-01, 03-05, 04-01, 05-02, 06-02, 07-02, 08-03, 09-04, 10-04) + **SC-06-04, SC-06-05** vì xác nhận giao có tranh chấp là điểm người quyết cuối (luật 3) và hai màn dùng chung FUNC / TECH của delivery (**L4-D07**, DEC-056).
-- **Vì sao không làm đủ 70 màn của 画面一覧:** đề LAB-4 yêu cầu "các màn hình cốt lõi", không quy định số màn; người dùng chốt 10 màn ở đầu LAB-4 (plan §0, L4-D02) và **quyết không mở rộng thêm** ngày 2026-11-25 sau Gate 2. Ba màn SC-03-02, SC-03-07, SC-04-05 có wireframe nhưng chưa có Screen Specification.
+- **Vì sao không làm đủ 70 màn của 画面一覧:** đề LAB-4 yêu cầu "các màn hình cốt lõi", không quy định số màn; người dùng chốt 10 màn ở đầu LAB-4 (plan §0, L4-D02) và **quyết không mở rộng thêm** ngày 2026-11-25 sau Gate 2 (PREMISE **L4-D08**, DEC-058; mở rộng 12 màn ở L4-D07 là PL quyết theo Expert G2-m05). Ba màn SC-03-02, SC-03-07, SC-04-05 có wireframe nhưng chưa có Screen Specification.
 - **Các màn còn lại** chỉ ở mức dòng trong [`wireframes/SCREEN-LIST.md`](wireframes/SCREEN-LIST.md); phần 12 màn gọi tới mà chưa đặc tả được liệt kê là **DEP-01..17** ở [`specs/_index.md`](specs/_index.md) (A. gọi trực tiếp, B. nguồn dữ liệu đầu vào, mỗi dòng có giả định seed cho test) — input để LAB-5 tách issue.
 
 ## 5. Script của bộ thiết kế
@@ -334,7 +337,7 @@ Project Status and Quality Gate fields are updated automatically based on pull r
 | Any tracker | Issue closed as completed | → Closed (guarded) |
 | Any tracker | Issue closed as not planned | → Cancelled (guarded) |
 
-Full spec: [`docs/status-transition-spec/tracker-status.csv`](docs/status-transition-spec/tracker-status.csv)
+Full spec: `docs/status-transition-spec/tracker-status.csv` (có ở template gốc, không kèm trong repo này)
 
 ---
 
