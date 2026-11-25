@@ -2,7 +2,7 @@
 id: WF-SC-06-02
 title: Wireframe SC-06-02 引渡し記録（タブレット）
 status: draft
-version: "0.2.2"
+version: "0.2.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-06-01, FT-06-03, FT-06-07, FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, PRM-086, PRM-118, E-17, DEC-004, ADR-008]
@@ -76,12 +76,17 @@ related: [FT-06-01, FT-06-03, FT-06-07, FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-
 | 9 | −/+ | Nút | — | Bước 1 cho 箱 / 尾 | — |
 | 10 | 残り全部 | Nút lớn | — | Ghi đúng phần còn lại | FR-DEL-02 |
 | 11 | 受取人 | 2 nút to + văn bản | ✓ | 「本人」/「代理」 (không dùng ô thả xuống ▼ — khó bấm khi đeo găng), **mặc định 本人**; chọn 代理 mới hiện ô tên (tùy chọn) — khách #13, Q-DEL-03 [Customer giả lập, 2026-11-25] | FR-DEL-01, PRM-086 |
+| 11.1 | 代理人氏名 | Text box | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-06-02_SPEC.md` |
 | 12 | 記録する | Nút | — | Append-only; offline lưu cục bộ, gắn mã thiết bị + giờ | luật 4, ADR-008 |
 | 13 | 例外・差異 | Nút | — | → SC-06-04 (thiếu / thừa / trả / tranh chấp) | FT-06-04 |
 | 14 | Xem trước | Nhãn | — | | — |
 | 15 | In 引渡票 | Nút | — | → SC-06-06 khi người mua cần | FT-06-08 |
 | 16 | Mốc dữ liệu offline | Nhãn | — | **Chỉ hiện khi offline**: 「取引データ hh:mm 時点」 (giờ tải / đồng bộ cuối) + 「この時刻以降の取引は表示されません」 cạnh ô tìm, để người giao không kết luận nhầm "người mua không có hàng" — khách #2 | NFR-AVL-02, FR-DEL-01, KPI-05 |
 | 17 | Giao hết một lần | Nút | — | Hiện khi người mua có ≥ 2 GD còn 残. Bấm → hộp xác nhận liệt kê từng GD (取引 / 品目 / 残) → 「すべて記録」; mỗi GD vẫn một dòng 「残り全部」 riêng; 受取人 chọn một lần cho cả nhóm. Offline vẫn dùng được — khách #12 | FR-DEL-02, PERSONA-DOCK-01 |
+| 17.1 | Danh sách GD sẽ giao | Label | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-06-02_SPEC.md` |
+| 17.2 | 受取人 本人 / 代理 (+ tên) | Button | ✓ | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-06-02_SPEC.md` |
+| 17.3 | すべて記録 | Button | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-06-02_SPEC.md` |
+| 17.4 | キャンセル | Button | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-06-02_SPEC.md` |
 
 ## 4. Trạng thái
 
@@ -118,3 +123,4 @@ DELIVERY, DEL-HEAD: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: xem trạng thái 
 | 2 | 0.2.0 | Update | Gate 1 / khách: [8] để trống không điền sẵn (#8); [16] mốc giờ dữ liệu offline (#2); [17] giao hết một lần (#12); [11] 2 nút 本人 / 代理 (#13); chạm cả dòng để chọn; số lẻ theo đơn vị (m-11); header dùng chữ 「ホーム」 thay 「≡」 (#32). Ảnh prototype giữ nguyên (ảnh có số 「6」 điền sẵn là as-is) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Khách Q-DEL-03: item 11 mặc định 本人 | 2026-11-25 | phuongnnm-23344 |  |
 | 4 | 0.2.2 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-06-02.html`, nhúng `png/SC-06-02.png` | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.2.3 | Update | W-m01: bảng Item thêm ID con 11.1, 17.1–17.4; W-m02: HTML biến thể C — 相対-0011 giữ 引渡済 0 / 残 4 / 待機中 (một lần ghi chỉ đổi 相対-0005) | 2026-11-25 | phuongnnm-23344 |  |

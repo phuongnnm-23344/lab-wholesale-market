@@ -2,7 +2,7 @@
 id: WF-SC-07-02
 title: Wireframe SC-07-02 日次締め
 status: draft
-version: "0.2.3"
+version: "0.2.4"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-07-04, FR-SETTLE-01, E-08, PRM-036, PRM-127, FR-SETTLE-02, BR-CLOSE-01, PRM-031, PRM-110, PRM-119, E-12, RACI-01, ADR-005, ADR-002, ADR-008]
@@ -91,6 +91,11 @@ Checklist khớp danh sách chuẩn ở ADR-005 §2.5: 12 mục — 6 mục ✖ 
 | 17 | 締める | Nút | Mờ khi còn dòng ✖ hoặc [13] / [22] chưa tick hoặc [16] sai; C-31 → **C-30 MFA (luôn hỏi lại mã — hành động không quay lại được, ADR-002)**. Khóa xong mở luôn 業務日 chợ kế tiếp theo lịch để 修正申請 / 後入力 có ngày ghi sổ (ADR-005) | P25, ADR-002, ADR-005 |
 | 18 | キャンセル | Nút | | — |
 | 19 | 端末回収不能 | Nút + hộp | Chỉ STL-HEAD / 代行; lý do bắt buộc; C-30 MFA; ghi 監査ログ. Máy ra khỏi dòng [8]; phiên và PIN offline của máy bị thu hồi; bản ghi của máy đó đến sau → SC-03-07 (要確認) → 修正申請 後入力. Khách #1 | NFR-AVL-02, BR-CLOSE-01, ADR-005, ADR-008 |
+| 19.1 | 端末情報 | Label | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-07-02_SPEC.md` |
+| 19.2 | 理由 | Text box | ✓ | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-07-02_SPEC.md` |
+| 19.3 | 影響の説明 | Label | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-07-02_SPEC.md` |
+| 19.4 | 端末回収不能として登録 | Button | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-07-02_SPEC.md` |
+| 19.5 | キャンセル | Button | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-07-02_SPEC.md` |
 | 20 | Ngoại lệ giao làm đổi tiền chưa 確認済 | Dòng ✖ | 不足 / 返品 / 一部取消 ở ngày chưa khóa (SC-06-04 [12]); 照合事務局 bấm 「確認済」 ở SC-07-01. Khách #4 | FR-SETTLE-01, OBJ-05 |
 | 21 | 当日訂正 dưới ngưỡng | Dòng ⚠ | Soát ở SC-07-01, không chặn | PRM-127 |
 
@@ -132,3 +137,4 @@ Checklist khớp danh sách chuẩn ở ADR-005 §2.5: 12 mục — 6 mục ✖ 
 | 3 | 0.2.1 | Update | P3 gộp: [11] chỉ đếm tranh chấp `OPEN` đã nhập, phiếu giấy chưa nhập bù soát bằng sổ giấy — khớp ADR-005 0.2.2 #10 (Q-STL-02) | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | Khách Q-STL-02: thêm [22], checklist 12 mục (6 ✖ / 6 ⚠) | 2026-11-25 | phuongnnm-23344 |  |
 | 5 | 0.2.3 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-07-02.html`, nhúng `png/SC-07-02.png`; liên kết [6] → SC-04-02, [11] → SC-06-05 / SC-07-03, [12] → SC-06-01 (khớp SPEC) | 2026-11-25 | phuongnnm-23344 | |
+| 6 | 0.2.4 | Update | W-m01: bảng Item thêm ID con 19.1–19.5 (hộp thoại 端末回収不能) | 2026-11-25 | phuongnnm-23344 |  |

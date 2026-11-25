@@ -29,7 +29,7 @@ related: [WF-SC-01-02, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-01-02 0.2.5](../../../wireframes/SC-01-02-participant-detail-kyoka-shonin-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-01-02.html`](../../../wireframes/html/SC-01-02.html) · mọi biến thể: [`wireframes/png/SC-01-02.png`](../../../wireframes/png/SC-01-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-01-02_prototype-nakaoroshi.png`, `wireframes/assets/SC-01-02_prototype-baibai.png`
+**Design:** [Wireframe SC-01-02 0.2.6](../../../wireframes/SC-01-02-participant-detail-kyoka-shonin-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-01-02.html`](../../../wireframes/html/SC-01-02.html) · mọi biến thể: [`wireframes/png/SC-01-02.png`](../../../wireframes/png/SC-01-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-01-02_prototype-nakaoroshi.png`, `wireframes/assets/SC-01-02_prototype-baibai.png`
 
 ![SC-01-02 annotated](./assets/SC-01-02_annotated.png)
 

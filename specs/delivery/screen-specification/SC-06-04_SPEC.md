@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-06-04
 feature: delivery
 feature_id: DEL
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-06-04, SPEC-SC-06-02-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEPTION_DISPUTE-001, API-DEL-004, SPEC-TRADE_DB-001, SPEC-ADJUST_DB-001, ADR-004, ADR-005, ADR-008, FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, TBL-ATTACH-01, E-21]
@@ -24,12 +24,13 @@ related: [WF-SC-06-04, SPEC-SC-06-02-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-06-04 0.2.0 (màn nối của SC-06-02) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách: đóng Q-DEL-01/04/05/06 (Q-DEL-04: 配送 chỉ nhập SL thực giao, tiền tự tính theo đơn giá đã chốt); dòng 10.1 tên 代理 không bắt buộc | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-06-04.html` (WF 0.2.2); ghi badge không có trên ảnh; link HTML / PNG / PDF; §4.1 dòng 10.1 tên 代理 → tùy chọn (khớp §4.2 / Q-DEL-03) | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.1.3 | Update | W-m06: dòng C-11 ghi rõ là khung chứa C-24 / C-28, wireframe không có badge riêng | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-06-04 0.2.2](../../../wireframes/SC-06-04-delivery-exception-registration-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-06-04.html`](../../../wireframes/html/SC-06-04.html) · mọi biến thể: [`wireframes/png/SC-06-04.png`](../../../wireframes/png/SC-06-04.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md)
+**Design:** [Wireframe SC-06-04 0.2.3](../../../wireframes/SC-06-04-delivery-exception-registration-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-06-04.html`](../../../wireframes/html/SC-06-04.html) · mọi biến thể: [`wireframes/png/SC-06-04.png`](../../../wireframes/png/SC-06-04.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md)
 
 ![SC-06-04 annotated](./assets/SC-06-04_annotated.png)
 
@@ -59,7 +60,7 @@ Tranh chấp → trạng thái 「確認待ち（配送部門責任者）」, hi
 |---|---|---|---|---|
 | **H** | **Khung** | | | |
 | C-9 | 画面タイトル 「引渡し例外登録」 | Label | - | |
-| C-11 | バナー | Label | - | C-24 / C-28 |
+| C-11 | バナー (khung chứa C-24 / C-28, không có badge riêng trên wireframe — W-m06) | Label | - | C-24 / C-28 |
 | **A** | **GD đích** | | | |
 | 1 | 対象取引 | Label | - | 「{取引} {品目}（{買受人番号} {名称}） 確定 {数量} ／ 引渡済 {数量} ／ 残 {数量}」 |
 | **B** | **Cách nhập** | | | |

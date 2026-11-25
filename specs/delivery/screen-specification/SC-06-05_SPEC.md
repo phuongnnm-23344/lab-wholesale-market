@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-06-05
 feature: delivery
 feature_id: DEL
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-06-05, SPEC-SC-06-04-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEPTION_DISPUTE-001, API-DEL-005, API-DEL-006, SPEC-TRADE_DB-001, ADR-002, ADR-008, FT-06-05, CAP-HUMAN-01, PRM-111, FR-DEL-04]
@@ -24,6 +24,7 @@ related: [WF-SC-06-05, SPEC-SC-06-04-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEP
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-06-05 0.2.0 (màn nối của SC-06-02) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-DEL-07: nhu cầu RPT-04 lọc 継続協議 + lịch sử từng lần họp (DEP-17); đóng Q-DEL-08 | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-06-05.html` (WF 0.2.1); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.1.3 | Update | W-m06: dòng C-11 ghi rõ là khung chứa C-28, wireframe không có badge riêng | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -55,7 +56,7 @@ Ràng buộc: **cấm tự xác nhận** lần giao / ngoại lệ do chính mì
 |---|---|---|---|---|
 | **H** | **Khung** | | | |
 | C-9 | 画面タイトル | Label | - | |
-| C-11 | バナー | Label | - | C-28 khi offline |
+| C-11 | バナー (khung chứa C-28, không có badge riêng trên wireframe — W-m06) | Label | - | C-28 khi offline |
 | **A** | **Danh sách chờ** | | | |
 | 1 | 確認待ち一覧 | Label (bảng chọn) | - | Tiêu đề 「確認待ち（{n}件）」; bộ lọc 「自分が確認できるもの」(mặc định) / 「すべて」. Cột: 受付時刻 / 取引 / 買受人 / 内容 / 記録者 / 入力方法 (現場 \| 紙→後入力 {番号}) / SLA残 |
 | **B** | **Chi tiết** | | | |

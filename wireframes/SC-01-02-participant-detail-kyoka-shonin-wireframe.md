@@ -2,7 +2,7 @@
 id: WF-SC-01-02
 title: Wireframe SC-01-02 参加者詳細・編集 (許可 / 承認 hai khối)
 status: draft
-version: "0.2.5"
+version: "0.2.6"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-01-01, FT-01-02, FT-01-03, FT-01-04, FR-PARTY-01, TBL-ACTOR-01, 02-08, B.2, BR-PERM-01, PRM-044, PRM-046, PRM-121, FIG-010, L4-D02, ADR-003, OPEN-DB-09]
@@ -87,6 +87,12 @@ Hai khối không bao giờ hiện cùng lúc; tiêu đề khối chữ to, khun
 | 6–7 | 通知メール 1, 2 | Email | — | Tối đa 2; đổi theo giấy yêu cầu, có lịch sử | như trên | L4-A08 |
 | 8 | 保証金額 | Nhãn | — | Giá trị hiện hành | — | PRM-046 |
 | 9 | Đổi 保証金 | Nút → hộp thoại | — | Số mới + ngày hiệu lực + lý do; **thêm dòng lịch sử, không sửa đè**. Với 売買参加者: hộp thoại nói rõ 参加上限 có đổi theo không (theo 保証金 → đổi; đặt riêng → không đổi) — khách #20. **Chỉ 照合部門長**, MFA, không checker (Q-PTY-06 [Customer giả lập, 2026-11-25]) | Sửa: STL-HEAD | luật 4, D14, PRM-046 |
+| 9.1 | 新しい保証金額 | Text box | ✓ | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-01-02_SPEC.md` |
+| 9.2 | 発効日 | Text box (date) | ✓ | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-01-02_SPEC.md` |
+| 9.3 | 理由 | Text box | ✓ | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-01-02_SPEC.md` |
+| 9.4 | Câu ảnh hưởng 参加上限 | Label | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-01-02_SPEC.md` |
+| 9.5 | 変更する | Button | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-01-02_SPEC.md` |
+| 9.6 | キャンセル | Button | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-01-02_SPEC.md` |
 | 10 | Lịch sử 保証金 | Bảng gập | — | | Đọc | D14 |
 | 11 | 保存する | Nút | — | Ghi audit before/after | SETTLE, STL-HEAD | FR-AUDIT-01 |
 | 12 | **Khối 許可** | Vùng | — | **Chỉ hiện khi 種別 = 仲卸.** Tiêu đề to 「【許可】仲卸」, khung riêng. Không có cột 参加上限 | Đọc: SETTLE, STL-HEAD, OPS-HEAD | 02-08, S5, khách #18 |
@@ -146,3 +152,4 @@ Hai khối không bao giờ hiện cùng lúc; tiêu đề khối chữ to, khun
 | 5 | 0.2.3 | Update | P3 gộp (D-01 còn lệch nhỏ): hình vẽ [17] thêm nút 「期限前更新を入力」 cho khối 許可 và chú thích thủ tục, khớp bảng §5 và SC-01-02_SPEC | 2026-11-25 | phuongnnm-23344 | |
 | 6 | 0.2.4 | Update | Khách Q-PTY-06 (chỉ 照合部門長 đổi 保証金 / 参加上限), Q-TRD-02 (税込 / 税抜) | 2026-11-25 | phuongnnm-23344 |  |
 | 7 | 0.2.5 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-01-02.html`, nhúng `png/SC-01-02.png`; [19] nút đổi trạng thái ẩn khi có yêu cầu chờ, thêm 「再開を起案」 ở [17]/[21] (khớp SPEC §6); 失効まで tính từ 業務日 (448日) | 2026-11-25 | phuongnnm-23344 | |
+| 8 | 0.2.6 | Update | W-m01: bảng Item thêm ID con 9.1–9.6 (hộp thoại 保証金の変更) cho khớp badge HTML / SPEC §4.1 | 2026-11-25 | phuongnnm-23344 |  |

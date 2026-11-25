@@ -29,7 +29,7 @@ related: [WF-SC-07-02, SPEC-SETTLE_FUNC-001, SPEC-STL_DAY_CLOSE-001, SPEC-STL_DE
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-07-02 0.2.3](../../../wireframes/SC-07-02-daily-close-business-day-lock-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-07-02.html`](../../../wireframes/html/SC-07-02.html) · mọi biến thể: [`wireframes/png/SC-07-02.png`](../../../wireframes/png/SC-07-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-07-02_prototype.png`
+**Design:** [Wireframe SC-07-02 0.2.4](../../../wireframes/SC-07-02-daily-close-business-day-lock-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-07-02.html`](../../../wireframes/html/SC-07-02.html) · mọi biến thể: [`wireframes/png/SC-07-02.png`](../../../wireframes/png/SC-07-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-07-02_prototype.png`
 
 ![SC-07-02 annotated](./assets/SC-07-02_annotated.png)
 

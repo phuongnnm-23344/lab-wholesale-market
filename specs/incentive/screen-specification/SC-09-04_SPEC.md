@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-09-04
 feature: incentive
 feature_id: INC
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-09-04, SPEC-INC_ENGINE-001, SPEC-INC_FUNC-001, SPEC-INC_API-001, SPEC-INC_API-002, SPEC-INC_API-003, SPEC-INC_API-004, ADR-007, ADR-002, FT-09-06, FT-09-07, FT-09-08, FT-09-10, BR-INC-01, FR-INC-01, FR-INC-03, PRM-040, PRM-042, PRM-043, PRM-053, PRM-055, OPEN-L4-02, E-02]
@@ -24,12 +24,13 @@ related: [WF-SC-09-04, SPEC-INC_ENGINE-001, SPEC-INC_FUNC-001, SPEC-INC_API-001,
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe SC-09-04 0.2.1 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-INC-01/02: item [17] tick 「支払期日分までの入金CSV取込済」, [18] 前期分の後入力; validation, mapping, vai, E-INC-014; ảnh annotated dựng lại | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-09-04.html` (WF 0.2.3); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.1.3 | Update | W-m03: [1] ví dụ kỳ 2027-09, 支払期日 2027/10/08 (10/10 Chủ nhật); ảnh biến thể A dựng lại; W-m06: thêm dòng C-9 画面タイトル vào §4.1 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-09-04 0.2.3](../../../wireframes/SC-09-04-incentive-calc-period-lock-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-09-04.html`](../../../wireframes/html/SC-09-04.html) · mọi biến thể: [`wireframes/png/SC-09-04.png`](../../../wireframes/png/SC-09-04.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [`SC-09-04_prototype.png`](../../../wireframes/assets/SC-09-04_prototype.png)
+**Design:** [Wireframe SC-09-04 0.2.4](../../../wireframes/SC-09-04-incentive-calc-period-lock-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-09-04.html`](../../../wireframes/html/SC-09-04.html) · mọi biến thể: [`wireframes/png/SC-09-04.png`](../../../wireframes/png/SC-09-04.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [`SC-09-04_prototype.png`](../../../wireframes/assets/SC-09-04_prototype.png)
 
 ![SC-09-04 annotated](./assets/SC-09-04_annotated.png)
 
@@ -58,7 +59,7 @@ Màn **quyết định** của 照合部門長 (STL-HEAD): kiểm tiền 入金 
 | ID | Item Name | Item Type | Required | Note |
 |---|---|---|---|---|
 | **A** | **Đầu màn (kỳ, version, bước)** | | | |
-| 1 | 対象期 + 支払期日 | Label | - | 「対象期 2027-08（2027/08/01〜08/31、業務日基準）　支払期日 2027/09/10(金)」. Ngày `YYYY/MM/DD(曜)`. Nếu 支払期日 bị lùi (ngày 10 là ngày ngân hàng nghỉ) thêm 「（10日は銀行休業日のため前銀行営業日）」 |
+| 1 | 対象期 + 支払期日 | Label | - | 「対象期 2027-09（2027/09/01〜09/30、業務日基準）　支払期日 2027/10/08(金)」. Ngày `YYYY/MM/DD(曜)`. Nếu 支払期日 bị lùi (ngày 10 là ngày ngân hàng nghỉ) thêm 「（10日は銀行休業日のため前銀行営業日）」 |
 | 2 | 適用規則版 | Label | - | 「適用規則版 第{n}版」 = version của kỳ (hiệu lực ngày 1 của kỳ, PRM-042); kỳ migrate: 「稼働時の版（移行期）」 |
 | 3 | ステップ表示 | Label | - | ① 入金の割当・要確認 / ② 期ロック（正式計算）; ● bước hiện tại, ○ chưa tới. ② chỉ thành ● khi không còn dòng 要確認 chưa quyết |
 | **B** | **① 入金の割当（どの期に充当したか）** | | | |
@@ -82,6 +83,7 @@ Màn **quyết định** của 照合部門長 (STL-HEAD): kiểm tiền 入金 
 | **E** | **Hộp thoại (thuộc màn này)** | | | |
 | C-31 | Xác nhận 期ロック | Dialog | - | 「期ロックすると、この期の奨励金が確定し、直接修正できません。差額は次の期ロックで計上されます。」 + số chính: 本計算 合計 / 差額 合計 / 件数. Khi có ⚠: checkbox 「注意事項 {n} 件を確認しました」 (bắt buộc). Nút 「期ロックする」 / 「戻る」 |
 | C-30 | MFA (luôn hỏi lại mã) | Dialog + Text box | Có | Mã 6 số; 期ロック là hành động không quay lại được → luôn hỏi lại kể cả còn hiệu lực step-up (ADR-002 §2-6a) |
+| C-9 | 画面タイトル 「奨励金計算・期ロック」 | Label | - | |
 | C-10 | Nút góc phải | Button | - | Trước khóa: 「入金状況へ」 (→ SC-09-03); sau khóa: 「奨励金明細へ」 (→ SC-09-05) |
 
 > - `Item Type`: `Label` · `Image` · `Text box` · `Button` (+ `Radio`, `Dialog` — mở rộng cần cho màn này).

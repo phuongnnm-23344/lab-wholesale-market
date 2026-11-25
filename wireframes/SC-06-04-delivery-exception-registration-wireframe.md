@@ -2,7 +2,7 @@
 id: WF-SC-06-04
 title: Wireframe SC-06-04 引渡し例外登録
 status: draft
-version: "0.2.2"
+version: "0.2.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, TBL-ATTACH-01, E-21, M16, ADR-008, ADR-004, ADR-005]
@@ -57,6 +57,7 @@ Không có (M16). Prototype chỉ có SC-06-02; không ảnh.
 | 8 | Lý do | Chọn | ✓ | | — |
 | 9 | Nội dung | Văn bản | Khi 争いあり | ≤ 500 | FR-DEL-04 |
 | 10 | Người nhận phía mua | 2 nút + văn bản | — | 「本人」/「代理」, chọn 代理 mới hiện ô tên (khách #13) | PRM-086 |
+| 10.1 | 代理人氏名 | Text box | Không (tùy chọn khi 代理 — Q-DEL-03, như SC-06-02 11.1) | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-06-04_SPEC.md` |
 | 11 | Đính kèm | File | Khi 後入力 | Chỉ PC; giới hạn dung lượng. Loại chứng từ 「紛争・引渡しの証憑」 → online 3 năm rồi lưu lạnh (TBL-ATTACH-01); xóa vật lý sau hạn phải có duyệt (B.7) | TBL-ATTACH-01, B.7, E-21, M11 |
 | 12 | Ảnh hưởng tiền | Nhãn | — | Đổi tiền (不足 / 返品 / 一部取消) + **ngày chưa khóa** → bản ghi REVERSE / DELTA qua luồng giao **và** dòng ở tab 要確認 SC-07-01 + dòng ✖ ở checklist SC-07-02 [20] tới khi 照合事務局 bấm 「確認済」 (khách #4). Đổi tiền + **ngày đã khóa** → phải 修正申請 | BR-CLOSE-01, ADR-004, FR-SETTLE-01, OBJ-05 |
 | 13 | Liên kết 修正申請 | Nút | — | → SC-08-01, mang mã GD | — |
@@ -85,3 +86,4 @@ DELIVERY, DEL-HEAD: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: xem ở SC-07-03 /
 | 2 | 0.2.0 | Update | Gate 1 / khách: ngoại lệ đổi tiền ở ngày chưa khóa → 要確認 SC-07-01 + checklist SC-07-02 (#4); 受取人 2 nút (#13); đính kèm theo loại chứng từ TBL-ATTACH-01 (M-08) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | P3 gộp: ngoại lệ không ghi offline theo ADR-008 §2.1 — offline hiện C-28 + hướng dẫn phiếu giấy, form khóa; nhập bù khi có mạng (Q-DEL-01, khớp SC-06-04_SPEC) | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-06-04.html`, nhúng `png/SC-06-04.png` | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.2.3 | Update | W-m01: bảng Item thêm ID con 10.1 (代理人氏名, tùy chọn) | 2026-11-25 | phuongnnm-23344 |  |

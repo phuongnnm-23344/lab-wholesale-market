@@ -29,7 +29,7 @@ related: [WF-SC-06-02, SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-06-02 0.2.2](../../../wireframes/SC-06-02-delivery-record-tablet-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-06-02.html`](../../../wireframes/html/SC-06-02.html) · mọi biến thể: [`wireframes/png/SC-06-02.png`](../../../wireframes/png/SC-06-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-06-02_prototype-tablet.png`
+**Design:** [Wireframe SC-06-02 0.2.3](../../../wireframes/SC-06-02-delivery-record-tablet-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-06-02.html`](../../../wireframes/html/SC-06-02.html) · mọi biến thể: [`wireframes/png/SC-06-02.png`](../../../wireframes/png/SC-06-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-06-02_prototype-tablet.png`
 
 ![SC-06-02 annotated](./assets/SC-06-02_annotated.png)
 

@@ -2,7 +2,7 @@
 id: WF-SC-05-02
 title: Wireframe SC-05-02 せり結果確認
 status: draft
-version: "0.2.3"
+version: "0.2.4"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-05-02, FT-01-05, FR-SERI-02, FORM-SERI-01, BR-PERM-01, CAP-HUMAN-01, PRM-115, ACT-03, L4-A04, M20, ADR-003]
@@ -68,6 +68,8 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 | 3 | Bảng kết quả | Bảng chọn | — | Bố cục FORM-SERI-01; cột 資格 ghi đúng **許可 (仲卸) / 承認 (売買参加者)**; kiểm lại tư cách + SL **tại lúc xác nhận** | BR-PERM-01, FT-01-05 |
 | 4 | Khối lý do vượt 参加上限 | Vùng | Khi có dòng vượt | **Chỉ 売買参加者** (仲卸 không có hạn mức); hạn mức theo kỳ, chung 相対 + せり; chọn lý do nhanh + 備考; không chặn cứng | L4-A04 (1), ACT-03, M20 |
 | 5 | Dòng không chốt được | Nhãn đỏ + 2 nút | — | Tư cách 失効 / 一時停止 / SL không đủ → bỏ chọn tự động, lý do cạnh dòng; **確認者 chọn** 「差し戻し（番号誤り）」 (入力者 sửa đúng số người thắng) hoặc 「取消（資格なし・不成立）」 (SL không bị trừ, lô vẫn / trở lại 販売公開中 — khách #9); không tự hủy, không nút đổi người mua (Q-TRD-05, luật 3) | BR-PERM-01, BR-LOT-02, FR-SERI-02 |
+| 5.1 | 差し戻し（番号誤り） | Button (trong dòng [5]) | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-05-02_SPEC.md` |
+| 5.2 | 取消（資格なし・不成立） | Button (trong dòng [5]) | — | Chi tiết ở SPEC §4.1 (W-m01) | — | `SC-05-02_SPEC.md` |
 | 6 | Áp cùng lý do | Checkbox | — | Một người mua trong phiên; vẫn lưu từng dòng (Muốn có) | L4-A04 (1) |
 | 7 | Lý do tự xác nhận | Văn bản | Khi 入力者 = 確認者 | Hiện ở tab 要確認 của SC-07-01 và checklist SC-07-02 | S2, PRM-115 |
 | 8 | Tổng | Nhãn | — | | — |
@@ -113,3 +115,4 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 | 3 | 0.2.1 | Update | P3 gộp: thêm item [12] hộp thoại lý do 差し戻し (bắt buộc, E-TRD-017) — khớp SC-05-02_SPEC | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | Khách Q-TRD-05: hai nút 差し戻し（番号誤り） / 取消（資格なし・不成立）; Q-TRD-02 | 2026-11-25 | phuongnnm-23344 |  |
 | 5 | 0.2.3 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-05-02.html`, nhúng `png/SC-05-02.png`; cột 上限 「▲超過」 (khớp SPEC), ví dụ 選択 10件 ¥404,350 | 2026-11-25 | phuongnnm-23344 | |
+| 6 | 0.2.4 | Update | W-m01: bảng Item thêm ID con 5.1 差し戻し / 5.2 取消 cho khớp badge HTML / SPEC §4.1 | 2026-11-25 | phuongnnm-23344 |  |

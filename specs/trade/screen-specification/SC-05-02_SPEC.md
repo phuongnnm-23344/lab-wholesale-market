@@ -29,7 +29,7 @@ related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFI
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-05-02 0.2.3](../../../wireframes/SC-05-02-seri-result-session-confirm-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-05-02.html`](../../../wireframes/html/SC-05-02.html) · mọi biến thể: [`wireframes/png/SC-05-02.png`](../../../wireframes/png/SC-05-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [SC-05-02_prototype-seri-list-ref.png](../../../wireframes/assets/SC-05-02_prototype-seri-list-ref.png) (chỉ danh sách phiên rỗng)
+**Design:** [Wireframe SC-05-02 0.2.4](../../../wireframes/SC-05-02-seri-result-session-confirm-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-05-02.html`](../../../wireframes/html/SC-05-02.html) · mọi biến thể: [`wireframes/png/SC-05-02.png`](../../../wireframes/png/SC-05-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [SC-05-02_prototype-seri-list-ref.png](../../../wireframes/assets/SC-05-02_prototype-seri-list-ref.png) (chỉ danh sách phiên rỗng)
 
 ![SC-05-02 annotated](./assets/SC-05-02_annotated.png)
 
