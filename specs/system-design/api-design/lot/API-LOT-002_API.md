@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: lot
 screen_id: [SC-03-01]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001]
@@ -26,6 +26,7 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-LOT-01: mã chính thức đã cấp khi lên server, không dùng lại | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -71,4 +72,4 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001]
 ## 5. Other Notes
 
 - Không idempotent: client khóa nút [9] khi đang gửi. Lô 新規 bấm hai lần nhanh → lần hai bị 409 `E-LOT-007` (nghi trùng) — chủ ý.
-- **Câu hỏi mở / TBD:** Q-LOT-01 (thời điểm cấp `lotNo`) — [LOT_FUNC §3](../../../lot/function-specifications/LOT_FUNC.md#3-mã-lỗi-câu-hỏi-giả-định-của-module).
+- Q-LOT-01 đã trả lời: `lotNo` cấp khi lô lên server, không dùng lại (LOT_REGISTER_TECH §5). **Câu hỏi mở / TBD:** xem [LOT_FUNC §3](../../../lot/function-specifications/LOT_FUNC.md#3-mã-lỗi-câu-hỏi-giả-định-của-module).

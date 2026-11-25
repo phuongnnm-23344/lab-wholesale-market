@@ -3,7 +3,7 @@ id: SPEC-PARTY_DB-001
 title: Database Design — Người tham gia và tư cách — 許可 (仲卸) ≠ 承認 (売買参加者)
 type: system
 subtype: database-design
-version: "0.3.1"
+version: "0.3.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -34,6 +34,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1 M-07: thể hiện khác biệt thủ tục 許可 (審査 + 運用部門長 決裁) và 承認 (届出 + 照合部門長 確認), sự kiện `REVIEWED` (許可) và `LIMIT_CHANGED` (承認, 参加上限 không sửa đè), bảng so sánh §3, giả định 失効 tự động, OPEN-DB-09; khách #20 (đổi 保証金 kéo theo 参加上限 khi NULL) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | §3, 4.12–4.15 | Gate 1 recheck N-03: gia hạn bình thường 許可 theo PRM-121 (照合部門長 確認), 審査 + 運用部門長 決裁 chỉ cho cấp mới (giả định PL); 承認 xét nhẹ thay "không 審査" | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.3.1 | Add new | 4.59, 4.60, §2, §3, 4.15 | Gộp P3 (spec party): thêm hai bảng yêu cầu chờ **riêng** `nakaoroshi_permit_requests` (許可) và `baibai_approval_requests` (承認) — nguồn trạng thái 起案中 / 確認待ち của SC-01-02 [19]; cấp mới 許可 ghi `REVIEWED` + `REGISTERED` lúc 決裁. Enum mới `qualification_request_kind`, `qualification_request_status` (MKT_DB 0.3.2 §4.0). 4.15 cột 11: MFA bắt buộc cả `LIMIT_CHANGED` — PREMISE §3.2 sửa khớp (Q-PTY-07 giữ để khách xác nhận) | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.3.2 | Update | — | Khách Q-PTY-06: 4.11, 4.15 (CHECK cho LIMIT_CHANGED một bước), 4.60 không nhận LIMIT_CHANGE; Q-PTY-07 đã chốt | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -234,7 +235,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|---|---|---|---|---|
 | 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
 | 2 | FK | Người tham gia | `participant_id` | UUID | N/A | Yes | | |
-| 3 | | 保証金額 | `deposit_jpy` | BIGINT | N/A | Yes | | CHECK ≥ 0 |
+| 3 | | 保証金額 | `deposit_jpy` | BIGINT | N/A | Yes | | CHECK ≥ 0. Chỉ 照合部門長 (STL-HEAD / 代行) ghi, MFA step-up, audit, không checker (Q-PTY-06 [Customer giả lập, 2026-11-25]) |
 | 4 | | Hiệu lực từ | `effective_from` | DATE | N/A | Yes | | |
 | 5 | | Lý do | `reason` | VARCHAR | 200 | Yes | | |
 | 6 | | Cột chung | `created_at`, `created_by` | | | | | |
@@ -368,9 +369,9 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 7 | | Hiệu lực từ ngày | `effective_on` | DATE | N/A | Yes | | `LIMIT_CHANGED`: áp từ kỳ chứa ngày này |
 | 8 | | Lý do | `reason` | VARCHAR | 500 | Yes | | |
 | 9 | FK | Người 起案 | `proposed_by` | UUID | N/A | No | | `STL_HEAD` cho 一時停止 / 再開 / 再審査 |
-| 10 | FK | Người 決裁 / 確認 | `decided_by` | UUID | N/A | No | | `STL_HEAD` 確認 cho `REGISTERED` / `RENEWED` / `LIMIT_CHANGED`; `OPS_HEAD` 決裁 cho `SUSPENDED` / `RESUMED` / `REVIEW_STARTED` / `REINSTATED`; NULL cho `EXPIRED` tự động. CHECK `decided_by <> proposed_by` và ≠ `created_by` |
-| 11 | | MFA lúc | `mfa_verified_at` | TIMESTAMPTZ | N/A | No | | Bắt buộc khi `decided_by` có giá trị, **kể cả `LIMIT_CHANGED`** (PREMISE §3.2 sửa khớp; Q-PTY-07 chờ khách xác nhận) |
-| 12 | | Cột chung | `created_at`, `created_by` | | | | | `created_by` = 照合事務局 nhập |
+| 10 | FK | Người 決裁 / 確認 | `decided_by` | UUID | N/A | No | | `STL_HEAD` 確認 cho `REGISTERED` / `RENEWED` / `LIMIT_CHANGED`; `OPS_HEAD` 決裁 cho `SUSPENDED` / `RESUMED` / `REVIEW_STARTED` / `REINSTATED`; NULL cho `EXPIRED` tự động. CHECK `decided_by <> proposed_by` và ≠ `created_by` — **trừ `LIMIT_CHANGED`**: một bước do 照合部門長, `decided_by = created_by` cho phép (Q-PTY-06 [Customer giả lập, 2026-11-25]; vẫn bắt `mfa_verified_at`) |
+| 11 | | MFA lúc | `mfa_verified_at` | TIMESTAMPTZ | N/A | No | | Bắt buộc khi `decided_by` có giá trị, **kể cả `LIMIT_CHANGED`** (Q-PTY-07 khách đồng ý [Customer giả lập, 2026-11-25]) |
+| 12 | | Cột chung | `created_at`, `created_by` | | | | | `created_by` = 照合事務局 nhập; với `LIMIT_CHANGED` = 照合部門長 thực hiện |
 
 **Index** — `baibai_approval_events_pkey`; `idx_approval_events_approval` (`approval_id`, `created_at`).
 
@@ -421,7 +422,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Yêu cầu thay đổi 承認 đang chờ | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `baibai_approval_requests` | Sửa bởi / ngày | — |
-| Overview | Như 4.59 nhưng cho 承認 (売買参加者) — **bảng riêng**, khác 4.59: có `LIMIT_CHANGE` (đổi 参加上限, `payload` giữ hạn mức cũ / mới + `effectiveOn`), không có bước 起案 cho `NEW` (承認 xét nhẹ, 照合部門長 確認 — PARTY_DB §3). Khi 確認・決裁 hàm cập nhật 4.14 và thêm dòng 4.15 trong cùng transaction. Không DELETE | Note | Mới (gộp P3 — PTY_APPROVAL_LIFECYCLE_TECH §3, giả định [PL]) |
+| Overview | Như 4.59 nhưng cho 承認 (売買参加者) — **bảng riêng**, khác 4.59: không có bước 起案 cho `NEW`; **không** chứa `LIMIT_CHANGE` (đổi 参加上限 là thao tác một bước của 照合部門長, ghi thẳng 4.14 + 4.15 — Q-PTY-06) (承認 xét nhẹ, 照合部門長 確認 — PARTY_DB §3). Khi 確認・決裁 hàm cập nhật 4.14 và thêm dòng 4.15 trong cùng transaction. Không DELETE | Note | Mới (gộp P3 — PTY_APPROVAL_LIFECYCLE_TECH §3, giả định [PL]) |
 
 **Định nghĩa cột** — cùng tên cột với 4.59 (không dùng chung bảng), khác ở:
 
@@ -430,10 +431,10 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
 | 2 | FK | Người tham gia | `participant_id` | UUID | N/A | Yes | | Loại `BAIBAI` (hàm kiểm) |
 | 3 | FK | 承認 | `approval_id` | UUID | N/A | No | | NULL khi `NEW` |
-| 4 | | Loại yêu cầu | `request_kind` | `qualification_request_kind` | N/A | Yes | | Mọi giá trị, gồm `LIMIT_CHANGE` |
-| 5 | | Trạng thái | `status` | `qualification_request_status` | N/A | Yes | | `ENTERED` với `NEW` / `RENEW` / `LIMIT_CHANGE`; `PROPOSED` với loại 起案 (一時停止 / 再開 / 再審査 / 再有効). CHECK không `PROPOSED` khi `NEW` |
-| 6 | | Nội dung đề nghị | `payload` | JSONB | N/A | Yes | | Số 承認, 有効期間, `limitMode`, `participationLimitJpy`, `oldLimitJpy` (lưu lúc tạo để checker thấy trước / sau), ghi chú xét nhẹ |
-| 7–14 | | (như 4.59) | `reason`, `entered_by`, `proposed_by`, `decided_by`, `decided_at`, `delegation_id`, `mfa_verified_at`, `decision_comment`, cột chung | | | | | CHECK maker-checker như 4.59; `mfa_verified_at` bắt buộc khi `DECIDED` **kể cả `LIMIT_CHANGE`** (PREMISE §3.2 — Q-PTY-07) |
+| 4 | | Loại yêu cầu | `request_kind` | `qualification_request_kind` | N/A | Yes | | CHECK ≠ `LIMIT_CHANGE` (Q-PTY-06 — như 4.59) |
+| 5 | | Trạng thái | `status` | `qualification_request_status` | N/A | Yes | | `ENTERED` với `NEW` / `RENEW`; `PROPOSED` với loại 起案 (一時停止 / 再開 / 再審査 / 再有効). CHECK không `PROPOSED` khi `NEW` |
+| 6 | | Nội dung đề nghị | `payload` | JSONB | N/A | Yes | | Số 承認, 有効期間, `limitMode`, `participationLimitJpy` (hạn mức ban đầu của `NEW`), ghi chú xét nhẹ |
+| 7–14 | | (như 4.59) | `reason`, `entered_by`, `proposed_by`, `decided_by`, `decided_at`, `delegation_id`, `mfa_verified_at`, `decision_comment`, cột chung | | | | | CHECK maker-checker như 4.59; `mfa_verified_at` bắt buộc khi `DECIDED` |
 
 **Index** — `baibai_approval_requests_pkey`; `uq_approval_requests_open` (`participant_id`) unique partial `status IN ('ENTERED','PROPOSED')`; `idx_approval_requests_status` (`status`, `created_at`).
 

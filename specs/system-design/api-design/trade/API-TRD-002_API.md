@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: trade
 screen_id: [SC-04-01]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001]
@@ -26,6 +26,7 @@ related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-TRD-02: E-TRD-007 so 参加上限 theo 税込, `detail` có 税込 / 税抜 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -62,7 +63,7 @@ Chốt một GD 相対 (luồng chính) trong một transaction: khóa lô + ki�
 | 6 | 409 | Trước giờ chốt | <pre>{ "error": { "code": "E-TRD-012", "message": "取引の確定は 02:00 以降にできます" } }</pre> | |
 | 7 | 409 | Deadlock | <pre>{ "error": { "code": "E-CMN-006", "message": "同時に操作が行われました。もう一度お試しください" } }</pre> | Client kiểm API-TRD-003 trước khi bấm lại |
 | 8 | 422 | Tư cách không hợp lệ (許可) | <pre>{ "error": { "code": "E-TRD-005", "message": "仲卸の許可が有効ではないため確定できません（失効・有効期限 2027/07/31）", "field": "buyerId" } }</pre> | 承認 → `E-TRD-006` 「売買参加者の承認が…」 — **hai mã, hai câu** (luật 2); `E-TRD-003`, `004` cùng `field` |
-| 9 | 422 | Vượt 参加上限 chưa có lý do | <pre>{ "error": { "code": "E-TRD-007", "message": "今期の参加上限を超えます。超過理由を選択してください（上限 ¥5,000,000 / 今期確定済 ¥4,990,000 / 今回 ¥24,000）", "detail": { "limitJpy": 5000000, "usedJpy": 4990000, "amountJpy": 24000 } } }</pre> | Client mở hộp [13] |
+| 9 | 422 | Vượt 参加上限 chưa có lý do | <pre>{ "error": { "code": "E-TRD-007", "message": "今期の参加上限を超えます。超過理由を選択してください（上限 ¥5,000,000 / 今期確定済 ¥4,989,600（税込） / 今回 ¥25,920（税込））", "detail": { "limitJpy": 5000000, "usedInclJpy": 4989600, "amountInclJpy": 25920, "usedExclJpy": 4620000, "amountExclJpy": 24000 } } }</pre> | Client mở hộp [13] |
 | 10 | 422 | Dữ liệu sai khác | <pre>{ "error": { "code": "E-TRD-010", "message": "kg は小数第1位まで、箱・尾は整数で入力してください", "field": "qty" } }</pre> | Mã có thể: `E-TRD-008`, `009`, `010`, `011`, `E-CMN-007` |
 | 11 | 423 | 業務日 đã khóa | <pre>{ "error": { "code": "E-CMN-003", "message": "2027/08/02 は締め済みのため直接修正できません。訂正は修正申請で行います。" } }</pre> | |
 | 12 | 500 | Lỗi hệ thống | <pre>{ "error": { "code": "E-CMN-004", "message": "処理中にエラーが発生しました。時間をおいて再度お試しください", "traceId": "b7e1c0d2" } }</pre> | |
@@ -73,4 +74,4 @@ Chốt một GD 相対 (luồng chính) trong một transaction: khóa lô + ki�
 
 - Không idempotent — client khóa nút khi đang gửi; timeout không tự gửi lại (SC-04-01 §5).
 - Lý do vượt gửi kèm khi **không** vượt (hoặc người mua là 仲卸) bị bỏ qua, không lưu.
-- **Câu hỏi mở / TBD:** Q-TRD-01 (định dạng `displayNo`), Q-TRD-02.
+- **Câu hỏi mở / TBD:** Q-TRD-01 (định dạng `displayNo`). Q-TRD-02 đã trả lời: so 税込, `amountInclJpy` = 税込(used + amount) − 税込(used) (TRADE_QUALIFICATION_CHECK §4.4).

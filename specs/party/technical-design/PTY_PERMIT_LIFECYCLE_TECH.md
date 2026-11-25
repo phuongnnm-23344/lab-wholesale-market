@@ -8,7 +8,7 @@ function: permit request lifecycle (create → propose → decide / reject) + ex
 endpoint: POST /api/v1/participants/{participantId}/permit-requests · POST /api/v1/permit-requests/{requestId}/transitions
 component: PermitService
 feature: party
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001, SPEC-PTY_APPROVAL_LIFECYCLE-001, API-PTY-004, API-PTY-005, SPEC-PARTY_DB-001, ADR-003, ADR-002, PRM-121, FIG-010, OPEN-DB-09]
@@ -25,6 +25,7 @@ related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001, SPEC-PTY_APPROVAL_LIFECYCLE-00
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); G2-M03: RENEW khi 許可 đã 失効 → 409 E-PTY-013 + `detail.nextAction`, E-PTY-014 chỉ 422, bỏ khóa lỗi cũ (thay bằng `detail` / `field`); đóng Q-PTY-01/04/05 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -108,7 +109,7 @@ Chạy xong: `nakaoroshi_permits` mang trạng thái / hạn mới, `nakaoroshi_
 | Không có phiên / phiên hết hạn | Dừng; `E-CMN-001` | 401 |
 | Vai không được làm thao tác (bảng §3: SETTLE tạo `NEW` / `RENEW`; STL-HEAD tạo `SUSPEND` / `RESUME` / `REVIEW_START` / `REINSTATE` và `PROPOSE`; checker đúng quyền) | Dừng; `E-CMN-002` | 403 |
 | Thao tác `DECIDE` mà MFA step-up không còn hiệu lực (10 phút, idle 3 phút — ADR-002 §2.2) | Dừng; `E-CMN-005`; client mở C-30 rồi gửi lại | 403 |
-| Body sai kiểu / thiếu trường | Dừng; `E-CMN-007` + `error_extra` theo trường | 422 |
+| Body sai kiểu / thiếu trường | Dừng; `E-CMN-007` + `field` = khóa lỗi (vd `payload.validTo`) | 422 |
 
 **Detail**
 
@@ -138,7 +139,8 @@ Chạy xong: `nakaoroshi_permits` mang trạng thái / hạn mới, `nakaoroshi_
 | Đã có yêu cầu mở (`ENTERED` / `PROPOSED`) cho cùng 許可 / cùng người tham gia (`NEW`) | Dừng; `E-PTY-011` | 409 |
 | `permitNo` trùng | Dừng; `E-PTY-019` | 409 |
 | `validTo < validFrom` | Dừng; `E-PTY-020` | 422 |
-| `RENEW`: `newValidTo ≤ valid_to` hiện tại, hoặc 許可 đã 失効 (`valid_to` < 業務日) | Dừng; `E-PTY-014` (đã 失効 → phải đi `REVIEW_START`, câu hướng dẫn trong `error_extra`) | 422 / 409 |
+| `RENEW` khi 許可 đã 失効 (`valid_to` < 業務日 hoặc trạng thái `EXPIRED`) — không có ân hạn (Q-PTY-04) | Dừng; `E-PTY-013`, `detail` = `{ currentStatus: "EXPIRED", kind: "RENEW", nextAction: "REVIEW_START" }` → client hướng sang 再審査 | 409 |
+| `RENEW`: `newValidTo ≤ valid_to` hiện tại | Dừng; `E-PTY-014`, `field` = `payload.newValidTo`, `detail.currentValidTo` | 422 |
 | `reason` rỗng | Dừng; `E-PTY-007` | 422 |
 
 **Detail**
@@ -259,5 +261,7 @@ Chạy xong: `nakaoroshi_permits` mang trạng thái / hạn mới, `nakaoroshi_
 - **Ngôn ngữ UI:** duyệt nội bộ dùng 「決裁」「確認」「起案」; **không** dùng 「承認」 (L4-D03, luật 2).
 - **Đồng thời:** khóa dòng `participants` + `nakaoroshi_permits` theo thứ tự cố định (participant → permit → request) để tránh deadlock với job 失効.
 - **Thông báo:** qua outbox `notifications`, gửi lại ≤ 3 lần; lỗi gửi không rollback nghiệp vụ.
-- **Câu hỏi treo:** OPEN-DB-09 (cấp mới 許可 có cần 運用部門長 決裁 không — giả định có); Q-PTY-01 (một yêu cầu mở / tư cách); Q-PTY-04 (失効 → hiệu lực lại đi `REVIEW_START` → `REINSTATE` hay cho `RENEW` trong N ngày ân hạn? giả định: không ân hạn); Q-PTY-05 (`SUSPEND` có hiệu lực ngay lúc 決裁 hay theo ngày chỉ định? giả định: ngay).
+- **Câu hỏi treo:** OPEN-DB-09 (cấp mới 許可 có cần 運用部門長 決裁 không — giả định có).
+- **Đã trả lời [Customer giả lập, 2026-11-25]:** Q-PTY-01 (đúng — một yêu cầu mở / tư cách; có 一時停止 thì xử lý trước, yêu cầu 更新 rút lại rồi lập sau), Q-PTY-04 (không ân hạn; 失効 → 再審査: 照合部門長 起案, 運用部門長 決裁; gia hạn bình thường làm **trước** 失効日), Q-PTY-05 (hiệu lực ngay lúc 決裁, áp cho GD chốt **sau** thời điểm đó; lưu giờ phút 決裁 — `nakaoroshi_permit_events.created_at` / yêu cầu `decided_at`; chưa cần chọn ngày tương lai).
 - Truy vết: luật 2, luật 4; FR-PARTY-01, BR-PERM-01, PRM-045, PRM-121, FIG-010, NFR-SEC-01; ADR-002, ADR-003; PARTY_DB 4.12, 4.13; Gate 1 N-03, D-01.
+- **Điều kiện hoàn thành (LAB-5):** (a) 許可 và 承認 hai mã khác nhau: 仲卸 có 許可 `SUSPENDED` chốt GD → `E-TRD-005` (chữ 「仲卸の許可」), không bao giờ `E-TRD-006`; hàm, bảng yêu cầu (`nakaoroshi_permit_requests`), endpoint tách khỏi 承認; (b) `NEW`: SETTLE nhập → `ENTERED`; STL-HEAD ghi 審査 + 起案 → `PROPOSED`; OPS-HEAD `DECIDE` + MFA → 許可 `VALID` + hai event `REVIEWED` + `REGISTERED` cùng transaction; (c) maker tự 起案 / 決裁 → 403 `E-PTY-012`, CHECK DB chặn khi gọi thẳng hàm; (d) đã có yêu cầu `ENTERED` / `PROPOSED` → yêu cầu thứ hai 409 `E-PTY-011` (unique partial `uq_permit_requests_open`); (e) `RENEW` khi 許可 đã 失効 → 409 `E-PTY-013` với `detail.nextAction = "REVIEW_START"`; `RENEW` với `newValidTo ≤ valid_to` khi còn hiệu lực → 422 `E-PTY-014` `field = payload.newValidTo`; (f) `SUSPEND` 決裁 lúc 10:05 → GD chốt 10:04 giữ nguyên, GD chốt 10:06 → `E-TRD-005` (Q-PTY-05); (g) job mở 業務日: 許可 `valid_to` < 業務日 → `EXPIRED` + event `EXPIRED` (`decided_by` NULL) + một dòng `audit_logs` tổng; chạy lại cùng ngày không sinh thêm; lỗi DB không chặn mở ngày (alarm); (h) `DECIDE` thiếu step-up MFA → 403 `E-CMN-005`; (i) không có API nào UPDATE thẳng `status` / `valid_to` của `nakaoroshi_permits`.

@@ -9,7 +9,7 @@ method: GET
 media_type: application/json
 feature: trade
 screen_id: [SC-04-01, SC-04-05]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK-001]
@@ -26,6 +26,7 @@ related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-TRD-02: trả hạn mức đã dùng cả 税込 / 税抜 (`usedInclJpy`, `usedExclJpy`, `taxRatePercent`) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -50,7 +51,7 @@ Gợi ý người mua theo đầu 買受人番号 cho ô [3] SC-04-01 / [4] SC-0
 
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
-| 1 | 200 | OK | <pre>{<br>  "periodKey": "2027-08",<br>  "buyers": [<br>    {<br>      "buyerId": "a1b2c3d4-0000-4000-8000-0000000000b3",<br>      "buyerNo": "B03",<br>      "name": "サンプル売買参加者3",<br>      "kind": "BAIBAI",<br>      "qualification": { "basis": "SHONIN", "status": "VALID", "validTo": "2028-03-31", "daysToExpiry": 242 },<br>      "participationLimit": { "limitJpy": 5000000, "usedJpy": 4990000, "remainingJpy": 10000 }<br>    },<br>    {<br>      "buyerId": "a1b2c3d4-0000-4000-8000-0000000000n1",<br>      "buyerNo": "N01",<br>      "name": "サンプル仲卸1",<br>      "kind": "NAKAOROSHI",<br>      "qualification": { "basis": "KYOKA", "status": "VALID", "validTo": "2028-10-23", "daysToExpiry": 448 },<br>      "participationLimit": null<br>    }<br>  ],<br>  "overLimitReasonOptions": [<br>    { "code": "PRIOR_CONSENT", "label": "事前に了承済", "key": "1" },<br>    { "code": "DEPOSIT_TOPUP", "label": "保証金追加予定", "key": "2" },<br>    { "code": "OTHER", "label": "その他", "key": "3", "noteRequired": true }<br>  ]<br>}</pre> | `qualification.status`: `VALID` 有効 · `SUSPENDED` 一時停止 · `EXPIRED` 失効 · `UNDER_REVIEW` 再審査 · `NONE` (không có bản ghi). `participationLimit` chỉ có với `BAIBAI`, `null` với `NAKAOROSHI`. `usedJpy` = 相対 + せり 確定 trong kỳ `periodKey` (税抜, giá trị hiệu lực). Người tham gia loại khác vẫn trả với `kind` thật để client báo `E-TRD-004` |
+| 1 | 200 | OK | <pre>{<br>  "periodKey": "2027-08",<br>  "buyers": [<br>    {<br>      "buyerId": "a1b2c3d4-0000-4000-8000-0000000000b3",<br>      "buyerNo": "B03",<br>      "name": "サンプル売買参加者3",<br>      "kind": "BAIBAI",<br>      "qualification": { "basis": "SHONIN", "status": "VALID", "validTo": "2028-03-31", "daysToExpiry": 242 },<br>      "participationLimit": { "limitJpy": 5000000, "usedInclJpy": 4989600, "usedExclJpy": 4620000, "remainingJpy": 10400, "taxRatePercent": 8 }<br>    },<br>    {<br>      "buyerId": "a1b2c3d4-0000-4000-8000-0000000000n1",<br>      "buyerNo": "N01",<br>      "name": "サンプル仲卸1",<br>      "kind": "NAKAOROSHI",<br>      "qualification": { "basis": "KYOKA", "status": "VALID", "validTo": "2028-10-23", "daysToExpiry": 448 },<br>      "participationLimit": null<br>    }<br>  ],<br>  "overLimitReasonOptions": [<br>    { "code": "PRIOR_CONSENT", "label": "事前に了承済", "key": "1" },<br>    { "code": "DEPOSIT_TOPUP", "label": "保証金追加予定", "key": "2" },<br>    { "code": "OTHER", "label": "その他", "key": "3", "noteRequired": true }<br>  ]<br>}</pre> | `qualification.status`: `VALID` 有効 · `SUSPENDED` 一時停止 · `EXPIRED` 失効 · `UNDER_REVIEW` 再審査 · `NONE` (không có bản ghi). `participationLimit` chỉ có với `BAIBAI`, `null` với `NAKAOROSHI`. `usedExclJpy` = 相対 + せり 確定 trong kỳ `periodKey` (税抜, giá trị hiệu lực); `usedInclJpy` = floor(`usedExclJpy` × (100 + `taxRatePercent`) / 100) — suất từ `tax_rates` theo mã ở tham số `PARTICIPATION_LIMIT_TAX_CODE` (Q-TRD-02, [Customer giả lập, 2026-11-25]); `remainingJpy` = `limitJpy` − `usedInclJpy` (có thể âm). Màn hiện cả hai số 「使用額 ¥…（税込）／ 税抜 ¥…」. Người tham gia loại khác vẫn trả với `kind` thật để client báo `E-TRD-004` |
 | 2 | 401 | Chưa đăng nhập | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | |
 | 3 | 403 | Không có vai TRADE | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | |
 | 4 | 422 | `q` sai | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "q" } }</pre> | |
@@ -62,4 +63,4 @@ Gợi ý người mua theo đầu 買受人番号 cho ô [3] SC-04-01 / [4] SC-0
 
 - Nguồn: view `v_qualification_current`, `v_buyer_period_usage`, `v_participant_current_deposit` (party) — cột view định nghĩa ở [MKT_DB §4.0a](../../database-design/MKT_DB.md#40a-view-công-bố).
 - Không trả email / địa chỉ người tham gia (dữ liệu cá nhân không cần ở bàn GD).
-- **Câu hỏi mở / TBD:** Q-TRD-02 (hạn mức so 税抜 / 税込).
+- Q-TRD-02 đã trả lời (税込). **Câu hỏi mở / TBD:** 経理部 xác nhận suất (軽減税率 8%?) và có hai suất trong một kỳ không.

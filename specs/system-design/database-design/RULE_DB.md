@@ -3,7 +3,7 @@ id: SPEC-RULE_DB-001
 title: Database Design — Quy chế có version (bảng tỷ lệ, tham số) + master mã / thuế
 type: system
 subtype: database-design
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -33,6 +33,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: tham số `TRADE_START_TIME` + nghĩa `LOT_INTAKE_START_TIME` là đầu 業務日 (M-01); `PAYMENT_DUE_RULE` lùi theo ngày ngân hàng là quy tắc chốt, có giả định + câu hỏi (M-03); ngưỡng 2 cấp đo theo tiền thay đổi lớn nhất của một người mua (khách #3); hủy version `APPROVED` có maker-checker (m-09); ghi giả định 110/100 cố định (m-07) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Modify | `code_values`, `rule_versions` | Gộp P3: `code_values` thêm loại `INSPECTION_GRADE` (hạng 目利き A / B / C / 規格外 — giả định Q-LOT-03); `rule_versions` thêm `cancel_requested_by`, `cancel_requested_at`, `cancel_request_reason` (bước 1 của hủy version `APPROVED` có maker-checker — Q-RULE-02, API-RULE-006); ghi rõ trạng thái hiển thị 「決裁待ち」 nhánh N2 = `PENDING` + `checker_id` NOT NULL + `second_approver_id` NULL (không thêm giá trị enum) | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | — | Khách Q-TRD-02: 4.19 `tax_rates` dùng để quy 参加上限 về 税込 (mã ở file cấu hình `PARTICIPATION_LIMIT_TAX_CODE`) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -186,7 +187,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Thuế suất | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `tax_rates` | Sửa bởi / ngày | — |
-| Overview | 税率マスタ (FT-10-05): mã + suất + ngày hiệu lực. Mỗi GD lưu `tax_rate_id` đã áp; thuế kỳ tính một lần trên tổng theo từng suất (PRM-053). Sửa D04 (prototype cố định 10%). | Note | Hệ số 110/100 của 完納奨励金 là 税係数 **cố định** của BR-INC-01 / B.5 / 13-06, **không** theo thuế suất của hàng (thủy sản tươi là thực phẩm → 軽減税率 8%) và không đọc từ bảng này — giả định [PL] ghi theo Gate 1 m-07; 税区分 của 完納奨励金 khi xuất IF-ACC-01 là câu hỏi Q-ARCH-12 (theo E-01 / E-06) |
+| Overview | 税率マスタ (FT-10-05): mã + suất + ngày hiệu lực. Mỗi GD lưu `tax_rate_id` đã áp; thuế kỳ tính một lần trên tổng theo từng suất (PRM-053). Sửa D04 (prototype cố định 10%). | Note | Hệ số 110/100 của 完納奨励金 là 税係数 **cố định** của BR-INC-01 / B.5 / 13-06, **không** theo thuế suất của hàng (thủy sản tươi là thực phẩm → 軽減税率 8%) và không đọc từ bảng này — giả định [PL] ghi theo Gate 1 m-07; 税区分 của 完納奨励金 khi xuất IF-ACC-01 là câu hỏi Q-ARCH-12 (theo E-01 / E-06). **Cũng dùng để so 参加上限 theo 税込** (Q-TRD-02 [Customer giả lập, 2026-11-25]): hệ số = `rate_percent` của mã trong tham số file cấu hình `PARTICIPATION_LIMIT_TAX_CODE` (mặc định `REDUCED8`) tại ngày GD — có lịch sử nhờ `valid_from` / `valid_to`, đổi không tính vào 4 lần/năm (không phải version quy chế) |
 
 **Định nghĩa cột**
 

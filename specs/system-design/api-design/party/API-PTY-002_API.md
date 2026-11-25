@@ -9,7 +9,7 @@ method: PUT
 media_type: application/json
 feature: party
 screen_id: [SC-01-02]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001]
@@ -26,6 +26,7 @@ related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: khóa trường ở `field` gốc | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -70,7 +71,7 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 200 | Đã lưu | <pre>{<br>&nbsp;&nbsp;"participant": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "6f1d…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"name": "サンプル仲卸1",<br>&nbsp;&nbsp;&nbsp;&nbsp;"buyerNo": "N01",<br>&nbsp;&nbsp;&nbsp;&nbsp;"version": 8<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"contacts": [<br>&nbsp;&nbsp;&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"slotNo": 1,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email": "n01@sakura-sample.example"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;]<br>}</pre> | Trả bản mới; client nạp lại API-PTY-001 để có đủ khối |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "name" } }</pre> | `E-CMN-007` |
 | 3 | 422 | Tên sai | <pre>{ "error": { "code": "E-PTY-001", "message": "名称は1〜100文字で入力してください", "detail": { "name": "length" } } }</pre> | `E-PTY-001` |
 | 4 | 422 | 買受人番号 sai dạng | <pre>{ "error": { "code": "E-PTY-002", "message": "買受人番号は英大文字・数字1〜10文字で入力してください", "detail": { "buyerNo": "pattern" } } }</pre> | `E-PTY-002` |
 | 5 | 422 | Email sai dạng | <pre>{ "error": { "code": "E-PTY-004", "message": "メールアドレスの形式が正しくありません", "detail": { "emails[1]": "format" } } }</pre> | `E-PTY-004` |

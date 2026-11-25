@@ -3,7 +3,7 @@ id: SPEC-PARTY_FUNC-001
 title: Function Specifications — module party (người tham gia, 許可 / 承認)
 type: system
 subtype: function-specifications
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 feature: party
@@ -26,6 +26,7 @@ Kiểu dùng chung: `SessionContext` = `{ userId, deviceId, roles: AppRole[], au
 | No | Ver | アクション / Action | 対象シート / Sheet | 変更内容 / Description of changes | 更新日 / Change Date | 更新者 / Editor | 承認 / Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | Ver 0.1 | Add New | Toàn module | Khởi tạo 8 function + danh mục mã lỗi `E-PTY` | 2026-11-25 | phuongnnm-23344 | |
+| 2 | Ver 0.1.1 | Update | — | Gate 2 G2-M02: §3.1 Điều kiện hoàn thành (LAB-5); G2-M03: E-PTY-013 gồm RENEW khi đã 失効 (`detail.nextAction`), E-PTY-014 chỉ 422; khách Q-PTY-06: đổi 保証金 / 参加上限 chỉ 照合部門長 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -82,14 +83,14 @@ Kiểu dùng chung: `SessionContext` = `{ userId, deviceId, roles: AppRole[], au
 
 | Argument type | Argument name | Role of the argument |
 |---|---|---|
-| `SessionContext` | `ctx` | |
+| `SessionContext` | `ctx` | Chỉ STL-HEAD (hoặc 代行), step-up MFA còn hiệu lực — Q-PTY-06 |
 | `string` | `participantId` | |
 | `{ depositJpy: number; effectiveFrom: string (YYYY-MM-DD); reason: string }` | `input` | |
 
 **Function description**
 
-> - Gọi `fn_participant_deposit_change`: INSERT `participant_deposit_history` (chỉ thêm). Với 売買参加者 `DEPOSIT` → trả `limitAfter = depositJpy`; `INDIVIDUAL` → trả hạn mức giữ nguyên.
-> - Lỗi: `E-PTY-005..008`, `E-PTY-022`, `E-PTY-010`.
+> - Kiểm vai STL-HEAD + MFA step-up (Q-PTY-06 [Customer giả lập, 2026-11-25]: 照合事務局 không tự đổi; một bước, không checker, có audit). Gọi `fn_participant_deposit_change`: INSERT `participant_deposit_history` (chỉ thêm) + `audit_logs` before / after. Với 売買参加者 `DEPOSIT` → trả `limitAfter = depositJpy`; `INDIVIDUAL` → trả hạn mức giữ nguyên.
+> - Lỗi: `E-PTY-005..008`, `E-PTY-022`, `E-PTY-010`, `E-CMN-002`, `E-CMN-005`.
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|
@@ -145,18 +146,19 @@ Kiểu dùng chung: `SessionContext` = `{ userId, deviceId, roles: AppRole[], au
 
 | Argument type | Argument name | Role of the argument |
 |---|---|---|
-| `SessionContext` | `ctx` | Maker: SETTLE (`NEW`, `RENEW`, `LIMIT_CHANGE`) hoặc STL-HEAD (loại 起案) |
+| `SessionContext` | `ctx` | Maker: SETTLE (`NEW`, `RENEW`) hoặc STL-HEAD (loại 起案). `LIMIT_CHANGE`: chỉ STL-HEAD + step-up MFA, một bước (Q-PTY-06) |
 | `string` | `participantId` | Phải là 売買参加者 |
 | `{ kind: ApprovalRequestKind; payload: ApprovalRequestPayload; reason: string }` | `input` | |
 
 **Function description**
 
 > - Gọi `fn_approval_request_create` (SPEC-PTY_APPROVAL_LIFECYCLE-001 §4.2). Hàm riêng, không dùng chung code path với 2.4 (ADR-003).
+> - `kind = LIMIT_CHANGE` → gọi `fn_approval_limit_change` (§4.2b): áp ngay, trả `{ limitChange }` thay cho `ApprovalRequest`; không tạo yêu cầu chờ.
 > - Lỗi: `E-PTY-006`, `-007`, `-009`, `-010`, `-011`, `-013`, `-014`, `-016`, `-018`, `-019`, `-020`.
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|
-| `number \| null` | `oldLimitJpy` | Lưu vào payload để người 確認 thấy trước / sau |
+| `number \| null` | `oldLimitJpy` | `LIMIT_CHANGE`: ghi vào `LIMIT_CHANGED.old_limit_jpy` (NULL = theo 保証金) |
 
 ### 2.7. `transitionApprovalRequest` (承認)
 
@@ -215,8 +217,8 @@ Kiểu dùng chung: `SessionContext` = `{ userId, deviceId, roles: AppRole[], au
 | E-PTY-010 | 409 | この参加者は退会済みのため変更できません | Người tham gia đã 退会 | API-PTY-002..007 |
 | E-PTY-011 | 409 | 処理中の申請があります。完了または却下の後に操作してください | Đã có yêu cầu mở | API-PTY-004, -006 |
 | E-PTY-012 | 403 | 申請者・起案者本人は決裁（確認）できません | Maker tự duyệt | API-PTY-005, -007 |
-| E-PTY-013 | 409 | この状態からは指定の操作はできません | Chuyển trạng thái không hợp lệ (FIG-010) | API-PTY-004..007 |
-| E-PTY-014 | 422 | 新しい失効日は現在の失効日より後の日付にしてください | Gia hạn không lùi / không hợp lệ | API-PTY-004, -006 |
+| E-PTY-013 | 409 | この状態からは指定の操作はできません | Chuyển trạng thái không hợp lệ (FIG-010), **kể cả `RENEW` khi 許可 / 承認 đã 失効** (`detail.nextAction = "REVIEW_START"` — Q-PTY-04, không ân hạn) | API-PTY-004..007 |
+| E-PTY-014 | 422 | 新しい失効日は現在の失効日より後の日付にしてください | Gia hạn với `newValidTo ≤ valid_to` hiện tại (tư cách còn hiệu lực); đã 失効 → `E-PTY-013` | API-PTY-004, -006 |
 | E-PTY-015 | 422 | 審査結果を入力してください | Thiếu kết quả 審査 (許可) | API-PTY-005 |
 | E-PTY-016 | 422 | 参加上限は1円以上で入力するか、「保証金額に連動」を選んでください | 参加上限 không hợp lệ / không đổi | API-PTY-006 |
 | E-PTY-017 | 409 | この申請は既に処理済み、または処理できる段階ではありません | Yêu cầu đã đóng / sai bước | API-PTY-005, -007 |
@@ -227,5 +229,13 @@ Kiểu dùng chung: `SessionContext` = `{ userId, deviceId, roles: AppRole[], au
 | E-PTY-022 | 422 | 現在の保証金額と同じです | 保証金 không đổi | 9.1; API-PTY-003 |
 | E-PTY-023 | 422 | 却下理由を入力してください | Thiếu lý do từ chối | API-PTY-005, -007 |
 | E-PTY-024 | 404 | 申請が見つかりません | Không tìm thấy yêu cầu 許可 / 承認 | API-PTY-005, -007 |
+
+### 3.1 Điều kiện hoàn thành (LAB-5)
+
+- **2.1–2.2:** (a) 仲卸 trả khối `permit`, 売買参加者 trả khối `approval`, không có khối chung; (b) sửa cùng lúc từ hai máy → máy sau 409 `E-CMN-008`.
+- **2.3 `changeDeposit`:** (a) SETTLE gọi → 403 `E-CMN-002`; STL-HEAD không còn step-up → 403 `E-CMN-005`; (b) STL-HEAD hợp lệ → thêm 1 dòng `participant_deposit_history` + 1 dòng `audit_logs`, dòng cũ giữ nguyên; (c) `DEPOSIT` → `limitAfter = depositJpy`; `INDIVIDUAL` → hạn mức giữ nguyên; (d) `effectiveFrom` < 業務日 → 422 `E-PTY-006`.
+- **2.4–2.5 (許可) và 2.6–2.7 (承認):** hai hàm, hai bảng yêu cầu, hai mã lỗi tư cách ở `trade` (`E-TRD-005` 許可 / `E-TRD-006` 承認) — điều kiện chi tiết ở [PTY_PERMIT_LIFECYCLE §5](../technical-design/PTY_PERMIT_LIFECYCLE_TECH.md#5-other-notes) và [PTY_APPROVAL_LIFECYCLE §5](../technical-design/PTY_APPROVAL_LIFECYCLE_TECH.md#5-other-notes).
+- **2.6 `LIMIT_CHANGE`:** STL-HEAD + MFA → 201 `limitChange`, đúng 1 dòng `LIMIT_CHANGED` có `old_limit_jpy` / `new_limit_jpy` / `effective_on`, không có dòng ở `baibai_approval_requests`; SETTLE gửi → 403.
+- **2.8 job:** chạy hai lần cùng ngày → lần hai không sinh thêm `EXPIRED`.
 
 Mã chung `E-CMN-001..008` (thông điệp JP một bản, HTTP, cách client xử lý): [`_common/error-codes.md`](../../_common/error-codes.md). Body lỗi, MFA, khóa lạc quan: [`_common/api-conventions.md`](../../_common/api-conventions.md).

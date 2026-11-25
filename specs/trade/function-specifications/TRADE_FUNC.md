@@ -3,7 +3,7 @@ id: SPEC-TRADE_FUNC-001
 title: Module trade — Function Specifications
 type: system
 subtype: function-specifications
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 feature: trade
@@ -26,6 +26,7 @@ Quy ước chung: như [LOT_FUNC](../../lot/function-specifications/LOT_FUNC.md)
 | No | Ver | アクション / Action | 対象シート / Sheet | 変更内容 / Description of changes | 更新日 / Change Date | 更新者 / Editor | 承認 / Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | Ver 0.1 | Add New | Toàn bộ (2.1–2.12) | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | Ver 0.1.1 | Update | — | Khách Q-TRD-02: 2.4 so 参加上限 theo 税込, E-TRD-007; Q-TRD-05: 2.9 hai đường 差し戻し / 取消, E-TRD-015 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -102,7 +103,7 @@ Quy ước chung: như [LOT_FUNC](../../lot/function-specifications/LOT_FUNC.md)
 
 | Return type | Function name |
 |---|---|
-| `jsonb` (`{kind, basis, over_limit, limit_jpy, used_jpy}`) | `app.fn_check_buyer_qualification` |
+| `jsonb` (`{kind, basis, over_limit, limit_jpy, used_excl_jpy, used_incl_jpy, total_incl_jpy}`) | `app.fn_check_buyer_qualification` |
 
 | Argument type | Argument name | Role of the argument |
 |---|---|---|
@@ -117,7 +118,7 @@ Quy ước chung: như [LOT_FUNC](../../lot/function-specifications/LOT_FUNC.md)
 
 **Function description**
 
-> - 仲卸 → kiểm **許可** (`nakaoroshi_permits`) `VALID` và `valid_from ≤ p_at::date ≤ valid_to`, sai → `E-TRD-005`; không có hạn mức. 売買参加者 → kiểm **承認** (`baibai_approvals`) tương tự, sai → `E-TRD-006`; rồi so `used + extra + amount` với 参加上限 của kỳ; vượt mà không lý do → `E-TRD-007`; `OTHER` thiếu note → `E-TRD-008`. Loại khác → `E-TRD-004`; không tồn tại → `E-TRD-003`.
+> - 仲卸 → kiểm **許可** (`nakaoroshi_permits`) `VALID` và `valid_from ≤ p_at::date ≤ valid_to`, sai → `E-TRD-005`; không có hạn mức. 売買参加者 → kiểm **承認** (`baibai_approvals`) tương tự, sai → `E-TRD-006`; rồi so **税込** của `used + extra + amount` (= floor(Σ税抜 × (100 + suất) / 100), suất từ `tax_rates` theo mã ở tham số `PARTICIPATION_LIMIT_TAX_CODE` — Q-TRD-02) với 参加上限 của kỳ; vượt mà không lý do → `E-TRD-007`; `OTHER` thiếu note → `E-TRD-008`. Loại khác → `E-TRD-004`; không tồn tại → `E-TRD-003`.
 > - Không ghi. Chi tiết: [TRADE_QUALIFICATION_CHECK_TECH](../technical-design/TRADE_QUALIFICATION_CHECK_TECH.md).
 
 | Variable type | Variable name | Role of variables |
@@ -210,12 +211,13 @@ Quy ước chung: như [LOT_FUNC](../../lot/function-specifications/LOT_FUNC.md)
 |---|---|---|
 | `uuid` | `p_session_id` | Phiên |
 | `uuid[]` | `p_confirm_trade_ids` | Dòng 確認者 chọn xác nhận |
+| `uuid[]` | `p_cancel_trade_ids` | Dòng ✖確定不可 mà 確認者 chọn 「取消（資格なし・不成立）」 (Q-TRD-05) |
 | `jsonb` | `p_over_limit_reasons` | `{tradeId: {code, note}}` |
 | `varchar(200)` | `p_same_person_reason` | Lý do khi 確認者 = 入力者 |
 
 **Function description**
 
-> - Khóa phiên → khóa mọi lô của phiên theo `lot_id` (chống deadlock, prototype 0027) → với mỗi dòng `PENDING` theo `No`: dòng được chọn phải qua 2.4 + SL, lỗi → `E-TRD-018` (rollback cả lượt); dòng không chọn: hệ thống đánh giá **không xác nhận được** → `CANCELLED` + `CANCEL`; **xác nhận được mà không chọn** → `E-TRD-015`. Dòng xác nhận: `APPROVE` + `CONFIRM`, `fn_lot_book_quantity(SALE)`. Chi tiết: [TRADE_SERI_CONFIRM_TECH](../technical-design/TRADE_SERI_CONFIRM_TECH.md).
+> - Khóa phiên → khóa mọi lô của phiên theo `lot_id` (chống deadlock, prototype 0027) → với mỗi dòng `PENDING` theo `No`: dòng được chọn phải qua 2.4 + SL, lỗi → `E-TRD-018` (rollback cả lượt); dòng trong `p_cancel_trade_ids` mà vẫn **không xác nhận được** → `CANCELLED` + `CANCEL` (lý do 資格なし・不成立, người hủy = 確認者), nay xác nhận được → `E-TRD-018`; dòng `PENDING` không ở danh sách nào (kể cả ✖確定不可 chưa chọn cách xử lý) → `E-TRD-015`. Không tự hủy, không đổi người mua (Q-TRD-05, luật 3). Dòng xác nhận: `APPROVE` + `CONFIRM`, `fn_lot_book_quantity(SALE)`. Chi tiết: [TRADE_SERI_CONFIRM_TECH](../technical-design/TRADE_SERI_CONFIRM_TECH.md).
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|
@@ -308,7 +310,7 @@ Quy ước chung: như [LOT_FUNC](../../lot/function-specifications/LOT_FUNC.md)
 | E-TRD-004 | 422 | 買受人は仲卸または売買参加者のみ指定できます | Loại người tham gia không được mua | SC-04-01 [3] / API-TRD-002, 008 |
 | E-TRD-005 | 422 | 仲卸の許可が有効ではないため確定できません（{状態}・有効期限 {date}） | **許可** (仲卸) không hiệu lực | SC-04-01 [3], SC-05-02 [5] / API-TRD-002, 006, 008 |
 | E-TRD-006 | 422 | 売買参加者の承認が有効ではないため確定できません（{状態}・有効期限 {date}） | **承認** (売買参加者) không hiệu lực | SC-04-01 [3], SC-05-02 [5] / API-TRD-002, 006, 008 |
-| E-TRD-007 | 422 | 今期の参加上限を超えます。超過理由を選択してください（上限 ¥{limit} / 今期確定済 ¥{used} / 今回 ¥{amount}） | Vượt 参加上限 chưa có lý do | SC-04-01 [13], SC-05-02 [4] / API-TRD-002, 006, 008 |
+| E-TRD-007 | 422 | 今期の参加上限を超えます。超過理由を選択してください（上限 ¥{limit} / 今期確定済 ¥{used}（税込） / 今回 ¥{amount}（税込）） | Vượt 参加上限 chưa có lý do | SC-04-01 [13], SC-05-02 [4] / API-TRD-002, 006, 008 |
 | E-TRD-008 | 422 | 「その他」を選んだ場合は備考を入力してください（200文字以内） | Thiếu ghi chú lý do | SC-04-01 [14], SC-05-02 [4], SC-04-05 [9] |
 | E-TRD-009 | 422 | 数量は0より大きい値を入力してください | SL ≤ 0 | SC-04-01 [5], SC-04-05 [5] |
 | E-TRD-010 | 422 | kg は小数第1位まで、箱・尾は整数で入力してください | Số lẻ sai theo đơn vị lô | SC-04-01 [5], SC-04-05 [5] |
@@ -316,7 +318,7 @@ Quy ước chung: như [LOT_FUNC](../../lot/function-specifications/LOT_FUNC.md)
 | E-TRD-012 | 409 | 取引の確定は {HH:MM} 以降にできます | Trước giờ bắt đầu chốt GD (quy chế) | SC-04-01 [8], SC-05-02 [9] |
 | E-TRD-013 | 409 | この回は確認待ちではありません（{状態}） | Phiên đã xác nhận / không chờ | SC-05-02 / API-TRD-006, 007 |
 | E-TRD-014 | 422 | 入力者と同じ人が確認する場合は理由を入力してください | Tự xác nhận thiếu lý do | SC-05-02 [7] / API-TRD-006 |
-| E-TRD-015 | 422 | チェックを外した行を先に差し戻してください（{n}件） | Còn dòng bỏ chọn chưa 差し戻し | SC-05-02 [9] / API-TRD-006 |
+| E-TRD-015 | 422 | 未処理の行があります。差し戻すか取消を選んでください（{n}件） | Còn dòng bỏ chọn chưa 差し戻し, hoặc dòng ✖確定不可 chưa chọn 差し戻し / 取消 (Q-TRD-05) | SC-05-02 [9] / API-TRD-006 |
 | E-TRD-016 | 422 | 確定する行がありません | Không có dòng để xác nhận | SC-05-02 [9] / API-TRD-006 |
 | E-TRD-017 | 422 | 差し戻しの理由を入力してください | Thiếu lý do 差し戻し | SC-05-02 [12] / API-TRD-007 |
 | E-TRD-018 | 409 | 確認中に状態が変わった行があります。一覧を更新してください（{tradeNos}） | Tư cách / SL đổi giữa lúc xem và lúc bấm | SC-05-02 / API-TRD-006 |
@@ -335,9 +337,9 @@ Quy ước chung: như [LOT_FUNC](../../lot/function-specifications/LOT_FUNC.md)
 | ID | Câu hỏi | Giả định tạm (PL) | Ảnh hưởng nếu sai | Truy vết |
 |---|---|---|---|---|
 | Q-TRD-01 | Định dạng số GD đọc cho người mua | Lưu `A{YYYYMMDD}-{nnnn}` / `S{…}`; hiển thị 「相対-0005」「せり-0302」 (số trong ngày) | Chỉ đổi hàm sinh số + mẫu phiếu, ~0,2 ngày | WF SC-04-01 §6 #7, FB LAB-2 #7 |
-| Q-TRD-02 | 参加上限 so với tiền 税抜 hay 税込? | 税抜 (như cột `amount_jpy`, 保証金 là số tiền tuyệt đối) | Đổi công thức 2.4 + view `v_buyer_period_usage`, ~0,3 ngày | PRM-046 |
+| Q-TRD-02 | 参加上限 so với tiền 税抜 hay 税込? | **Đã trả lời — 税込** [Customer giả lập, 2026-11-25]: tổng 税抜 trong kỳ × hệ số thuế (suất ở `tax_rates`, mã ở tham số `PARTICIPATION_LIMIT_TAX_CODE`), làm tròn xuống; không dùng 110/100; màn hiện cả 税込 / 税抜. Còn hỏi 経理部: suất áp cho 買受代金 hải sản tươi (軽減税率 8%?) và có hai suất trong một kỳ không | Đã tính +0,3 ngày (2.4 + view). Hai suất trong kỳ → nhóm theo suất, +0,2 ngày | PRM-046 |
 | Q-TRD-03 | Máy in hiện trường: in thẳng PDF bằng chế độ kiosk của trình duyệt hay agent in cục bộ? | Trình duyệt chế độ kiosk-printing trên PC bàn GD (không cài agent) | Agent in → thêm thành phần cài máy, ~2 ngày | M05, ARCHITECTURE §9 |
 | Q-TRD-04 | Phiên せり có 差し戻し: xác nhận nhiều lượt cho cùng phiên được không? | Được; phiên `CONFIRMED` khi hết dòng chờ | Nếu phải xác nhận một lần → 差し戻し mở lại cả phiên, đổi 2.9 / 2.10 | FR-SERI-02, `seri_status` |
-| Q-TRD-05 | Dòng せり người mua 失効: hủy dòng (lô bán lại) hay trả 入力者 sửa người mua? | Hủy dòng (khách #9: "lô quay lại 販売公開中") | Trả 入力者 → `REJECT` thay `CANCEL`, không đổi bảng | khách #9, BR-PERM-01 |
+| Q-TRD-05 | Dòng せり người mua 失効: hủy dòng (lô bán lại) hay trả 入力者 sửa người mua? | **Đã trả lời — cả hai, 確認者 chọn** [Customer giả lập, 2026-11-25]: 「差し戻し（番号誤り）」 (`REJECT` → 入力者 sửa đúng số người thắng) / 「取消（資格なし・不成立）」 (`CANCEL`, lô về 販売公開中); không nút đổi người mua, không đôn người trả giá thứ 2 | Không đổi bảng; thêm `p_cancel_trade_ids` ở 2.9 + 2 nút UI | khách #9, BR-PERM-01, luật 3 |
 | A-TRD-01 | 相対 một lần bấm ghi `SUBMIT` / `APPROVE` / `CONFIRM` cùng người, cùng thời điểm | Theo TRADE_DB 4.30 (PRM-114 (a)) | — | FIG-012, D10 |
 | A-TRD-02 | Nhãn sự kiện `APPROVE` (FIG-012 「承認」) trên UI / báo cáo hiển thị là 「確認」 | Theo L4-D03 | Nếu khách muốn giữ chữ FIG-012 → ghi chú phân biệt với 承認 (売買参加者) | L4-D03, luật 2 |

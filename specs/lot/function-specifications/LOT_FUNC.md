@@ -3,7 +3,7 @@ id: SPEC-LOT_FUNC-001
 title: Module lot — Function Specifications
 type: system
 subtype: function-specifications
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 feature: lot
@@ -29,6 +29,7 @@ Quy ước chung của mọi function trong file:
 | No | Ver | アクション / Action | 対象シート / Sheet | 変更内容 / Description of changes | 更新日 / Change Date | 更新者 / Editor | 承認 / Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | Ver 0.1 | Add New | Toàn bộ (2.1–2.10) | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | Ver 0.1.1 | Update | — | Khách Q-LOT-01: mã chính thức khi lên server, tìm theo 仮番号 cả ngày, không dùng lại số, lô 仮受付 hủy → CANCELLED giữ số, phiếu in dùng mã chính thức; đóng Q-LOT-03 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -113,7 +114,7 @@ Quy ước chung của mọi function trong file:
 
 | Argument type | Argument name | Role of the argument |
 |---|---|---|
-| `Request` | `request` | Query: `date`, `status` (csv), `itemCode`, `shipperId`, `q` (số đuôi mã lô), `onSale`, `registeredBy=me`, `include` (csv `latestInspection,hasTrades`), `sort`, `limit` (≤ 100), `offset` |
+| `Request` | `request` | Query: `date`, `status` (csv), `itemCode`, `shipperId`, `q` (số đuôi mã lô, mã lô đầy đủ **hoặc 仮番号** — Q-LOT-01), `onSale`, `registeredBy=me`, `include` (csv `latestInspection,hasTrades`), `sort`, `limit` (≤ 100), `offset` |
 
 **Function description**
 
@@ -283,9 +284,9 @@ Mã chung `E-CMN-001..008` (thông điệp JP một bản, HTTP, cách client x�
 
 | ID | Câu hỏi | Giả định tạm (PL) | Ảnh hưởng nếu sai | Truy vết |
 |---|---|---|---|---|
-| Q-LOT-01 | Mã lô chính thức cấp lúc nào: khi 仮受付 lên server hay khi 本登録? | Khi bản ghi lô lên server (theo `lots.lot_no NOT NULL` + prototype 0014); 仮番号 dùng ở bến tới lúc đó | Cấp ở 本登録 → đổi `lot_no` thành NULL được khi `PROVISIONAL` (LOT_DB 4.25), +0,5 ngày công | WF SC-03-01 [9], LOT_DB 4.25 |
+| Q-LOT-01 | Mã lô chính thức cấp lúc nào: khi 仮受付 lên server hay khi 本登録? | **Đã trả lời — đồng ý có điều kiện** [Customer giả lập, 2026-11-25]: cấp khi bản ghi 仮受付 lên server; (1) gõ 仮番号 tìm ra lô ở mọi màn (本登録, 目利き, 相対) tới hết 業務日 — API-LOT-003 `q`; (2) số chính thức **không dùng lại** (`day_counters` chỉ tăng); (3) lô 仮受付 hủy (nhập trùng / nhầm) giữ số với trạng thái `CANCELLED` 取消, không xóa, tra được khi kiểm toán; (4) lô offline chưa đồng bộ chưa có số chính thức → chưa bán được; (5) phiếu in cho người mua / 出荷者 dùng mã chính thức | Không tốn thêm; hàm / API hủy lô 仮受付 chưa đặc tả (phụ thuộc) | WF SC-03-01 [9], LOT_DB 4.25 |
 | Q-LOT-02 | Ngưỡng tô vàng chênh 仮受付 / 本登録 (khách nói "vd. 5%") | Chưa làm (FB-CUS-287 để sau) | Thêm tham số file cấu hình + 1 dòng UI, ~0,1 ngày | khách #28 |
-| Q-LOT-03 | Danh mục 等級 thật của chợ | A / B / C / 規格外, giữ ở `code_values` `INSPECTION_GRADE` | Chỉ đổi dữ liệu master | L4-A02, CAP-HUMAN-01 |
+| Q-LOT-03 | Danh mục 等級 thật của chợ | Cách làm khách đồng ý (danh mục ở master, đổi không cần nhà thầu); A / B / C / 規格外 dùng tạm cho UAT; **danh mục thật hỏi 運用部門 (目利き主任)**. 等級 là trường riêng — không gộp với サイズ / 入数 [Customer giả lập, 2026-11-25] | Chỉ đổi dữ liệu master | L4-A02, CAP-HUMAN-01 |
 | Q-LOT-04 | Ghi lại 目利き cho lô đã có GD có cần báo người chốt / 照合 không | Không báo; hiện ở lịch sử SC-03-04 | Thêm thông báo in-app, ~0,3 ngày | luật 4 |
 | Q-LOT-05 | Lô `CLOSED` (bán hết) được trả SL do 当日訂正 / 取消 → mở bán lại tự động? | Có: về `PUBLISHED` + lịch sử | Nếu phải người mở lại → thêm thao tác ở SC-03-03 | PRM-110, FIG-011 |
 | A-LOT-01 | 仮受付 không ghi sổ SL; 本登録 ghi `RECEIVE` = SL xác nhận | Theo prototype 0014 | Chú thích enum `ATTR_FIX` ("sửa SL lúc 本登録") ở MKT_DB phải sửa thành "sửa SL sau 本登録 ở SC-03-04" | MKT_DB §4.0, PRM-128 |

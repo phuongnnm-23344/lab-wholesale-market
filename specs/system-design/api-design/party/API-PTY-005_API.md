@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: party
 screen_id: [SC-01-03, SC-01-05]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-PARTY_FUNC-001]
@@ -26,6 +26,7 @@ related: [SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-PARTY_FUNC-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: khóa trường ở `field` gốc | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -66,7 +67,7 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 200 | Đã chuyển bước | <pre>{<br>&nbsp;&nbsp;"request": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "r-71…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "DECIDED"<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"permit": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "p-12…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "VALID",<br>&nbsp;&nbsp;&nbsp;&nbsp;"validTo": "2031-10-23"<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"events": [<br>&nbsp;&nbsp;&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"event": "RENEWED",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"oldValidTo": "2028-10-23",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"newValidTo": "2031-10-23",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"decidedBy": "桜 七子",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"mfaVerifiedAt": "2027-09-20T10:01:00+09:00"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;]<br>}</pre> | `PROPOSE` → chỉ `request.status = PROPOSED`. `REJECT` → `request.status = REJECTED`, không có `permit` / `events`. `DECIDE` cấp mới → `events` gồm `REVIEWED` + `REGISTERED` |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "action" } }</pre> | `E-CMN-007` |
 | 3 | 422 | `PROPOSE` thiếu kết quả 審査 | <pre>{ "error": { "code": "E-PTY-015", "message": "審査結果を入力してください" } }</pre> | `E-PTY-015` |
 | 4 | 422 | `REJECT` thiếu lý do | <pre>{ "error": { "code": "E-PTY-023", "message": "却下理由を入力してください" } }</pre> | `E-PTY-023` |
 | 5 | 401 | Chưa đăng nhập / phiên hết hạn | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | `E-CMN-001` |

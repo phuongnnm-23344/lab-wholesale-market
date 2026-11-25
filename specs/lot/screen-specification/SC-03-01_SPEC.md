@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-03-01
 feature: lot
 feature_id: LOT
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-03-01, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001, API-LOT-001, API-LOT-002, API-LOT-003, API-LOT-005, API-LOT-006, SPEC-LOT_DB-001]
@@ -22,6 +22,7 @@ related: [WF-SC-03-01, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001, 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-03-01 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-LOT-01: tìm theo 仮番号, lô 取消 giữ số; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -141,7 +142,7 @@ Kiểm ở client (ngay khi rời ô / bấm [9]) **và** ở server (API-LOT-00
 
 - **Truy vết:** FR-LOT-01, FORM-LOT-01, BR-LOT-02, FT-03-01, FT-03-06, FT-10-06, PRM-116, E-16, E-21, DEC-033, ADR-005, ADR-008; khách #27 (FB-CUS-286), #28 (FB-CUS-287 để sau); Gate 1 M-01 (業務日 từ giờ nhận lô), m-11 (số lẻ theo đơn vị); bảng lệch D15 (mã 出荷者 thay text).
 - **Sổ SL:** 本登録 ghi một dòng `RECEIVE` = SL xác nhận vào `lot_quantity_ledger`; 仮受付 **không** ghi sổ (lô chưa bán được). Chi tiết: [LOT_REGISTER_TECH](../technical-design/LOT_REGISTER_TECH.md) §5 (chú thích enum `ATTR_FIX` đã sửa ở MKT_DB 0.3.2).
-- **Mã lô:** `lots.lot_no` NOT NULL ở Database Design → mã `L{YYYYMMDD}-{n}` cấp khi bản ghi lô **lên server** (仮受付 đồng bộ hoặc 新規 ở màn này). Toast [9] hiện mã đó; wireframe [9] ghi "sinh mã lô chính thức" — xem câu hỏi Q-LOT-01 trong FUNC.
+- **Mã lô:** `lots.lot_no` NOT NULL ở Database Design → mã `L{YYYYMMDD}-{n}` cấp khi bản ghi lô **lên server** (仮受付 đồng bộ hoặc 新規 ở màn này). Toast [9] hiện mã đó. Q-LOT-01 đã trả lời [Customer giả lập, 2026-11-25]: giữ thời điểm cấp này; 受付 chỉ cần gõ 仮番号 vẫn tìm ra lô tới hết ngày (API-LOT-003 `q`), số không dùng lại, lô 仮受付 hủy giữ số với trạng thái 取消, phiếu in dùng mã chính thức.
 - **Không validate có chủ đích:** [3], [11] chỉ hiển thị. [1] không validate (chọn từ danh sách server trả).
-- **Hiệu năng:** API-LOT-002 ≤ 1 s ở p95 với 60 người đồng thời (NFR-PERF-01); bảng [1] tối đa ~150 dòng / ngày (350–600 lô/ngày, chia 2 giờ cao điểm) — không phân trang.
-- **Câu hỏi mở / TBD:** Q-LOT-01 (thời điểm cấp mã lô), Q-LOT-02 (ngưỡng tô vàng chênh SL, khách #28) — ở [LOT_FUNC §3](../function-specifications/LOT_FUNC.md#3-mã-lỗi-câu-hỏi-giả-định-của-module).
+- **Hiệu năng:** API-LOT-002 ≤ 1 s ở p95 với 60 người đồng thời — [PL] mục tiêu nội bộ cho API ghi (RFP chỉ có NFR-PERF-01 cho tìm kiếm, NFR-PERF-02 cho tải); bảng [1] tối đa ~150 dòng / ngày (350–600 lô/ngày, chia 2 giờ cao điểm) — không phân trang.
+- **Câu hỏi mở / TBD:** Q-LOT-02 (ngưỡng tô vàng chênh SL, khách #28) — ở [LOT_FUNC §3](../function-specifications/LOT_FUNC.md#3-mã-lỗi-câu-hỏi-giả-định-của-module).

@@ -2,7 +2,7 @@
 id: WF-SC-03-02
 title: Wireframe SC-03-02 ロット仮受付（埠頭・タブレット）
 status: draft
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-03-01, FR-LOT-01, BR-LOT-02, PRM-086, PRM-112, PRM-116, E-16, E-21, PERSONA-DOCK-01, NFR-USE-01, DEC-004, ADR-005, ADR-008, ADR-010, L4-A05, L4-D05, FB-CUS-281]
@@ -65,7 +65,7 @@ Không có ảnh trong `assets/`: prototype có `/lots/provisional` (INTAKE, **c
 | 4 | 単位 | 3 nút to | ✓ | Mặc định theo 品目; bấm để đổi | FB LAB-2 #5 |
 | 5 | 数量（概算） | Số | ✓ | **Để trống**, con trỏ ở đây (bài học khách #8); > 0; kg 1 chữ số lẻ, 箱 / 尾 số nguyên — chặn ngay khi gõ; sai → chữ đỏ dưới ô (C-22) | BR-LOT-02, m-11 |
 | 6 | テンキー | Bàn số to | — | Phím ≥ 64 px như SC-06-02; không bật bàn phím ảo của máy | PRM-086, khách #23, #24 |
-| 7 | 出荷者（分かれば） | Mã + gợi ý | Không | Mã master (tải sẵn); không có mạng vẫn gõ được mã, tên hiện nếu có trong bản tải. Để trống được — 本登録 bắt buộc (DB `lots.shipper_id` NULL khi `PROVISIONAL`) | D15, LOT_DB 4.25, Q-SC0302-02 |
+| 7 | 出荷者（分かれば） | Mã + gợi ý | Không | Mã master (tải sẵn); không có mạng vẫn gõ được mã, tên hiện nếu có trong bản tải. **Không bắt buộc** ở bến (Q-SC0302-02 đã trả lời [Customer giả lập, 2026-11-25]: mỗi lúc chỉ dỡ một tàu ở một bến, chỗ dễ lẫn là bàn 本登録 lúc 04:00); để trống vẫn lưu — 本登録 bắt buộc (DB `lots.shipper_id` NULL khi `PROVISIONAL`, truy vết A.1) | D15, LOT_DB 4.25, Q-SC0302-02 |
 | 8 | 記録する | Nút lớn nhất | — | Online: gửi ngay. Offline: lưu IndexedDB + hàng đợi, toast ghi rõ 「端末に保存」. Không MFA (PREMISE §3.2 "tiếp nhận lô") | ADR-008, L4-A05 |
 | 9 | Danh sách 直近（この端末） | Bảng | — | 5 bản ghi gần nhất của **máy này**, trạng thái 「未同期」/「送信済」/「⚠要確認」 (chữ + màu) | ADR-008 §2.1-3 |
 | 10 | 直前の記録を取り消す | Nút | — | Chỉ bản ghi **chưa đồng bộ** mới nhất của chính người đang dùng; hỏi lại một lần. Bản đã gửi → sửa ở 本登録 SC-03-01 (không xóa trên server — luật 4) | luật 4 |
@@ -102,12 +102,14 @@ INTAKE: toàn màn. Vai khác: không vào (C-25). SETTLE / STL-HEAD xem máy c�
 
 - **Không** chụp ảnh ở bến ở 第1期 (E-21 — ảnh chứng từ chỉ scan ở PC); **không** OCR ký hiệu tay / 符丁, **không** AI nhận dạng cá (luật 3, ADR-010) — người bấm 品目.
 - Q-SC0302-01 (mới): định dạng 仮番号 `K{端末番号}-{連番}` có dễ đọc với 受付担当 không, hay dùng số thẻ treo trên thùng có sẵn? Giả định PL: định dạng máy sinh; ảnh hưởng nếu sai: thêm ô 「札番号」 (~0,2 ngày).
-- Q-SC0302-02 (mới): 出荷者 ở bến có bắt buộc không (để phân biệt hai tàu cùng 品目)? Giả định PL: không bắt buộc (bổ sung ở 本登録); nếu bắt buộc → thêm nút to tàu cập bến hôm nay (~0,3 ngày).
+- Q-SC0302-02 — **đã trả lời** [Customer giả lập, 2026-11-25]: 出荷者 không bắt buộc ở bến (khớp góp ý #15 261118, tablet 3–4 ô); bắt buộc ở 本登録 giữ nguyên.
+- **Để sau (Muốn có, ~0,3 ngày — chỉ làm khi còn buffer):** ô 「いま荷揚げ中の船」 ở đầu màn — chạm **một lần mỗi tàu** (không phải mỗi lô), các lô nhập sau tự mang theo tàu đó tới khi đổi tàu; bỏ trống vẫn lưu được. Chưa vẽ vào wireframe / chưa có cột DB; khi làm cần nơi lưu trên bản ghi 仮受付 (vd `lots.shipper_id` gợi ý hoặc cột riêng) — quyết lúc làm. Tạm thời 受付 ghi dải 仮番号 của từng tàu lên 荷受伝票 giấy (đang làm).
 - Q-SC0302-03 (mới): danh sách 6–8 品目 nút to cố định cả năm hay đổi theo mùa (ai đổi)? Giả định PL: file cấu hình có nhật ký (PRM-126), quản trị đổi theo mùa.
-- Liên quan: Q-LOT-01 (thời điểm cấp mã lô chính thức) ở `specs/lot/function-specifications/LOT_FUNC.md` §3.
+- Liên quan: Q-LOT-01 — đã trả lời [Customer giả lập, 2026-11-25]: mã chính thức cấp khi bản ghi lên server, 仮番号 tra được ở mọi màn tới hết 業務日, số không dùng lại, phiếu in dùng mã chính thức — ở `specs/lot/function-specifications/LOT_FUNC.md` §3.
 
 ## History of change
 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu theo khách #22 (FB-CUS-281), L4-D05 — chỉ wireframe (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-SC0302-02: 出荷者 không bắt buộc; 「いま荷揚げ中の船」 là mục Muốn có (để sau); Q-LOT-01 | 2026-11-25 | phuongnnm-23344 |  |

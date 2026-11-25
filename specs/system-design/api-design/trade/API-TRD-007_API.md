@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: trade
 screen_id: [SC-05-02]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001]
@@ -26,12 +26,13 @@ related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-TRD-05: 差し戻し（番号誤り）, không đôn người trả giá thứ 2 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. 内容 / Description
 
-Trả các dòng kết quả せり nhập sai về 入力者 sửa ở SC-05-01: dòng `PENDING` → `DRAFT`, sự kiện `REJECT` có lý do, thông báo in-app cho 入力者. Không trừ SL, phiên giữ `ENTERING`. Function: [TRADE_FUNC 2.10](../../../trade/function-specifications/TRADE_FUNC.md#210-appfn_send_back_seri_results); bước: [TRADE_SERI_CONFIRM_TECH §4.5](../../../trade/technical-design/TRADE_SERI_CONFIRM_TECH.md#45-差し戻し-fn_send_back_seri_results-api-trd-007).
+Trả các dòng kết quả せり nhập sai về 入力者 sửa ở SC-05-01: dòng `PENDING` → `DRAFT`, sự kiện `REJECT` có lý do, thông báo in-app cho 入力者. Không trừ SL, phiên giữ `ENTERING`. Dùng cả cho dòng ✖確定不可 khi 確認者 nghi gõ nhầm số người mua — nút 「差し戻し（番号誤り）」 (Q-TRD-05): 入力者 đối chiếu せり原票 rồi sửa đúng số **người thật sự thắng せり**; BR-PERM-01 kiểm lại ở lượt xác nhận sau. Function: [TRADE_FUNC 2.10](../../../trade/function-specifications/TRADE_FUNC.md#210-appfn_send_back_seri_results); bước: [TRADE_SERI_CONFIRM_TECH §4.5](../../../trade/technical-design/TRADE_SERI_CONFIRM_TECH.md#45-差し戻し-fn_send_back_seri_results-api-trd-007).
 
 **Xác thực:** Session cookie. Vai: TRADE.
 
@@ -65,4 +66,5 @@ Trả các dòng kết quả せり nhập sai về 入力者 sửa ở SC-05-01
 ## 5. Other Notes
 
 - Thông báo in-app ghi qua outbox của module notify; lỗi gửi không làm hỏng 差し戻し.
+- Không có trường đổi người mua ở API này (chỉ trả về 入力者) — không đôn người trả giá thứ 2 (luật 3).
 - **Câu hỏi mở / TBD:** Q-TRD-04.

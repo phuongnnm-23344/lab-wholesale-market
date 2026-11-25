@@ -8,7 +8,7 @@ function: app.fn_confirm_aitai_trade
 endpoint: POST /api/v1/trades/aitai
 component: AitaiTradeService
 feature: trade
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-TRD-002, API-TRD-004, SPEC-TRADE_DB-001, SPEC-LOT_FUNC-001, ADR-003, ADR-004, ADR-008]
@@ -25,6 +25,7 @@ related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Gate 2 G2-m03: sửa câu as-is (mã GD prototype đã dùng `next_day_counter` 0025/0026) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -230,5 +231,5 @@ sequenceDiagram
 
 - **Bắt buộc online:** không có hàng đợi offline cho hàm này (ADR-008 §2.1); mất mạng → 紙伝票 → SC-04-07 nhập bù (`source = PAPER_LATE`, kiểm tư cách theo giờ trên phiếu — dùng lại 4.2–4.5 với `p_at = paper_slip_time`).
 - **Function này KHÔNG:** sửa / hủy GD (→ [TRADE_SAME_DAY_FIX_TECH](TRADE_SAME_DAY_FIX_TECH.md)); tính thuế (精算); kiểm trùng nội dung trong 3 phút (client, không chặn).
-- **Lệch prototype:** prototype 0015 dùng 参加上限 theo 業務日 + tiền gốc (D08) và `status` 2 giá trị không có lịch sử (D10); mã GD `T…-A{count+1}` không an toàn khi đồng thời → to-be dùng `day_counters`.
+- **Lệch prototype:** prototype dùng 参加上限 theo 業務日 + tiền gốc (`0025` `check_buyer_qualification` — D08) và `status` 2 giá trị không có lịch sử (`0001`, D10). Mã GD: prototype **đã** cấp qua `next_day_counter` (`0025`, gọi ở `0026:33`; `count(*)` chỉ làm số gốc khi bộ đếm của ngày chưa có) — to-be giữ cách này trên bảng `day_counters`, không phải điểm lệch.
 - **Điều kiện hoàn thành (LAB-5):** (a) GD hợp lệ → 1 dòng `trades` `CONFIRMED` + 3 dòng `trade_status_history` + 1 dòng sổ `SALE`; (b) hai request song song cùng lô, tổng SL > 残 → một 201, một 409 `E-TRD-002`, sổ SL không âm; (c) 仲卸 許可 hết hạn hôm qua → 422 `E-TRD-005`, không dòng nào được ghi; (d) 売買参加者 vượt hạn mức kỳ (cộng cả せり đã 確定 trong tháng) → 422 `E-TRD-007`; gửi lại có lý do → 201 `overLimit = true`; (e) 01:59 → 409 `E-TRD-012`; (f) lô về SL 0 → `CLOSED`.

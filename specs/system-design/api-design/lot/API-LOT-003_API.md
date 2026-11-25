@@ -9,7 +9,7 @@ method: GET
 media_type: application/json
 feature: lot
 screen_id: [SC-03-01, SC-03-05, SC-04-01, SC-03-03]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-LOT_FUNC-001, SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-SC-04-01-001]
@@ -26,6 +26,7 @@ related: [SPEC-LOT_FUNC-001, SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-SC-04-01
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-m07: nhãn [PL]; khách Q-LOT-01: `q` khớp cả 仮番号 tới hết 業務日 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -44,7 +45,7 @@ Tìm lô của một 業務日 kèm SL khả dụng (view `v_lot_available_qty`)
 | 1 | Query Parameters | `date` | string | `2027-08-02` | 業務日 `YYYY-MM-DD`; mặc định ngày đang mở | `[optional]` |
 | 2 | Query Parameters | `status` | string | `RECEIVED,INSPECTED` | CSV giá trị `lot_status` | `[optional]` |
 | 3 | Query Parameters | `onSale` | boolean | `true` | Chỉ lô `PUBLISHED` có SL khả dụng > 0 (gồm lô 持ち越し sang ngày này) | `[optional]` |
-| 4 | Query Parameters | `q` | string | `5` | Số đuôi mã lô (1–6 chữ số) hoặc mã lô đầy đủ | `[optional]` |
+| 4 | Query Parameters | `q` | string | `5` | Số đuôi mã lô (1–6 chữ số), mã lô đầy đủ, hoặc **仮番号** (`K1-012`, khớp đúng, trong 業務日 của `date`) — Q-LOT-01 | `[optional]` |
 | 5 | Query Parameters | `itemCode` | string | `MADAI` | Lọc 品目 | `[optional]` |
 | 6 | Query Parameters | `shipperId` | string | `0b6d…-0021` | Lọc 出荷者 | `[optional]` |
 | 7 | Query Parameters | `registeredBy` | string | `me` | Chỉ `me` | `[optional]` |
@@ -69,6 +70,7 @@ Tìm lô của một 業務日 kèm SL khả dụng (view `v_lot_available_qty`)
 
 ## 5. Other Notes
 
-- Luôn có điều kiện ngày + `limit` (M23). p95 ≤ 500 ms với 600 lô / ngày.
+- Luôn có điều kiện ngày + `limit` (M23). p95 ≤ 500 ms với 600 lô / ngày — [PL] mục tiêu nội bộ, chặt hơn NFR-PERF-01 (tìm kiếm p95 ≤ 2s).
 - SC-04-01 gọi `onSale=true&q={số}&limit=10` mỗi lần gõ (debounce 150 ms).
+- `q` khớp 仮番号 (Q-LOT-01): 受付 / 目利き / 相対 gõ số trên thẻ treo thùng vẫn ra lô tới hết 業務日; kết quả luôn hiện `lotNo` chính thức. Lô `CANCELLED` (仮受付 hủy) không trả về trừ khi lọc `status=CANCELLED` (tra kiểm toán).
 - **Câu hỏi mở / TBD:** cách nhận diện lô 持ち越し (theo `lot_status_history.carried_to_date`) phụ thuộc E-12 / OPEN-L4-03.

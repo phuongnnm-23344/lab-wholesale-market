@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: party
 screen_id: [SC-01-03, SC-01-05]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-PARTY_FUNC-001]
@@ -26,6 +26,7 @@ related: [SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-PARTY_FUNC-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: `field` gốc; RENEW khi 許可 đã 失効 → 409 E-PTY-013 + `detail.nextAction`, bỏ khóa lỗi cũ (thay bằng `detail` / `field`) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -71,7 +72,7 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 201 | Đã tạo yêu cầu | <pre>{<br>&nbsp;&nbsp;"request": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "r-71…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"kind": "RENEW",<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "ENTERED",<br>&nbsp;&nbsp;&nbsp;&nbsp;"label": "確認待ち",<br>&nbsp;&nbsp;&nbsp;&nbsp;"nextActor": "STL_HEAD",<br>&nbsp;&nbsp;&nbsp;&nbsp;"createdAt": "2027-09-20T09:12:00+09:00"<br>&nbsp;&nbsp;}<br>}</pre> | `status`: `ENTERED` (`NEW`, `RENEW`) · `PROPOSED` (loại STL-HEAD 起案). `label`: 「確認待ち」/「審査待ち」/「決裁待ち」. `nextActor`: `STL_HEAD` \| `OPS_HEAD` |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "kind" } }</pre> | `E-CMN-007` |
 | 3 | 422 | Thiếu lý do | <pre>{ "error": { "code": "E-PTY-007", "message": "理由を入力してください" } }</pre> | `E-PTY-007` |
 | 4 | 422 | Gia hạn không hợp lệ | <pre>{ "error": { "code": "E-PTY-014", "message": "新しい失効日は現在の失効日より後の日付にしてください", "detail": { "currentValidTo": "2028-10-23" } } }</pre> | `E-PTY-014` |
 | 5 | 422 | Khoảng hiệu lực sai | <pre>{ "error": { "code": "E-PTY-020", "message": "有効期間の終了日は開始日以降にしてください" } }</pre> | `E-PTY-020` |
@@ -90,7 +91,7 @@ Ví dụ body:
 ## 5. Other Notes
 
 - Không cần MFA ở bước tạo / 起案 (MFA ở bước 決裁 / 確認 — PARTY_DB 4.13 cột 10).
-- `RENEW` khi 許可 đã 失効 → `E-PTY-013` kèm `error_extra.hint = REVIEW_START` (Q-PTY-04).
+- `RENEW` khi 許可 đã 失効 → 409 `E-PTY-013`, `detail` = `{ "currentStatus": "EXPIRED", "kind": "RENEW", "nextAction": "REVIEW_START" }` (Q-PTY-04 — không ân hạn, đi 再審査). `E-PTY-014` (422) chỉ dùng khi tư cách còn hiệu lực mà `newValidTo ≤ valid_to`.
 - Ghi `notifications` cho checker; audit `PERMIT_REQUEST_CREATE`.
 - Bảng `nakaoroshi_permit_requests`: PARTY_DB 0.3.1 §4.59.
 - **Câu hỏi mở / TBD:** OPEN-DB-09, Q-PTY-01, Q-PTY-04

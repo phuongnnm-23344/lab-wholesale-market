@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: party
 screen_id: [SC-01-04, SC-01-05]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-PTY_APPROVAL_LIFECYCLE-001, SPEC-PARTY_FUNC-001]
@@ -26,12 +26,15 @@ related: [SPEC-PTY_APPROVAL_LIFECYCLE-001, SPEC-PARTY_FUNC-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: `field` gốc; khách Q-PTY-06: LIMIT_CHANGE một bước do 照合部門長 (dòng 1b, 7b) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. 内容 / Description
 
-Tạo yêu cầu cho **承認 của 売買参加者**: cấp mới theo 届出 (`NEW`), gia hạn (`RENEW`), đổi 参加上限 (`LIMIT_CHANGE`), và loại 起案 (`SUSPEND`, `RESUME`, `REVIEW_START`, `REINSTATE`). Endpoint riêng, không dùng cho 許可 (ADR-003).
+Tạo yêu cầu cho **承認 của 売買参加者**: cấp mới theo 届出 (`NEW`), gia hạn (`RENEW`), và loại 起案 (`SUSPEND`, `RESUME`, `REVIEW_START`, `REINSTATE`). Endpoint riêng, không dùng cho 許可 (ADR-003).
+
+**Ngoại lệ `LIMIT_CHANGE` (đổi 参加上限) — một bước:** chỉ 照合部門長 (STL-HEAD / 代行) gọi, MFA step-up, **áp ngay** trong cùng transaction (UPDATE `baibai_approvals.participation_limit_jpy` + INSERT `baibai_approval_events.LIMIT_CHANGED` cũ / mới), **không tạo yêu cầu chờ, không checker** — Q-PTY-06 [Customer giả lập, 2026-11-25] (khách không muốn 照合事務局 tự đổi, không cần thêm người kiểm). Giữ trên endpoint này để không thêm API; response khác loại khác (xem mục 4 dòng 1b).
 
 **Xác thực:** Session cookie `sid` + CSRF (header `X-CSRF-Token`)
 
@@ -42,7 +45,7 @@ Tạo yêu cầu cho **承認 của 売買参加者**: cấp mới theo 届出 (
 | No. | Param Type | Key | Data Type | Values | Description | Note |
 |---|---|---|---|---|---|---|
 | 1 | Path Parameters | `participantId` | string | `6f1d…` | UUID, `kind = BAIBAI` |  |
-| 2 | Body Parameters | `kind` | string | `LIMIT_CHANGE` | `NEW` · `RENEW` · `LIMIT_CHANGE` (maker SETTLE) · `SUSPEND` · `RESUME` · `REVIEW_START` · `REINSTATE` (maker STL-HEAD) |  |
+| 2 | Body Parameters | `kind` | string | `LIMIT_CHANGE` | `NEW` · `RENEW` (maker SETTLE) · `SUSPEND` · `RESUME` · `REVIEW_START` · `REINSTATE` (maker STL-HEAD, 起案) · `LIMIT_CHANGE` (**STL-HEAD, một bước, MFA**) |  |
 | 3 | Body Parameters | `payload.approvalNo` | string | `サンプル承認-B01` | ≤ 20, duy nhất | chỉ `NEW` |
 | 4 | Body Parameters | `payload.validFrom / validTo` | string | `2025-10-19 / 2028-10-23` | `YYYY-MM-DD` | chỉ `NEW` |
 | 5 | Body Parameters | `payload.screeningNote` | string | `保証金・資力 確認済` | Ghi xét nhẹ 保証金 / 資力, ≤ 500 | `NEW` bắt buộc |
@@ -74,14 +77,16 @@ Ví dụ body:
 
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
-| 1 | 201 | Đã tạo | <pre>{<br>&nbsp;&nbsp;"request": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "q-55…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"kind": "LIMIT_CHANGE",<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "ENTERED",<br>&nbsp;&nbsp;&nbsp;&nbsp;"label": "確認待ち",<br>&nbsp;&nbsp;&nbsp;&nbsp;"nextActor": "STL_HEAD",<br>&nbsp;&nbsp;&nbsp;&nbsp;"payload": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"oldLimitJpy": null,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"oldLimitDisplayJpy": 5000000,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"participationLimitJpy": 8000000<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;}<br>}</pre> | `oldLimitJpy = null` nghĩa là trước đó theo 保証金; `oldLimitDisplayJpy` là số đang áp để checker so sánh |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 1 | 201 | Đã tạo yêu cầu (`NEW` / `RENEW` / loại 起案) | <pre>{<br>&nbsp;&nbsp;"request": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "q-55…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"kind": "RENEW",<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "ENTERED",<br>&nbsp;&nbsp;&nbsp;&nbsp;"label": "確認待ち",<br>&nbsp;&nbsp;&nbsp;&nbsp;"nextActor": "STL_HEAD",<br>&nbsp;&nbsp;&nbsp;&nbsp;"payload": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"newValidTo": "2031-10-23"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;}<br>}</pre> | `LIMIT_CHANGE` không trả dòng này — xem 1b |
+| 1b | 201 | `LIMIT_CHANGE` đã áp (không có yêu cầu chờ) | <pre>{<br>&nbsp;&nbsp;"limitChange": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"event": "LIMIT_CHANGED",<br>&nbsp;&nbsp;&nbsp;&nbsp;"limitMode": "INDIVIDUAL",<br>&nbsp;&nbsp;&nbsp;&nbsp;"oldLimitJpy": null,<br>&nbsp;&nbsp;&nbsp;&nbsp;"oldLimitDisplayJpy": 5000000,<br>&nbsp;&nbsp;&nbsp;&nbsp;"newLimitJpy": 8000000,<br>&nbsp;&nbsp;&nbsp;&nbsp;"effectiveOn": "2027-10-01",<br>&nbsp;&nbsp;&nbsp;&nbsp;"decidedBy": "桜 七子",<br>&nbsp;&nbsp;&nbsp;&nbsp;"mfaVerifiedAt": "2027-09-20T10:05:00+09:00"<br>&nbsp;&nbsp;}<br>}</pre> | Một dòng `LIMIT_CHANGED` (`decided_by` = người gọi = `created_by`); `oldLimitJpy = null` = trước đó theo 保証金 |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "kind" } }</pre> | `E-CMN-007` |
 | 3 | 422 | Hạn mức không hợp lệ / không đổi | <pre>{ "error": { "code": "E-PTY-016", "message": "参加上限は1円以上で入力するか、「保証金額に連動」を選んでください" } }</pre> | `E-PTY-016` |
 | 4 | 422 | Ngày hiệu lực quá khứ | <pre>{ "error": { "code": "E-PTY-006", "message": "発効日は本日（業務日）以降の日付を入力してください" } }</pre> | `E-PTY-006` |
 | 5 | 422 | Gia hạn không hợp lệ | <pre>{ "error": { "code": "E-PTY-014", "message": "新しい失効日は現在の失効日より後の日付にしてください" } }</pre> | `E-PTY-014` |
 | 6 | 422 | Thiếu lý do | <pre>{ "error": { "code": "E-PTY-007", "message": "理由を入力してください" } }</pre> | `E-PTY-007` |
 | 7 | 401 | Chưa đăng nhập / phiên hết hạn | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | `E-CMN-001` |
-| 8 | 403 | Vai / quyền duyệt không đủ | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | `E-CMN-002` |
+| 7b | 403 | `LIMIT_CHANGE` thiếu step-up MFA | <pre>{ "error": { "code": "E-CMN-005", "message": "この操作の前に本人確認（MFA）が必要です" } }</pre> | `E-CMN-005`; client mở C-30 rồi gửi lại |
+| 8 | 403 | Vai / quyền duyệt không đủ (vd SETTLE gửi `LIMIT_CHANGE`) | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | `E-CMN-002` |
 | 9 | 404 | Không tìm thấy người tham gia (hoặc RLS ẩn) | <pre>{ "error": { "code": "E-PTY-018", "message": "参加者が見つかりません" } }</pre> | `E-PTY-018` |
 | 10 | 409 | Người tham gia không phải 売買参加者 | <pre>{ "error": { "code": "E-PTY-009", "message": "この種別では承認を登録できません", "detail": { "kind": "NAKAOROSHI" } } }</pre> | `E-PTY-009` |
 | 11 | 409 | Người tham gia đã 退会 | <pre>{ "error": { "code": "E-PTY-010", "message": "この参加者は退会済みのため変更できません" } }</pre> | `E-PTY-010` |
@@ -96,4 +101,5 @@ Ví dụ body:
 
 - Không có bước `PROPOSE` / 審査 riêng (承認 xét nhẹ — PARTY_DB 4.15 CHECK ≠ `REVIEWED`).
 - Bảng `baibai_approval_requests`: PARTY_DB 0.3.1 §4.60.
-- **Câu hỏi mở / TBD:** OPEN-DB-09, Q-PTY-01, Q-PTY-07
+- `LIMIT_CHANGE` không chịu `E-PTY-011` (không tạo yêu cầu), nhưng 承認 phải `VALID` / `SUSPENDED` (không `EXPIRED`) → else `E-PTY-013`.
+- Q-PTY-01 (một yêu cầu mở / tư cách), Q-PTY-06, Q-PTY-07 đã trả lời [Customer giả lập, 2026-11-25]. **Câu hỏi mở / TBD:** OPEN-DB-09.

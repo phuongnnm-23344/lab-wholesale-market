@@ -8,7 +8,7 @@ function: app.fn_register_lot
 endpoint: POST /api/v1/lots
 component: LotRegisterService
 feature: lot
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, ADR-004, ADR-005, ADR-008]
@@ -25,6 +25,7 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, AD
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Khách Q-LOT-01: thêm DoD (g), (h) — mã chính thức không dùng lại, lô 仮受付 hủy giữ số | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -206,4 +207,5 @@ sequenceDiagram
 - **Function này KHÔNG:** sửa lô đã `RECEIVED` (→ SC-03-04, PRM-128, `ATTR_FIX`); ghi 目利き; 公開; xử lý 仮受付 offline (đồng bộ qua module `sync` gọi hàm tạo 仮受付 riêng — ADR-008 §2.2; bản ghi `HELD` → SC-03-07).
 - **Đối chiếu Database Design (đã gộp):** (1) chú thích enum `ATTR_FIX` sửa thành "sửa SL **sau** 本登録 ở SC-03-04" — MKT_DB 0.3.2 §4.0 (A-LOT-01); (2) `lots.voucher_no` thống nhất `VARCHAR(20)` theo wireframe [8] — LOT_DB 0.2.1 §4.25; (3) `lots.registered_at` (giờ 本登録, dùng cho sort `-registeredAt` của API-LOT-003) — LOT_DB 0.2.1 §4.25; (4) thời điểm cấp `lot_no` vẫn là giả định (Q-LOT-01).
 - **Tiền đề:** 業務日 `OPEN` đã được 日次締め hôm trước mở (ADR-005); master `shippers` / `item_codes` có dữ liệu (SC-10-07).
-- **Điều kiện hoàn thành (LAB-5):** (a) 仮受付 → `RECEIVED` + 1 dòng `RECEIVE` đúng SL; (b) 新規 → lô mới có `lot_no` theo ngày; (c) hai máy bấm cùng 仮受付 → một 201, một 409 `E-LOT-006`; (d) nghi trùng → 409 `E-LOT-007`, gửi lại `confirmDuplicate=true` → 201; (e) ngày khóa → 423, không có dòng nào được ghi; (f) `qty = 1.25` kg / `2.5` 箱 → 422 `E-LOT-004`.
+- **Mã lô (Q-LOT-01 [Customer giả lập, 2026-11-25]):** `lot_no` cấp khi bản ghi lô **lên server** (仮受付 đồng bộ / 新規) qua `next_day_counter` — bộ đếm chỉ tăng, số **không dùng lại**, số nhảy được chấp nhận. Lô `PROVISIONAL` hủy (nhập trùng / nhầm) chuyển `CANCELLED` 取消 + dòng `lot_status_history` có lý do, **không DELETE** (LOT_DB 4.25) — hàm hủy thuộc phụ thuộc chưa đặc tả. 仮番号 (`provisional_no`) tra được tới hết 業務日 qua API-LOT-003 `q`. Lô offline chưa lên server chưa có `lot_no` → không thể `PUBLISHED` (không bán). 取引確認票 / phiếu cho 出荷者 in `lot_no`, không in 仮番号.
+- **Điều kiện hoàn thành (LAB-5):** (a) 仮受付 → `RECEIVED` + 1 dòng `RECEIVE` đúng SL; (b) 新規 → lô mới có `lot_no` theo ngày; (c) hai máy bấm cùng 仮受付 → một 201, một 409 `E-LOT-006`; (d) nghi trùng → 409 `E-LOT-007`, gửi lại `confirmDuplicate=true` → 201; (e) ngày khóa → 423, không có dòng nào được ghi; (f) `qty = 1.25` kg / `2.5` 箱 → 422 `E-LOT-004`; (g) gõ 仮番号 `K1-012` ở API-LOT-003 `q` → ra đúng lô (cả sau 本登録, tới hết 業務日); (h) hủy một lô 仮受付 rồi tạo lô mới → lô mới nhận số kế tiếp, số cũ vẫn tra được với trạng thái `CANCELLED`.

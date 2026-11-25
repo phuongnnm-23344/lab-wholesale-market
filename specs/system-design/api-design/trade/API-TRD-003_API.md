@@ -9,7 +9,7 @@ method: GET
 media_type: application/json
 feature: trade
 screen_id: [SC-04-01, SC-04-03]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001]
@@ -26,6 +26,7 @@ related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-m07: nhãn [PL] mục tiêu hiệu năng (chặt hơn NFR-PERF-01) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -68,5 +69,5 @@ Liệt kê GD theo khoảng 業務日 với giá trị **hiệu lực** (gốc +
 
 ## 5. Other Notes
 
-- Luôn có khoảng ngày + phân trang (M23). p95 ≤ 500 ms với 1.200 GD / ngày.
+- Luôn có khoảng ngày + phân trang (M23). p95 ≤ 500 ms với 1.200 GD / ngày — [PL] mục tiêu nội bộ, chặt hơn NFR-PERF-01 (tìm kiếm p95 ≤ 2s).
 - **Câu hỏi mở / TBD:** không có.

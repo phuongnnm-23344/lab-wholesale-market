@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: trade
 screen_id: [SC-05-02]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001]
@@ -26,12 +26,13 @@ related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001, S
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-TRD-05: `cancelTradeIds` (取消 dòng, lô về 販売公開中), E-TRD-015 / E-TRD-018 `NOW_CONFIRMABLE`; Q-TRD-02 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. 内容 / Description
 
-確認者 (người quyết cuối — CAP-HUMAN-01) xác nhận các dòng đã chọn của phiên せり. Tất cả hoặc không: mỗi dòng được chọn được kiểm lại 許可 / 承認 + SL + 参加上限 (chỉ 売買参加者, cộng dồn) tại lúc gọi; dòng không chọn mà hệ thống xác định **không xác nhận được** bị hủy có lịch sử; dòng không chọn mà xác nhận được → lỗi (phải 差し戻し trước). Xử lý: [TRADE_SERI_CONFIRM_TECH](../../../trade/technical-design/TRADE_SERI_CONFIRM_TECH.md).
+確認者 (người quyết cuối — CAP-HUMAN-01) xác nhận các dòng đã chọn của phiên せり. Tất cả hoặc không: mỗi dòng được chọn được kiểm lại 許可 / 承認 + SL + 参加上限 (chỉ 売買参加者, cộng dồn) tại lúc gọi; dòng ✖確定不可 **không tự hủy**: 確認者 chọn 「取消（資格なし・不成立）」 (gửi ở `cancelTradeIds`) hoặc 「差し戻し（番号誤り）」 (API-TRD-007, trước khi gọi API này) — Q-TRD-05; dòng `PENDING` còn lại chưa xử lý → lỗi `E-TRD-015`. Xử lý: [TRADE_SERI_CONFIRM_TECH](../../../trade/technical-design/TRADE_SERI_CONFIRM_TECH.md).
 
 **Xác thực:** Session cookie. Vai: TRADE. Không MFA. Bắt buộc online.
 
@@ -43,6 +44,7 @@ related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001, S
 |---|---|---|---|---|---|---|
 | 1 | Path Parameters | `sessionId` | string | `e7f8a9b0-0000-4000-8000-000000000003` | UUID phiên | |
 | 2 | Body Parameters | `confirmTradeIds` | string[] | `["f000…0301","f000…0302"]` | ≥ 1 id dòng `PENDING` của phiên | |
+| 2b | Body Parameters | `cancelTradeIds` | string[] | `["f000…0303"]` | Dòng ✖確定不可 mà 確認者 chọn 「取消（資格なし・不成立）」; không trùng `confirmTradeIds`; mỗi dòng phải vẫn **không xác nhận được** lúc gọi | `[optional]`, mặc định `[]` |
 | 3 | Body Parameters | `overLimitReasons` | object | `{ "f000…0302": { "code": "PRIOR_CONSENT", "note": null } }` | Khóa = `tradeId`; `code` ∈ `PRIOR_CONSENT` · `DEPOSIT_TOPUP` · `OTHER`; `note` ≤ 200, bắt buộc khi `OTHER` | `[optional]` |
 | 4 | Body Parameters | `samePersonReason` | string | `確認者不在のため` | ≤ 200; bắt buộc khi người gọi là 入力者 | `[optional]` |
 
@@ -57,9 +59,9 @@ related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001, S
 | 3 | 403 | Không có vai TRADE | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | |
 | 4 | 404 | Phiên không tồn tại | <pre>{ "error": { "code": "E-TRD-024", "message": "対象のせりの回が見つかりません" } }</pre> | |
 | 5 | 409 | Phiên không chờ xác nhận | <pre>{ "error": { "code": "E-TRD-013", "message": "この回は確認待ちではありません（確定済）" } }</pre> | |
-| 6 | 409 | Dòng đổi trạng thái | <pre>{ "error": { "code": "E-TRD-018", "message": "確認中に状態が変わった行があります。一覧を更新してください（せり-0305）", "detail": { "rows": [ { "displayNo": "せり-0305", "reason": "INSUFFICIENT_QTY" } ] } } }</pre> | Không dòng nào được ghi |
+| 6 | 409 | Dòng đổi trạng thái (gồm dòng trong `cancelTradeIds` nay xác nhận được — `reason: NOW_CONFIRMABLE`) | <pre>{ "error": { "code": "E-TRD-018", "message": "確認中に状態が変わった行があります。一覧を更新してください（せり-0305）", "detail": { "rows": [ { "displayNo": "せり-0305", "reason": "INSUFFICIENT_QTY" } ] } } }</pre> | Không dòng nào được ghi |
 | 7 | 409 | Trước giờ chốt / deadlock | <pre>{ "error": { "code": "E-TRD-012", "message": "取引の確定は 02:00 以降にできます" } }</pre> | Hoặc `E-CMN-006` |
-| 8 | 422 | Thiếu lý do vượt hạn mức | <pre>{ "error": { "code": "E-TRD-007", "message": "今期の参加上限を超えます。超過理由を選択してください（上限 ¥3,000,000 / 今期確定済 ¥2,990,000 / 今回 ¥29,750）", "detail": { "tradeNos": ["せり-0302"] } } }</pre> | Hoặc `E-TRD-008` |
+| 8 | 422 | Thiếu lý do vượt hạn mức | <pre>{ "error": { "code": "E-TRD-007", "message": "今期の参加上限を超えます。超過理由を選択してください（上限 ¥3,000,000 / 今期確定済 ¥2,989,440（税込） / 今回 ¥32,130（税込））", "detail": { "tradeNos": ["せり-0302"] } } }</pre> | Hoặc `E-TRD-008` |
 | 9 | 422 | Lỗi điều kiện khác | <pre>{ "error": { "code": "E-TRD-014", "message": "入力者と同じ人が確認する場合は理由を入力してください", "field": "samePersonReason" } }</pre> | Mã có thể: `E-TRD-014`, `015`, `016`, `E-CMN-007` |
 | 10 | 423 | 業務日 đã khóa | <pre>{ "error": { "code": "E-CMN-003", "message": "2027/08/02 は締め済みのため直接修正できません。訂正は修正申請で行います。" } }</pre> | |
 | 11 | 500 | Lỗi hệ thống | <pre>{ "error": { "code": "E-CMN-004", "message": "処理中にエラーが発生しました。時間をおいて再度お試しください", "traceId": "b7e1c0d2" } }</pre> | |
@@ -69,4 +71,5 @@ related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001, S
 ## 5. Other Notes
 
 - Lý do vượt gửi cho dòng 仲卸 / dòng không vượt bị bỏ qua.
-- **Câu hỏi mở / TBD:** Q-TRD-04, Q-TRD-05.
+- Dòng hủy: `CANCEL` lý do 「資格なし・不成立（{nguyên nhân}）」, người hủy = 確認者, không trừ SL, lô về / giữ 販売公開中. Không có tham số đổi người mua — kết quả せり do sàn quyết, không đôn người trả giá thứ 2 (Q-TRD-05, luật 3).
+- **Câu hỏi mở / TBD:** Q-TRD-04.

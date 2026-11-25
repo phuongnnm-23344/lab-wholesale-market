@@ -2,7 +2,7 @@
 id: WF-SC-05-02
 title: Wireframe SC-05-02 せり結果確認
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-05-02, FT-01-05, FR-SERI-02, FORM-SERI-01, BR-PERM-01, CAP-HUMAN-01, PRM-115, ACT-03, L4-A04, M20, ADR-003]
@@ -33,11 +33,11 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 │ ☑ 1  L…-21  鰤  40kg ¥900  ¥36,000  N03  仲卸      許可 有効          —         │
 │ ☑ 2  L…-22  鰤  35kg ¥850  ¥29,750  B07  売買参加者 承認 有効          ⚠超過 [4]  │
 │ ☐ 3  L…-23  鯖  20kg ¥300  ¥6,000   B11  売買参加者 承認 失効 ✖確定不可 [5]       │
-│      └ この行は確定できません。ロットは販売可能に戻ります（再せり・相対）            │
+│      └ 確定できません [差し戻し（番号誤り）] [取消（資格なし・不成立）]              │
 │ …                                                                         │
 └────────────────────────────────────────────────────────────────────────────┘
 ┌─ [4] 参加上限超過の理由（売買参加者のみ）───────────────────────────────────────┐
-│ B07 サンプル売買参加者7: 今期上限 ¥3,000,000 / 確定済 ¥2,990,000 / 本回 ¥29,750       │
+│ B07 サンプル売買参加者7: 今期上限 ¥3,000,000 / 確定済 ¥2,989,440（税込） / 本回 ¥32,130（税込）│
 │ 理由 (1)事前了承済 (2)保証金追加予定 (3)その他 [備考        ]                         │
 │ [6] ☐ この買受人の本回の超過行すべてに同じ理由を適用（各行に記録）                       │
 └────────────────────────────────────────────────────────────────────────────┘
@@ -61,7 +61,7 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 | 2 | Hướng dẫn | Nhãn | — | | FR-SERI-02 |
 | 3 | Bảng kết quả | Bảng chọn | — | Bố cục FORM-SERI-01; cột 資格 ghi đúng **許可 (仲卸) / 承認 (売買参加者)**; kiểm lại tư cách + SL **tại lúc xác nhận** | BR-PERM-01, FT-01-05 |
 | 4 | Khối lý do vượt 参加上限 | Vùng | Khi có dòng vượt | **Chỉ 売買参加者** (仲卸 không có hạn mức); hạn mức theo kỳ, chung 相対 + せり; chọn lý do nhanh + 備考; không chặn cứng | L4-A04 (1), ACT-03, M20 |
-| 5 | Dòng không chốt được | Nhãn đỏ | — | Tư cách 失効 / 一時停止 / SL không đủ → bỏ chọn tự động, lý do cạnh dòng + câu hướng dẫn 「この行は確定できません。ロットは販売可能に戻ります（再せり・相対）」; SL của dòng không bị trừ, lô vẫn / trở lại 販売公開中 để bán lại (khách #9) | BR-PERM-01, BR-LOT-02, FR-SERI-02 |
+| 5 | Dòng không chốt được | Nhãn đỏ + 2 nút | — | Tư cách 失効 / 一時停止 / SL không đủ → bỏ chọn tự động, lý do cạnh dòng; **確認者 chọn** 「差し戻し（番号誤り）」 (入力者 sửa đúng số người thắng) hoặc 「取消（資格なし・不成立）」 (SL không bị trừ, lô vẫn / trở lại 販売公開中 — khách #9); không tự hủy, không nút đổi người mua (Q-TRD-05, luật 3) | BR-PERM-01, BR-LOT-02, FR-SERI-02 |
 | 6 | Áp cùng lý do | Checkbox | — | Một người mua trong phiên; vẫn lưu từng dòng (Muốn có) | L4-A04 (1) |
 | 7 | Lý do tự xác nhận | Văn bản | Khi 入力者 = 確認者 | Hiện ở tab 要確認 của SC-07-01 và checklist SC-07-02 | S2, PRM-115 |
 | 8 | Tổng | Nhãn | — | | — |
@@ -105,3 +105,4 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Khách #9: dòng せり 確定不可 có câu hướng dẫn, lô quay lại 販売公開中 | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | P3 gộp: thêm item [12] hộp thoại lý do 差し戻し (bắt buộc, E-TRD-017) — khớp SC-05-02_SPEC | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | Khách Q-TRD-05: hai nút 差し戻し（番号誤り） / 取消（資格なし・不成立）; Q-TRD-02 | 2026-11-25 | phuongnnm-23344 |  |

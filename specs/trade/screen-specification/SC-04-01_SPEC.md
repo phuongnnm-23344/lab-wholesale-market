@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-04-01
 feature: trade
 feature_id: TRD
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-LOT-003, API-TRD-001, API-TRD-002, API-TRD-003, API-TRD-004, SPEC-TRADE_DB-001]
@@ -22,6 +22,7 @@ related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONF
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-04-01 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-TRD-02: hiện 使用額 税込 / 税抜; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -59,7 +60,7 @@ related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONF
 | 1 | ロット | Text box (số + gợi ý) | Có | Placeholder 「番号」. Gõ số đuôi → gợi ý ≤ 10 lô 販売公開中 còn SL; bên phải hiện `→ {lotNo} {品目}` |
 | 2 | 単位・残・下見 | Label | - | `単位 {kg/箱/尾}・残 {available}{unit}・下見済 {grade}` (目利き chỉ để tham khảo, **không tự quyết giá** — CAP-HUMAN-01) |
 | 3 | 買受人 | Text box (mã + gợi ý) | Có | Placeholder 「例：N01」; bên phải hiện tên |
-| 4 | Tư cách người mua | Label | - | 仲卸: 「仲卸 許可 {状態}（〜{YYYY/MM/DD}）」. 売買参加者: 「売買参加者 承認 {状態}（〜…）／参加上限残 ¥{n}（{YYYY年M月}期）」. Màu **+ chữ**: đỏ = 失効 / 一時停止 / 再審査 / loại không được mua; vàng = còn ≤ 30 ngày tới 失効日; xanh = 有効. **Không** gộp thành 「資格OK」 |
+| 4 | Tư cách người mua | Label | - | 仲卸: 「仲卸 許可 {状態}（〜{YYYY/MM/DD}）」. 売買参加者: 「売買参加者 承認 {状態}（〜…）／参加上限残 ¥{n}（{YYYY年M月}期）」 + dòng nhỏ 「使用額 ¥{usedIncl}（税込）／ 税抜 ¥{usedExcl}」 (Q-TRD-02: 残 = 上限 − 使用額 税込). Màu **+ chữ**: đỏ = 失効 / 一時停止 / 再審査 / loại không được mua; vàng = còn ≤ 30 ngày tới 失効日; xanh = 有効. **Không** gộp thành 「資格OK」 |
 | 5 | 数量（{単位}） | Text box (số) | Có | Nhãn đổi theo đơn vị lô |
 | 6 | 単価（円/{単位}） | Text box (số) | Có | Dấu phẩy nghìn khi rời ô |
 | 7 | 金額（税抜） | Label | - | `¥{floor(数量 × 単価)}`; thuế tính ở 精算 (PRM-053) |
@@ -70,7 +71,7 @@ related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONF
 | 11 | 取引一覧へ → | Button (liên kết) | - | → SC-04-03 |
 | 12 | Banner lỗi in | Label (banner) | - | 「取引確認票の印刷に失敗しました。取引は確定済みです → 再印刷」 → SC-04-02 |
 | **D** | **Hộp thoại** | | | |
-| 13 | 参加上限超過 | Label (dialog) | - | Chỉ 売買参加者. 「今期の参加上限を超えます：上限 ¥{limit} / 今期確定済 ¥{used} / 今回 ¥{amount}」 + 3 lựa chọn bấm phím số `1` 事前に了承済 · `2` 保証金追加予定 · `3` その他（備考必須） + [理由を付けて確定] [戻る] |
+| 13 | 参加上限超過 | Label (dialog) | - | Chỉ 売買参加者. 「今期の参加上限を超えます：上限 ¥{limit} / 今期確定済 ¥{usedIncl}（税込） / 今回 ¥{amountIncl}（税込）」 + dòng nhỏ 「税抜：今期確定済 ¥{usedExcl} / 今回 ¥{amountExcl}」 + 3 lựa chọn bấm phím số `1` 事前に了承済 · `2` 保証金追加予定 · `3` その他（備考必須） + [理由を付けて確定] [戻る] |
 | 14 | 備考 | Text box | Có khi chọn 「3 その他」 | Trong [13] |
 | 15 | 同一内容の再確定確認 | Label (dialog) | - | 「直前と同じ内容です。もう一度確定しますか？」 [はい] [いいえ] (mặc định con trỏ ở [いいえ]) |
 
@@ -120,7 +121,7 @@ Client kiểm ngay ở ô; server (API-TRD-002) kiểm lại **tất cả** lúc
 | 1 | - | Gõ số + Enter | Chọn gợi ý đầu (hoặc dòng đang trỏ); [2] hiện đơn vị · 残 · 下見; con trỏ sang [3] | FB LAB-2 #1 |
 | 3 | - | Gõ mã + Enter | Gọi API-TRD-001; [4] hiện tư cách đúng chữ 許可 / 承認; con trỏ sang [5] (kể cả khi đỏ — server quyết) | luật 2 |
 | 5, 6 | - | Gõ | [7] cập nhật ngay; Enter ở [5] → [6] | |
-| 8 | Các ô hợp lệ ở client | Enter ở [6] / bấm [8] | 1. Nếu [10] có GD cùng lô · người mua · SL · đơn giá trong 3 phút → mở [15]<br>2. Nếu người mua là 売買参加者 và 金額 > 参加上限残 → mở [13] trước<br>3. Gọi API-TRD-002 (nút [8] mờ, không bấm đúp được) | |
+| 8 | Các ô hợp lệ ở client | Enter ở [6] / bấm [8] | 1. Nếu [10] có GD cùng lô · người mua · SL · đơn giá trong 3 phút → mở [15]<br>2. Nếu người mua là 売買参加者 và 金額 quy 税込 (cùng công thức server, từ `taxRatePercent` của API-TRD-001) > 参加上限残 → mở [13] trước; server vẫn là bên quyết (E-TRD-007)<br>3. Gọi API-TRD-002 (nút [8] mờ, không bấm đúp được) | |
 | 15 | [15] mở | [はい] / [いいえ] | はい → tiếp bước 2–3 ở trên; いいえ → đóng, con trỏ về [5] | FB LAB-2 #6 |
 | 13 | [13] mở | Bấm `1`/`2`/`3` (+ [14]) → [理由を付けて確定] | Gọi API-TRD-002 kèm `overLimitReasonCode` (+ `overLimitNote`) | GD có lý do hiện ở 要確認 SC-07-01 (khách #10) |
 | 8 | - | API-TRD-002 trả 201 | 1. C-12 「確定：{buyerNo} {名前}／{品目} {qty}{unit} × ¥{単価} = ¥{金額}（{displayNo}）」<br>2. Gọi API-TRD-004 → in thẳng, không xem trước<br>3. Giữ [1], cập nhật [2] theo `availableQtyAfter`; xóa [3]–[7]; con trỏ [3]<br>4. Nạp lại [10] | DEC-033, M05 |
@@ -130,7 +131,7 @@ Client kiểm ngay ở ô; server (API-TRD-002) kiểm lại **tất cả** lúc
 | **Error Handling（エラー制御）** | | | | |
 | 1, 5 | Người khác vừa chốt cùng lô | 409 `E-TRD-002` / `E-TRD-001` | C-23 với số thật; [2] cập nhật 残 từ `detail.availableQty`; con trỏ [5] | |
 | 3, 4 | Tư cách không hợp lệ tại lúc chốt | 422 `E-TRD-003`..`006` | C-22 dưới [3] với thông điệp riêng 許可 / 承認; [4] đỏ | BR-PERM-01 |
-| 13 | Client chưa biết vượt (hạn mức đổi giữa chừng) | 422 `E-TRD-007` | Mở [13] với `detail.limit/used/amount` server trả | |
+| 13 | Client chưa biết vượt (hạn mức đổi giữa chừng) | 422 `E-TRD-007` | Mở [13] với `detail.limitJpy` / `usedInclJpy` / `amountInclJpy` (+ `usedExclJpy` / `amountExclJpy`) server trả | |
 | 14 | - | 422 `E-TRD-008` | C-22 dưới [14] | |
 | 8 | Trước giờ chốt | 409 `E-TRD-012` | C-23 | |
 | 8 | 業務日 bị khóa | 423 `E-CMN-003` | C-24, giữ nội dung (hiếm: màn chỉ ghi ngày mở) | |
@@ -143,7 +144,7 @@ Client kiểm ngay ở ô; server (API-TRD-002) kiểm lại **tất cả** lúc
 
 - **Truy vết:** FR-AITAI-01, FR-AITAI-02, FT-04-01..04, FT-01-05, FT-01-09, FT-03-04, BR-PERM-01, BR-LOT-02, NFR-USE-01, PRM-046, PRM-053, PRM-114, PRM-116, FIG-012, DEC-033, ADR-003, ADR-004, ADR-008, L4-A04 (1), L4-A05; luật 1, 2, 3, 4; FB LAB-2 #1, #3, #5, #6, #7; khách #10 (FB-CUS-269), #11 (FB-CUS-270); bảng lệch D08 / M19 (hạn mức theo kỳ), D10 (FIG-012).
 - **Không chặn cứng 参加上限:** người chốt tự quyết lúc cao điểm, lý do ghi ở `trades.over_limit_reason_code` / `over_limit_note`; 照合 soát ở 要確認 SC-07-01.
-- **Kỳ của 参加上限:** tháng của `trade_date` (= 業務日), cộng 相対 + せり đã 確定 theo giá trị hiệu lực (gốc + điều chỉnh) — view `v_buyer_period_usage` (PARTY_DB). So **税抜** (giả định PL, Q-TRD-02).
+- **Kỳ của 参加上限:** tháng của `trade_date` (= 業務日), cộng 相対 + せり đã 確定 theo giá trị hiệu lực (gốc + điều chỉnh) — view `v_buyer_period_usage` (PARTY_DB). So **税込** = floor(Σ税抜 × (100 + suất) / 100), suất ở `tax_rates` theo mã trong tham số `PARTICIPATION_LIMIT_TAX_CODE` — không dùng 110/100 của BR-INC-01 (Q-TRD-02 [Customer giả lập, 2026-11-25]; 照合 soát sổ theo 税抜, nói chuyện với người mua theo 税込 nên màn hiện cả hai số).
 - **Mã GD hiển thị:** `相対-{nnnn}` (số trong ngày) — đề xuất PL, chờ chốt (Q-TRD-01); `trade_no` lưu dạng `A{YYYYMMDD}-{nnnn}`.
-- **Hiệu năng:** API-TRD-002 p95 ≤ 1 s ở cao điểm 60 người đồng thời (NFR-PERF-01); hai người chốt cùng lô được tuần tự hóa bằng khóa dòng lô.
-- **Câu hỏi mở / TBD:** Q-TRD-01 (định dạng số GD), Q-TRD-02 (so hạn mức 税抜 hay 税込), Q-TRD-03 (máy in hiện trường — cách in thẳng PDF) — ở [TRADE_FUNC §3](../function-specifications/TRADE_FUNC.md#3-mã-lỗi-câu-hỏi-giả-định-của-module).
+- **Hiệu năng:** API-TRD-002 p95 ≤ 1 s ở cao điểm 60 người đồng thời — [PL] mục tiêu nội bộ cho API ghi (RFP chỉ có NFR-PERF-01 cho tìm kiếm, NFR-PERF-02 cho tải); hai người chốt cùng lô được tuần tự hóa bằng khóa dòng lô.
+- **Câu hỏi mở / TBD:** Q-TRD-01 (định dạng số GD), Q-TRD-03 (máy in hiện trường — cách in thẳng PDF) — ở [TRADE_FUNC §3](../function-specifications/TRADE_FUNC.md#3-mã-lỗi-câu-hỏi-giả-định-của-module).

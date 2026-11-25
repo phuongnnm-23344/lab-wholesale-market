@@ -9,7 +9,7 @@ method: GET
 media_type: application/json
 feature: lot
 screen_id: [SC-03-01]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001]
@@ -26,6 +26,7 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-m07: nhãn [PL] mục tiêu hiệu năng (chặt hơn NFR-PERF-01) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -59,5 +60,5 @@ Trả các lô 仮受付 (`PROVISIONAL`) của 業務日 đang mở để 受付
 ## 5. Other Notes
 
 - Định dạng lỗi `{ "error": { code, message, field?, detail?, traceId? } }` giữ theo prototype (`api-error-response.ts`) — quy ước chung ở [`_common/api-conventions.md`](../../../_common/api-conventions.md).
-- Tối đa ~150 dòng / ngày, không phân trang. p95 ≤ 500 ms.
+- Tối đa ~150 dòng / ngày, không phân trang. p95 ≤ 500 ms — [PL] mục tiêu nội bộ, chặt hơn NFR-PERF-01 (tìm kiếm p95 ≤ 2s).
 - **Câu hỏi mở / TBD:** định dạng 仮番号 (`K{端末番号}-{連番}`) — Q-SC0302-01 ở wireframe SC-03-02.

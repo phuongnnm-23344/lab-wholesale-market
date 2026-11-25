@@ -8,7 +8,7 @@ function: app.fn_check_buyer_qualification
 endpoint:
 component: BuyerQualificationCheck
 feature: trade
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_SERI_CONFIRM-001, SPEC-TRADE_SAME_DAY_FIX-001, SPEC-PARTY_DB-001, ADR-003]
@@ -25,6 +25,7 @@ related: [SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_SERI_CON
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Khách Q-TRD-02: so 参加上限 với 税込 = floor(Σ税抜 × (100 + suất) / 100), thêm DoD d2, d3 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -59,10 +60,10 @@ sequenceDiagram
         alt không VALID hoặc ngoài hạn
             Q-->>CALL: E-TRD-006 (状態, 有効期限)
         end
-        Q->>P: 参加上限 (NULL → 保証金) · used trong kỳ của trade_date
-        alt used + extra + amount > limit
+        Q->>P: 参加上限 (NULL → 保証金) · used 税抜 trong kỳ của trade_date · suất thuế (tax_rates)
+        alt 税込(used + extra + amount) > limit
             alt reason trống
-                Q-->>CALL: E-TRD-007 (limit, used, amount)
+                Q-->>CALL: E-TRD-007 (limit, used 税込, amount 税込)
             else reason = OTHER và note trống
                 Q-->>CALL: E-TRD-008
             end
@@ -150,13 +151,13 @@ sequenceDiagram
 | Trường | Giá trị |
 |---|---|
 | Input | `p_trade_date`, `p_amount_jpy`, `p_extra_used_jpy`, `p_exclude_trade_id`, `p_reason_code`, `p_note` |
-| Output | `{kind: BAIBAI, basis: SHONIN, over_limit, limit_jpy, used_jpy}` |
+| Output | `{kind: BAIBAI, basis: SHONIN, over_limit, limit_jpy, used_excl_jpy, used_incl_jpy, total_incl_jpy}` |
 
 **Error**
 
 | Điều kiện lỗi | Xử lý | Status code |
 |---|---|---|
-| `used + extra + amount > limit` và `p_reason_code` NULL | Ném `E-TRD-007: {limit} {used + extra} {amount}` — client mở hộp lý do | 422 |
+| `total_incl > limit` và `p_reason_code` NULL | Ném `E-TRD-007: {limit} {used_incl} {amount_incl}` (`amount_incl = total_incl − floor((used + extra) × k)`) — client mở hộp lý do | 422 |
 | `p_reason_code` không thuộc `OVER_LIMIT_REASON` | Ném `E-TRD-007` (coi như chưa chọn) | 422 |
 | `p_reason_code = OTHER` và `p_note` trống | Ném `E-TRD-008` | 422 |
 
@@ -165,8 +166,9 @@ sequenceDiagram
 | No | Nội dung xử lý |
 |---|---|
 | 1 | `v_limit :=` `baibai_approvals.participation_limit_jpy` hiện hành; NULL → `v_participant_current_deposit` tại `p_trade_date` |
-| 2 | `v_used :=` Σ tiền **hiệu lực** (gốc + REVERSE / DELTA) của GD `CONFIRMED` kênh `AITAI` + `SERI` có `trade_date` cùng tháng với `p_trade_date` — view `v_buyer_period_usage`; trừ `p_exclude_trade_id` nếu có |
-| 3 | So `v_used + p_extra_used_jpy + p_amount_jpy` với `v_limit` (税抜 — Q-TRD-02) |
+| 2 | `v_used :=` (税抜) Σ tiền **hiệu lực** (gốc + REVERSE / DELTA) của GD `CONFIRMED` kênh `AITAI` + `SERI` có `trade_date` cùng tháng với `p_trade_date` — view `v_buyer_period_usage`; trừ `p_exclude_trade_id` nếu có |
+| 3 | 参加上限 so với **税込** (Q-TRD-02 [Customer giả lập, 2026-11-25]): `税込 = floor(Σ税抜 × (100 + rate_percent) / 100)`, `rate_percent` = suất của mã thuế trong tham số file cấu hình `PARTICIPATION_LIMIT_TAX_CODE` (mặc định `REDUCED8`) tra `tax_rates` theo `p_trade_date` — không dùng 110/100 của BR-INC-01, không cài cứng. `v_used_incl := floor(v_used × (100 + r) / 100)`; `v_total_incl := floor((v_used + p_extra_used_jpy + p_amount_jpy) × (100 + r) / 100)`; so `v_total_incl` với `v_limit`. Một suất cho cả kỳ (giả định: chỉ 軽減税率 8% — hỏi 経理部; hai suất trong kỳ → nhóm theo suất của từng GD, +0,2 ngày). Không tính thuế lại theo từng dòng như hóa đơn |
+| 3b | Thiếu dòng `tax_rates` hiệu lực cho mã ở ngày `p_trade_date` → ném `E-CMN-004` (lỗi cấu hình, ghi log `ERROR`) — không âm thầm so 税抜 |
 | 4 | Không vượt → `over_limit = false` (lý do gửi kèm bị bỏ) |
 
 ---
@@ -175,6 +177,6 @@ sequenceDiagram
 
 - **Tiền đề:** hàm gọi đã khóa dòng lô và chạy trong transaction `READ COMMITTED`; hai người chốt cùng một người mua song song có thể cùng thấy `v_used` cũ → vượt hạn mức nhỏ không bị bắt lý do. Chấp nhận (hạn mức là cảnh báo, không chặn cứng); 照合 soát ở 要確認. Nếu khách muốn chính xác tuyệt đối → khóa advisory theo `buyer_id` (~0,3 ngày) — ghi ở Q-TRD-02.
 - **Thời điểm xét:** `p_at` = `now()` với online; = `paper_slip_time` với `PAPER_LATE` (ADR-008 §2.4-11); 業務日 / kỳ theo `p_trade_date`, không theo giờ đồng hồ (L4-A04 (2)).
-- **Cột view** (đã định nghĩa ở MKT_DB 0.3.2 §4.0a — thêm `qualification_no`, `limit_mode`, `period_id`, `trade_count`): `v_qualification_current(participant_id, basis KYOKA|SHONIN, qualification_id, status, valid_from, valid_to, participation_limit_jpy NULL với KYOKA)` — một dòng / người × căn cứ, lấy từ **hai** bảng `nakaoroshi_permits`, `baibai_approvals` (không gộp bảng); `v_buyer_period_usage(buyer_id, period_ym, used_jpy)` theo `trade_date`, giá trị hiệu lực. Định nghĩa chính thức ở MKT_DB §4.0a.
+- **Cột view** (đã định nghĩa ở MKT_DB 0.3.2 §4.0a — thêm `qualification_no`, `limit_mode`, `period_id`, `trade_count`): `v_qualification_current(participant_id, basis KYOKA|SHONIN, qualification_id, status, valid_from, valid_to, participation_limit_jpy NULL với KYOKA)` — một dòng / người × căn cứ, lấy từ **hai** bảng `nakaoroshi_permits`, `baibai_approvals` (không gộp bảng); `v_buyer_period_usage(buyer_id, period_ym, used_excl_jpy, used_incl_jpy)` theo `trade_date`, giá trị hiệu lực; `used_incl_jpy` tính theo công thức §4.4-3 (đề nghị sửa MKT_DB §4.0a — Q-TRD-02). Định nghĩa chính thức ở MKT_DB §4.0a.
 - **Function này KHÔNG:** đổi trạng thái tư cách (module party); gửi cảnh báo 30 ngày (module notify); chặn GD vì vượt hạn mức.
-- **Điều kiện hoàn thành (LAB-5):** (a) 仲卸 許可 `EXPIRED` → `E-TRD-005` với chữ 「仲卸の許可」; (b) 売買参加者 承認 `SUSPENDED` → `E-TRD-006` với chữ 「売買参加者の承認」; (c) 売買参加者 vượt không lý do → `E-TRD-007` kèm 3 số; có lý do → `over_limit = true`; (d) 仲卸 tiền rất lớn không bao giờ nhận `E-TRD-007`; (e) せり 2 dòng cùng người mua, dòng 2 vượt nhờ cộng dồn `p_extra_used_jpy` → chỉ dòng 2 cần lý do; (f) GD tháng 7 không tính vào hạn mức tháng 8.
+- **Điều kiện hoàn thành (LAB-5):** (a) 仲卸 許可 `EXPIRED` → `E-TRD-005` với chữ 「仲卸の許可」; (b) 売買参加者 承認 `SUSPENDED` → `E-TRD-006` với chữ 「売買参加者の承認」; (c) 売買参加者 vượt không lý do → `E-TRD-007` kèm 3 số; có lý do → `over_limit = true`; (d) 仲卸 tiền rất lớn không bao giờ nhận `E-TRD-007`; (d2) 売買参加者 上限 5.000.000, 税抜 đã dùng 4.620.000 (税込 4.989.600), GD mới 税抜 9.000 (税込 tổng 4.999.320) → không vượt; GD mới 24.000 (税込 tổng 5.015.520) → `E-TRD-007`, `detail.usedInclJpy` 4.989.600, `amountInclJpy` 25.920 — so 税込 dù 税抜 chưa vượt; (d3) đổi `rate_percent` trong `tax_rates` (dòng mới có ngày hiệu lực) → GD từ ngày đó dùng suất mới, không cần sửa code; (e) せり 2 dòng cùng người mua, dòng 2 vượt nhờ cộng dồn `p_extra_used_jpy` → chỉ dòng 2 cần lý do; (f) GD tháng 7 không tính vào hạn mức tháng 8.

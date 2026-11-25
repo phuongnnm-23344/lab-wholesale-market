@@ -2,7 +2,7 @@
 id: WF-SC-04-01
 title: Wireframe SC-04-01 相対取引入力・確定
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-01, FR-AITAI-02, BR-PERM-01, BR-LOT-02, NFR-USE-01, PRM-046, PRM-114, DEC-033, ADR-003, ADR-008]
@@ -47,7 +47,7 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
     ロット・残 を保持、買受人以降を空欄、カーソルは [3]
 
  ── [13] 参加上限超過ダイアログ（売買参加者のみ）
-   ┌ 今期の参加上限を超えます：上限 ¥5,000,000 / 今期確定済 ¥4,990,000 / 今回 ¥24,000 ┐
+   ┌ 今期の参加上限を超えます：上限 ¥5,000,000 / 今期確定済 ¥4,989,600（税込） / 今回 ¥25,920（税込） ┐
    │ 理由を選択: 1 事前に了承済  2 保証金追加予定  3 その他（備考必須）  [14] 備考 [   ] │
    └ [ 理由を付けて確定 ]  [ 戻る ]                                              ┘
  ── [15] 同一内容の再確定確認: 「直前と同じ内容です。もう一度確定しますか？」 [はい] [いいえ]
@@ -60,7 +60,7 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
 | 1 | ロット | Ô nhập số + gợi ý | ✓ | Gõ số đuôi (「5」) → lô của 業務日 hiện tại; chỉ lô 販売公開中 và còn SL; gợi ý ≤ 10 dòng | FB LAB-2 #1, FIG-011 |
 | 2 | Đơn vị · 残 · 目利き | Nhãn | — | `単位 kg・残 66kg`; kết quả 目利き hiện để tham khảo, **không tự quyết giá** | FR-LOT-03, CAP-HUMAN-01 |
 | 3 | 買受人 | Ô nhập mã + gợi ý | ✓ | 買受人番号 `^[A-Z0-9]{1,10}$`; chỉ 仲卸 / 売買参加者 | TBL-ACTOR-01 |
-| 4 | Tư cách người mua | Nhãn trạng thái | — | **仲卸 → chữ 「許可」; 売買参加者 → chữ 「承認」 + 参加上限残 (theo kỳ)**; không gộp thành "資格OK". Màu + chữ | BR-PERM-01, ADR-003, luật 2 |
+| 4 | Tư cách người mua | Nhãn trạng thái | — | **仲卸 → chữ 「許可」; 売買参加者 → chữ 「承認」 + 参加上限残 (theo kỳ, so 税込 — Q-TRD-02) + 「使用額 ¥…（税込）／ 税抜 ¥…」**; không gộp thành "資格OK". Màu + chữ | BR-PERM-01, ADR-003, luật 2 |
 | 5 | 数量 | Số | ✓ | > 0, ≤ 残 (kiểm lại ở server lúc chốt). Theo đơn vị của lô: kg **1 chữ số lẻ**; 箱 (ケース) / 尾 **số nguyên** — chặn ngay ở ô (khớp Database Design `NUMERIC(12,1)` + CHECK theo đơn vị; N03) | BR-LOT-02, PRM-053, khách #11 |
 | 6 | 単価 | Số | ✓ | > 0, nguyên; nhãn theo đơn vị lô | FB LAB-2 #5 |
 | 7 | 金額 | Nhãn tính | — | floor(数量 × 単価), 税抜; thuế tính ở 精算 | PRM-053 |
@@ -111,3 +111,4 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 m-11 / khách #11: 数量 1 chữ số lẻ với kg, số nguyên với 箱 / 尾; khách #10: GD vượt 参加上限 hiện ở 要確認 SC-07-01. Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | Khách Q-TRD-02: 使用額 税込 / 税抜 | 2026-11-25 | phuongnnm-23344 |  |

@@ -8,7 +8,7 @@ function: approval request lifecycle (create → decide / reject) + limit change
 endpoint: POST /api/v1/participants/{participantId}/approval-requests · POST /api/v1/approval-requests/{requestId}/transitions
 component: ApprovalService
 feature: party
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001, API-PTY-003, API-PTY-006, API-PTY-007, SPEC-PARTY_DB-001, ADR-003, PRM-046, PRM-121, FIG-010, L4-A04, OPEN-DB-09]
@@ -25,6 +25,7 @@ related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001,
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); G2-M03: RENEW khi 承認 đã 失効 → 409 E-PTY-013; khách Q-PTY-06: LIMIT_CHANGE một bước do 照合部門長 (§4.2b) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -60,6 +61,9 @@ sequenceDiagram
         API->>DB: fn_approval_request_reject(...)
     end
     Note over DB: Job 01:00: fn_approval_expire_due(business_date) → EXPIRED
+    C->>API: POST /participants/{id}/approval-requests (LIMIT_CHANGE) + MFA step-up
+    API->>DB: fn_approval_limit_change(...) · chỉ STL_HEAD · một bước
+    DB->>DB: UPDATE baibai_approvals.participation_limit_jpy · INSERT LIMIT_CHANGED (cũ / mới) · audit_logs
 ```
 
 ---
@@ -72,14 +76,16 @@ sequenceDiagram
 |---|---|---|---|---|---|
 | `NEW` cấp mới | (chưa có) → 有効 | SETTLE nhập 届出 → `ENTERED` | **STL-HEAD 確認** | `REGISTERED` | PARTY_DB 4.15; OPEN-DB-09 (xét nhẹ, một người) |
 | `RENEW` gia hạn | 有効 / 一時停止 → giữ nguyên, `valid_to` mới | SETTLE | **STL-HEAD 確認** | `RENEWED` | PRM-121 |
-| `LIMIT_CHANGE` đổi 参加上限 | giữ nguyên | SETTLE | **STL-HEAD 確認** | `LIMIT_CHANGED` (`old_limit_jpy`, `new_limit_jpy`) | PRM-046, Gate 1 M-07 |
+| `LIMIT_CHANGE` đổi 参加上限 | giữ nguyên | **STL-HEAD thực hiện trực tiếp, một bước** (không maker riêng) | — (không checker; MFA step-up + audit) | `LIMIT_CHANGED` (`old_limit_jpy`, `new_limit_jpy`) | PRM-046, Gate 1 M-07, **Q-PTY-06 [Customer giả lập, 2026-11-25]** |
 | `SUSPEND` / `RESUME` / `REVIEW_START` / `REINSTATE` | như 許可 (FIG-010) | STL-HEAD 起案 → `PROPOSED` | **OPS-HEAD 決裁** | `SUSPENDED` / `RESUMED` / `REVIEW_STARTED` / `REINSTATED` | PRM-121 |
 | (job) 失効 | 有効 / 一時停止 → 失効 | hệ thống | — | `EXPIRED` | giả định [PL] |
 
 **参加上限 hiệu lực** (đọc ở SC-01-02 [16], SC-04-01, SC-05-02):
 `limit = baibai_approvals.participation_limit_jpy` nếu khác NULL (`INDIVIDUAL`), ngược lại = 保証金 hiện hành `v_participant_current_deposit` tại ngày xét (`DEPOSIT`). **今期使用額** = Σ 買受代金 hiệu lực (相対 + せり, gồm điều chỉnh có `period_id` = kỳ đang xét) theo `trade_date` trong kỳ — view `v_buyer_period_usage`; **残** = `limit − 使用額` (có thể âm, hiện đỏ).
 
-Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB 0.3.1 §4.60 (bảng riêng, cùng tên cột với `nakaoroshi_permit_requests`; `request_kind` có thêm `LIMIT_CHANGE`, không có `PROPOSED` cho `NEW`).
+Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB §4.60 (bảng riêng, cùng tên cột với `nakaoroshi_permit_requests`; **không** nhận `LIMIT_CHANGE` — đổi 参加上限 không qua yêu cầu chờ; không có `PROPOSED` cho `NEW`).
+
+**Vì sao `LIMIT_CHANGE` một bước (Q-PTY-06):** khách muốn **chỉ 照合部門長** đổi 保証金 / 参加上限, không để 照合事務局 tự đổi, và không thêm người kiểm hay luồng duyệt. Giữ maker-checker (SETTLE nhập → STL-HEAD 確認) thì trái ý thứ nhất; thêm checker thứ hai thì trái ý thứ hai. Bù lại: MFA step-up (Q-PTY-07 khách đồng ý — thông số tiền), `audit_logs` before / after, lịch sử `LIMIT_CHANGED` hiện ở SC-01-02 [22]. Cùng quy tắc cho đổi 保証金 (API-PTY-003).
 
 ---
 
@@ -97,8 +103,8 @@ Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB 0.3.1 §4.60 (b
 | Điều kiện lỗi | Xử lý | Status code |
 |---|---|---|
 | Không có phiên | Dừng; `E-CMN-001` | 401 |
-| Vai không đúng bảng §3 (SETTLE tạo `NEW` / `RENEW` / `LIMIT_CHANGE`; STL-HEAD tạo loại 起案; checker đúng quyền) | Dừng; `E-CMN-002` | 403 |
-| `DECIDE` thiếu MFA hợp lệ | Dừng; `E-CMN-005` | 403 |
+| Vai không đúng bảng §3 (SETTLE tạo `NEW` / `RENEW`; STL-HEAD tạo loại 起案 và `LIMIT_CHANGE`; checker đúng quyền) | Dừng; `E-CMN-002` | 403 |
+| `DECIDE` hoặc `LIMIT_CHANGE` thiếu step-up MFA | Dừng; `E-CMN-005` | 403 |
 | Body sai kiểu | Dừng; `E-CMN-007` | 422 |
 
 **Detail**
@@ -111,7 +117,7 @@ Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB 0.3.1 §4.60 (b
 
 | Trường | Giá trị |
 |---|---|
-| Input | `participantId`, `kind`, `payload` (`approvalNo`, `validFrom`, `validTo`, `limitMode` `DEPOSIT` \| `INDIVIDUAL`, `participationLimitJpy?`, `screeningNote` cho `NEW`; `newValidTo` cho `RENEW`; `limitMode`, `participationLimitJpy?`, `effectiveOn` cho `LIMIT_CHANGE`), `reason` |
+| Input | `participantId`, `kind`, `payload` (`approvalNo`, `validFrom`, `validTo`, `limitMode` `DEPOSIT` \| `INDIVIDUAL`, `participationLimitJpy?`, `screeningNote` cho `NEW`; `newValidTo` cho `RENEW`), `reason` — `LIMIT_CHANGE` đi §4.2b |
 | Output | Yêu cầu `ENTERED` / `PROPOSED` → response `API-PTY-006` |
 
 **Error**
@@ -125,9 +131,9 @@ Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB 0.3.1 §4.60 (b
 | Có yêu cầu mở | Dừng; `E-PTY-011` | 409 |
 | `approvalNo` trùng | Dừng; `E-PTY-019` | 409 |
 | `validTo < validFrom` | Dừng; `E-PTY-020` | 422 |
-| `RENEW`: `newValidTo ≤ valid_to` hoặc đã 失効 | Dừng; `E-PTY-014` | 422 / 409 |
+| `RENEW` khi 承認 đã 失効 — không có ân hạn (Q-PTY-04) | Dừng; `E-PTY-013`, `detail` = `{ currentStatus: "EXPIRED", kind: "RENEW", nextAction: "REVIEW_START" }` | 409 |
+| `RENEW`: `newValidTo ≤ valid_to` | Dừng; `E-PTY-014`, `field` = `payload.newValidTo`, `detail.currentValidTo` | 422 |
 | `INDIVIDUAL` mà `participationLimitJpy` ≤ 0 / thiếu; hoặc hạn mức mới = hạn mức hiện tại | Dừng; `E-PTY-016` | 422 |
-| `LIMIT_CHANGE.effectiveOn` < 業務日 hiện tại | Dừng; `E-PTY-006` | 422 |
 | `reason` rỗng | Dừng; `E-PTY-007` | 422 |
 
 **Detail**
@@ -135,9 +141,37 @@ Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB 0.3.1 §4.60 (b
 | No | Nội dung xử lý |
 |---|---|
 | 1 | `assert_caller`; `SELECT … FOR UPDATE` `participants`, `baibai_approvals` hiện hành |
-| 2 | Kiểm như bảng Error; với `LIMIT_CHANGE` tính và lưu vào `payload` cả `oldLimitJpy` (NULL = theo 保証金) để checker thấy trước / sau |
+| 2 | Kiểm như bảng Error |
 | 3 | INSERT `baibai_approval_requests` (`ENTERED` cho maker SETTLE, `PROPOSED` cho STL-HEAD 起案) |
 | 4 | `notifications` → STL-HEAD (`ENTERED`) / OPS-HEAD (`PROPOSED`); `audit_logs` |
+
+### 4.2b. Đổi 参加上限 một bước (`fn_approval_limit_change`)
+
+| Trường | Giá trị |
+|---|---|
+| Input | `participantId`, `payload` (`limitMode` `DEPOSIT` \| `INDIVIDUAL`, `participationLimitJpy?`, `effectiveOn`), `reason`, `app.mfa_verified_at` |
+| Output | `baibai_approvals` cập nhật + một dòng `LIMIT_CHANGED` → response `API-PTY-006` dòng 1b |
+
+**Error**
+
+| Điều kiện lỗi | Xử lý | Status code |
+|---|---|---|
+| Người gọi không phải STL-HEAD (hoặc 代行) | Dừng; `E-CMN-002` | 403 |
+| Step-up MFA hết hiệu lực | Dừng; `E-CMN-005` | 403 |
+| Người tham gia không tồn tại / không phải 売買参加者 / 退会 | Dừng; `E-PTY-018` / `E-PTY-009` / `E-PTY-010` | 404 / 409 / 409 |
+| 承認 không có hoặc `EXPIRED` | Dừng; `E-PTY-013` | 409 |
+| `INDIVIDUAL` mà `participationLimitJpy` ≤ 0 / thiếu; hoặc hạn mức mới = hạn mức hiện tại | Dừng; `E-PTY-016` | 422 |
+| `effectiveOn` < 業務日 hiện tại | Dừng; `E-PTY-006` | 422 |
+| `reason` rỗng | Dừng; `E-PTY-007` | 422 |
+
+**Detail**
+
+| No | Nội dung xử lý |
+|---|---|
+| 1 | `assert_caller(['STL_HEAD'])`; `SELECT … FOR UPDATE` `participants`, `baibai_approvals` hiện hành |
+| 2 | `v_old := participation_limit_jpy` (NULL = theo 保証金) |
+| 3 | UPDATE `participation_limit_jpy` (NULL khi về `DEPOSIT`) **và** INSERT `LIMIT_CHANGED` (`old_limit_jpy`, `new_limit_jpy`, `effective_on`, `reason`, `decided_by` = `created_by` = người gọi, `mfa_verified_at`) **trong cùng transaction** — không có đường UPDATE cột hạn mức nào khác (PARTY_DB 4.14 cột 6). Hạn mức mới áp từ **kỳ chứa** `effective_on` |
+| 4 | `audit_logs` before / after (代行 ghi "thay cho …"); không tạo `notifications` cho checker (không có checker) |
 
 ### 4.3. 確認 / 決裁 (`fn_approval_request_decide`)
 
@@ -151,7 +185,7 @@ Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB 0.3.1 §4.60 (b
 | Điều kiện lỗi | Xử lý | Status code |
 |---|---|---|
 | Yêu cầu không chờ quyết | Dừng; `E-PTY-017` | 409 |
-| Quyền không khớp (`NEW` / `RENEW` / `LIMIT_CHANGE` cần `STL_HEAD`; loại 起案 cần `OPS_HEAD`) | Dừng; `E-CMN-002` | 403 |
+| Quyền không khớp (`NEW` / `RENEW` cần `STL_HEAD`; loại 起案 cần `OPS_HEAD`) | Dừng; `E-CMN-002` | 403 |
 | Người gọi = maker (`entered_by` / `proposed_by`) | Dừng; `E-PTY-012` | 403 |
 | Trạng thái 承認 đã đổi từ lúc tạo | Dừng; `E-PTY-013` | 409 |
 | Thiếu MFA | Dừng; `E-CMN-005` | 403 |
@@ -163,7 +197,6 @@ Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB 0.3.1 §4.60 (b
 | 1 | `SELECT … FOR UPDATE` yêu cầu + `baibai_approvals`; kiểm lại chuyển trạng thái |
 | 2 | `NEW`: INSERT `baibai_approvals` (`status = VALID`, `participation_limit_jpy` = NULL nếu `DEPOSIT`); INSERT `REGISTERED` (`decided_by` = STL-HEAD, MFA; `reason` ghi kết quả xét nhẹ 保証金 / 資力 từ `screeningNote`) |
 | 3 | `RENEW`: UPDATE `valid_to`; INSERT `RENEWED` (`old_valid_to`, `new_valid_to`) |
-| 4 | `LIMIT_CHANGE`: UPDATE `participation_limit_jpy` (NULL khi về `DEPOSIT`) **và** INSERT `LIMIT_CHANGED` (`old_limit_jpy`, `new_limit_jpy`, `effective_on`) **trong cùng transaction** — không có đường UPDATE cột hạn mức nào khác (PARTY_DB 4.14 cột 6). Hạn mức mới áp từ **kỳ chứa** `effective_on` (PARTY_DB 4.15 cột 7) |
 | 5 | Loại 起案: UPDATE `status`; INSERT event tương ứng (`proposed_by`, `decided_by` = OPS-HEAD, MFA) |
 | 6 | UPDATE yêu cầu `DECIDED`; `audit_logs` (代行 ghi "thay cho …"); `notifications` → maker |
 
@@ -211,9 +244,10 @@ Bảng yêu cầu chờ: `baibai_approval_requests` — PARTY_DB 0.3.1 §4.60 (b
 
 ## 5. Other Notes
 
-- **Đổi 保証金 kéo theo 参加上限** (`API-PTY-003`, không qua yêu cầu): hàm `fn_participant_deposit_change` INSERT `participant_deposit_history` (chỉ thêm, `uq_deposit_participant_from`), **không** sinh `LIMIT_CHANGED` — với `limitMode = DEPOSIT` hạn mức là giá trị suy ra từ 保証金 theo ngày, lịch sử nằm ở chính bảng 保証金; response trả `limitAfter` để màn báo (khách #20). Giả định [PL]: đổi 保証金 chỉ cần SETTLE / STL-HEAD + audit, không checker (PRM-046 coi là trường số có lịch sử) — Q-PTY-06.
-- **MFA cho `LIMIT_CHANGE`:** PARTY_DB 4.15 bắt `mfa_verified_at` khi có `decided_by`; PREMISE 0.6.1 §3.2 đã thêm 確認 đổi 参加上限 vào danh sách hỏi MFA cho khớp. Q-PTY-07 giữ để khách xác nhận.
+- **Đổi 保証金 kéo theo 参加上限** (`API-PTY-003`, không qua yêu cầu): hàm `fn_participant_deposit_change` INSERT `participant_deposit_history` (chỉ thêm, `uq_deposit_participant_from`), **không** sinh `LIMIT_CHANGED` — với `limitMode = DEPOSIT` hạn mức là giá trị suy ra từ 保証金 theo ngày, lịch sử nằm ở chính bảng 保証金; response trả `limitAfter` để màn báo (khách #20). Đổi 保証金: **chỉ STL-HEAD**, MFA step-up, audit, không checker (Q-PTY-06 [Customer giả lập, 2026-11-25]). Hỏi 経理部: 保証金 trong hệ thống có phải khớp sổ 経理 hằng kỳ không — khớp thì cần mục so sánh (báo giá riêng).
+- **MFA cho `LIMIT_CHANGE`:** PARTY_DB 4.15 bắt `mfa_verified_at` khi có `decided_by`; khách đồng ý (Q-PTY-07 [Customer giả lập, 2026-11-25]). PREMISE §3.2 cần đổi chữ 「確認 đổi 参加上限」 thành 「đổi 保証金 / 参加上限 (照合部門長, một bước)」.
 - **Không làm:** không chặn GD khi vượt 参加上限 (chỉ cảnh báo ở `trade`); không hồi tố hạn mức về trước `effective_on`.
 - Bảng `baibai_approval_requests`: PARTY_DB 0.3.1 §4.60 (cột giống 4.59, bảng riêng).
-- Câu hỏi treo: OPEN-DB-09 (cấp mới 承認 chỉ cần 照合部門長 確認 — xét nhẹ?), Q-PTY-01, Q-PTY-04, Q-PTY-06, Q-PTY-07.
+- Câu hỏi treo: OPEN-DB-09 (cấp mới 承認 chỉ cần 照合部門長 確認 — xét nhẹ?); hỏi 経理部 về khớp sổ 保証金. Đã trả lời [Customer giả lập, 2026-11-25]: Q-PTY-01 (một yêu cầu mở / tư cách), Q-PTY-04 (không ân hạn → 再審査), Q-PTY-06, Q-PTY-07.
+- **Điều kiện hoàn thành (LAB-5):** (a) 承認 và 許可 là hai hàm / hai bảng: lỗi tư cách ở `trade` ra `E-TRD-006` (chữ 「売買参加者の承認」) cho 承認, `E-TRD-005` cho 許可 — không có mã chung; (b) `NEW` → `ENTERED`, STL-HEAD khác người nhập `DECIDE` + MFA → `baibai_approvals` `VALID` + `REGISTERED`; người nhập tự `DECIDE` → 403 `E-PTY-012`; (c) `LIMIT_CHANGE` do STL-HEAD + MFA → đúng 1 dòng `LIMIT_CHANGED` có `old_limit_jpy` / `new_limit_jpy` / `effective_on`, `baibai_approvals.participation_limit_jpy` đổi cùng transaction, không có dòng `baibai_approval_requests`; SETTLE gọi → 403 `E-CMN-002`; thiếu step-up → 403 `E-CMN-005`; (d) GD chốt trong kỳ chứa `effective_on` dùng hạn mức mới, kỳ trước giữ hạn mức cũ; (e) đã có một yêu cầu `ENTERED` / `PROPOSED` → tạo yêu cầu thứ hai 409 `E-PTY-011` (Q-PTY-01); (f) `RENEW` khi 承認 đã 失効 → 409 `E-PTY-013` `detail.nextAction = "REVIEW_START"`; `newValidTo ≤ valid_to` khi còn hiệu lực → 422 `E-PTY-014`; (g) job mở ngày: 承認 `valid_to` < 業務日 → `EXPIRED` + event `EXPIRED` (`decided_by` NULL); chạy lại cùng ngày không sinh thêm dòng; yêu cầu mở giữ nguyên, người quyết gặp `E-PTY-013`; (h) đổi 保証金 khi `limitMode = DEPOSIT` không sinh `LIMIT_CHANGED` nhưng `limitAfter` = 保証金 mới; (i) `SUSPEND` có hiệu lực ngay lúc 決裁 (giờ phút ở event): GD chốt trước giữ, GD chốt sau → `E-TRD-006` (Q-PTY-05).
 - Truy vết: luật 2, luật 4; FR-PARTY-01, BR-PERM-01, PRM-046, PRM-121, FIG-010, L4-A04 (1); ADR-003; PARTY_DB 4.11, 4.14, 4.15; Gate 1 M-07, N-03; khách #20, #21.
