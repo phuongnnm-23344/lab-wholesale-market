@@ -9,7 +9,7 @@ method: GET
 media_type: application/json
 feature: delivery
 screen_id: [SC-06-02]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-06-02-001, SPEC-DEL_RECORD-001, ADR-008]
@@ -26,6 +26,7 @@ related: [SPEC-SC-06-02-001, SPEC-DEL_RECORD-001, ADR-008]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách: đóng Q-DEL-02 (snapshot 7 業務日) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -63,4 +64,5 @@ Trả toàn bộ GD còn 残 (tối đa 7 業務日 gần nhất) và danh sách
 
 - Vai: DELIVERY, DEL-HEAD; chỉ thiết bị `DELIVERY_TABLET` / `DOCK_TABLET` `is_active`.
 - Kích thước dự kiến < 300 KB (≈ 1.200 GD / ngày × phần còn 残).
-- **Câu hỏi mở / TBD:** Q-DEL-02 (số ngày 前日残 trong snapshot)
+- Q-DEL-02 đã trả lời [Customer giả lập, 2026-11-25]: 7 業務日.
+- **Câu hỏi mở / TBD:** không có

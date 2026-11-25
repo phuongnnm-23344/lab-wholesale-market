@@ -3,7 +3,7 @@ id: SPEC-DELIVERY_FUNC-001
 title: Function Specifications — module delivery (引渡し, ngoại lệ, tranh chấp)
 type: system
 subtype: function-specifications
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 feature: delivery
@@ -26,6 +26,7 @@ Kiểu dùng chung `SessionContext`, `Result<T>`, `AppError`: xem [PARTY_FUNC](.
 | No | Ver | アクション / Action | 対象シート / Sheet | 変更内容 / Description of changes | 更新日 / Change Date | 更新者 / Editor | 承認 / Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | Ver 0.1 | Add New | Toàn module | Khởi tạo 7 function + mã lỗi `E-DEL` | 2026-11-25 | phuongnnm-23344 | |
+| 2 | Ver 0.1.1 | Update | — | Gate 2 G2-M02: §4 Điều kiện hoàn thành (LAB-5); khách Q-DEL-03: E-DEL-007 chỉ cho tên 代理 > 50 ký tự | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -180,7 +181,7 @@ Kiểu dùng chung `SessionContext`, `Result<T>`, `AppError`: xem [PARTY_FUNC](.
 | E-DEL-004 | 422 | kg は小数点以下1桁まで、箱・尾は整数で入力してください | Số lẻ sai đơn vị | [8]; API-DEL-003, -004, -006 |
 | E-DEL-005 | 409 | 残数量（{残}{単位}）を超えています | Vượt 残 | [8]; API-DEL-003 |
 | E-DEL-006 | 422 | 受取人（本人／代理）を選んでください | Chưa chọn người nhận | [11]; API-DEL-003 |
-| E-DEL-007 | 422 | 代理の場合は受取人の氏名を入力してください（50文字以内） | Thiếu tên người nhận thay | 11.1; API-DEL-003, -004 |
+| E-DEL-007 | 422 | 代理人の氏名は50文字以内で入力してください | Tên người nhận thay quá 50 ký tự (tên tùy chọn — Q-DEL-03) | 11.1; API-DEL-003, -004 |
 | E-DEL-008 | 409 | この取引は確定していないため引渡しできません | GD chưa 確定 / đã 取消 | API-DEL-003, -004 |
 | E-DEL-009 | 409 | この取引は引渡しが完了しています | GD đã giao hết | API-DEL-003 |
 | E-DEL-010 | 409 | 同じ記録IDで異なる内容が送信されました | Trùng `clientRecordId` khác nội dung | API-DEL-003 |
@@ -206,3 +207,19 @@ Kiểu dùng chung `SessionContext`, `Result<T>`, `AppError`: xem [PARTY_FUNC](.
 | E-DEL-030 | 422 | 確認票番号を入力してください | Thiếu số phiếu giấy | [3]; API-DEL-004 |
 
 Mã chung `E-CMN-001..008` (thông điệp JP một bản, HTTP, cách client xử lý): [`_common/error-codes.md`](../../_common/error-codes.md). Body lỗi, MFA, khóa lạc quan: [`_common/api-conventions.md`](../../_common/api-conventions.md).
+
+---
+
+## 4. Điều kiện hoàn thành (LAB-5)
+
+Theo function; ca kiểm chi tiết ở mục "Điều kiện hoàn thành (LAB-5)" của Technical Design tương ứng. Mỗi function xong khi: mọi mã lỗi ở §3 mà function trả đều có ít nhất một test chạm tới với đúng HTTP status, và các điều kiện dưới đây đạt.
+
+| Function | Điều kiện hoàn thành | TECH |
+|---|---|---|
+| `listPendingDeliveries` | Chỉ GD `CONFIRMED` còn 残 > 0; thiếu cả `buyerNo` và `tradeId` → 422 | [DEL_RECORD](../technical-design/DEL_RECORD_TECH.md) |
+| `getOfflineSnapshot` | Tối đa 7 業務日 (Q-DEL-02), không chứa giá / tiền | [DEL_RECORD](../technical-design/DEL_RECORD_TECH.md) |
+| `recordDeliveries` | Cùng `clientRecordId` gửi 2 lần → 1 bản ghi; giao vượt → 409 `E-DEL-005`; nhiều item lỗi một → không ghi item nào; ngày đã khóa → 423 (online) / `HELD` (offline); 代理 không tên → 「代理」 | [DEL_RECORD](../technical-design/DEL_RECORD_TECH.md) |
+| `enqueueOfflineDelivery` (PWA) | Mất mạng vẫn ghi được giao thường vào hàng đợi; đồng bộ lại không sinh bản ghi trùng; ngoại lệ không vào hàng đợi (Q-DEL-01) | [DEL_RECORD](../technical-design/DEL_RECORD_TECH.md) |
+| `registerException` | Ngày mở → `trade_fixes` + REVERSE / DELTA tính theo đơn giá đã chốt, 過剰 không đổi tiền; ngày khóa → `correctionRequired`; `fix_id` không bị đếm hai lần ở checklist | [DEL_EXCEPTION_DISPUTE](../technical-design/DEL_EXCEPTION_DISPUTE_TECH.md) |
+| `listDisputes` | Mặc định loại dòng người xem không được xác nhận (tự ghi); `scope = all` trả cả ngoại lệ đang 継続協議 (còn `OPEN`) | [DEL_EXCEPTION_DISPUTE](../technical-design/DEL_EXCEPTION_DISPUTE_TECH.md) |
+| `confirmDispute` | Cấm tự xác nhận → 403 `E-DEL-019`; `CONTINUE_DISPUTE` ghi được nhiều lượt; MFA bắt buộc | [DEL_EXCEPTION_DISPUTE](../technical-design/DEL_EXCEPTION_DISPUTE_TECH.md) |

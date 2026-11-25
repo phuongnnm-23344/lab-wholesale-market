@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: settle
 screen_id: [SC-07-02]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-07-02-001, SPEC-STL_DAY_CLOSE-001, SPEC-CLOSE_DB-001, ADR-005, ADR-002]
@@ -26,6 +26,7 @@ related: [SPEC-SC-07-02-001, SPEC-STL_DAY_CLOSE-001, SPEC-CLOSE_DB-001, ADR-005,
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: `detail.blocking` là mảng `{adrNo, label, count}`, `field` gốc; khách Q-STL-02: `paperSlipsAllEnteredAcknowledged` + 422 E-STL-013; đóng Q-STL-01 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -45,7 +46,8 @@ Khóa 業務日 sau khi kiểm lại checklist trong cùng transaction; ghi ản
 | 2 | Header Parameters | `X-MFA-Token` | string | `mfa_…` | Token một lần, `purpose = DAY_CLOSE`, hạn 120 giây (iam) |  |
 | 3 | Body Parameters | `confirmDate` | string | `2027/08/02` | Người dùng gõ lại; chấp nhận `/` hoặc `-` |  |
 | 4 | Body Parameters | `deliveryRemainderAcknowledged` | boolean | `true` | Phải `true` (tick [13]) |  |
-| 5 | Body Parameters | `checklistVersion` | string | `sha256:4f1c…` | Giá trị từ API-STL-001 lúc hiển thị |  |
+| 5 | Body Parameters | `paperSlipsAllEnteredAcknowledged` | boolean | `true` | Phải `true` (tick [22] 「未入力の引渡し確認票なし（紙台帳で確認）」, ADR-005 §2.5 #12 — Q-STL-02) |  |
+| 6 | Body Parameters | `checklistVersion` | string | `sha256:4f1c…` | Giá trị từ API-STL-001 lúc hiển thị |  |
 
 Ví dụ body:
 
@@ -53,6 +55,7 @@ Ví dụ body:
 {
   "confirmDate": "2027/08/02",
   "deliveryRemainderAcknowledged": true,
+  "paperSlipsAllEnteredAcknowledged": true,
   "checklistVersion": "sha256:4f1c…"
 }
 ```
@@ -66,14 +69,15 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 200 | Đã khóa | <pre>{<br>&nbsp;&nbsp;"businessDate": "2027-08-02",<br>&nbsp;&nbsp;"status": "LOCKED",<br>&nbsp;&nbsp;"lockedAt": "2027-08-02T10:04:00+09:00",<br>&nbsp;&nbsp;"lockedBy": "桜 七子",<br>&nbsp;&nbsp;"delegatedFor": null,<br>&nbsp;&nbsp;"nextBusinessDate": "2027-08-03",<br>&nbsp;&nbsp;"accountingExport": "QUEUED"<br>}</pre> | `nextBusinessDate`: 業務日 chợ kế tiếp đã `OPEN`. `accountingExport`: `QUEUED` (job IF-ACC-01, hạn 11:00) hoặc `ENQUEUE_FAILED` (đã alarm, khóa vẫn thành công) |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "confirmDate" } }</pre> | `E-CMN-007` |
 | 3 | 422 | Ngày gõ lại không khớp | <pre>{ "error": { "code": "E-STL-001", "message": "確認のため業務日を正しく入力してください" } }</pre> | `E-STL-001` |
-| 4 | 422 | Chưa tick 引渡し残 | <pre>{ "error": { "code": "E-STL-003", "message": "引渡し残の確認（確認済み）にチェックしてください" } }</pre> | `E-STL-003` |
+| 4 | 422 | Chưa tick 引渡し残 | <pre>{ "error": { "code": "E-STL-003", "message": "引渡し残の確認（確認済み）にチェックしてください", "field": "deliveryRemainderAcknowledged" } }</pre> | `E-STL-003` |
+| 4b | 422 | Chưa tick 未入力の引渡し確認票なし | <pre>{ "error": { "code": "E-STL-013", "message": "未入力の引渡し確認票がないこと（紙台帳で確認）にチェックしてください", "field": "paperSlipsAllEnteredAcknowledged" } }</pre> | `E-STL-013` |
 | 5 | 401 | Chưa đăng nhập / phiên hết hạn | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | `E-CMN-001` |
 | 6 | 403 | Vai / quyền duyệt không đủ | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | `E-CMN-002` |
 | 7 | 403 | `X-MFA-Token` thiếu / hết hạn / đã dùng / sai mục đích (★ luôn hỏi lại mã) | <pre>{ "error": { "code": "E-CMN-005", "message": "この操作の前に本人確認（MFA）が必要です", "detail": { "purpose": "DAY_CLOSE" } } }</pre> | `E-CMN-005` |
 | 8 | 404 | Không có 業務日 | <pre>{ "error": { "code": "E-STL-012", "message": "指定の業務日が存在しません" } }</pre> | `E-STL-012` |
-| 9 | 409 | Còn mục ✖ | <pre>{ "error": { "code": "E-STL-002", "message": "締め不可（✖）の項目が残っています", "detail": { "blocking": "adrNo 2: 1件, adrNo 3: 1台" } } }</pre> | `E-STL-002` |
+| 9 | 409 | Còn mục ✖ | <pre>{ "error": { "code": "E-STL-002", "message": "締め不可（✖）の項目が残っています", "detail": { "blocking": [ { "adrNo": 2, "label": "未確定の取引", "count": 1 }, { "adrNo": 3, "label": "未同期の端末", "count": 1 } ] } } }</pre> | `E-STL-002` |
 | 10 | 409 | Ngày đã khóa | <pre>{ "error": { "code": "E-STL-004", "message": "この業務日は既に締め済みです", "detail": { "lockedBy": "桜 七子", "lockedAt": "2027-08-02T10:04:00+09:00" } } }</pre> | `E-STL-004` |
 | 11 | 409 | Ngày trước chưa khóa | <pre>{ "error": { "code": "E-STL-005", "message": "前の業務日 2027-07-31 が未締めです。先に締めてください", "detail": { "openDate": "2027-07-31" } } }</pre> | `E-STL-005` |
 | 12 | 409 | Lịch thiếu ngày chợ kế tiếp | <pre>{ "error": { "code": "E-STL-008", "message": "次の市場開催日がカレンダーに登録されていません" } }</pre> | `E-STL-008` |
@@ -88,4 +92,5 @@ Ví dụ body:
 - MFA token dùng một lần lấy từ API xác thực MFA của `iam` (chưa có spec — đề xuất `POST /api/v1/auth/mfa/verify` {code, purpose}).
 - Khóa xong mọi ghi vào ngày đó trả 423 `E-CMN-003` (trigger `enforce_open_business_day`).
 - Không retry tự động phía client: lỗi mạng → gọi lại API-STL-001 xem trạng thái thật.
-- **Câu hỏi mở / TBD:** Q-STL-01 (khóa theo thứ tự ngày)
+- Q-STL-01 đã trả lời [Customer giả lập, 2026-11-25]: bắt buộc khóa theo thứ tự ngày (`E-STL-005`).
+- **Câu hỏi mở / TBD:** không có

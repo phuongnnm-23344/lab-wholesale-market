@@ -8,7 +8,7 @@ function: registerException · confirmDispute
 endpoint: POST /api/v1/delivery-exceptions · POST /api/v1/delivery-exceptions/{exceptionId}/confirmation
 component: DeliveryExceptionService
 feature: delivery
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, API-DEL-004, API-DEL-005, API-DEL-006, SPEC-TRADE_DB-001, SPEC-ADJUST_DB-001, ADR-002, ADR-004, ADR-005, ADR-008, CAP-HUMAN-01, PRM-111, FR-DEL-03, FR-DEL-04]
@@ -25,6 +25,7 @@ related: [SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, API-DEL-
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); khách Q-DEL-04: chỉ SL thực giao, tiền theo đơn giá đã chốt, chỉ hướng giảm | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -137,7 +138,7 @@ Chạy xong (1): có `delivery_exceptions` (OPEN; tranh chấp có `sla_due_at`)
 |---|---|
 | 1 | `SELECT … FROM trades WHERE id = :tradeId FOR UPDATE`; tính 残 / 引渡済 như DEL_RECORD §4.3 |
 | 2 | `affects_amount_candidate` = loại ∈ (不足, 返品, 一部取消) và `qty` > 0 |
-| 3 | `amount_delta` = −floor(`qty` × `unit_price_jpy`) (税抜, PRM-053) |
+| 3 | `amount_delta` = −floor(`qty` × `unit_price_jpy`) (税抜, PRM-053) — `unit_price_jpy` lấy từ GD đã chốt (giá hiệu lực); body **không có** trường giá / tiền, 配送 chỉ nhập SL; chỉ hướng giảm (`EXCESS` 過剰 → `affects_amount = false`, chỉ ghi nhận — Q-DEL-04, Q-DEL-06 [Customer giả lập, 2026-11-25]) |
 
 ### 4.3. Ghi ngoại lệ (+ điều chỉnh nếu ngày mở)
 
@@ -219,3 +220,23 @@ Chạy xong (1): có `delivery_exceptions` (OPEN; tranh chấp có `sla_due_at`)
 - **Hệ quả kỳ:** điều chỉnh mang `period_id` = kỳ GD gốc; kỳ đã 期ロック → chỉ đi DELTA ở 期ロック kế tiếp (ADR-007 §2.3) — module `incentive` xử lý.
 - **SLA:** `sla_due_at` theo 営業日 của `market_calendar`; quá hạn chỉ cảnh báo (RPT-09), không chặn.
 - Truy vết: luật 3, luật 4; CAP-HUMAN-01, FT-06-04, FT-06-05, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, PRM-048, PRM-053, PRM-111, BR-CLOSE-01, TBL-ATTACH-01, E-21; ADR-002, ADR-004, ADR-005, ADR-007, ADR-008 §2.4; TRADE_DB 4.34–4.36, ADJUST_DB 4.32, 4.39, IAM_AUDIT_DB 4.54; khách #4, #16, #17.
+
+### Điều kiện hoàn thành (LAB-5)
+
+Mỗi dòng là một ca kiểm được (test tích hợp gọi API / hàm DB); issue LAB-5 xong khi mọi dòng đạt. Cùng khuôn với luồng 1 (vd `trade/technical-design/TRADE_AITAI_CONFIRM_TECH.md` §5).
+
+| # | Cho / Khi | Kết quả mong đợi |
+|---|---|---|
+| 1 | Ngày GD `OPEN`; 配送 ghi 不足 2kg (đơn giá đã chốt 1.500) | 201; `delivery_exceptions` `affects_amount = true`, `fix_id` trỏ `trade_fixes` mới; REVERSE + DELTA với tiền −3.000 tính từ đơn giá GD (body không có trường giá / tiền); mục #6 checklist 日次締め +1 tới khi 照合 bấm 確認済; mục #5 / #9 **không** đếm fix này (Q-DEL-09) |
+| 2 | Ngày GD `LOCKED`; ghi 返品 | 201; không có `trade_adjustments`, `correctionRequired = true` |
+| 3 | Ghi 過剰 (`EXCESS`) | 201; `affects_amount = false`, không điều chỉnh tiền (Q-DEL-06) |
+| 4 | 不足 / 一部取消 > 残 chưa giao; 返品 > 引渡済 | 409 `E-DEL-028` |
+| 5 | 争いあり không nội dung | 422 `E-DEL-013` |
+| 6 | Nhập bù phiếu giấy (`PAPER_LATE`): số phiếu đã dùng / thiếu scan / người ký = người ghi lần giao | 409 `E-DEL-014` / 422 `E-DEL-017` / 422 `E-DEL-016` |
+| 7 | 配送部門責任者 xác nhận tranh chấp do **chính mình** ghi (người ghi ngoại lệ hoặc người ghi lần giao) | 403 `E-DEL-019` — kiểm ở DB, không chỉ UI |
+| 8 | Xác nhận `CONTINUE_DISPUTE` 2 lần cho cùng ngoại lệ, rồi `COMPLETED` | 3 dòng `dispute_confirmations` (2 `CONTINUE_DISPUTE` + 1 `COMPLETED`); ngoại lệ `RESOLVED`; xác nhận kết luận lần hai → 409 `E-DEL-024` |
+| 9 | `CONTINUE_DISPUTE` không ghi chú | 422 `E-DEL-021` |
+| 10 | `PARTIAL_RETURN` ở ngày GD `OPEN` | Một `trade_fixes` + REVERSE / DELTA; `fix_id` gắn vào ngoại lệ; checklist đếm **một lần** ở mục #6 |
+| 11 | Phiếu giấy, người xác nhận ≠ người ký giấy, thiếu lý do / chưa xem scan | 422 `E-DEL-022` / `E-DEL-023` |
+| 12 | Thiếu step-up MFA khi xác nhận (kể cả 継続協議 — Q-DEL-08) | 403 `E-CMN-005` |
+| 13 | Mất mạng | Màn khóa form (C-28), không có hàng đợi offline cho ngoại lệ (Q-DEL-01) — kiểm bằng test UI |

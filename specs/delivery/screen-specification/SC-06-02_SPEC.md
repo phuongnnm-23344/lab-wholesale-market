@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-06-02
 feature: delivery
 feature_id: DEL
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-06-02, SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_RECORD-001, API-DEL-001, API-DEL-002, API-DEL-003, SPEC-TRADE_DB-001, ADR-008, ADR-005, FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, PRM-086, PRM-118, E-17, DEC-004]
@@ -22,6 +22,7 @@ related: [WF-SC-06-02, SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-06-02 0.2.0 | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-DEL-03: nút 本人 mặc định, 代理 + tên tùy chọn; đóng Q-DEL-01/02/03; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -76,8 +77,8 @@ ID item = số trong wireframe to-be; `C-` = item dùng chung (`wireframes/_comm
 | 8 | 今回の数量 | Text box | Có (trừ khi bấm [10]) | **Để trống, con trỏ ở đây** khi chọn GD — không điền sẵn (khách #8) |
 | 9 | − / + | Button | - | Bước 1 (箱 / 尾); 0,1 với kg |
 | 10 | 残り全部 | Button | - | Nút lớn nhất; ghi đúng phần còn lại, `isRemainingAll = true` |
-| 11 | 受取人 本人 / 代理 | Button | Có | 2 nút to; chọn 「代理」 mới hiện 11.1 |
-| 11.1 | 代理人氏名 | Text box | Có khi 代理 | Bàn phím chữ (ngoại lệ duy nhất trên màn) |
+| 11 | 受取人 本人 / 代理 | Button | Có | 2 nút to; **mặc định 「本人」** (đã chọn sẵn); chọn 「代理」 mới hiện 11.1 (Q-DEL-03 [Customer giả lập, 2026-11-25]) |
+| 11.1 | 代理人氏名 | Text box | Không | Tên ngắn **tùy chọn** (tài xế / nhân viên người mua); bàn phím chữ (ngoại lệ duy nhất trên màn) |
 | 12 | 記録する | Button | - | |
 | 13 | 例外・差異 | Button | - | → SC-06-04 (mang `tradeId`) |
 | 14 | 記録前プレビュー | Label | - | 「累計 {引渡済} → {引渡済+今回}{単位} ／ 残 {残} → {残−今回}{単位}」 |
@@ -94,8 +95,8 @@ ID item = số trong wireframe to-be; `C-` = item dùng chung (`wireframes/_comm
 |---|---|---|---|---|---|
 | [1] | String | 2 | 11 | (trống) | `^[NB][0-9]{1,10}$` (tiền tố từ [3]). Trống khi bấm [4] → `E-DEL-001` 「買受人番号を入力してください」. Không thấy → `E-DEL-002` 「該当する買受人が見つかりません」 |
 | [8] | Decimal | > 0 | 残 của GD | (trống) | Trống / ≤ 0 → `E-DEL-003` 「数量を入力してください（0より大きい値）」. Đơn vị `KG`: tối đa 1 chữ số lẻ; `CASE` / `PIECE`: số nguyên → `E-DEL-004` 「kg は小数点以下1桁まで、箱・尾は整数で入力してください」. > 残 → `E-DEL-005` 「残数量（{残}{単位}）を超えています」 (offline: so với 残 trên máy) |
-| [11] | Enum | — | — | (chưa chọn) | Chưa chọn → `E-DEL-006` 「受取人（本人／代理）を選んでください」 |
-| 11.1, 17.2 | String | 1 | 50 | (trống) | Khi 代理: trống / > 50 → `E-DEL-007` 「代理の場合は受取人の氏名を入力してください（50文字以内）」 |
+| [11] | Enum | — | — | `SELF` (本人) | Luôn có giá trị trên UI; API nhận thiếu `receiver.type` → `E-DEL-006` 「受取人（本人／代理）を選んでください」 |
+| 11.1, 17.2 | String | 0 | 50 | (trống) | Tùy chọn khi 代理; > 50 → `E-DEL-007` 「代理人の氏名は50文字以内で入力してください」 |
 
 > Không validate ở client: trạng thái GD (確定 / đã xong) — server kiểm (`E-DEL-008`, `E-DEL-009`). Quy tắc "khớp 精算" (`DELIVERY_MATCH_RULE`, E-17) do server áp khi tính 完了.
 
@@ -152,7 +153,7 @@ ID item = số trong wireframe to-be; `C-` = item dùng chung (`wireframes/_comm
 | GD ngày trước (前日残) | Ghi bình thường vào 業務日 hiện tại; nhãn 「前日残」 ở [6] |
 | GD có ngoại lệ đang mở | 状態 「例外」 ở [6]; vẫn giao được phần còn lại; tranh chấp không chặn GD khác của người mua (PRM-111) |
 | Lỗi vượt 残 | C-22 dưới [8] |
-| Đang gửi | [12] / 17.3 mờ + vòng quay; ≤ 2 giây mục tiêu (NFR-PERF-01) |
+| Đang gửi | [12] / 17.3 mờ + vòng quay; ≤ 2 giây mục tiêu ([PL] cho API ghi, lấy theo mức NFR-PERF-01 của tìm kiếm) |
 
 ### 6.2 Phân quyền hiển thị theo vai
 
@@ -177,7 +178,7 @@ flowchart LR
 ### 6.4 Quy tắc nghiệp vụ dev cần biết
 
 - 残 = SL hiệu lực của GD (`v_trade_effective`, sau 当日訂正 / 修正申請 / ngoại lệ 不足 · 返品 · 一部取消) − Σ `deliveries.qty_delivered`. 完了 khi 残 = 0 theo `DELIVERY_MATCH_RULE` của quy chế (BR-DEL-03, E-17).
-- `receiver_name` (NOT NULL ở TRADE_DB 4.34): 本人 → lưu chuỗi 「本人」; 代理 → tên nhập ở 11.1. Giả định [PL] — Q-DEL-03.
+- `receiver_name` (NOT NULL ở TRADE_DB 4.34): 本人 → lưu chuỗi 「本人」; 代理 → tên nhập ở 11.1, bỏ trống → lưu 「代理」. Q-DEL-03 [Customer giả lập, 2026-11-25].
 - Không có thao tác sửa / xóa lần giao trên màn (luật 4).
 
 ### 6.5 Truy vết
@@ -188,6 +189,6 @@ FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, FT-06-01, FT-06-03, FT-06-07, PRM-08
 
 | ID đề xuất | Nội dung | Giả định tạm | Ảnh hưởng nếu sai |
 |---|---|---|---|
-| Q-DEL-01 | Ngoại lệ giao thường (不足 / 過剰…) có cần ghi **offline** không? Wireframe SC-06-04 nói có, ADR-008 §2.1 + `sync_kind` chỉ có `DELIVERY` | Không — chỉ ghi khi online; tranh chấp offline đi phiếu giấy | Có: thêm `sync_kind = DELIVERY_EXCEPTION`, xử lý xung đột ở SC-03-07, +0,3 MM |
-| Q-DEL-02 | Snapshot offline gồm GD của bao nhiêu ngày trước (引渡し残)? | Mọi GD `CONFIRMED` còn 残 > 0, tối đa 7 業務日 | Dài hơn: dung lượng IndexedDB / thời gian tải tăng |
-| Q-DEL-03 | 本人 lưu thế nào trong `receiver_name` (bắt buộc)? | Chuỗi 「本人」 | Cần tên thật người nhận: thêm ô nhập, chậm thao tác ở bến |
+| Q-DEL-01 | Ngoại lệ giao thường (不足 / 過剰…) có cần ghi **offline** không? | **Đã trả lời** [Customer giả lập, 2026-11-25]: không; mất mạng → ghi lên 引渡し確認票 giấy có số thứ tự (ô giống màn hình), **nhập lại trong ngày, trước 日次締め** (SC-06-04 後入力; soát ở checklist #12 — Q-STL-02). Giao bình thường vẫn chạy offline | Có: thêm `sync_kind = DELIVERY_EXCEPTION`, xử lý xung đột ở SC-03-07, +0,3 MM |
+| Q-DEL-02 | Snapshot offline gồm GD của bao nhiêu ngày trước (引渡し残)? | **Đã trả lời** [Customer giả lập, 2026-11-25]: 7 業務日 là đủ (thường xong trong 1–3 ngày) | Dài hơn: dung lượng IndexedDB / thời gian tải tăng |
+| Q-DEL-03 | 本人 lưu thế nào trong `receiver_name` (bắt buộc)? | **Đã trả lời** [Customer giả lập, 2026-11-25]: mặc định 「本人」; 「代理」 + tên ngắn tùy chọn — không bắt gõ tên thật | Cần tên thật người nhận: thêm ô nhập, chậm thao tác ở bến |

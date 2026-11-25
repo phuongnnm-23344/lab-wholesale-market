@@ -1,6 +1,6 @@
 ---
 id: SPEC-STL_DAY_CLOSE-001
-title: 日次締め — checklist 11 mục, khóa 業務日, mở ngày kế tiếp
+title: 日次締め — checklist 12 mục, khóa 業務日, mở ngày kế tiếp
 type: system
 subtype: detail-design
 design_id: STL_DAY_CLOSE
@@ -8,7 +8,7 @@ function: getCloseChecklist · closeBusinessDay
 endpoint: GET /api/v1/business-days/{businessDate}/close-checklist · POST /api/v1/business-days/{businessDate}/close
 component: DayCloseService
 feature: settle
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-07-02-001, SPEC-SETTLE_FUNC-001, SPEC-STL_DEVICE_LOST-001, API-STL-001, API-STL-002, SPEC-CLOSE_DB-001, ADR-005, ADR-002, ADR-008, BR-CLOSE-01, PRM-031, PRM-119]
@@ -25,6 +25,7 @@ related: [SPEC-SC-07-02-001, SPEC-SETTLE_FUNC-001, SPEC-STL_DEVICE_LOST-001, API
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); G2-M03: `detail.blocking` là mảng `{adrNo, label, count}`; khách Q-STL-02: checklist 12 mục, #12 tick, E-STL-013 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -45,7 +46,7 @@ sequenceDiagram
     H->>API: GET /business-days/{d}/close-checklist
     API->>DayCloseService: getCloseChecklist(ctx, d)
     DayCloseService->>DB: fn_day_close_checklist(d)
-    DB-->>API: 11 mục + checklistVersion
+    DB-->>API: 12 mục + checklistVersion
     H->>IAM: xác thực mã MFA (purpose DAY_CLOSE)
     IAM-->>H: mfaToken (1 lần, 120 giây)
     H->>API: POST /business-days/{d}/close + X-MFA-Token
@@ -85,10 +86,11 @@ Checklist (một hàm `fn_day_close_checklist(d)` dùng cho cả màn và cho ki
 | 9 | ⚠ | Như #5 nhưng dưới ngưỡng và không đổi 買受人 | [21] |
 | 10 | ⚠ | `delivery_exceptions.is_dispute` `status = 'OPEN'` có `business_date ≤ d` | [11] |
 | 11 | ⚠ | Phiên せり của `d` có 確認者 = 入力者 (có lý do) | [5] |
+| 12 | ⚠ (tick) | Không đếm — người khóa đối chiếu sổ giấy 引渡し確認票 đánh số của 配送 (Q-STL-02); `count` luôn `null` | [22] |
 
-`checklistVersion` = hash SHA-256 của (11 số đếm + danh sách id máy ở #3). Client gửi lại khi khóa — lệch → bắt xem lại (tránh khóa theo màn đã cũ).
+`checklistVersion` = hash SHA-256 của (11 số đếm #1–#11 + danh sách id máy ở #3). Client gửi lại khi khóa — lệch → bắt xem lại (tránh khóa theo màn đã cũ).
 
-Chạy xong: `business_days(d).status = LOCKED`, có `locked_by`, `lock_delegation_id`, `locked_at`, `close_checklist` (ảnh chụp 11 mục + máy đã loại vì 「端末回収不能」); 業務日 chợ kế tiếp `OPEN`; batch IF-ACC-01 được xếp hàng.
+Chạy xong: `business_days(d).status = LOCKED`, có `locked_by`, `lock_delegation_id`, `locked_at`, `close_checklist` (ảnh chụp 12 mục, gồm trạng thái tick #8 / #12, + máy đã loại vì 「端末回収不能」); 業務日 chợ kế tiếp `OPEN`; batch IF-ACC-01 được xếp hàng.
 
 ---
 
@@ -135,7 +137,7 @@ Chạy xong: `business_days(d).status = LOCKED`, có `locked_by`, `lock_delegati
 
 | No | Nội dung xử lý |
 |---|---|
-| 1 | Chạy 11 truy vấn đếm ở §3 (index: `idx_trades_business_date`, `idx_trade_fixes_unreviewed`, `idx_delivery_exceptions_open`, `idx_offline_sync_held`) — mục tiêu ≤ 1 giây |
+| 1 | Chạy 11 truy vấn đếm ở §3 (#12 không đếm) (index: `idx_trades_business_date`, `idx_trade_fixes_unreviewed`, `idx_delivery_exceptions_open`, `idx_offline_sync_held`) — mục tiêu ≤ 1 giây |
 | 2 | Ngưỡng #5 / #9 đọc từ `rule_parameters` của `business_days(d).rule_version_id` |
 | 3 | Tổng tiền: Σ hiệu lực 税抜 của GD `business_date = d` (gồm điều chỉnh có `business_date = d`), tách 相対 / せり (`v_daily_settlement`) |
 | 4 | Ngày đã `LOCKED` → trả ảnh chụp `close_checklist` + `lockedInfo` thay vì tính lại |
@@ -144,7 +146,7 @@ Chạy xong: `business_days(d).status = LOCKED`, có `locked_by`, `lock_delegati
 
 | Trường | Giá trị |
 |---|---|
-| Input | `d`, `confirmDate`, `deliveryRemainderAcknowledged`, `checklistVersion` |
+| Input | `d`, `confirmDate`, `deliveryRemainderAcknowledged`, `paperSlipsAllEnteredAcknowledged`, `checklistVersion` |
 | Output | Ngày `d` `LOCKED` → 4.4 |
 
 **Error**
@@ -152,11 +154,12 @@ Chạy xong: `business_days(d).status = LOCKED`, có `locked_by`, `lock_delegati
 | Điều kiện lỗi | Xử lý | Status code |
 |---|---|---|
 | `confirmDate` (sau chuẩn hóa `/` → `-`) ≠ `d` | Dừng; `E-STL-001` | 422 |
-| `deliveryRemainderAcknowledged ≠ true` | Dừng; `E-STL-003` | 422 |
+| `deliveryRemainderAcknowledged ≠ true` | Dừng; `E-STL-003`, `field` = `deliveryRemainderAcknowledged` | 422 |
+| `paperSlipsAllEnteredAcknowledged ≠ true` (ADR #12) | Dừng; `E-STL-013`, `field` = `paperSlipsAllEnteredAcknowledged` | 422 |
 | `d` đã `LOCKED` | Dừng; `E-STL-004` (kèm người / giờ khóa) | 409 |
 | Có 業務日 `OPEN` < `d` | Dừng; `E-STL-005` (Q-STL-01) | 409 |
 | `checklistVersion` ≠ giá trị tính lại | Dừng; `E-STL-010` | 409 |
-| Còn mục ✖ có `count > 0` | Dừng; `E-STL-002` + `error_extra.blocking[]` | 409 |
+| Còn mục ✖ có `count > 0` | Dừng; `E-STL-002` + `detail.blocking` = mảng `{ adrNo, label, count }` (một phần tử / dòng ✖) | 409 |
 | Mất mạng / timeout giữa chừng | Transaction rollback; client nhận lỗi mạng → gọi lại GET để xem trạng thái thật | — |
 
 **Detail**
@@ -165,7 +168,7 @@ Chạy xong: `business_days(d).status = LOCKED`, có `locked_by`, `lock_delegati
 |---|---|
 | 1 | `SELECT … FROM business_days WHERE business_date = d FOR UPDATE` — chặn hai người khóa cùng lúc và chặn ghi mới trong lúc kiểm (ghi nghiệp vụ đọc trạng thái ngày qua trigger cùng dòng) |
 | 2 | Gọi `fn_day_close_checklist(d)` trong cùng transaction; so `checklistVersion`, kiểm ✖ |
-| 3 | UPDATE `business_days` `status = LOCKED`, `locked_by`, `lock_delegation_id`, `locked_at = now()`, `close_checklist` = JSON 11 mục + danh sách máy `lost_reported_at` không null đã loại khỏi #3 |
+| 3 | UPDATE `business_days` `status = LOCKED`, `locked_by`, `lock_delegation_id`, `locked_at = now()`, `close_checklist` = JSON 12 mục (tick #8, #12 = `true`, người tick = người khóa) + danh sách máy `lost_reported_at` không null đã loại khỏi #3 |
 
 ### 4.4. Hệ quả sau khóa (cùng transaction)
 
@@ -200,3 +203,23 @@ Chạy xong: `business_days(d).status = LOCKED`, có `locked_by`, `lock_delegati
 - **Cảnh báo trước giờ khóa:** do job nhắc (file cấu hình, ADR-005 §3 E), không thuộc function này.
 - **MFA token dùng một lần** là chi tiết của `iam` (chưa có spec P3) — đề xuất: `POST /api/v1/auth/mfa/verify` {code, purpose} → `mfaToken` — chốt ở [api-conventions §4](../../_common/api-conventions.md#4-mfa-step-up); API iam chưa đặc tả (DEP-01, `specs/_index.md`).
 - Truy vết: luật 3, luật 4; BR-CLOSE-01, FR-SETTLE-02, PRM-030, PRM-031, PRM-036, PRM-110, PRM-119, PRM-123, PRM-127, NFR-AVL-02, S8, RACI-01; ADR-002, ADR-005 §2.4–2.7, ADR-008; CLOSE_DB 4.20, 4.24; Gate 1 M-01, M-05; khách #1, #4, #25.
+
+### Điều kiện hoàn thành (LAB-5)
+
+Mỗi dòng là một ca kiểm được (test tích hợp gọi API / hàm DB); issue LAB-5 xong khi mọi dòng đạt. Cùng khuôn với luồng 1 (vd `trade/technical-design/TRADE_AITAI_CONFIRM_TECH.md` §5).
+
+| # | Cho / Khi | Kết quả mong đợi |
+|---|---|---|
+| 1 | Ngày `d` có đủ dữ liệu cho 12 mục (#1–#11 có số, #12 không đếm); gọi API-STL-001 | Trả đúng 12 phần tử `items`, `adrNo` 1..12 khớp ADR-005 §2.5; #12 `count = null`, `requiresAck = true`; `checklistVersion` đổi khi bất kỳ số đếm #1–#11 đổi |
+| 2 | Còn ≥ 1 mục ✖ (vd #2 = 1, #3 = 1); POST close với token đúng | 409 `E-STL-002`, `detail.blocking` là **mảng** `{adrNo, label, count}` đúng 2 phần tử; ngày vẫn `OPEN` |
+| 3 | Mọi ✖ = 0; thiếu tick #8 hoặc #12 (`deliveryRemainderAcknowledged` / `paperSlipsAllEnteredAcknowledged` ≠ true) | 422 `E-STL-003` / `E-STL-013`, `field` = khóa tương ứng; không khóa |
+| 4 | `confirmDate` khác `d` (`2027/08/03` khi khóa 2027-08-02) | 422 `E-STL-001` |
+| 5 | Hợp lệ, token `purpose = DAY_CLOSE` | 200; `business_days(d).status = LOCKED`, `close_checklist` có 12 mục + tick #8/#12 + máy đã loại; 業務日 chợ kế tiếp `OPEN` (`nextBusinessDate`); `audit_logs` `DAY_CLOSE`; job IF-ACC-01 được xếp (`accountingExport = QUEUED`) |
+| 6 | Sau khi khóa `d`: ghi GD / lô / giao / điều chỉnh vào `d` (mọi bảng nghiệp vụ) | 423 `E-CMN-003` (trigger `enforce_open_business_day`); không có endpoint mở lại |
+| 7 | Token `purpose = DEVICE_LOST` (hoặc token đã dùng, quá 120 giây, khác thiết bị) | 403 `E-CMN-005`; ngày vẫn `OPEN` |
+| 8 | Step-up còn hiệu lực nhưng không gửi `X-MFA-Token` | 403 `E-CMN-005` (★ luôn hỏi lại mã) |
+| 9 | `d−1` còn `OPEN` | 409 `E-STL-005` `detail.openDate` (Q-STL-01) |
+| 10 | Checklist đổi giữa GET và POST (`checklistVersion` cũ) | 409 `E-STL-010` `detail.currentVersion` |
+| 11 | Hai người khóa cùng `d` cùng lúc | Một 200, một 409 `E-STL-004` |
+| 12 | Lịch không có ngày chợ mở trong 14 ngày tới | 409 `E-STL-008`; rollback toàn bộ, `d` vẫn `OPEN` |
+| 13 | 代行 STL_HEAD hết hạn; vai SETTLE gọi POST | 403 `E-CMN-002` |

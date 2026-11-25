@@ -8,7 +8,7 @@ function: recordDeliveries (online) · fn_delivery_record (dùng chung cho đồ
 endpoint: POST /api/v1/deliveries
 component: DeliveryService
 feature: delivery
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-06-02-001, SPEC-DELIVERY_FUNC-001, API-DEL-001, API-DEL-002, API-DEL-003, SPEC-TRADE_DB-001, SPEC-IAM_AUDIT_DB-001, ADR-004, ADR-005, ADR-008, FR-DEL-01, FR-DEL-02, BR-DEL-03, PRM-118, E-17]
@@ -25,6 +25,7 @@ related: [SPEC-SC-06-02-001, SPEC-DELIVERY_FUNC-001, API-DEL-001, API-DEL-002, A
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); khách Q-DEL-03; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -94,14 +95,14 @@ Chạy xong: có dòng `deliveries` với `business_date` = 業務日 hiện t�
 | `items` rỗng hoặc > 20; trường sai kiểu | Dừng; `E-CMN-007` | 422 |
 | `qty` thiếu khi `isRemainingAll = false`, hoặc ≤ 0 | Dừng; `E-DEL-003` | 422 |
 | `receiver.type` thiếu | Dừng; `E-DEL-006` | 422 |
-| `PROXY` mà `name` rỗng / > 50 | Dừng; `E-DEL-007` | 422 |
+| `PROXY` mà `name` > 50 (tên tùy chọn — Q-DEL-03) | Dừng; `E-DEL-007`, `field` = `receiver.name` | 422 |
 
 **Detail**
 
 | No | Nội dung xử lý |
 |---|---|
 | 1 | Kiểm phiên, vai, thiết bị (`devices.is_active`, không `lost_reported_at`) |
-| 2 | `receiver_name` = 「本人」 khi `SELF`, = `name` khi `PROXY` (Q-DEL-03) |
+| 2 | `receiver_name` = 「本人」 khi `SELF`; = `name` khi `PROXY`, `name` rỗng → 「代理」 (Q-DEL-03 [Customer giả lập, 2026-11-25]) |
 | 3 | Mở **một** transaction cho cả `items` (giao hết một lần [17] là nguyên tử: một GD lỗi → không ghi GD nào) |
 
 ### 4.2. Idempotent theo `client_record_id`
@@ -193,9 +194,27 @@ Chạy xong: có dòng `deliveries` với `business_date` = 業務日 hiện t�
 
 ## 5. Other Notes
 
-- **Snapshot offline** (`API-DEL-002`): GD `CONFIRMED` còn 残 > 0 trong tối đa 7 業務日 gần nhất (Q-DEL-02) + danh sách người mua (số, tên) + `snapshotAt`. Không chứa giá / tiền (giảm dữ liệu trên máy). PWA tính 残 cục bộ = snapshot − hàng đợi chưa đồng bộ của chính máy.
+- **Snapshot offline** (`API-DEL-002`): GD `CONFIRMED` còn 残 > 0 trong tối đa 7 業務日 gần nhất (Q-DEL-02 — khách đồng ý [Customer giả lập, 2026-11-25]) + danh sách người mua (số, tên) + `snapshotAt`. Không chứa giá / tiền (giảm dữ liệu trên máy). PWA tính 残 cục bộ = snapshot − hàng đợi chưa đồng bộ của chính máy.
 - **Hai tablet cùng giao một GD khi offline**: cả hai ghi cục bộ được; khi đồng bộ, bản ghi tới sau vượt 残 → `HELD` → SC-03-07 (người quyết giữ / bỏ / lập 修正申請 `LATE_ENTRY`) — không tự gộp, không ghi đè (ADR-008 §2.2-6).
 - **Không làm:** không sửa / xóa lần giao; không xử lý ngoại lệ (DEL_DISPUTE); không đổi trạng thái lô sang `DELIVERED` (module `lot` đọc `v_delivery_status`).
-- **Hiệu năng:** p95 ≤ 2 giây với 20 item (NFR-PERF-01); index `idx_deliveries_trade`, `uq_deliveries_client_record`.
+- **Hiệu năng:** p95 ≤ 2 giây với 20 item ([PL] cho API ghi, lấy theo mức NFR-PERF-01 của tìm kiếm); index `idx_deliveries_trade`, `uq_deliveries_client_record`.
 - **API đồng bộ** thuộc module `sync` (chưa có spec ở P3) — phải gọi `fn_delivery_record` với cờ `offline` và `captured_by`, `captured_at`, `device_id` lấy từ bản ghi hàng đợi.
 - Truy vết: luật 4; FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, PRM-111, PRM-118, E-17, NFR-AVL-02, NFR-PERF-01, DEC-004; ADR-004, ADR-005 §2.3, ADR-008 §2.2; TRADE_DB 4.34, IAM_AUDIT_DB 4.6, 4.55.
+
+### Điều kiện hoàn thành (LAB-5)
+
+Mỗi dòng là một ca kiểm được (test tích hợp gọi API / hàm DB); issue LAB-5 xong khi mọi dòng đạt. Cùng khuôn với luồng 1 (vd `trade/technical-design/TRADE_AITAI_CONFIRM_TECH.md` §5).
+
+| # | Cho / Khi | Kết quả mong đợi |
+|---|---|---|
+| 1 | Online, GD `CONFIRMED` 残 = 12kg; giao 6kg `receiver.type = SELF` | 201; 1 dòng `deliveries` (`receiver_name` = 「本人」), `remaining = 6.0`, `status` 引渡し中 |
+| 2 | Gửi lại **cùng** `clientRecordId` cùng nội dung (2 lần, hoặc đồng bộ lại sau mất mạng) | 200 `replayed = true`; vẫn **1** dòng `deliveries` |
+| 3 | Cùng `clientRecordId` nhưng khác `qty` | 409 `E-DEL-010`; log `WARN`; không ghi thêm |
+| 4 | `qty` > 残 (vd tablet khác vừa giao) | 409 `E-DEL-005`, `field = items[i].qty`, `detail.remaining`; offline → bản ghi `HELD` lý do 「残数量超過」 |
+| 5 | `isRemainingAll = true` khi 残 đã đổi | Ghi đúng 残 hiện tại (bỏ `qty` client) |
+| 6 | Giao hết một lần 3 GD, GD thứ 2 lỗi | Không GD nào được ghi (một transaction); `field = items[1]…` |
+| 7 | Bản ghi offline có `captured_at` thuộc 業務日 đã `LOCKED` | `HELD` (không ghi vào ngày đã khóa, không tự dời ngày); online gọi thẳng vào ngày khóa → 423 `E-CMN-003` |
+| 8 | `PROXY` không tên | 201; `receiver_name` = 「代理」 (Q-DEL-03). Tên > 50 → 422 `E-DEL-007` |
+| 9 | Số lẻ sai đơn vị (`CASE` 1.5) | 422 `E-DEL-004` |
+| 10 | GD `PENDING` / 取消; GD đã giao hết | 409 `E-DEL-008` / `E-DEL-009` |
+| 11 | Hai tablet giao cùng người mua cùng lúc (GD chồng nhau) | Không deadlock (khóa `trades` theo `id`); tổng giao ≤ SL hiệu lực |

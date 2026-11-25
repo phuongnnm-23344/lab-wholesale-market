@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: delivery
 screen_id: [SC-06-02]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-06-02-001, SPEC-DEL_RECORD-001, SPEC-TRADE_DB-001]
@@ -26,6 +26,7 @@ related: [SPEC-SC-06-02-001, SPEC-DEL_RECORD-001, SPEC-TRADE_DB-001]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: lỗi item dùng `field` dạng `items[i].…`, bỏ khóa lỗi cũ (thay bằng `detail` / `field`); khách Q-DEL-03: `receiver.name` không bắt buộc | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -47,7 +48,7 @@ Ghi lần giao cho một GD, hoặc nhiều GD cùng người mua (nút 「残�
 | 4 | Body Parameters | `items[].isRemainingAll` | boolean | `false` | `true` = giao hết phần còn lại (server tự lấy 残) |  |
 | 5 | Body Parameters | `items[].clientRecordId` | string | `0b9c6f3e-…` | UUID v4 sinh trên máy — khóa idempotent |  |
 | 6 | Body Parameters | `receiver.type` | string | `SELF` | `SELF` 本人 · `PROXY` 代理 |  |
-| 7 | Body Parameters | `receiver.name` | string | `代理 太郎` | 1–50 | bắt buộc khi `PROXY` |
+| 7 | Body Parameters | `receiver.name` | string | `代理 太郎` | 0–50; rỗng khi `PROXY` → lưu 「代理」 (Q-DEL-03) | [optional] |
 | 8 | Body Parameters | `deviceRecordedAt` | string | `2027-08-02T07:15:22+09:00` | Giờ trên máy lúc bấm |  |
 
 Ví dụ body:
@@ -78,15 +79,15 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 201 | Đã ghi (200 nếu mọi item là gửi lại) | <pre>{<br>&nbsp;&nbsp;"results": [<br>&nbsp;&nbsp;&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"clientRecordId": "0b9c6f3e-…",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"deliveryId": "d-88…",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"tradeId": "t-0005…",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"qtyDelivered": 6.0,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"deliveredTotal": 18.0,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"remaining": 12.0,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"status": "IN_PROGRESS",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"replayed": false<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;]<br>}</pre> | `status` như API-DEL-001; `remaining = 0` → `COMPLETED`. `replayed = true` khi item đã ghi trước đó |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
-| 3 | 422 | Thiếu / sai SL | <pre>{ "error": { "code": "E-DEL-003", "message": "数量を入力してください（0より大きい値）", "detail": { "items[0].qty": "required" } } }</pre> | `E-DEL-003` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "items[0].tradeId" } }</pre> | `E-CMN-007` |
+| 3 | 422 | Thiếu / sai SL | <pre>{ "error": { "code": "E-DEL-003", "message": "数量を入力してください（0より大きい値）", "field": "items[0].qty" } }</pre> | `E-DEL-003` |
 | 4 | 422 | Số lẻ sai đơn vị | <pre>{ "error": { "code": "E-DEL-004", "message": "kg は小数点以下1桁まで、箱・尾は整数で入力してください", "detail": { "unit": "CASE" } } }</pre> | `E-DEL-004` |
 | 5 | 422 | Thiếu người nhận | <pre>{ "error": { "code": "E-DEL-006", "message": "受取人（本人／代理）を選んでください" } }</pre> | `E-DEL-006` |
-| 6 | 422 | Thiếu tên 代理 | <pre>{ "error": { "code": "E-DEL-007", "message": "代理の場合は受取人の氏名を入力してください（50文字以内）" } }</pre> | `E-DEL-007` |
+| 6 | 422 | Tên 代理 quá 50 ký tự | <pre>{ "error": { "code": "E-DEL-007", "message": "代理人の氏名は50文字以内で入力してください", "field": "receiver.name" } }</pre> | `E-DEL-007` |
 | 7 | 401 | Chưa đăng nhập / phiên hết hạn | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | `E-CMN-001` |
 | 8 | 403 | Vai / quyền duyệt không đủ | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | `E-CMN-002` |
 | 9 | 404 | Không tìm thấy GD | <pre>{ "error": { "code": "E-DEL-027", "message": "取引が見つかりません" } }</pre> | `E-DEL-027` |
-| 10 | 409 | Vượt 残 (có thể vì tablet khác vừa giao) | <pre>{ "error": { "code": "E-DEL-005", "message": "残数量（12kg）を超えています", "detail": { "tradeId": "t-0005…", "remaining": "12.0" } } }</pre> | `E-DEL-005` |
+| 10 | 409 | Vượt 残 (có thể vì tablet khác vừa giao) | <pre>{ "error": { "code": "E-DEL-005", "message": "残数量（12kg）を超えています", "field": "items[0].qty", "detail": { "tradeId": "t-0005…", "remaining": "12.0" } } }</pre> | `E-DEL-005` |
 | 11 | 409 | GD chưa 確定 / đã 取消 | <pre>{ "error": { "code": "E-DEL-008", "message": "この取引は確定していないため引渡しできません", "detail": { "tradeNo": "相対-0005" } } }</pre> | `E-DEL-008` |
 | 12 | 409 | GD đã giao hết | <pre>{ "error": { "code": "E-DEL-009", "message": "この取引は引渡しが完了しています" } }</pre> | `E-DEL-009` |
 | 13 | 409 | Cùng `clientRecordId` khác nội dung | <pre>{ "error": { "code": "E-DEL-010", "message": "同じ記録IDで異なる内容が送信されました", "detail": { "clientRecordId": "0b9c6f3e-…" } } }</pre> | `E-DEL-010` |
@@ -98,7 +99,7 @@ Ví dụ body:
 ## 5. Other Notes
 
 - Vai: DELIVERY, DEL-HEAD. Không MFA (PREMISE §3.2 — ghi giao thường không hỏi).
-- Nhiều item: lỗi một item → không ghi item nào; `error_extra` chỉ ra item lỗi.
+- Nhiều item: lỗi một item → không ghi item nào; `field` chỉ ra item lỗi theo đường dẫn (`items[2].qty`, `items[0].tradeId`), `detail` mang dữ liệu của item đó (vd `{ "tradeId": …, "remaining": "12.0" }`) — api-conventions §3.2.
 - Timeout phía client → gửi lại **cùng** `clientRecordId` (hoặc xếp hàng đợi offline) — an toàn nhờ idempotent.
 - `business_date` do server xác định (ADR-005 §2.3); GD ngày trước ghi vào ngày hiện tại.
 - **Câu hỏi mở / TBD:** không có

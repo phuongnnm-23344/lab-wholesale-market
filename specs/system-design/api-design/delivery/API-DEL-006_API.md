@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: delivery
 screen_id: [SC-06-05]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-06-05-001, SPEC-DEL_EXCEPTION_DISPUTE-001, SPEC-TRADE_DB-001, CAP-HUMAN-01]
@@ -26,6 +26,7 @@ related: [SPEC-SC-06-05-001, SPEC-DEL_EXCEPTION_DISPUTE-001, SPEC-TRADE_DB-001, 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: `field` gốc; khách Q-DEL-07 / Q-DEL-08 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -67,7 +68,7 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 200 | Đã xác nhận | <pre>{<br>&nbsp;&nbsp;"confirmation": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "dc-9…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"conclusion": "PARTIAL_RETURN",<br>&nbsp;&nbsp;&nbsp;&nbsp;"confirmedBy": "桜 十郎",<br>&nbsp;&nbsp;&nbsp;&nbsp;"mfaVerifiedAt": "2027-08-02T09:20:00+09:00",<br>&nbsp;&nbsp;&nbsp;&nbsp;"paperConfirmedAt": "2027-08-02T07:05:00+09:00",<br>&nbsp;&nbsp;&nbsp;&nbsp;"enteredAt": "2027-08-02T09:12:00+09:00"<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"exceptionStatus": "RESOLVED",<br>&nbsp;&nbsp;"adjustmentCreated": true,<br>&nbsp;&nbsp;"correctionRequired": false,<br>&nbsp;&nbsp;"amountDeltaJpy": -5400<br>}</pre> | `CONTINUE_DISPUTE` → `exceptionStatus = OPEN`. Ba mốc giờ (紙で確認 / 入力 / システム確認) để màn hiện |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "conclusion" } }</pre> | `E-CMN-007` |
 | 3 | 422 | Thiếu kết luận | <pre>{ "error": { "code": "E-DEL-020", "message": "結論を選んでください" } }</pre> | `E-DEL-020` |
 | 4 | 422 | 継続協議 thiếu bình luận | <pre>{ "error": { "code": "E-DEL-021", "message": "継続協議の場合はコメントを入力してください" } }</pre> | `E-DEL-021` |
 | 5 | 422 | Thiếu lý do xác nhận thay | <pre>{ "error": { "code": "E-DEL-022", "message": "署名者に代わって確認する場合は理由を入力してください" } }</pre> | `E-DEL-022` |
@@ -90,4 +91,5 @@ Ví dụ body:
 - Không chạy offline (không MFA offline — ADR-008 §2.3-10).
 - Kết luận lưu ở `dispute_confirmations.conclusion`; 継続協議 ghi được nhiều lượt (unique partial) — TRADE_DB 0.2.1 §4.36 (Q-DEL-07).
 - `PARTIAL_RETURN` ngày GD đã khóa → `correctionRequired = true`, màn dẫn sang SC-08-01.
-- **Câu hỏi mở / TBD:** Q-DEL-07, Q-DEL-08
+- Q-DEL-08 đã trả lời [Customer giả lập, 2026-11-25] (có MFA). Q-DEL-07: nhu cầu báo cáo RPT-04 lọc 継続協議 + lịch sử từng lần họp (phụ thuộc `report`).
+- **Câu hỏi mở / TBD:** không có

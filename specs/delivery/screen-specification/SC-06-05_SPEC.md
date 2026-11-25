@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-06-05
 feature: delivery
 feature_id: DEL
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-06-05, SPEC-SC-06-04-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEPTION_DISPUTE-001, API-DEL-005, API-DEL-006, SPEC-TRADE_DB-001, ADR-002, ADR-008, FT-06-05, CAP-HUMAN-01, PRM-111, FR-DEL-04]
@@ -22,6 +22,7 @@ related: [WF-SC-06-05, SPEC-SC-06-04-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEP
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-06-05 0.2.0 (màn nối của SC-06-02) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-DEL-07: nhu cầu RPT-04 lọc 継続協議 + lịch sử từng lần họp (DEP-17); đóng Q-DEL-08 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -143,5 +144,5 @@ FT-06-05, CAP-HUMAN-01, PRM-048, PRM-111, FR-DEL-03, FR-DEL-04, BR-CLOSE-01, NFR
 
 | ID đề xuất | Nội dung | Giả định tạm | Ảnh hưởng nếu sai |
 |---|---|---|---|
-| Q-DEL-07 | 継続協議 lưu ở đâu? `dispute_confirmations` có unique theo ngoại lệ và không có cột kết luận | Thêm cột `conclusion` + unique partial `conclusion <> 'CONTINUE_DISPUTE'` — đã phản ánh ở TRADE_DB 0.2.1 §4.36 | Không thêm: 継続協議 chỉ còn ở `audit_logs`, báo cáo RPT-04 không lọc được |
-| Q-DEL-08 | 継続協議 có cần MFA không (không đổi dữ liệu nghiệp vụ)? | Có — cùng nút, cùng thứ tự C-31 → C-30 cho đơn giản | Bỏ MFA: tách nút, đổi thứ tự xử lý |
+| Q-DEL-07 | 継続協議 lưu ở đâu? | Cột `conclusion` + unique partial `conclusion <> 'CONTINUE_DISPUTE'` (TRADE_DB 0.2.1 §4.36). Khách [Customer giả lập, 2026-11-25]: nơi lưu là việc nội bộ; nhu cầu là **RPT-04 lọc được các vụ 継続協議 và xem lịch sử từng lần họp** — ghi ở phụ thuộc `report` (`specs/_index.md`) | Không thêm: 継続協議 chỉ còn ở `audit_logs`, báo cáo RPT-04 không lọc được |
+| Q-DEL-08 | 継続協議 có cần MFA không (không đổi dữ liệu nghiệp vụ)? | **Đã trả lời** [Customer giả lập, 2026-11-25]: có, giống bước xác nhận tranh chấp | Bỏ MFA: tách nút, đổi thứ tự xử lý |

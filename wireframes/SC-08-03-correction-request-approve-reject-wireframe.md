@@ -2,7 +2,7 @@
 id: WF-SC-08-03
 title: Wireframe SC-08-03 修正申請決裁・却下
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-08-02, FT-08-03, FR-CORR-02, FR-CORR-03, 07-03, D.4, CAP-HUMAN-01, PRM-120, PRM-121, E-08, GOV-RULE-01, M13, D07, ADR-004, ADR-006, ADR-007, ADR-002, L4-D03]
@@ -13,7 +13,7 @@ related: [FT-08-02, FT-08-03, FR-CORR-02, FR-CORR-03, 07-03, D.4, CAP-HUMAN-01, 
 | Mục | Nội dung |
 |---|---|
 | Vai trò màn | **Quyết định** — duyệt (決裁) / từ chối điều chỉnh sau khi chốt. Duyệt **không sửa GD gốc**: sinh bản ghi REVERSE + DELTA ghi sổ ở 業務日 chưa khóa sớm nhất; **kỳ của dòng = kỳ của GD gốc** (luật 4, ADR-004, ADR-007) |
-| Vai ghi | Cấp 1: STL-HEAD (hoặc OPS-HEAD thay); cấp 2: OPS-HEAD (◎, MFA — P27, P28). Người lập không duyệt; một người không duyệt cả 2 cấp (S3) |
+| Vai ghi | Cấp 1: STL-HEAD (vắng → 代行 đã chỉ định trước; **OPS-HEAD không thay** — Q-STL-04); cấp 2: OPS-HEAD (◎, MFA — P27, P28). Người lập không duyệt; một người không duyệt cả 2 cấp (S3) |
 | Thiết bị | PC |
 | Tên màn | LAB-1 ghi 「修正申請承認・却下」; LAB-4 đổi nhãn thành 「修正申請決裁・却下」 để chữ 承認 chỉ dùng cho 承認（売買参加者）(luật 2, PRM-121, PREMISE L4-D03). ID màn giữ nguyên |
 
@@ -89,7 +89,7 @@ Ví dụ: GD 相対-0005 có 業務日 2027/08/02 → thuộc **kỳ 2027-08**. 
 | Vai | Thấy |
 |---|---|
 | STL-HEAD | Nút cấp 1 (khi không phải người lập) |
-| OPS-HEAD | Nút cấp 2; nút cấp 1 khi thay STL-HEAD |
+| OPS-HEAD | Nút cấp 2 (không có nút cấp 1 — Q-STL-04) |
 | TRADE / DELIVERY / SETTLE (người lập) | Chỉ đọc yêu cầu của mình + các yêu cầu khác theo 閲 |
 
 ## 6. To-be khác prototype
@@ -109,3 +109,4 @@ Ví dụ: GD 相対-0005 có 業務日 2027/08/02 → thuộc **kỳ 2027-08**. 
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: đổi nhãn 承認 → 決裁 (M-06); ví dụ [10]/[11] tách 計上業務日 và 対象期 = kỳ GD gốc, sửa ví dụ kỳ sai (C-02); ngưỡng 2 cấp theo tiền thay đổi lớn nhất của một người mua, đổi 買受人 luôn 2 cấp (khách #3); thêm loại KANNO / INCENTIVE / LATE_ENTRY ở [4]; nút [16] 次の決裁待ちへ (khách #29). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-05: ví dụ nộp 修正申請 2027/09/15 cho khớp giờ khóa kỳ 08 ở SC-09-04 | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | Khách Q-STL-04: bỏ nút cấp 1 của 運用部門長 (chỉ 照合部門長 / 代行) | 2026-11-25 | phuongnnm-23344 |  |

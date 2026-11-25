@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: settle
 screen_id: [SC-08-03]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-08-03-001, SPEC-STL_CORRECTION_DECIDE-001, SPEC-ADJUST_DB-001, ADR-004, ADR-007]
@@ -26,6 +26,7 @@ related: [SPEC-SC-08-03-001, SPEC-STL_CORRECTION_DECIDE-001, SPEC-ADJUST_DB-001,
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: 409 E-STL-029 (LATE_ENTRY bị module đích từ chối), `field` gốc; khách Q-STL-04: quyền cấp 1; đóng Q-STL-04/05 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -65,7 +66,7 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 200 | Đã ghi quyết định | <pre>{<br>&nbsp;&nbsp;"correction": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "cr-12…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "APPROVED",<br>&nbsp;&nbsp;&nbsp;&nbsp;"statusLabel": "決裁・反映済",<br>&nbsp;&nbsp;&nbsp;&nbsp;"appliedBusinessDate": "2027-09-15"<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"approval": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"level": 2,<br>&nbsp;&nbsp;&nbsp;&nbsp;"decision": "APPROVE",<br>&nbsp;&nbsp;&nbsp;&nbsp;"approver": "桜 九郎",<br>&nbsp;&nbsp;&nbsp;&nbsp;"delegatedFor": null,<br>&nbsp;&nbsp;&nbsp;&nbsp;"mfaVerifiedAt": "2027-09-15T11:02:00+09:00"<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"records": [<br>&nbsp;&nbsp;&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": "adj-1…",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"kind": "REVERSE",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"buyerNo": "N04",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"qtyDelta": -60,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"amountDeltaJpy": -114000,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"businessDate": "2027-09-15",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"periodId": "2027-08"<br>&nbsp;&nbsp;&nbsp;&nbsp;},<br>&nbsp;&nbsp;&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": "adj-2…",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"kind": "DELTA",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"buyerNo": "N01",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"qtyDelta": 60,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"amountDeltaJpy": 414000,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"businessDate": "2027-09-15",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"periodId": "2027-08"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;],<br>&nbsp;&nbsp;"nextPendingId": "cr-15…"<br>}</pre> | Cấp 1 của yêu cầu 2 cấp → `status = FIRST_APPROVED`, `records = []`. `REJECT` → `REJECTED`. `nextPendingId` cho nút 「次の決裁待ちへ」 (null nếu hết) |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "decision" } }</pre> | `E-CMN-007` |
 | 3 | 422 | 却下 thiếu lý do | <pre>{ "error": { "code": "E-STL-025", "message": "却下理由を入力してください（200文字以内）" } }</pre> | `E-STL-025` |
 | 4 | 401 | Chưa đăng nhập / phiên hết hạn | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | `E-CMN-001` |
 | 5 | 403 | Vai / quyền duyệt không đủ | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | `E-CMN-002` |
@@ -77,14 +78,16 @@ Ví dụ body:
 | 11 | 409 | `level` lệch cấp hiện tại (người khác vừa duyệt) | <pre>{ "error": { "code": "E-STL-026", "message": "この修正申請は既に処理されました（決裁段階が変わりました）", "detail": { "currentLevel": "2" } } }</pre> | `E-STL-026` |
 | 12 | 409 | Lô không đủ SL khi tăng SL | <pre>{ "error": { "code": "E-STL-027", "message": "ロットの残数量が不足しているため反映できません（残 12kg）", "detail": { "available": "12" } } }</pre> | `E-STL-027` |
 | 13 | 409 | Không có 業務日 mở để ghi | <pre>{ "error": { "code": "E-STL-028", "message": "計上できる未締めの業務日がありません" } }</pre> | `E-STL-028` |
+| 13b | 409 | `LATE_ENTRY` bị module đích từ chối | <pre>{ "error": { "code": "E-STL-029", "message": "反映先の処理でエラーになりました：仲卸の許可が有効ではないため確定できません（失効・有効期限 2027/08/31）", "detail": { "sourceCode": "E-TRD-005", "sourceMessage": "仲卸の許可が有効ではないため確定できません（失効・有効期限 2027/08/31）" } } }</pre> | `E-STL-029`; rollback toàn bộ |
 | 14 | 500 | Lỗi hệ thống | <pre>{ "error": { "code": "E-CMN-004", "message": "処理中にエラーが発生しました。時間をおいて再度お試しください", "traceId": "9f2c…" } }</pre> | `E-CMN-004` |
 
 ---
 
 ## 5. Other Notes
 
-- Quyền: cấp 1 = `STL_HEAD` hoặc `OPS_HEAD` (thay — Q-STL-04) hoặc 代行; cấp 2 = `OPS_HEAD` hoặc 代行; người lập không duyệt; một người không duyệt 2 cấp (unique DB).
+- Quyền: cấp 1 = `STL_HEAD` hoặc 代行 STL_HEAD đã chỉ định trước (`OPS_HEAD` gửi `level = 1` → 403 `E-CMN-002` — Q-STL-04, PRM-033); cấp 2 = `OPS_HEAD` hoặc 代行 OPS_HEAD; người lập không duyệt; một người không duyệt 2 cấp (unique DB).
 - MFA step-up 10 phút (không ★) — duyệt liên tiếp qua `nextPendingId` không hỏi lại mã trong cửa sổ.
-- `LATE_ENTRY` bị module đích từ chối → 409 với mã lỗi của module đó trong `error_extra`.
+- `LATE_ENTRY` bị module đích từ chối → 409 `E-STL-029`, mã gốc của module đó ở `detail.sourceCode` (giữ quy tắc mỗi mã một HTTP status).
 - Ghi bản ghi luôn vào 業務日 `OPEN`; trigger `enforce_open_business_day` là chốt chặn cuối.
-- **Câu hỏi mở / TBD:** Q-STL-04, Q-STL-05
+- Q-STL-04, Q-STL-05 đã trả lời [Customer giả lập, 2026-11-25].
+- **Câu hỏi mở / TBD:** nhân sự 代行 STL_HEAD chỉ định trước UAT (hỏi 経営陣 — Q-STL-04)

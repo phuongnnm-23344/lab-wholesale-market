@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: delivery
 screen_id: [SC-06-04]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-06-04-001, SPEC-DEL_EXCEPTION_DISPUTE-001, SPEC-TRADE_DB-001, SPEC-ADJUST_DB-001]
@@ -26,6 +26,7 @@ related: [SPEC-SC-06-04-001, SPEC-DEL_EXCEPTION_DISPUTE-001, SPEC-TRADE_DB-001, 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: `field` gốc; khách Q-DEL-01 (không ghi offline), Q-DEL-04 (chỉ SL thực giao, không trường giá / tiền) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -78,7 +79,7 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 201 | Đã ghi | <pre>{<br>&nbsp;&nbsp;"exception": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "x-31…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"status": "OPEN",<br>&nbsp;&nbsp;&nbsp;&nbsp;"isDispute": false,<br>&nbsp;&nbsp;&nbsp;&nbsp;"affectsAmount": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;"slaDueAt": null<br>&nbsp;&nbsp;},<br>&nbsp;&nbsp;"adjustmentCreated": true,<br>&nbsp;&nbsp;"correctionRequired": false,<br>&nbsp;&nbsp;"amountDeltaJpy": -5400<br>}</pre> | `adjustmentCreated`: đã ghi REVERSE / DELTA (ngày GD mở). `correctionRequired`: đổi tiền nhưng ngày GD đã khóa → màn hiện nút → SC-08-01. Tranh chấp: `isDispute = true`, `slaDueAt` theo SLA (PRM-048) |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "tradeId" } }</pre> | `E-CMN-007` |
 | 3 | 422 | Thiếu loại / lý do | <pre>{ "error": { "code": "E-DEL-011", "message": "例外の種類を選んでください" } }</pre> | `E-DEL-011` |
 | 4 | 422 | Thiếu SL | <pre>{ "error": { "code": "E-DEL-003", "message": "数量を入力してください（0より大きい値）" } }</pre> | `E-DEL-003` |
 | 5 | 422 | Số lẻ sai đơn vị | <pre>{ "error": { "code": "E-DEL-004", "message": "kg は小数点以下1桁まで、箱・尾は整数で入力してください", "detail": { "unit": "CASE" } } }</pre> | `E-DEL-004` |
@@ -101,7 +102,9 @@ Ví dụ body:
 ## 5. Other Notes
 
 - Vai: DELIVERY, DEL-HEAD. Không MFA ở bước ghi.
-- Không chạy offline (Q-DEL-01; ADR-008 §2.1).
-- Ghi `trade_fixes` từ vai DELIVERY là giả định [PL] (Q-DEL-04); nối ngoại lệ ↔ `trade_fixes` bằng `delivery_exceptions.fix_id` (TRADE_DB 0.2.1 §4.35, Q-DEL-09); ADR-004 0.2.1 §2.2.
+- Không chạy offline (Q-DEL-01 [Customer giả lập, 2026-11-25]; ADR-008 §2.1): mất mạng → 引渡し確認票 giấy có số thứ tự, nhập bù bằng API này (`inputMode = PAPER_LATE`) trong ngày, trước 日次締め.
+- Không có tham số giá / tiền: tiền điều chỉnh = −floor(`qty` × đơn giá đã chốt), chỉ hướng giảm (Q-DEL-04).
+- Ghi `trade_fixes` từ vai DELIVERY: khách đồng ý có điều kiện (Q-DEL-04 [Customer giả lập, 2026-11-25]); nối ngoại lệ ↔ `trade_fixes` bằng `delivery_exceptions.fix_id` (TRADE_DB 0.2.1 §4.35, Q-DEL-09); ADR-004 0.2.1 §2.2.
 - Upload file dùng API đính kèm chung (chưa đặc tả — DEP-03 ở [`specs/_index.md`](../../../_index.md); đề xuất ở [`_common/api-list.md`](../../../_common/api-list.md) §4).
-- **Câu hỏi mở / TBD:** Q-DEL-01, Q-DEL-04, Q-DEL-05, Q-DEL-06, Q-DEL-09
+- Q-DEL-01, Q-DEL-04, Q-DEL-05, Q-DEL-06, Q-DEL-09 đã trả lời [Customer giả lập, 2026-11-25].
+- **Câu hỏi mở / TBD:** không có

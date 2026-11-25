@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: settle
 screen_id: [SC-07-02]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-07-02-001, SPEC-STL_DEVICE_LOST-001, SPEC-IAM_AUDIT_DB-001, ADR-005, ADR-008]
@@ -26,6 +26,7 @@ related: [SPEC-SC-07-02-001, SPEC-STL_DEVICE_LOST-001, SPEC-IAM_AUDIT_DB-001, AD
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M03: khóa trường ở `field` gốc | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -62,7 +63,7 @@ Ví dụ body:
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
 | 1 | 200 | Đã đánh dấu | <pre>{<br>&nbsp;&nbsp;"device": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": "dv-3…",<br>&nbsp;&nbsp;&nbsp;&nbsp;"code": "TAB-03",<br>&nbsp;&nbsp;&nbsp;&nbsp;"lostReportedAt": "2027-08-02T09:40:00+09:00",<br>&nbsp;&nbsp;&nbsp;&nbsp;"lostReportedBy": "桜 七子",<br>&nbsp;&nbsp;&nbsp;&nbsp;"pendingSyncCountAtReport": 5,<br>&nbsp;&nbsp;&nbsp;&nbsp;"isActive": false<br>&nbsp;&nbsp;}<br>}</pre> | Client gọi lại API-STL-001 để thấy máy rời mục #3 |
-| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "detail": { "field": "message" } } }</pre> | `E-CMN-007` |
+| 2 | 422 | Body / query sai kiểu hoặc thiếu trường (zod) | <pre>{ "error": { "code": "E-CMN-007", "message": "入力の形式が正しくありません", "field": "reason" } }</pre> | `E-CMN-007` |
 | 3 | 422 | Thiếu lý do | <pre>{ "error": { "code": "E-STL-006", "message": "理由を入力してください（200文字以内）" } }</pre> | `E-STL-006` |
 | 4 | 401 | Chưa đăng nhập / phiên hết hạn | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | `E-CMN-001` |
 | 5 | 403 | Vai / quyền duyệt không đủ | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | `E-CMN-002` |

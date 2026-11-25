@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-06-04
 feature: delivery
 feature_id: DEL
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-06-04, SPEC-SC-06-02-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEPTION_DISPUTE-001, API-DEL-004, SPEC-TRADE_DB-001, SPEC-ADJUST_DB-001, ADR-004, ADR-005, ADR-008, FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, TBL-ATTACH-01, E-21]
@@ -22,6 +22,7 @@ related: [WF-SC-06-04, SPEC-SC-06-02-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-06-04 0.2.0 (màn nối của SC-06-02) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách: đóng Q-DEL-01/04/05/06 (Q-DEL-04: 配送 chỉ nhập SL thực giao, tiền tự tính theo đơn giá đã chốt); dòng 10.1 tên 代理 không bắt buộc | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -86,7 +87,7 @@ Tranh chấp → trạng thái 「確認待ち（配送部門責任者）」, hi
 | [7] | Decimal | > 0 | 確定数量 hiệu lực | (trống) | Thiếu khi loại ≠ 争いあり → `E-DEL-003`. Số lẻ sai đơn vị → `E-DEL-004`. 不足 / 一部取消 > 残 chưa giao, 返品 > 引渡済 → `E-DEL-028` 「数量が対象の範囲を超えています（上限 {n}{単位}）」 |
 | [8] | Code | — | — | (chưa chọn) | → `E-DEL-012` 「理由を選んでください」 |
 | [9] | String | 1 | 500 | (trống) | Bắt buộc khi 争いあり → `E-DEL-013` 「争いありの場合は内容を入力してください（500文字以内）」; loại khác 0–500 |
-| 10.1 | String | 1 | 50 | (trống) | → `E-DEL-007` |
+| 10.1 | String | 0 | 50 | (trống) | Tùy chọn khi 代理; > 50 → `E-DEL-007` (Q-DEL-03) |
 | [11] | File | 1 file | 10 MB | — | PDF / JPEG / PNG. Thiếu khi 後入力 → `E-DEL-017` 「後入力の場合は確認票のスキャンを添付してください」. Sai loại / quá cỡ → `E-DEL-029` 「PDF・JPEG・PNG（10MB以下）を添付してください」 |
 
 ### 4.3 Data Mapping
@@ -152,7 +153,7 @@ FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, BR-CLOSE-01, PRM-048, PRM-
 
 | ID đề xuất | Nội dung | Giả định tạm | Ảnh hưởng nếu sai |
 |---|---|---|---|
-| Q-DEL-01 | (xem SC-06-02) ngoại lệ offline | Không offline | +0,3 MM nếu có |
-| Q-DEL-04 | Ngoại lệ đổi tiền ở ngày chưa khóa được ghi REVERSE / DELTA bằng `trade_fixes` (nguồn `SAME_DAY`) do **vai DELIVERY** tạo — ADR-004 §2.2 chỉ nói vai TRADE | Cho phép, chỉ qua hàm ngoại lệ, có 照合 確認済 chặn 締め | Không cho: ngoại lệ chỉ ghi nhận, TRADE phải làm 当日訂正 riêng — thêm một bước tay |
-| Q-DEL-05 | 返品 / 不足 có trả SL về sổ lô (`lot_quantity_ledger`) không? | Không tự động; xử lý hàng trả ở module `lot` (返品・廃棄) | Có: thêm bút toán `SALE_REVERSE` trong cùng transaction |
-| Q-DEL-06 | 過剰 (giao thừa) có đổi tiền không? | Không — chỉ ghi nhận; muốn tính tiền thì TRADE làm 当日訂正 / 修正申請 | Có: thêm DELTA dương |
+| Q-DEL-01 | (xem SC-06-02) ngoại lệ offline | **Đã trả lời** [Customer giả lập, 2026-11-25]: không offline; phiếu giấy có số thứ tự, nhập bù ở màn này (後入力) trong ngày, trước 日次締め | — |
+| Q-DEL-04 | Ngoại lệ đổi tiền ở ngày chưa khóa được ghi REVERSE / DELTA bằng `trade_fixes` (nguồn `SAME_DAY`) do **vai DELIVERY** tạo? | **Đã trả lời (điều chỉnh)** [Customer giả lập, 2026-11-25]: cho phép với điều kiện 配送 **chỉ nhập SL thực giao** (不足 / 返品 / 一部取消), tiền tự tính theo **đơn giá đã chốt**, 配送 không nhập / sửa giá-tiền; mọi bút toán phải 照合 確認済 mới 締め; chỉ hướng giảm | Không cho: ngoại lệ chỉ ghi nhận, TRADE phải làm 当日訂正 riêng — thêm một bước tay |
+| Q-DEL-05 | 返品 / 不足 có trả SL về sổ lô (`lot_quantity_ledger`) không? | **Đã trả lời** [Customer giả lập, 2026-11-25]: không tự động; hàng trả phải có người xem lại chất lượng rồi quyết bán lại / hủy qua 返品・廃棄 (luật 3) | Có: thêm bút toán `SALE_REVERSE` trong cùng transaction |
+| Q-DEL-06 | 過剰 (giao thừa) có đổi tiền không? | **Đã trả lời** [Customer giả lập, 2026-11-25]: không — chỉ ghi nhận; người mua nhận thêm thì TRADE làm 当日訂正 / 修正申請 | Có: thêm DELTA dương |

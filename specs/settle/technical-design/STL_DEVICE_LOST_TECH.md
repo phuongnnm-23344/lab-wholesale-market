@@ -8,7 +8,7 @@ function: markDeviceLost
 endpoint: POST /api/v1/devices/{deviceId}/lost
 component: DayCloseService
 feature: settle
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-07-02-001, SPEC-STL_DAY_CLOSE-001, API-STL-003, SPEC-IAM_AUDIT_DB-001, ADR-005, ADR-008, ADR-002, NFR-AVL-02]
@@ -25,6 +25,7 @@ related: [SPEC-SC-07-02-001, SPEC-STL_DAY_CLOSE-001, API-STL-003, SPEC-IAM_AUDIT
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -114,3 +115,18 @@ Lối thoát duy nhất khi checklist 日次締め bị một thiết bị hỏn
 - **Không làm:** không xóa bản ghi offline đã nhận; không tự tạo 修正申請 cho bản ghi đến muộn.
 - Báo cáo khóa ngày (`close_checklist`) ghi danh sách máy đã loại để kiểm toán thấy đường tắt đã dùng (ADR-005 §4).
 - Truy vết: NFR-AVL-02, BR-CLOSE-01, NFR-SEC-03; ADR-002, ADR-005 §2.6, ADR-008 §2.2-7; IAM_AUDIT_DB 4.6, 4.7, 4.55; PREMISE §3.2; khách #1.
+
+### Điều kiện hoàn thành (LAB-5)
+
+Mỗi dòng là một ca kiểm được (test tích hợp gọi API / hàm DB); issue LAB-5 xong khi mọi dòng đạt. Cùng khuôn với luồng 1 (vd `trade/technical-design/TRADE_AITAI_CONFIRM_TECH.md` §5).
+
+| # | Cho / Khi | Kết quả mong đợi |
+|---|---|---|
+| 1 | Máy TAB-03 còn 5 bản ghi chưa đồng bộ; STL-HEAD gửi lý do + token `purpose = DEVICE_LOST` | 200; `devices.lost_reported_at`, `lost_reason`, `is_active = false`; phiên của máy bị thu hồi; API-STL-001 không còn TAB-03 ở mục #3; `close_checklist` lúc khóa ghi TAB-03 trong danh sách máy đã loại |
+| 2 | Sau khi đánh dấu, máy gửi bản ghi đồng bộ (online) | 401 với phiên cũ; bản ghi nếu tới qua đường đồng bộ → `HELD` → SC-03-07 |
+| 3 | Lý do rỗng / > 200 ký tự | 422 `E-STL-006`, `field = reason` |
+| 4 | Đánh dấu lần hai cùng máy | 409 `E-STL-007` kèm người / giờ lần đầu |
+| 5 | `deviceId` không tồn tại | 404 `E-STL-009` |
+| 6 | Token `purpose = DAY_CLOSE` / thiếu token dù step-up còn hiệu lực | 403 `E-CMN-005` |
+| 7 | Vai SETTLE gọi | 403 `E-CMN-002` |
+| 8 | Mọi ca thành công | Một dòng `audit_logs` `DEVICE_LOST` có `pending_sync_count`, 代行, thời điểm MFA; `notifications` → SYSADM, SETTLE |

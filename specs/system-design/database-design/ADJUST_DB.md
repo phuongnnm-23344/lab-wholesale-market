@@ -3,7 +3,7 @@ id: SPEC-ADJUST_DB-001
 title: Database Design — 当日訂正, 修正申請, điều chỉnh REVERSE / DELTA
 type: system
 subtype: database-design
-version: "0.3.1"
+version: "0.3.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -34,6 +34,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: `trade_adjustments.period_id` = kỳ GD gốc, tách khỏi `business_date` ngày áp (C-02); `correction_scope` thêm `INCENTIVE`, `LATE_ENTRY` + nghĩa `KANNO` (M-04, M-05, M-10); ngưỡng 2 cấp theo tiền thay đổi lớn nhất của một người mua, `buyer_changed` (khách #3); `trade_fixes` thêm số đo ngưỡng + `reviewed_*` cho checklist 日次締め (khách #25) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | 4.37, 4.39 | Gate 1 recheck: unique một yêu cầu KANNO / INCENTIVE đang chờ theo người × kỳ (n-02); ví dụ 4.39 dùng kỳ 2027-08 (n-05) | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.3.1 | Update | 4.37 | Gộp P3: `uq_correction_requests_one_pending_period` bỏ cột `scope` — **tối đa một** yêu cầu KANNO **hoặc** INCENTIVE đang chờ cho mỗi người × kỳ, khớp ADR-007 §2.5-12 (bản cũ cho phép một KANNO và một INCENTIVE cùng chờ). Chọn sửa DB vì ADR là quyết định đã duyệt ở Gate 1 và hai loại cùng đổi một kết quả 完納奨励金 của người × kỳ — chờ song song dễ duyệt chồng | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.3.2 | Update | — | Khách Q-STL-04: 4.38 ghi chú cấp 1 = 照合部門長 / 代行 chỉ định trước, 運用部門長 chỉ cấp 2 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -191,7 +192,7 @@ Chứng cứ (sao kê, ảnh) ở `attachments` (`ref_table = 'correction_reques
 |---|---|---|---|
 | Tên bảng (logic) | Bước duyệt 修正申請 | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `correction_approvals` | Sửa bởi / ngày | — |
-| Overview | Mỗi lần 決裁 / 却下 một dòng. Cấp 1 = 照合部門長, cấp 2 = 運用部門長; **một người không duyệt cả 2 cấp**; người lập không duyệt; 照合部門長 tự lập → cấp 1 do 代行 đã chỉ định (PRM-120 (a)). MFA bắt buộc. **Chỉ thêm.** | Note | Mới — thay `approver1` / `approver2` |
+| Overview | Mỗi lần 決裁 / 却下 một dòng. Cấp 1 = 照合部門長 (vắng → 代行 chỉ định trước; 運用部門長 không thay cấp 1 — Q-STL-04), cấp 2 = 運用部門長; **một người không duyệt cả 2 cấp**; người lập không duyệt; 照合部門長 tự lập → cấp 1 do 代行 đã chỉ định (PRM-120 (a)). MFA bắt buộc. **Chỉ thêm.** | Note | Mới — thay `approver1` / `approver2` |
 
 **Định nghĩa cột**
 

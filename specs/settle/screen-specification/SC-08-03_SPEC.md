@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-08-03
 feature: settle
 feature_id: STL
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-08-03, SPEC-SETTLE_FUNC-001, SPEC-STL_CORRECTION_DECIDE-001, API-STL-004, API-STL-005, SPEC-ADJUST_DB-001, ADR-004, ADR-006, ADR-007, ADR-002, FT-08-02, FT-08-03, FR-CORR-02, FR-CORR-03, PRM-120, E-08, L4-D03]
@@ -22,6 +22,7 @@ related: [WF-SC-08-03, SPEC-SETTLE_FUNC-001, SPEC-STL_CORRECTION_DECIDE-001, API
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-08-03 0.2.1 | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Khách Q-STL-04: cấp 1 = 照合部門長 hoặc 代行 chỉ định trước, 運用部門長 chỉ cấp 2; đóng Q-STL-04/05; G2-M03: lỗi LATE_ENTRY hiện `message` + `detail.sourceCode` | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -110,7 +111,7 @@ Bốn loại [4]: `TRADE` (SL / giá / người mua của GD), `KANNO` (đổi �
 | [13], [14] | - | 403 `E-STL-023` / `E-STL-024` | C-23 với câu lỗi; ẩn [13] [14] | Server kiểm lại dù UI đã ẩn |
 | [13], [14] | - | 409 `E-STL-026` / `E-STL-022` (người khác vừa duyệt) | C-23 「この修正申請は既に処理されました」; nạp lại | |
 | [13] | - | 409 `E-STL-027` (lô không đủ SL) | C-23 với SL còn; yêu cầu giữ nguyên trạng thái | |
-| [13] | - | 409 lỗi module đích (`LATE_ENTRY`) | C-23 hiện thông điệp trong `error_extra` | |
+| [13] | - | 409 lỗi module đích (`LATE_ENTRY`) | C-23 hiện `message` của lỗi; mã gốc của module đích ở `detail.sourceCode` | |
 | [13], [14] | - | 403 `E-CMN-005` | Mở C-30, gửi lại | |
 | - | - | Mất mạng | C-28; [13] [14] mờ | Duyệt không chạy offline |
 
@@ -138,12 +139,12 @@ Bốn loại [4]: `TRADE` (SL / giá / người mua của GD), `KANNO` (đổi �
 | Item | STL-HEAD (không phải người lập) | OPS-HEAD | Người lập (TRADE / DELIVERY / SETTLE) | SETTLE khác | Vai khác |
 |---|---|---|---|---|---|
 | [1]–[11], [15] | Đ | Đ | Đ (yêu cầu của mình) | Đ (theo 閲) | Ẩn (C-25) |
-| [12], [14] | T ở cấp 1 | T ở cấp 2; T ở cấp 1 khi thay STL-HEAD | Ẩn | Ẩn | Ẩn |
-| [13] 「1次決裁」 | T | T (thay STL-HEAD; khi đó cấp 2 phải là OPS-HEAD khác) | Ẩn | Ẩn | Ẩn |
+| [12], [14] | T ở cấp 1 | T ở cấp 2 | Ẩn | Ẩn | Ẩn |
+| [13] 「1次決裁」 | T (hoặc 代行 STL-HEAD đã chỉ định) | Ẩn (không thay cấp 1 — Q-STL-04) | Ẩn | Ẩn | Ẩn |
 | [13] 「2次決裁」 | Ẩn | T (≠ người duyệt cấp 1) | Ẩn | Ẩn | Ẩn |
 | [16] | T | T | Ẩn | Ẩn | Ẩn |
 
-代行 đang hiệu lực được tính như quyền của người được thay; STL-HEAD tự lập → cấp 1 do 代行 (PRM-120 (a)).
+代行 đang hiệu lực (chỉ định trước ở `delegations`) được tính như quyền của người được thay; STL-HEAD vắng hoặc tự lập → cấp 1 do 代行 (PRM-033, PRM-120 (a)); không có 代行 → yêu cầu chờ ở SC-08-02, 運用部門長 **không** duyệt cấp 1 thay (Q-STL-04 [Customer giả lập, 2026-11-25]).
 
 ### 6.3 Luồng chuyển màn
 
@@ -157,5 +158,5 @@ FT-08-02, FT-08-03, FR-CORR-01..03, 07-03, D.4, CAP-HUMAN-01, PRM-033, PRM-043, 
 
 | ID đề xuất | Nội dung | Giả định tạm | Ảnh hưởng nếu sai |
 |---|---|---|---|
-| Q-STL-04 | 運用部門長 duyệt cấp 1 thay 照合部門長 (wireframe 「OPS-HEAD thay」) có cần điều kiện (vắng mặt / 代行) không? | Cho phép mọi lúc, miễn cấp 2 là người khác | Chỉ khi có 代行: bỏ quyền cấp 1 của OPS_HEAD, dùng `delegations` |
-| Q-STL-05 | Lô không đủ SL khi 修正申請 tăng SL — chặn hay cho âm có cảnh báo? | Chặn (`E-STL-027`), người lập sửa yêu cầu | Cho âm: cần quy tắc 持ち越し / 返品 riêng |
+| Q-STL-04 | 運用部門長 duyệt cấp 1 thay 照合部門長? | **Đã trả lời** Q-STL-04 [Customer giả lập, 2026-11-25]: không; cấp 1 = 照合部門長 hoặc 代行 chỉ định trước; 運用部門長 chỉ cấp 2. Còn hỏi 経営陣: nhân sự 代行 chỉ định trước UAT | Chưa có 代行 lúc go-live → 修正申請 kẹt khi 照合部門長 vắng |
+| Q-STL-05 | Lô không đủ SL khi 修正申請 tăng SL — chặn hay cho âm có cảnh báo? | **Đã trả lời** [Customer giả lập, 2026-11-25]: chặn (`E-STL-027`) — sổ đang sai ở đâu đó, phải tra trước (có khi sửa SL lô trước) | Cho âm: cần quy tắc 持ち越し / 返品 riêng |

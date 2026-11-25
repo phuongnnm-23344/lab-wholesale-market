@@ -2,7 +2,7 @@
 id: WF-SC-06-02
 title: Wireframe SC-06-02 引渡し記録（タブレット）
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-06-01, FT-06-03, FT-06-07, FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, PRM-086, PRM-118, E-17, DEC-004, ADR-008]
@@ -70,7 +70,7 @@ related: [FT-06-01, FT-06-03, FT-06-07, FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-
 | 8 | 今回の数量 | Số | ✓ (trừ [10]) | **Để trống, con trỏ ở đây** khi chọn GD — không điền sẵn (số điền sẵn mà người giao vội bấm 記録 là ghi sai — khách #8). > 0, ≤ 残; kg 1 chữ số lẻ, 箱 / 尾 số nguyên. GD bán theo kg có thể giao theo thùng — quy tắc 「khớp 精算」 là tham số quy chế | PRM-118, E-17, BR-LOT-02 |
 | 9 | −/+ | Nút | — | Bước 1 cho 箱 / 尾 | — |
 | 10 | 残り全部 | Nút lớn | — | Ghi đúng phần còn lại | FR-DEL-02 |
-| 11 | 受取人 | 2 nút to + văn bản | ✓ | 「本人」/「代理」 (không dùng ô thả xuống ▼ — khó bấm khi đeo găng); chọn 代理 mới hiện ô tên — khách #13 | FR-DEL-01, PRM-086 |
+| 11 | 受取人 | 2 nút to + văn bản | ✓ | 「本人」/「代理」 (không dùng ô thả xuống ▼ — khó bấm khi đeo găng), **mặc định 本人**; chọn 代理 mới hiện ô tên (tùy chọn) — khách #13, Q-DEL-03 [Customer giả lập, 2026-11-25] | FR-DEL-01, PRM-086 |
 | 12 | 記録する | Nút | — | Append-only; offline lưu cục bộ, gắn mã thiết bị + giờ | luật 4, ADR-008 |
 | 13 | 例外・差異 | Nút | — | → SC-06-04 (thiếu / thừa / trả / tranh chấp) | FT-06-04 |
 | 14 | Xem trước | Nhãn | — | | — |
@@ -111,3 +111,4 @@ DELIVERY, DEL-HEAD: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: xem trạng thái 
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 / khách: [8] để trống không điền sẵn (#8); [16] mốc giờ dữ liệu offline (#2); [17] giao hết một lần (#12); [11] 2 nút 本人 / 代理 (#13); chạm cả dòng để chọn; số lẻ theo đơn vị (m-11); header dùng chữ 「ホーム」 thay 「≡」 (#32). Ảnh prototype giữ nguyên (ảnh có số 「6」 điền sẵn là as-is) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | Khách Q-DEL-03: item 11 mặc định 本人 | 2026-11-25 | phuongnnm-23344 |  |

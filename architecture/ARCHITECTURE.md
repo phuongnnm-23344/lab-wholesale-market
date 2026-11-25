@@ -3,7 +3,7 @@ id: ARCH-001
 title: Kiến trúc to-be Product A (第1期)
 type: architecture
 status: draft
-version: "0.2.2"
+version: "0.2.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [DOC-PREMISE-001, ADR-001, ADR-002, ADR-003, ADR-004, ADR-005, ADR-006, ADR-007, ADR-008, ADR-009, ADR-010, DEC-002, DEC-004, DEC-005, DEC-009, DEC-012, L4-D01]
@@ -235,7 +235,7 @@ Hệ thống **chỉ ghi** quyết định của người; không OCR ký hiệu
 ### 7.2 Khóa ngày, khóa kỳ (ADR-005)
 
 - **Một định nghĩa 業務日:** D = [D 01:00, D+1 01:00) JST, 01:00 = giờ nhận lô trong quy chế (E-16); chốt GD từ 02:00 (PRM-116). Hàm 日次締め mở luôn 業務日 chợ kế tiếp; job 01:00 là lưới an toàn (sửa D22, Gate 1 M-01). Ví dụ biên: lô nhận 01:30 ngày 1 thuộc 業務日 ngày 1 → kỳ mới.
-- 日次締め khóa vĩnh viễn ngày đó ở mức DB (trigger `DAY_LOCKED`); không có chức năng mở khóa (Q-ARCH-02). Checklist 11 mục (ADR-005 §2.5); máy hỏng / mất → 「端末回収不能」 (照合部門長 + lý do + MFA) để ngày không bị kẹt. Sửa sau khóa đi 修正申請, chênh lệch ghi vào **ngày chưa khóa sớm nhất** (PRM-120). GD / lô / lần giao **mới** của ngày đã khóa (紙伝票後入力, offline trễ) đi 修正申請 `LATE_ENTRY`, ghi vào ngày mở nhưng giữ **ngày GD thật** (ADR-005 §2.8).
+- 日次締め khóa vĩnh viễn ngày đó ở mức DB (trigger `DAY_LOCKED`); không có chức năng mở khóa (Q-ARCH-02). Checklist 12 mục (ADR-005 §2.5; mục 12 「未入力の引渡し確認票なし」 tick tay — Q-STL-02); máy hỏng / mất → 「端末回収不能」 (照合部門長 + lý do + MFA) để ngày không bị kẹt. Sửa sau khóa đi 修正申請, chênh lệch ghi vào **ngày chưa khóa sớm nhất** (PRM-120). GD / lô / lần giao **mới** của ngày đã khóa (紙伝票後入力, offline trễ) đi 修正申請 `LATE_ENTRY`, ghi vào ngày mở nhưng giữ **ngày GD thật** (ADR-005 §2.8).
 - 期 = tháng dương lịch theo 業務日 của GD gốc (`trade_date`). Điều chỉnh vào kỳ gốc nếu kỳ gốc còn OPEN; kỳ gốc đã 期ロック → DELTA ghi ở kỳ đang khóa (mọi kỳ đã khóa, không giới hạn năm TC — ADR-007 §2.4).
 
 ### 7.3 Quy chế có version, maker-checker, rollback — hai nhánh E-14 (ADR-006)
@@ -354,3 +354,4 @@ Các câu đã có (E-01..E-21, OPEN-L4-01..03) không lặp lại; dưới đâ
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: một định nghĩa 業務日, job 01:00 dự phòng (M-01); hai trục thời gian, kỳ khóa chỉ đi DELTA, tính lại mọi kỳ đã khóa (C-01, C-02 — §4.2, §7.2); 支払期日 theo ngày ngân hàng + Q-ARCH-11 (M-03); N1 sửa tiền bằng 修正申請 INCENTIVE, phương án F / G (M-04); 「端末回収不能」, LATE_ENTRY (M-05); khác biệt thủ tục 許可 / 承認 (M-07); lưu chứng từ theo loại, không tự xóa, Q-ARCH-07 viết lại (M-08); Q-ARCH-08 hỏi cách thu (m-05); step-up idle (m-06); Q-ARCH-12 税区分 (m-07); mermaid §3 tách link (m-08); bảng §12 thêm N15 / N16 | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck N-03: thủ tục cấp mới / gia hạn 許可 · 承認 theo PRM-121 (§5, §6) | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | Gộp P3: sơ đồ đường ghi dùng `/api/v1/...` theo `specs/_common/api-conventions.md` (DEC-052) | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.2.3 | Update | Gate 2 / khách Q-STL-02: checklist 日次締め 12 mục (thêm tick 「未入力の引渡し確認票なし（紙台帳で確認）」) | 2026-11-25 | phuongnnm-23344 |  |

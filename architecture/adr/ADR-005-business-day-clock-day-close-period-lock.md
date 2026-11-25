@@ -3,7 +3,7 @@ id: ADR-005
 title: Đồng hồ 業務日, 日次締め và 期ロック khóa ở mức DB, không mở lại
 type: adr
 status: proposed
-version: "0.2.2"
+version: "0.2.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-119, PRM-120, BR-CLOSE-01, BR-INC-01, L4-A04, L4-A09, E-12, E-16]
@@ -42,12 +42,13 @@ related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-11
 | 7 | Lô còn SL → 持ち越し | ⚠ xác nhận | PRM-110, E-12 |
 | 8 | Giao còn dư — phải tick xác nhận | ⚠ xác nhận | PRM-036 |
 | 9 | 当日訂正 dưới ngưỡng (soát) | ⚠ | PRM-127 |
-| 10 | Tranh chấp giao chưa xác nhận (ngoại lệ `is_dispute` còn `OPEN` **đã nhập** hệ thống) → đi tiếp sang ngày sau. Phiếu giấy 争いのある引渡し確認票 đã phát mà chưa nhập bù **không** đếm được (không có sổ phát phiếu) — người khóa soát bằng sổ giấy (giả định [PL] Q-STL-02) | ⚠ | PRM-111, ADR-008 §2.4 |
+| 10 | Tranh chấp giao chưa xác nhận (ngoại lệ `is_dispute` còn `OPEN` **đã nhập** hệ thống) → đi tiếp sang ngày sau. Phiếu giấy chưa nhập bù không đếm được ở mục này (không có sổ phát phiếu trên hệ thống) — soát ở mục 12 | ⚠ | PRM-111, ADR-008 §2.4 |
 | 11 | Phiên せり do chính người nhập xác nhận (có lý do) — soát | ⚠ | PRM-115 |
+| 12 | 「未入力の引渡し確認票なし（紙台帳で確認）」 — người khóa đối chiếu sổ giấy đánh số do 配送 giữ (引渡し確認票 phát khi mất mạng / tranh chấp) và **tick** mới khóa được; tick cả khi không phát phiếu nào (tick = "đã xem", như Q-STL-03). Hệ thống không đếm | ⚠ (tick bắt buộc) | PRM-111, ADR-008 §2.4; [Customer giả lập, 2026-11-25 — Q-STL-02] |
 
 6. **Lối thoát cho checklist kẹt — 「端末回収不能」:** thiết bị hỏng / mất / hết pin không đồng bộ được → 照合部門長 (hoặc 代行) đánh dấu máy 「端末回収不能」 + lý do + MFA + audit. Máy ra khỏi mục 3 của checklist, phiên và PIN offline của máy bị thu hồi; bản ghi của máy đó nếu về sau → SC-03-07 (要確認) → đường 後入力 ở mục 8. Phần mất hẳn nhập bù từ giấy cũng theo mục 8.
 7. **Không có chức năng mở lại ngày đã khóa** (Q-ARCH-02 — Expert Gate 1 đồng ý giữ). Khóa nhầm / thiếu → 修正申請 hoặc 後入力 (mục 8) vào ngày mở sớm nhất.
-8. **Bản ghi đến muộn cho ngày đã khóa (後入力):** GD / lô / lần giao **mới** của một ngày đã khóa không ghi vào ngày đó. Đi **修正申請 phạm vi `LATE_ENTRY`**: nội dung bản ghi mới + ngày gốc + chứng cứ (scan 紙伝票); 照合部門長 決裁 (2 cấp nếu ≥ ngưỡng). Duyệt xong ghi vào 業務日 đang mở (`business_date` = ngày ghi sổ) với **ngày GD thật** riêng (`trades.trade_date`, `deliveries` / `lots.original_business_date` = ngày gốc); kỳ theo ngày gốc và quy tắc kỳ OPEN / LOCKED của ADR-007 §2.3. ADR-008 và SC-03-07 dùng chung đường này.
+8. **Bản ghi đến muộn cho ngày đã khóa (後入力):** GD / lô / lần giao **mới** của một ngày đã khóa không ghi vào ngày đó. Đi **修正申請 phạm vi `LATE_ENTRY`**: nội dung bản ghi mới + ngày gốc + chứng cứ (scan 紙伝票); 照合部門長 決裁 (2 cấp nếu ≥ ngưỡng). Duyệt xong ghi vào 業務日 đang mở (`business_date` = ngày ghi sổ) với **ngày GD thật** riêng (`trades.trade_date`, `deliveries` / `lots.original_business_date` = ngày gốc); kỳ theo ngày gốc và quy tắc kỳ OPEN / LOCKED của ADR-007 §2.3; GD mới cho kỳ đã `LOCKED`: 完納奨励金 / 期のお支払額 tính ở kỳ đang mở (`trades.incentive_period_id` — ADR-007 §2.3-7a, Q-INC-02). ADR-008 và SC-03-07 dùng chung đường này.
 9. **期ロック:** sau 支払期日 + thời gian 照合; 照合部門長 + MFA; trong cùng transaction tính chính thức 完納奨励金 và đóng băng kết quả (ADR-007). Sau khóa, mọi thay đổi gán vào kỳ đó → DELTA ở kỳ sau; không hồi tố 完納 (ngoại lệ có duyệt: 修正申請 KANNO — ADR-007 §2.5).
 10. **Xuất IF-ACC-01** tạo sau 日次締め, nội dung đóng băng lúc tạo (PRM-123).
 
@@ -93,3 +94,4 @@ BR-CLOSE-01, BR-INC-01, FR-SETTLE-01, FR-SETTLE-02, FR-CORR-01..03, FIG-002, FIG
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: một định nghĩa 業務日 [D 01:00, D+1 01:00), mở ngày kế tiếp khi 日次締め + job 01:00 dự phòng (M-01); checklist chuẩn 11 mục (6 ✖ / 5 ⚠) khớp SC-07-02, 「端末回収不能」, 後入力 cho ngày đã khóa qua 修正申請 LATE_ENTRY với ngày GD thật (M-05, khách #1, #4, #25); phương án F, G | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-04: tham chiếu "(mục 6)" → "§2-6" | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | Gộp P3 (spec settle): mục 10 checklist chỉ đếm tranh chấp đã nhập; phiếu giấy đã phát chưa nhập do người khóa tự soát (Q-STL-02). Mục 6 đếm ngoại lệ đổi tiền cả khi đã sinh `trade_fixes` (nối `fix_id`) — mục 5 / 9 không đếm lại `trade_fixes` đó (Q-DEL-09) | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.2.3 | Update | Khách Q-STL-02: §2.5 checklist thêm mục 12 「未入力の引渡し確認票なし（紙台帳で確認）」 (⚠, bắt buộc tick), mục 10 trỏ sang 12; Q-INC-02: §2.8 GD mới cho kỳ đã LOCKED tính thưởng ở kỳ đang mở | 2026-11-25 | phuongnnm-23344 |  |

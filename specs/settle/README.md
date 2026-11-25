@@ -1,6 +1,6 @@
 # settle — 日次締め, 修正申請 + 決裁
 
-Module `settle` (ARCHITECTURE §2): khóa 業務日 sau checklist chuẩn 11 mục (ADR-005 §2.5), lối thoát 「端末回収不能」, và 決裁 / 却下 修正申請 sinh REVERSE / DELTA (ADR-004). Không có chức năng mở lại ngày đã khóa. Duyệt nội bộ dùng chữ 決裁, không dùng 承認 (L4-D03).
+Module `settle` (ARCHITECTURE §2): khóa 業務日 sau checklist chuẩn 12 mục (ADR-005 §2.5), lối thoát 「端末回収不能」, và 決裁 / 却下 修正申請 sinh REVERSE / DELTA (ADR-004). Không có chức năng mở lại ngày đã khóa. Duyệt nội bộ dùng chữ 決裁, không dùng 承認 (L4-D03).
 
 Phần 日次精算 / IF-ACC-01 / SC-07-01 của module chưa thuộc phạm vi P3 (màn mức List).
 
