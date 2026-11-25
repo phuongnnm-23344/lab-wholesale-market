@@ -3,7 +3,7 @@ id: SPEC-ERROR_CODES-001
 title: Danh mục mã lỗi (mã chung E-CMN + bảng tổng theo feature)
 type: system
 subtype: error-codes
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 design_id: ERROR_CODES
@@ -22,6 +22,7 @@ related: ["SPEC-API_CONV-001", "BM-2-901-52", "BM-2-901-54"]
 | No. | Version | Action | Thay đổi | Ngày | Người sửa | Ghi chú |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu khi gộp P3: hợp nhất mã chung của 3 luồng (luồng 3 `AUTH_REQUIRED` / `MFA_*` / `FORBIDDEN` / `VALIDATION` / `INTERNAL` → `E-CMN`), bảng tổng 7 tiền tố feature | 2026-11-25 | phuongnnm-23344 | LAB-4 P3 |
+| 2 | 0.1.1 | Update | Gate 2: E-STL 001–029 (21 mã; thêm 013 Q-STL-02, 029 G2-M03), E-INC 001–014 (thêm 014 Q-INC-01); tổng 8 + 147; "12 màn" (G2-m05) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -60,17 +61,17 @@ Mã đổi tên khi gộp (chỉ để tra lịch sử, **không dùng**): `AUTH
 | `E-TRD` | `trade` | 001–027 | 27 | [TRADE_FUNC §3.1](../trade/function-specifications/TRADE_FUNC.md#31-mã-lỗi-e-trd-) | 005 許可 / 006 承認 tách riêng |
 | `E-PTY` | `party` | 001–024 | 24 | [PARTY_FUNC §3](../party/function-specifications/PARTY_FUNC.md#3-danh-mục-mã-lỗi-e-pty) | |
 | `E-DEL` | `delivery` | 001–030 | 30 | [DELIVERY_FUNC §3](../delivery/function-specifications/DELIVERY_FUNC.md#3-danh-mục-mã-lỗi-e-del) | 029 dùng ở API đính kèm chung (chưa đặc tả) |
-| `E-STL` | `settle` | 001–028 | 19 | [SETTLE_FUNC §3](../settle/function-specifications/SETTLE_FUNC.md#3-danh-mục-mã-lỗi-e-stl) | 011, 013–020 dự trữ |
-| `E-INC` | `incentive` | 001–013 | 13 | [INC_FUNC §3](../incentive/function-specifications/INC_FUNC.md#3-bảng-mã-lỗi-của-feature) | 002 dùng 423 (kỳ đã 期ロック) |
+| `E-STL` | `settle` | 001–029 | 21 | [SETTLE_FUNC §3](../settle/function-specifications/SETTLE_FUNC.md#3-danh-mục-mã-lỗi-e-stl) | 011, 014–020 dự trữ; 013 = tick 「未入力の引渡し確認票なし」 (Q-STL-02), 029 = `LATE_ENTRY` bị module đích từ chối (G2-M03) |
+| `E-INC` | `incentive` | 001–014 | 14 | [INC_FUNC §3](../incentive/function-specifications/INC_FUNC.md#3-bảng-mã-lỗi-của-feature) | 002 dùng 423 (kỳ đã 期ロック) |
 | `E-RULE` | `rule` | 001–014 | 14 | [RULE_FUNC §3](../rule/function-specifications/RULE_FUNC.md#3-bảng-mã-lỗi-của-feature) | |
 
-Tổng: 8 mã chung + 144 mã feature.
+Tổng: 8 mã chung + 147 mã feature.
 
 ---
 
 ## 5. Tiền tố đặt trước (feature chưa có đặc tả)
 
-Feature dưới đây chưa có spec trong 10 màn cốt lõi; giữ tiền tố để LAB-5 không đặt trùng. Danh sách phụ thuộc đầy đủ: [`specs/_index.md`](../_index.md) mục "Phụ thuộc chưa đặc tả".
+Feature dưới đây chưa có spec trong 12 màn có Screen Specification; giữ tiền tố để LAB-5 không đặt trùng. Danh sách phụ thuộc đầy đủ: [`specs/_index.md`](../_index.md) mục "Phụ thuộc chưa đặc tả".
 
 | Tiền tố | Feature | Dự kiến |
 |---|---|---|

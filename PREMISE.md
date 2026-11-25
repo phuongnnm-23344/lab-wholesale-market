@@ -2,7 +2,7 @@
 id: DOC-PREMISE-001
 title: Tiền đề thiết kế LAB-4 (PREMISE)
 type: premise
-version: "0.6.1"
+version: "0.6.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [DEC-002, DEC-004, DEC-005, DEC-008, DEC-028, DEC-029, DEC-031, DEC-032, DEC-033, PRM-042, PRM-046, PRM-110, PRM-126, PRM-127]
@@ -71,7 +71,7 @@ Thuật ngữ nghiệp vụ: 相対取引 (thỏa thuận mua bán trực tiếp
 | # | Hạng mục | LAB-1 bản cuối | LAB-4 | Lý do | ID |
 |---|---|---|---|---|---|
 | 1 | Danh sách chức năng | 99 FT / 70 màn + 10 batch | Giữ nguyên; 画面一覧 LAB-4 liệt kê đủ 70 màn | Phạm vi hợp đồng | DEC-031 |
-| 2 | Mức chi tiết thiết kế | — (LAB-1 chỉ có list) | **10 màn cốt lõi** có đủ Screen Specification + Function / Technical / API Design; wireframe to-be cho **10 màn cốt lõi + 4 màn bổ sung** (dòng 3) + SC-03-02 仮受付 ở P3 (L4-D05); **22 màn còn lại của prototype và mọi màn khác của 70 màn chỉ ở mức 画面一覧** (`wireframes/SCREEN-LIST.md`) | Đề LAB-4 không quy định số màn; phân bổ theo plan đã duyệt. Danh sách 10 màn: L4-D02 mục 5 | Plan LAB-4 §0; L4-D02 |
+| 2 | Mức chi tiết thiết kế | — (LAB-1 chỉ có list) | **10 màn cốt lõi** có đủ Screen Specification + Function / Technical / API Design (thêm SC-06-04, SC-06-05 → 12 Screen Specification — L4-D07); wireframe to-be cho **10 màn cốt lõi + 4 màn bổ sung** (dòng 3) + SC-03-02 仮受付 ở P3 (L4-D05); **22 màn còn lại của prototype và mọi màn khác của 70 màn chỉ ở mức 画面一覧** (`wireframes/SCREEN-LIST.md`) | Đề LAB-4 không quy định số màn; phân bổ theo plan đã duyệt. Danh sách 10 màn: L4-D02 mục 5 | Plan LAB-4 §0; L4-D02 |
 | 3 | 4 màn bổ sung wireframe (không có trong prototype) | Có trong 70 màn | SC-04-05 当日訂正（+取消）, SC-06-04 引渡し例外登録, SC-06-05 争いのある引渡し完了確認, SC-03-07 オフライン同期・照合 | Đây là chỗ prototype thay bằng mock (M04, M16, M17); thiết kế to-be phải lấp | FR-AITAI-03, CAP-HUMAN-01, NFR-AVL-02, DEC-004 |
 | 4 | 参加上限 (hạn mức tham gia của 売買参加者) | Cảnh báo theo **kỳ hiện tại**, mặc định = 保証金額, bắt lý do, không chặn cứng | Theo LAB-1 (sửa lệch của prototype — M19) | Prototype tính theo 業務日 là giản lược | PRM-046, FT-01-09 |
 | 5 | Ngưỡng duyệt 2 cấp của 修正申請 | Giá trị tạm 100.000 JPY, chờ E-08 | Là tham số **trong quy chế có version** (GOV-RULE-01), không phải hằng số, không phải màn SC-10-06 | Giá trị liên quan tiền phải có version + maker-checker (PRM-126); prototype để hằng số (M13) | E-08, PRM-126, GOV-RULE-01 |
@@ -112,6 +112,7 @@ Tiền đề LAB-1 (PRM-001..131) vẫn hiệu lực; dưới đây chỉ là gi
 | Lịch chợ–ngân hàng năm (1 bảng, 2 cờ; ルール管理者 nhập lịch năm sau một lần vào tháng 12, 照合部門長 duyệt) | Lịch (SC-10-05) — **dữ liệu master**, không phải version quy chế | **Không** | Công thức tính 期日 dùng lịch này vẫn nằm trong quy chế | PRM-054, PRM-042 |
 | 臨時休市 / 臨時開市 | Lịch (SC-10-05), có duyệt gọn | **Không** **[Giả lập]** | Đổi trong ngày, không cần nhà thầu | 00-02, PRM-054, FB-CUS-239 |
 | Nơi nhận / giờ gửi / mẫu câu thông báo, hạn SLA tranh chấp, cảnh báo sắp hết hạn, timeout máy, thời gian idle hết step-up, mức thiếu tiền để đánh dấu 「手数料差引の疑い」 (chỉ đánh dấu 要確認, không đổi tiền) | File cấu hình có nhật ký | Không | Đổi tài khoản nhận tiền trong mẫu câu phải có 照合部門長 hoặc 財務部門 xác nhận | PRM-126; ADR-002 §2.2, ADR-007 §2.6 |
+| Mã thuế suất dùng để quy 参加上限 về 税込 (`PARTICIPATION_LIMIT_TAX_CODE`, mặc định 軽減税率 8%; suất lấy từ `tax_rates` có ngày hiệu lực) | File cấu hình (có nhật ký) | **Không** — thuế suất không phải quy chế chợ | So 参加上限 với 税込 = floor(Σ 税抜 × (100 + suất) / 100); không dùng 110/100 của BR-INC-01 (Q-TRD-02 [Customer giả lập, 2026-11-25]); hỏi 経理部 suất và có hai suất trong kỳ không | PRM-046, Q-TRD-02 |
 | Rollback khi đã đủ 4 lần | **Không phải tham số** — cố định trong thiết kế sau workshop | — | Xem §6 | E-14 |
 
 ### 3.2 Hành động hỏi MFA và không hỏi (L4-A07) **[Giả lập]**
@@ -123,7 +124,7 @@ Tiền đề LAB-1 (PRM-001..131) vẫn hiệu lực; dưới đây chỉ là gi
 | ★ 期ロック 完納奨励金 (gồm chốt dòng 要確認) | Xem báo cáo thường |
 | Xác nhận giao có tranh chấp (SC-06-05) | Đổi người bằng PIN trên máy dùng chung |
 | ★ Checker quy chế, rollback quy chế, hủy version đã duyệt | Nhập GD, tiếp nhận lô, ghi giao hàng thường |
-| 一時停止 / 失効 / phục hồi tư cách người tham gia; 決裁 cấp mới 許可, 確認 cấp mới 承認 [PL — ADR-003 §2.2]; 確認 期限前更新 (gia hạn) 許可 / 承認 **[Giả lập]** (FB-CUS-280); 確認 đổi 参加上限 của 承認 (`LIMIT_CHANGE`) [PL — khớp PARTY_DB 4.15, chờ khách xác nhận Q-PTY-07] | |
+| 一時停止 / 失効 / phục hồi tư cách người tham gia; 決裁 cấp mới 許可, 確認 cấp mới 承認 [PL — ADR-003 §2.2]; 確認 期限前更新 (gia hạn) 許可 / 承認 **[Giả lập]** (FB-CUS-280); đổi 保証金 / 参加上限 — **chỉ 照合部門長**, một bước, không checker, có audit (Q-PTY-06, Q-PTY-07 [Customer giả lập, 2026-11-25]) | |
 | Xuất CSV kế toán, xuất danh sách có dữ liệu cá nhân, xuất 監査ログ | |
 | Mở khóa / đặt lại PIN cho người khác | |
 | ★ 決裁 xóa vật lý chứng từ hết hạn lưu (B.7) | |
@@ -176,6 +177,7 @@ Bảy luật của dự án được giữ ở mọi nơi thiết kế: 相対�
 | L4-D04 | 2026-11-25 | **Tách Database Design theo cụm**: 9 file `{CỤM}_DB.md` (IAM_AUDIT, PARTY, RULE, CLOSE, LOT, TRADE, ADJUST, BILLING, INCENTIVE) + `MKT_DB.md` làm file tổng (nguyên tắc, enum, ERD tổng quan, bảng lệch, parity, điểm mở) — ngoại lệ #7 README §3 | Giữ một file và ghi ngoại lệ | Người dùng (Gate 1 M-09) | QC-01 §4, §5 ràng buộc 1 |
 | L4-D05 | 2026-11-25 | **Bổ sung L4-D02: wireframe 10 + 5 màn** — thêm wireframe **SC-03-02 仮受付** (tablet bến; chỉ wireframe, không Screen Specification đầy đủ), làm ở P3 [Customer giả lập, 2026-11-25 — #22] | Không thêm (giữ 10 + 4) | Người dùng | FB-CUS-281; PERSONA-DOCK-01, NFR-USE-01 |
 | L4-D06 | 2026-11-25 | **E-14 để mở tới workshop**: Technical Design vẽ hai nhánh N1 / N2; phương án F (rollback hồi tố về đầu kỳ chưa khóa) và G (tách gói) **chỉ là tư liệu** trong ADR-006 §3 kèm ghi chú ảnh hưởng effort — không thiết kế chi tiết; LAB-5 tách issue làm rõ riêng | Chọn trước F hoặc G | Người dùng | OPEN-L4-01, ADR-006, DEC-048 |
+| L4-D07 | 2026-11-25 | **Mở rộng L4-D02: Screen Specification đầy đủ cho 12 màn** = 10 màn đại diện + **SC-06-04 引渡し例外登録, SC-06-05 争いのある引渡し完了確認** (ngoài 10 màn). Lý do: luật 3 — xác nhận giao **có tranh chấp** là một điểm người quyết cuối (CAP-HUMAN-01, PRM-111), và hai màn dùng chung Function / Technical Design của delivery (DELIVERY_FUNC, DEL_EXCEPTION_DISPUTE_TECH) nên tách ra không bớt được việc. Các câu "10 màn cốt lõi" giữ nghĩa *màn đại diện*; số Screen Specification thực tế là 12. Không đổi giá (nằm trong buffer DEC-048) | Giữ đúng 10 màn, SC-06-04 / 05 chỉ ở mức wireframe | PL (giao việc sửa Gate 2 G2-m05) | Expert Gate 2 G2-m05; luật 3; CAP-HUMAN-01, PRM-111, FR-DEL-01..05 |
 
 Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 2026-11-25 (đồng ý 5, đồng ý có điều chỉnh 4, trong đó một điểm con không đồng ý ở L4-A04 (3)); góp ý đã áp ở bản 0.3.0 — xem §3, §3.1, §3.2, §6 **[Giả lập]**.
 
@@ -200,3 +202,4 @@ Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 20
 | 5 | 0.5.0 | Update | Sửa theo Expert Gate 1 + góp ý khách về wireframe: L4-A04 (2) bỏ định nghĩa 02:00 → 01:59, thêm hai trục thời gian và phạm vi tính lại mọi kỳ đã khóa (C-01, C-02, M-01); L4-A09 ngày biên đúng (lô 01:30, 支払期日 theo ngày ngân hàng — M-03); §3.1 ngưỡng theo người mua, tham số file cấu hình mới; §3.2 thêm MFA cho 期限前更新, 端末回収不能, xóa vật lý, dấu ★ hỏi lại mã (m-06, khách #21); M08 câu CARRY dùng chung (m-05), M10, M11 (M-08), M21; §5 thêm L4-D03 nhãn 決裁 (M-06), L4-D04 tách DB (M-09); §6 OPEN-L4-01 / R-L4-01 viết lại theo đường 修正申請 INCENTIVE (M-04) | 2026-11-25 | phuongnnm-23344 | |
 | 6 | 0.6.0 | Update | Sửa theo Expert Gate 1 recheck: nguồn MFA cấp mới / gia hạn ở §3.2 (N-03); nhãn [PL 0.5.0] cho phần PL thêm ở L4-A04 (2), L4-A09 (n-08); thêm L4-D05 (wireframe SC-03-02 ở P3), L4-D06 (E-14 để mở, F / G là tư liệu) theo quyết định người dùng | 2026-11-25 | phuongnnm-23344 | |
 | 7 | 0.6.1 | Update | Gộp P3: §3.2 thêm 確認 đổi 参加上限 (`LIMIT_CHANGE`) vào danh sách hỏi MFA — khớp PARTY_DB 4.15 (`mfa_verified_at` bắt buộc khi có `decided_by`) và spec PTY_APPROVAL_LIFECYCLE; chọn theo DB vì chặt hơn và 参加上限 là thông số tiền. Q-PTY-07 giữ để khách xác nhận | 2026-11-25 | phuongnnm-23344 | |
+| 8 | 0.6.2 | Update | Gate 2 + khách P3: §3.2 dòng 参加上限 theo Q-PTY-06 / Q-PTY-07 (chỉ 照合部門長, một bước, MFA); §3.1 thêm tham số `PARTICIPATION_LIMIT_TAX_CODE` (Q-TRD-02); thêm L4-D07 (Screen Specification 12 màn = 10 đại diện + SC-06-04, SC-06-05 — G2-m05); §3.2 giữ nguyên ★ cho checker quy chế / hủy version đã duyệt (G2-M01 sửa spec theo PREMISE, không đổi PREMISE) | 2026-11-25 | phuongnnm-23344 | |

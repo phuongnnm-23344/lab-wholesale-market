@@ -20,7 +20,7 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 | [`specs/`](specs/) | **HOW** — Screen Specification · Function Specifications · Technical Design trong `specs/{feature}/`; Database Design · API Design trong `specs/system-design/`; tài liệu dùng chung trong `specs/_common/` | `BM-2-901-50` … `BM-2-901-54` | Kế thừa | PL (BrSE, Tech Lead, Dev) | [`specs/_index.md`](specs/_index.md) |
 | [`architecture/`](architecture/) | Kiến trúc to-be: thành phần hệ thống, luồng dữ liệu chính, điểm tích hợp | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/_index.md`](architecture/_index.md) |
 | [`architecture/adr/`](architecture/adr/) | ADR: bối cảnh · quyết định · phương án đã bỏ · hệ quả | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/adr/_index.md`](architecture/adr/_index.md) |
-| [`wireframes/`](wireframes/) | 画面一覧 / 画面遷移 (70 màn 第1期), wireframe to-be cho 10 màn cốt lõi + 5 màn bổ sung | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
+| [`wireframes/`](wireframes/) | 画面一覧 / 画面遷移 (70 màn 第1期), wireframe to-be cho 10 màn cốt lõi + 5 màn bổ sung; Screen Specification đầy đủ cho **12 màn** (10 màn đại diện + 2 màn nối của delivery — PREMISE L4-D07) | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
 | `AI-report.md` | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa | — | **Mới** (yêu cầu đề) | PL | *(viết ở P4)* |
 | [`prototype/`](prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](prototype/README.md) |
 
@@ -31,7 +31,7 @@ Nhóm thư mục mức repo khác (`.github/`, `docs/`, `webhook/`, các script 
 | Điểm QC-01 để dự án chọn | Dự án chọn |
 |---|---|
 | Kiểu tên nhánh version (§2) | Theo **milestone / phase** của khóa học: `ver/lab-4`, `ver/lab-5`, … — không trộn kiểu version sản phẩm |
-| Chia `specs/{screen-or-feature}/` (§2 ghi chú) | Theo **feature** (cụm nghiệp vụ, kebab-case tiếng Anh), trùng tên module ở `architecture/ARCHITECTURE.md` §2. Danh sách feature và feature của 10 màn cốt lõi đã chốt ở [`specs/_index.md`](specs/_index.md) (Gate 1 m-03) |
+| Chia `specs/{screen-or-feature}/` (§2 ghi chú) | Theo **feature** (cụm nghiệp vụ, kebab-case tiếng Anh), trùng tên module ở `architecture/ARCHITECTURE.md` §2. Danh sách feature và feature của 12 màn có Screen Specification (10 màn đại diện + SC-06-04, SC-06-05 — PREMISE L4-D07) đã chốt ở [`specs/_index.md`](specs/_index.md) (Gate 1 m-03) |
 | Screen ID | Giữ ID màn hình của LAB-1 (`SC-xx-yy`) để truy được về 画面一覧 LAB-1 và prototype LAB-2; tên file `SC-xx-yy_SPEC.md`. *Lệch quy tắc §4 (`{tiền tố}_{TÊN}` viết HOA) — xem §3* |
 | Nguồn khuôn `_templates/` | `spec-standards` nhánh `main`, commit `72c1dda` (2026-11-05). Hai thư mục `_templates/` copy cùng một lượt |
 
@@ -47,6 +47,9 @@ Nhóm thư mục mức repo khác (`.github/`, `docs/`, `webhook/`, các script 
 | 8 | BM-2-901-50 §4: Index và Khoá ngoại viết dạng bảng | Database Design viết Index / Khoá ngoại theo **một dòng** (mặc định) hoặc **dạng bảng như khuôn** — hai cách chứa cùng thông tin (tên index, cột, unique, điều kiện partial; FK, `ON DELETE`), cách viết ở một bảng **không mang nghĩa**. Danh sách bảng đang viết dạng bảng và cú pháp một dòng: `MKT_DB.md` §4.0 | 60 bảng, phần lớn chỉ có PK + 1–3 FK — bảng nhiều dòng làm file dài mà không thêm thông tin; các bảng viết trước khi có quy ước giữ nguyên dạng bảng, không chuyển (Gate 1 recheck n-07, D-03) |
 | 6 | Bản mẫu chỉ có một cho mỗi loại | Screen Specification dùng `sample-LOGIN_SPEC.md` (bản mẫu của `BM-2-901-51`); không copy `BM-01-spec-template.md` và `sample-AD_LOGIN_SPEC.md` | Dự án dùng khuôn ISO `BM-2-901-51`; BM-01 là khuôn thứ hai cho cùng việc, chuẩn chưa chốt bỏ cái nào |
 | 7 | §4, §5 ràng buộc 1: Database Design `{DB_ID}_DB.md` — **một file một nhóm bảng** | Database Design chia 9 file theo cụm (`IAM_AUDIT_DB.md`, `PARTY_DB.md`, `RULE_DB.md`, `CLOSE_DB.md`, `LOT_DB.md`, `TRADE_DB.md`, `ADJUST_DB.md`, `BILLING_DB.md`, `INCENTIVE_DB.md`) — đúng quy định; **thêm một file tổng `MKT_DB.md`** không phải một nhóm bảng: nguyên tắc chung, quy ước + enum dùng chung, ERD tổng quan, view công bố, bảng lệch to-be ↔ prototype, kết quả parity, điểm mở. Tất cả đặt ở gốc `database-design/` vì bảng của mỗi cụm được nhiều feature dùng (ràng buộc 3) | Quy ước và enum dùng chung cho cả 58 bảng — chép vào 9 file là trái DRY và dễ lệch; bảng lệch / parity là yêu cầu của đề LAB-4 cho cả schema, không thuộc cụm nào. Người dùng chốt tách file (PREMISE L4-D04) |
+| 9 | BM-2-901-51 §4.1: cột `ID` theo section chữ (`A`, `B`…) và item `1.0`, tham chiếu dạng `A-2` | Cột `ID` / `No` = **số item của wireframe to-be** (`[1]`, `[2]`…); chữ `A/B/C` chỉ là nhóm hiển thị; khung chung dùng `C-xx` của `wireframes/_common-layout.md` | Truy vết một số duy nhất từ wireframe (Gate 1, khách đã góp ý theo số) → Screen Specification → ảnh annotated → issue LAB-5; đánh số lại theo khuôn sẽ làm gãy mọi tham chiếu `[n]` trong feedback và ADR |
+| 10 | BM-2-901-51: không có mục phân quyền theo vai; §6 chỉ là ghi chú chung | Thêm **§4.4 Phân quyền theo vai** (bảng vai × item: hiện / ẩn / chỉ đọc / thao tác) và các mục §6.x (trạng thái, offline, câu hỏi mở) | Đề LAB-4 bắt buộc "phân quyền hiển thị theo vai" và trạng thái (rỗng, lỗi, 423, chờ duyệt, offline) cho mỗi màn; giữ nguyên các mục của khuôn, chỉ thêm mục |
+| 11 | BM-2-901-51 §3: `_layout.png` xuất từ Figma / Draw.io / XD | Không có Figma; ảnh `{SCREEN_ID}_annotated.png` vẽ bằng script Pillow từ dữ liệu bố cục của wireframe to-be (mục 5), ảnh as-is của prototype để ở `wireframes/assets/` | Dự án chưa có file thiết kế; wireframe Markdown là nguồn to-be đã qua Gate 1. Ảnh dựng lại được bằng một lệnh nên số trên ảnh luôn khớp cột `No` |
 
 Link tương đối bên trong các file bản mẫu (`../01-templates/…`) trỏ theo cấu trúc của repo chuẩn nên không mở được trong repo này — giữ nguyên theo ràng buộc 5.
 
@@ -65,6 +68,7 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 | `log-convention.md` | `specs/_common/` | Kế thừa, thêm mục 4 áp dụng cho dự án | `72c1dda` | |
 | `api-conventions.md`, `api-list.md`, `error-codes.md` | `specs/_common/` | **Mới** — khuôn BM-2-901-52 trỏ tới ba file này nhưng repo chuẩn chưa có (ISS-36) | — | P3: body lỗi theo prototype (khác ví dụ `errors[]` của khuôn — lý do ở `api-conventions.md` quy ước 3) |
 | `render-annotated-screens.py` + `annotated_screens/` | `scripts/` | Mới | — | Dựng ảnh đánh số cho Screen Specification (mục 5) |
+| `check-api-spec-consistency.py` | `scripts/` | Mới | — | Kiểm API Design (mục 5) — Gate 2 G2-m01 |
 | Các `_index.md` | mỗi thư mục | Kế thừa quy định QC-01 §3 | — | |
 | `PREMISE.md` | gốc | Mới | — | |
 | Khuôn kiến trúc, khuôn ADR | `architecture/` | Mới | — | *(P2-A)* |
@@ -85,7 +89,11 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 | Xem danh sách màn + đường dẫn ảnh | `python scripts/render-annotated-screens.py --list` |
 
 - Phụ thuộc: Python 3.10+, Pillow, font tiếng Nhật (Meiryo / Yu Gothic trên Windows, Hiragino trên macOS, Noto Sans CJK trên Linux) — hoặc đặt biến `ANNOT_FONT_REGULAR` / `ANNOT_FONT_BOLD` trỏ tới file font.
-- Mã nguồn: `scripts/render-annotated-screens.py` (danh sách màn → thư mục feature) · `scripts/annotated_screens/` (`lot_trade.py`, `party_delivery_settle.py`, `incentive_rule.py`: dữ liệu bố cục từng màn; `common.py`: tìm font).
+- Mã nguồn: `scripts/render-annotated-screens.py` (danh sách màn → thư mục feature) · `scripts/annotated_screens/` (`lot_trade.py`, `party.py`, `delivery.py`, `settle.py`, `incentive_rule.py`: dữ liệu bố cục từng màn; `box_layout.py`: hàm vẽ chung của party / delivery / settle; `common.py`: tìm font).
+
+### Script kiểm API Design
+
+`python scripts/check-api-spec-consistency.py` (chạy ở gốc repo; chỉ dùng thư viện chuẩn) — quét 42 file `specs/system-design/api-design/**`: JSON ví dụ trong `<pre>` parse được; token trong backtick ở cột `Note` không còn tên snake_case trừ khi là tên bảng / cột / hàm có trong Database Design hoặc FUNC / TECH; không còn khóa cũ `error_extra`; lỗi dạng `"detail": { "field": … }` (khóa trường phải ở `field` gốc). Thoát mã 1 khi có lỗi.
 
 ---
 

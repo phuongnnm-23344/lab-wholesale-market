@@ -3,7 +3,7 @@ id: SPEC-MKT_DB-001
 title: Thiết kế dữ liệu to-be — file tổng (第1期)
 type: system
 subtype: database-design
-version: "0.3.2"
+version: "0.3.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -50,6 +50,7 @@ related: [DOC-PREMISE-001, ADR-001, ADR-002, ADR-003, ADR-004, ADR-005, ADR-006,
 | 5 | 0.3.0 | Update | §4.0, §5 N15, §7 | Gate 1 recheck: N15 nhãn INC-EDGE-02 (N-01); OPEN-DB-08 nêu hệ quả FIFO (n-03); quy ước viết Index / FK (n-07) | 2026-11-25 | phuongnnm-23344 | |
 | 6 | 0.3.1 | Update | §4.0, §7 OPEN-DB-09 | Kiểm diff 5b0ef16: quy ước Index / FK viết lại khớp thực tế các file (mặc định một dòng; liệt kê đúng các bảng đang viết dạng bảng; hai cách tương đương) (D-03); OPEN-DB-09 hỏi thêm cấp mới 許可 có cần 運用部門長 決裁, 承認 = xét nhẹ, gia hạn theo PRM-121 đã chốt (D-02) | 2026-11-25 | phuongnnm-23344 | |
 | 7 | 0.3.2 | Update | §2, §4.0, §4.0a | Gộp P3 (spec 7 feature): thêm 2 bảng yêu cầu chờ 4.59 `nakaoroshi_permit_requests`, 4.60 `baibai_approval_requests` (PARTY_DB 0.3.1) → **60 bảng**; enum mới `qualification_request_kind`, `qualification_request_status`; chú thích `ATTR_FIX` = sửa SL **sau** 本登録 ở SC-03-04 (A-LOT-01); `trade_event.APPROVE` đổi nhãn 確認 (bỏ 「承認」 cho duyệt nội bộ — L4-D03), `REJECT` gồm 差し戻し せり; `seri_status` giữ 2 giá trị, 差し戻し ở mức dòng GD (Q-TRD-04); `rule_status` ghi rõ 「決裁待ち」 N2; định nghĩa cột view `v_qualification_current`, `v_buyer_period_usage`. Cột mới ở file cụm: LOT_DB 0.2.1, RULE_DB 0.2.1, TRADE_DB 0.2.1, CLOSE_DB 0.2.1, ADJUST_DB 0.3.1 | 2026-11-25 | phuongnnm-23344 | |
+| 8 | 0.3.3 | Update | §4.0, §4.0a, §7 OPEN-DB-08 | Khách Q-LOT-01: `lot_status` thêm `CANCELLED`; Q-TRD-02: `v_buyer_period_usage` có `used_excl_jpy` / `used_incl_jpy` (so 参加上限 theo 税込); Q-INC-02: phạm vi 「前期以前の調整」 chỉ còn điều chỉnh (修正申請 TRADE); GD 後入力 sang kỳ đang mở; `trades.incentive_period_id` (TRADE_DB 0.2.2) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -213,7 +214,7 @@ Cột chung được ghi ở cuối mỗi bảng (trong file cụm) dưới dạ
 | `qualification_request_kind` / `qualification_request_status` | `NEW` · `RENEW` · `LIMIT_CHANGE` (**chỉ 承認**, CHECK theo bảng) · `SUSPEND` · `RESUME` · `REVIEW_START` · `REINSTATE` / `ENTERED` (đã nhập, chờ 確認) · `PROPOSED` (đã 起案, chờ 決裁) · `DECIDED` · `REJECTED` | `nakaoroshi_permit_requests`, `baibai_approval_requests` | Mới (P3, PARTY_DB 0.3.1) |
 | `day_status` / `period_status` | `OPEN` · `LOCKED` | `business_days` / `payment_periods` | Giữ |
 | `unit_code` | `KG` · `CASE` (ケース) · `PIECE` (尾) | `lots`, `item_codes` | Mới — prototype `unit` là text |
-| `lot_status` | `PROVISIONAL` 仮受付 · `RECEIVED` 受付 · `INSPECTED` 下見済 · `PUBLISHED` 公開 · `CLOSED` 確定 · `DELIVERED` 引渡し完了 | `lots`, `lot_status_history` | Đổi `SOLD_OUT` → `CLOSED` (確定 khi SL = 0 **hoặc** 販売終了 — PRM-110) |
+| `lot_status` | `PROVISIONAL` 仮受付 · `RECEIVED` 受付 · `INSPECTED` 下見済 · `PUBLISHED` 公開 · `CLOSED` 確定 · `DELIVERED` 引渡し完了 · `CANCELLED` 取消 | `lots`, `lot_status_history` | Đổi `SOLD_OUT` → `CLOSED` (確定 khi SL = 0 **hoặc** 販売終了 — PRM-110). `CANCELLED` chỉ chuyển từ `PROVISIONAL` (仮受付 nhập trùng / nhầm): giữ số chính thức, không xóa, số không dùng lại (Q-LOT-01 [Customer giả lập, 2026-11-25]; LOT_DB 4.25) |
 | `ledger_entry_kind` | `RECEIVE` 受入 · `SALE` · `SALE_REVERSE` (trả SL do 訂正 / 取消 / 修正申請) · `CARRY_OVER` 持ち越し (SL 0) · `RETURN_DISPOSE` 返品・廃棄 · `ATTR_FIX` (sửa SL **sau** 本登録 — SC-03-04, ngày chưa khóa, PRM-128; 本登録 chỉ ghi một dòng `RECEIVE` = SL xác nhận, 仮受付 không ghi sổ — A-LOT-01) | `lot_quantity_ledger` | Mới — prototype dùng `reason` text |
 | `trade_channel` | `AITAI` 相対 · `SERI` せり | `trades` | Giữ |
 | `trade_status` | `DRAFT` 下書き · `PENDING` 確認待ち · `CONFIRMED` 確定 · `CANCELLED` 取消. 更正 của FIG-012 **không** là giá trị lưu: là trạng thái hiển thị khi GD có 修正申請 đang chờ | `trades` | Đổi: prototype `PROVISIONAL` / `CONFIRMED` |
@@ -249,7 +250,7 @@ Cột chung được ghi ở cuối mỗi bảng (trong file cụm) dưới dạ
 | View | Cột | Nguồn / quy tắc |
 |---|---|---|
 | `v_qualification_current` (module `party`) | `participant_id`, `basis` (`KYOKA` \| `SHONIN`), `qualification_id`, `qualification_no`, `status` (`qualification_status`), `valid_from`, `valid_to`, `limit_mode` (`DEPOSIT` \| `INDIVIDUAL`, NULL với `KYOKA`), `participation_limit_jpy` (NULL với `KYOKA` hoặc khi theo 保証金) | `UNION ALL` của **hai** bảng `nakaoroshi_permits` (→ `KYOKA`) và `baibai_approvals` (→ `SHONIN`) — không gộp bảng (luật 2, ADR-003). Một dòng / người × căn cứ, dòng hiện hành (không `SUPERSEDED`). Hàm kiểm nhận thêm thời điểm `p_at` (`paper_slip_time` khi nhập bù) và so `valid_from ≤ p_at::date ≤ valid_to` |
-| `v_buyer_period_usage` (module `trade`) | `buyer_id`, `period_id`, `period_ym`, `used_jpy` (税抜, giả định Q-TRD-02), `trade_count` | Σ `v_trade_effective` (gốc + điều chỉnh, 相対 + せり `CONFIRMED`) theo **`trade_date`** trong kỳ — sửa D08 (prototype so theo 業務日). Hạn mức = `participation_limit_jpy` hoặc 保証金 hiện hành `v_participant_current_deposit` |
+| `v_buyer_period_usage` (module `trade`) | `buyer_id`, `period_id`, `period_ym`, `used_excl_jpy` (税抜), `used_incl_jpy` (税込 = floor(`used_excl_jpy` × (100 + suất) / 100), suất từ `tax_rates` theo mã ở tham số file cấu hình `PARTICIPATION_LIMIT_TAX_CODE` — **so với 参加上限**, Q-TRD-02 [Customer giả lập, 2026-11-25]; không dùng 110/100 của BR-INC-01), `trade_count` | Σ `v_trade_effective` (gốc + điều chỉnh, 相対 + せり `CONFIRMED`) theo **`trade_date`** trong kỳ — sửa D08 (prototype so theo 業務日). Hạn mức = `participation_limit_jpy` hoặc 保証金 hiện hành `v_participant_current_deposit` |
 
 ---
 
@@ -357,7 +358,7 @@ Phạm vi parity trên là 38 dòng của bản 0.1.1. N15, N16 thêm ở 0.2.0 
 | OPEN-DB-05 | E-12 持ち越し, E-13 bán trước 下見済 có làm đổi tiền không | 4.23 hai `param_key`; 4.26 | Tạm xếp như tham số quy chế | 運用部門 | open (OPEN-L4-03) |
 | OPEN-DB-06 | Bảng tỷ lệ thật, kiểu / độ dài cột theo fixture (E-03) | 4.22 `rate_bp`, độ dài VARCHAR | bp; độ dài theo TBL-* + prototype | Khách (fixture ~2026-12-01 **[Giả lập]**) | open (L4-A02) |
 | OPEN-DB-07 | Thuế kỳ làm tròn xuống (E-06) | 4.23 `TAX_ROUNDING`, 4.50 | `FLOOR` (DEC-011) | 経理部 | open |
-| OPEN-DB-08 | Chênh lệch tiền của **kỳ đã khóa** (điều chỉnh có `period_id` kỳ cũ) người mua trả / được trả thế nào: tạm hiện dòng 「前期以前の調整」 trên thông báo kỳ kế tiếp, **không** cộng vào 期のお支払額 xét 完納 kỳ mới | ADJUST_DB 4.39, BILLING_DB 4.49, 4.48 | Dòng riêng trên thông báo; 入金 FIFO trả nợ kỳ cũ trước ("nợ kỳ đã khóa" = LOCK + điều chỉnh / LATE_ENTRY sau khóa − phân bổ). **Hệ quả cần khách quyết:** người mua trả đúng 期のお支払額 kỳ mới mà chưa trả khoản chênh của kỳ đã khóa thì FIFO đem tiền trả khoản chênh trước → kỳ mới **mất 完納** vì một sửa sai duyệt sau khi khóa (vd. TV-02: trả 1.080.000 cho kỳ 09 → 216.000 trả kỳ 08 trước, kỳ 09 thiếu). Phương án: (a) giữ FIFO; (b) khoản chênh kỳ đã khóa có hạn riêng, FIFO bỏ qua tới hạn đó | 照合部門 / 経理部 | open (Gate 1 C-02, recheck n-03) |
+| OPEN-DB-08 | Chênh lệch tiền của **kỳ đã khóa** (điều chỉnh có `period_id` kỳ cũ) người mua trả / được trả thế nào: tạm hiện dòng 「前期以前の調整」 trên thông báo kỳ kế tiếp, **không** cộng vào 期のお支払額 xét 完納 kỳ mới | ADJUST_DB 4.39, BILLING_DB 4.49, 4.48 | Dòng riêng trên thông báo; 入金 FIFO trả nợ kỳ cũ trước ("nợ kỳ đã khóa" = LOCK + điều chỉnh sau khóa − phân bổ; GD 後入力 `LATE_ENTRY` không còn thuộc phạm vi này — vào kỳ đang mở theo Q-INC-02, ADR-007 §2.3-7a). **Hệ quả cần khách quyết:** người mua trả đúng 期のお支払額 kỳ mới mà chưa trả khoản chênh của kỳ đã khóa thì FIFO đem tiền trả khoản chênh trước → kỳ mới **mất 完納** vì một sửa sai duyệt sau khi khóa (vd. TV-02: trả 1.080.000 cho kỳ 09 → 216.000 trả kỳ 08 trước, kỳ 09 thiếu). Phương án: (a) giữ FIFO; (b) khoản chênh kỳ đã khóa có hạn riêng, FIFO bỏ qua tới hạn đó | 照合部門 / 経理部 | open (Gate 1 C-02, recheck n-03) |
 | OPEN-DB-09 | Thủ tục cấp mới / đình chỉ 許可 vs 承認 (gia hạn bình thường của cả hai đã chốt theo PRM-121: 照合事務局 nhập + 照合部門長 確認, MFA): (1) cấp mới 許可 có cần 運用部門長 決裁 không; (2) cấp mới 承認 xét nhẹ 保証金 / 資力 rồi 照合部門長 確認 — đúng không; (3) ai 決裁 đình chỉ / thu hồi, có 弁明の機会 không | PARTY_DB 4.12–4.15 | (1) 許可: 審査 + 運用部門長 決裁 [PL]; (2) 承認: 届出 + xét nhẹ + 照合部門長 確認 [PL]; (3) đình chỉ cả hai: 運用部門長 決裁 [PL] | 運用部門 | open (Gate 1 M-07, recheck D-02) |
 | OPEN-DB-10 | Một người có giữ nhiều vai trên một tài khoản không (vd. 受付 + 目利き, 照合 + ルール管理) | IAM_AUDIT_DB 4.58 `staff_roles` | Cho nhiều vai / tài khoản (PRM-089 mỗi người một tài khoản); SoD kiểm theo người trong hàm | IT khách / 運用部門 | open (Gate 1 m-10) |
 

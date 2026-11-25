@@ -3,7 +3,7 @@ id: SPEC-API_LIST-001
 title: Danh mục API (API List)
 type: system
 subtype: api-list
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 design_id: API_LIST
@@ -22,6 +22,7 @@ related: ["SPEC-API_CONV-001", "SPEC-ERROR_CODES-001", "BM-2-901-52"]
 | No. | Version | Action | Thay đổi | Ngày | Người sửa | Ghi chú |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu khi gộp P3: 42 API của 10 màn cốt lõi (7 feature), thống nhất `/api/v1`; API đã đề xuất nhưng chưa đặc tả ở mục 4 | 2026-11-25 | phuongnnm-23344 | LAB-4 P3 |
+| 2 | 0.1.1 | Update | Gate 2 G2-M04: §4 thêm API đề xuất cho nguồn dữ liệu đầu vào (DEP-07..14), "ngoài 12 màn"; Q-STL-02: API-STL-001 checklist 12 mục | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -74,7 +75,7 @@ related: ["SPEC-API_CONV-001", "SPEC-ERROR_CODES-001", "BM-2-901-52"]
 | API-DEL-004 | `POST` | `/api/v1/delivery-exceptions` | Ghi ngoại lệ giao / tranh chấp (gồm nhập bù phiếu giấy) | `delivery` | SC-06-04 | [API-DEL-004_API.md](../system-design/api-design/delivery/API-DEL-004_API.md) |
 | API-DEL-005 | `GET` | `/api/v1/delivery-exceptions/disputes` | Danh sách tranh chấp chờ 配送部門責任者 xác nhận | `delivery` | SC-06-05 | [API-DEL-005_API.md](../system-design/api-design/delivery/API-DEL-005_API.md) |
 | API-DEL-006 | `POST` | `/api/v1/delivery-exceptions/{exceptionId}/confirmation` | 配送部門責任者 xác nhận / kết luận tranh chấp (MFA) | `delivery` | SC-06-05 | [API-DEL-006_API.md](../system-design/api-design/delivery/API-DEL-006_API.md) |
-| API-STL-001 | `GET` | `/api/v1/business-days/{businessDate}/close-checklist` | Checklist 日次締め (11 mục chuẩn ADR-005 §2.5) | `settle` | SC-07-02 | [API-STL-001_API.md](../system-design/api-design/settle/API-STL-001_API.md) |
+| API-STL-001 | `GET` | `/api/v1/business-days/{businessDate}/close-checklist` | Checklist 日次締め (12 mục chuẩn ADR-005 §2.5) | `settle` | SC-07-02 | [API-STL-001_API.md](../system-design/api-design/settle/API-STL-001_API.md) |
 | API-STL-002 | `POST` | `/api/v1/business-days/{businessDate}/close` | Khóa 業務日 (日次締め) — không có API mở lại | `settle` | SC-07-02 | [API-STL-002_API.md](../system-design/api-design/settle/API-STL-002_API.md) |
 | API-STL-003 | `POST` | `/api/v1/devices/{deviceId}/lost` | Đánh dấu thiết bị 「端末回収不能」 | `settle` | SC-07-02 | [API-STL-003_API.md](../system-design/api-design/settle/API-STL-003_API.md) |
 | API-STL-004 | `GET` | `/api/v1/corrections/{correctionId}` | Chi tiết 修正申請 + xem trước bản ghi sẽ sinh | `settle` | SC-08-03 | [API-STL-004_API.md](../system-design/api-design/settle/API-STL-004_API.md) |
@@ -92,9 +93,9 @@ related: ["SPEC-API_CONV-001", "SPEC-ERROR_CODES-001", "BM-2-901-52"]
 
 ---
 
-## 4. API đã đề xuất, chưa đặc tả (ngoài 10 màn)
+## 4. API đã đề xuất, chưa đặc tả (ngoài 12 màn)
 
-Màn cốt lõi đã gọi tới nhưng chưa có API Design — **chưa cấp ID**, LAB-5 tạo issue (xem [`specs/_index.md`](../_index.md) mục "Phụ thuộc chưa đặc tả").
+Màn cốt lõi đã gọi tới (DEP-01..06) hoặc cần làm nguồn dữ liệu đầu vào (DEP-07..17) nhưng chưa có API Design — **chưa cấp ID**, LAB-5 tạo issue (xem [`specs/_index.md`](../_index.md) mục "Phụ thuộc chưa đặc tả").
 
 | Đề xuất | Feature | Màn / spec cần | Ghi chú |
 |---|---|---|---|
@@ -102,3 +103,10 @@ Màn cốt lõi đã gọi tới nhưng chưa có API Design — **chưa cấp I
 | `GET /api/v1/staff/lookup?employeeNo=` | `iam` | SC-03-05 [8], SC-06-04 [5] | Tra tên theo 社員番号, chỉ tài khoản `ACTIVE` |
 | `POST /api/v1/attachments`, `GET /api/v1/attachments/{attachmentId}` | đính kèm chung | SC-06-04 [11], SC-08-03 [6] | Upload / tải chứng từ; lỗi tạm dùng `E-DEL-029` |
 | API hàng đợi đồng bộ offline | `sync` | SC-03-02, SC-06-02 (ADR-008) | Đối chiếu SC-03-07; API-DEL-003 là đầu ghi của delivery |
+| `POST /api/v1/lots/provisional`, `POST /api/v1/lots/{lotId}/cancel-provisional` | `lot` | SC-03-02 → SC-03-01 (DEP-07) | Ghi 仮受付 online, cấp mã chính thức khi lên server; hủy → `CANCELLED`, giữ số (Q-LOT-01) |
+| `POST /api/v1/rule-versions`, `PUT /api/v1/rule-versions/{versionId}`, `POST …/{versionId}/submit` | `rule` | SC-10-01..03 → SC-10-04 (DEP-08) | Maker tạo / sửa `DRAFT`, gửi `PENDING`; sau 差し戻し sửa và gửi lại |
+| `POST /api/v1/corrections` | `settle` | SC-08-01 → SC-08-03 (DEP-09) | Mọi phạm vi `TRADE` / `KANNO` / `INCENTIVE` / `LATE_ENTRY`; trả số cấp duyệt theo ngưỡng |
+| `POST /api/v1/seri-sessions/{sessionId}/results`, `PUT …/results/{tradeId}` | `trade` | SC-05-01 → SC-05-02 (DEP-10) | Ghi dòng kết quả; sửa số người mua sau 差し戻し (lịch sử số cũ / mới — Q-TRD-05) |
+| `POST /api/v1/payment-imports`, `GET/PUT /api/v1/partner-code-mappings` | `incentive` | SC-09-01..03 → SC-09-04 (DEP-11) | Import CSV lưu 入金日 ngân hàng (Q-INC-01); ánh xạ 取引先コード; phân bổ FIFO (INC_FUNC 2.3) |
+| `GET/PUT /api/v1/market-calendar`, `POST /api/v1/business-days/{businessDate}/open` (job) | `calendar` | SC-10-05; mọi màn ghi (DEP-12) | Mở 業務日, tạo kỳ ở lần mở đầu tháng (Q-INC-03, DEC-055) |
+| `GET/POST /api/v1/delegations` | `iam` | SC-02-03 tab 代行者 → SC-08-03, SC-07-02 (DEP-14) | 代行 chỉ định trước (Q-STL-04) |
