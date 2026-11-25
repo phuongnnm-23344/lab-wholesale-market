@@ -32,7 +32,7 @@ related: []
   Ba mục `_common/` đó CHƯA TỒN TẠI — xem ISS-36. Chưa có thì viết trước rồi mới viết API.
 
   CÁCH DÙNG
-  1. Copy file này thành `{feature}/{API_ID}_API.md`, điền frontmatter trước.
+  1. Copy file này thành `specs/system-design/api-design/{screen-or-feature}/{API_ID}_API.md`, điền frontmatter trước.
   2. Cấp `API ID` ở `_common/api-list.md` TRƯỚC, rồi mới mở file này — spec màn hình
      (BM-2-901-51 mục 4.3) trỏ tới API bằng chính ID đó.
   3. Mục 1 History of change: xoá dòng mẫu, đánh lại từ `1 · 0.1.0 · Add new · Khởi tạo`.
@@ -73,7 +73,7 @@ related: []
      (MAJOR đổi hợp đồng: bỏ/đổi param, đổi kiểu, đổi status code · MINOR thêm param optional
      hoặc thêm ca response · PATCH sửa chữ).
      Dòng cuối bảng này phải khớp `version` / `updated` ở frontmatter và khớp dòng trong
-     `03-specs/_index.md` — ba nơi không được lệch.
+     `specs/system-design/api-design/_index.md` — ba nơi không được lệch.
      Biểu mẫu gốc gom lịch sử của MỌI API vào một sheet `History of changes`; tách file thì
      mỗi file tự mang lịch sử của mình — xem decision-log 2026-09-09.
      Biểu mẫu gốc còn có `Creator` / `Updator` riêng cho từng API — bỏ, vì cột `Ngày` và

@@ -15,9 +15,9 @@ related: [SPEC-AUTH_LOGIN-001, REQ-2609-01]
 
 # LOGIN — Màn hình đăng nhập
 
-> **BẢN MẪU** của [`BM-2-901-51-screen-specification-template.md`](./BM-2-901-51-screen-specification-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải spec của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
+> **BẢN MẪU** của [`BM-2-901-51-screen-specification-template.md`](../01-templates/BM-2-901-51-screen-specification-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải spec của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
 >
-> Thuộc bộ demo feature `authentication` — tài liệu yêu cầu cùng bộ: [`sample-REQ-2609-01.md`](../../requirements/_templates/sample-REQ-2609-01.md).
+> Thuộc bộ demo feature `authentication` — xem [`README.md`](./README.md) của thư mục này.
 
 > Biểu mẫu: **BM-2-901-51 v2.1** — Screen Specification · SUN ASTERISK VIETNAM CO., LTD · ISO/IEC 27001:2013 & ISO 9001:2015
 
@@ -136,11 +136,11 @@ Màn hình này là điểm vào công khai, không yêu cầu đăng nhập tr�
 **Tiền đề**
 
 - Tài khoản do admin tạo sẵn; màn hình này không có đường đăng ký.
-- Màn hình chỉ truy cập được từ mạng nội bộ hoặc VPN (ràng buộc C1 của [`sample-REQ-2609-01.md`](../../requirements/_templates/sample-REQ-2609-01.md)).
+- Màn hình chỉ truy cập được từ mạng nội bộ hoặc VPN (ràng buộc C1 của [`sample-REQ-2609-01.md`](./sample-REQ-2609-01.md)).
 
 **Quy tắc nghiệp vụ liên quan — không mô tả lại ở đây**
 
-Bốn quy tắc dưới đây chi phối hành vi màn hình nhưng **do máy chủ sở hữu hoàn toàn**. Nơi ở chính thức là `sample-AD_LOGIN_SPEC.md` mục Page-level Assumptions — ở đây chỉ nêu tên để người đọc biết mà tra:
+Bốn quy tắc dưới đây chi phối hành vi màn hình nhưng **do máy chủ sở hữu hoàn toàn**. Nơi ở chính thức là [`sample-AD_LOGIN_SPEC.md`](./sample-AD_LOGIN_SPEC.md) mục Page-level Assumptions — ở đây chỉ nêu tên để người đọc biết mà tra:
 
 | Mã | Tên | Ảnh hưởng tới màn hình |
 |---|---|---|

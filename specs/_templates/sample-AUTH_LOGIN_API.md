@@ -19,9 +19,9 @@ related: [SPEC-AUTH_LOGIN-001, SPEC-LOGIN-002]
 
 # API-AUTH-001 — POST /api/v1/auth/login
 
-> **BẢN MẪU** của [`BM-2-901-52-api-design-template.md`](./BM-2-901-52-api-design-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
+> **BẢN MẪU** của [`BM-2-901-52-api-design-template.md`](../01-templates/BM-2-901-52-api-design-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
 >
-> Thuộc bộ demo feature `authentication` — tài liệu yêu cầu cùng bộ: [`sample-REQ-2609-01.md`](../../requirements/_templates/sample-REQ-2609-01.md).
+> Thuộc bộ demo feature `authentication` — xem [`README.md`](./README.md) của thư mục này.
 
 > Biểu mẫu: **BM-2-901-52 v01** — API Design · SUN ASTERISK VIETNAM CO., LTD · ISO/IEC 27001:2013 & ISO 9001:2015
 
@@ -77,7 +77,7 @@ Xác thực nhân viên bằng email và mật khẩu, phát hành phiên đăng
 
 ## 5. Other Notes
 
-- **Vì sao một mã lỗi cho ba ca khác nhau (`401` / `M_01`):** để không suy ra được email nào đã đăng ký. Đây là quy tắc A3 ở `sample-AD_LOGIN_SPEC.md` mục Page-level Assumptions, **không phải** mô tả sơ sài. Đề nghị tách thành `M_01a` / `M_01b` để tiện gỡ lỗi sẽ phá quy tắc này.
+- **Vì sao một mã lỗi cho ba ca khác nhau (`401` / `M_01`):** để không suy ra được email nào đã đăng ký. Đây là quy tắc A3 ở [`sample-AD_LOGIN_SPEC.md`](./sample-AD_LOGIN_SPEC.md) mục Page-level Assumptions, **không phải** mô tả sơ sài. Đề nghị tách thành `M_01a` / `M_01b` để tiện gỡ lỗi sẽ phá quy tắc này.
 
 - **Thời gian phản hồi phải đồng đều giữa các ca lỗi.** Khi email không tồn tại, máy chủ vẫn chạy một phép băm giả trước khi trả `401`. Nếu bỏ bước này, thời gian phản hồi sẽ tiết lộ email nào có thật. Ngưỡng: chênh lệch p50 ≤ 50 ms (`NFR-SEC-02`).
 

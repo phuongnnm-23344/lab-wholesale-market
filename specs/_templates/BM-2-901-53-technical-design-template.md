@@ -19,7 +19,8 @@ related: []
   Nguồn: 02-context-inputs/bm-2-901-53-detail-design/
 
   CÁCH DÙNG
-  1. Copy file này thành `{feature}/{DESIGN_ID}_DETAIL.md`, điền frontmatter trước.
+  1. Copy file này thành `specs/{screen-or-feature}/technical-design/{FUNC_ID}_TECH.md`, điền frontmatter trước.
+     Một file một function; `{FUNC_ID}` là giá trị trường `design_id`.
   2. Mục 1 History of change: xoá dòng mẫu, đánh lại từ `1 · 0.1.0 · Add new · Khởi tạo`.
   3. Điền từ trên xuống. Xoá các khối comment và chữ trong {{...}} khi xong.
   4. Mục 4 lặp lại khối `4.x` cho mỗi bước xử lý — thêm/bớt bước và thêm/bớt dòng tuỳ function.
@@ -27,7 +28,7 @@ related: []
 
   FRONTMATTER — không có mục "Thông tin tài liệu" trong thân file, mọi trường định danh nằm ở
   frontmatter để tra được bằng máy:
-    design_id  mã tài liệu, viết HOA (vd `AUTH_LOGIN`)   function  tên function
+    design_id  mã function, viết HOA (vd `AUTH_VERIFY`) — dùng làm `{FUNC_ID}` trong tên file   function  tên function
     endpoint   `GET /api/v1/login` — không có thì để trống (batch, job nội bộ)
     component  service / module / class chạy xử lý này — tên phải KHỚP TỪNG KÝ TỰ với tên
                thành phần trên sequence diagram ở mục 2
@@ -62,7 +63,7 @@ related: []
      Từ khi có version đã được duyệt (ô `Approve`), mỗi lần sửa bắt buộc thêm một dòng và tăng version theo SemVer
      (MAJOR đổi luồng xử lý/hợp đồng dữ liệu · MINOR bổ sung bước hoặc lỗi mới · PATCH sửa chữ).
      Dòng cuối bảng này phải khớp `version` / `updated` ở frontmatter và khớp dòng trong
-     `03-specs/_index.md` — ba nơi không được lệch. -->
+     `specs/_index.md` — ba nơi không được lệch. -->
 
 ---
 
@@ -72,7 +73,7 @@ related: []
 
 **File nguồn của sơ đồ:** [{{tên file/frame}}]({{link Draw.io / Figma / Miro}})
 
-> - Ảnh lưu trong `{feature}/assets/`, **tên có tiền tố Design ID** (`{{DESIGN_ID}}_sequence.png`), nhúng bằng đường dẫn tương đối.
+> - Ảnh lưu trong `technical-design/assets/`, **tên có tiền tố Design ID** (`{{DESIGN_ID}}_sequence.png`), nhúng bằng đường dẫn tương đối.
 > - Vẽ bằng Draw.io / Figma / PlantUML — **không** vẽ bằng Excel hay Spreadsheet. Luôn để lại link file nguồn để người sau sửa được, ảnh PNG không sửa lại được.
 > - Sửa luồng xử lý ở mục 4 thì **phải xuất lại ảnh trong cùng lần sửa đó** — ảnh và mục 4 lệch nhau là lỗi nặng nhất của tài liệu này.
 > - Tên thành phần trên sơ đồ phải **khớp từng ký tự** với `component` ở frontmatter.

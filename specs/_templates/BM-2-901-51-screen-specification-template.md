@@ -16,7 +16,7 @@ related: []
   Nguồn: 02-context-inputs/bm-2-901-51-screen-specification/
 
   CÁCH DÙNG
-  1. Copy file này thành `{feature}/{SCREEN_ID}_SPEC.md`, điền frontmatter trước.
+  1. Copy file này thành `specs/{screen-or-feature}/screen-specification/{SCREEN_ID}_SPEC.md`, điền frontmatter trước.
   2. Mục 1 History of change: xoá dòng mẫu, đánh lại từ `1 · 0.1.0 · Add New · Khởi tạo`.
   3. Điền từ trên xuống. Xoá các khối comment và chữ trong {{...}} khi xong.
   4. Ô không có dữ liệu thì để trống; mục không áp dụng ghi "N/A + lý do", không xoá tiêu đề.
@@ -44,7 +44,7 @@ related: []
      Từ khi có version đã được duyệt (ô `Approve`), mỗi lần sửa bắt buộc thêm một dòng và tăng version theo SemVer
      (MAJOR đổi nghiệp vụ/luồng/đánh số item · MINOR bổ sung không phá vỡ · PATCH sửa chữ).
      Dòng cuối bảng này phải khớp `version` / `updated` ở frontmatter và khớp dòng trong
-     `03-specs/_index.md` — ba nơi không được lệch. -->
+     `specs/_index.md` — ba nơi không được lệch. -->
 
 ---
 
@@ -57,7 +57,7 @@ related: []
 ![{{SCREEN_ID}} annotated](./assets/{{SCREEN_ID}}_annotated.png)
 
 > - Ảnh thiết kế tạo bằng Figma / Draw.io / Adobe XD. **Không** vẽ màn hình bằng Excel hay Spreadsheet.
-> - Ảnh lưu trong `{feature}/assets/`, tên có tiền tố Screen ID, nhúng bằng đường dẫn tương đối.
+> - Ảnh lưu trong `screen-specification/assets/`, tên có tiền tố Screen ID, nhúng bằng đường dẫn tương đối.
 > - Modal / pop-up / dialog của màn hình này mô tả **ngay trong file này**, không tách file riêng.
 
 ---

@@ -18,9 +18,9 @@ related: [SPEC-AUTH_API-001, SPEC-AUTH_LOGIN-001]
 
 # AUTH_LOGIN — Chi tiết xử lý đăng nhập
 
-> **BẢN MẪU** của [`BM-2-901-53-detail-design-template.md`](./BM-2-901-53-detail-design-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
+> **BẢN MẪU** của [`BM-2-901-53-detail-design-template.md`](../01-templates/BM-2-901-53-detail-design-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
 >
-> Thuộc bộ demo feature `authentication` — tài liệu yêu cầu cùng bộ: [`sample-REQ-2609-01.md`](../../requirements/_templates/sample-REQ-2609-01.md).
+> Thuộc bộ demo feature `authentication` — xem [`README.md`](./README.md) của thư mục này.
 
 > Biểu mẫu: **BM-2-901-53 v01** — Detail Design (Chart + Description) · SUN ASTERISK VIETNAM CO., LTD · ISO/IEC 27001:2013 & ISO 9001:2015
 
@@ -218,7 +218,7 @@ Chạy xong, hệ thống ở một trong ba trạng thái: ① phiên mới đ�
 
 Function này không gọi trực tiếp hệ thống ngoài nào. Mail Gateway được gọi gián tiếp qua EventBus (`EV2`), chi tiết timeout/retry **hiện không có nơi ở** — mục này trước đây thuộc bản mẫu System Design, đã xoá ngày 2026-09-28 (`ISS-89`).
 
-**Quy ước log:** `_common/log-convention.md`. Riêng function này: **không bao giờ** ghi `password`, `password_hash` hay mã phiên vào log ở bất kỳ mức nào.
+**Quy ước log:** [`_common/log-convention.md`](../_common/log-convention.md). Riêng function này: **không bao giờ** ghi `password`, `password_hash` hay mã phiên vào log ở bất kỳ mức nào.
 
 **Câu hỏi mở / TBD**
 

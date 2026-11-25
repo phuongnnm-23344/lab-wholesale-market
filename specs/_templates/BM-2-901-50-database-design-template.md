@@ -17,7 +17,8 @@ related: []
   Nguồn: 02-context-inputs/bm-2-901-50-database-design/
 
   CÁCH DÙNG
-  1. Copy file này thành `{feature}/{DB_ID}_DATABASE.md` (hoặc `_common/` nếu nhiều feature dùng).
+  1. Copy file này thành `specs/system-design/database-design/{screen-or-feature}/{DB_ID}_DB.md`
+     — một file một nhóm bảng.
   2. Điền từ trên xuống. Mỗi bảng dữ liệu = một khối ở mục 4, lặp lại khối đó.
   3. Ô không có dữ liệu thì để trống; mục không áp dụng ghi "N/A + lý do", không xoá tiêu đề.
   4. Dự án không phải dự án Nhật: xoá phần nhãn tiếng Nhật trong tên cột.

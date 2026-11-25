@@ -1,6 +1,74 @@
  > **LAB-2 prototype (Product A — 桜水産市場, dữ liệu giả):** xem [`prototype/README.md`](prototype/README.md).
 > App: https://lab-wholesale-market-fup2.vercel.app/ · tài khoản demo, mật khẩu, kịch bản demo đều ở README đó.
-> Phần còn lại của file này là README của template quản lý dự án Sun* mà repo được dựng từ đó.
+> Ngay dưới là điều hướng bộ thiết kế LAB-4; từ mục "GitHub Project Management Template" trở xuống là README của template quản lý dự án Sun* mà repo được dựng từ đó.
+
+# Product A — 桜水産市場: tài liệu thiết kế LAB-4 (nhánh `ver/lab-4`)
+
+Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống hỗ trợ vận hành chợ bán buôn thủy sản 株式会社 桜水産市場 — khách hàng, số liệu, dữ liệu đều hư cấu):
+
+- **Prototype LAB-2** chạy thật ở `prototype/` (không sửa trong LAB-4).
+- **Bộ thiết kế LAB-4** (requirement, spec, kiến trúc, ADR, wireframe) theo chuẩn công ty [`sun-asterisk-internal/spec-standards`](https://github.com/sun-asterisk-internal/spec-standards) — QC-01 *Quy chuẩn Cấu trúc Thư mục Spec trên GitHub* (`0.32.1`).
+
+Đọc theo thứ tự: **`PREMISE.md` → `architecture/` → `wireframes/` → `specs/`**. Bộ thiết kế này là input để break task ở LAB-5.
+
+## 1. Bảng điều hướng
+
+| Nhóm / file | Chứa gì | Template | Kế thừa / mới | Người viết | Bảng tra |
+|---|---|---|---|---|---|
+| [`PREMISE.md`](PREMISE.md) | Tiền đề của LAB-4: thêm/bỏ so với LAB-1, giả định mới, hướng đi đã chốt, cách xử lý chỗ prototype làm khác | Frontmatter + History theo quy ước chuẩn | **Mới** (yêu cầu đề) | PL | — |
+| [`requirements/`](requirements/) | **WHAT** — tài liệu yêu cầu `REQ-{số Story}-{slug}.md` | `BM-2-901-63` | Kế thừa | BrSE / PL | [`requirements/_index.md`](requirements/_index.md) |
+| [`specs/`](specs/) | **HOW** — Screen Specification · Function Specifications · Technical Design trong `specs/{feature}/`; Database Design · API Design trong `specs/system-design/`; tài liệu dùng chung trong `specs/_common/` | `BM-2-901-50` … `BM-2-901-54` | Kế thừa | PL (BrSE, Tech Lead, Dev) | [`specs/_index.md`](specs/_index.md) |
+| [`architecture/`](architecture/) | Kiến trúc to-be: thành phần hệ thống, luồng dữ liệu chính, điểm tích hợp | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/_index.md`](architecture/_index.md) |
+| [`architecture/adr/`](architecture/adr/) | ADR: bối cảnh · quyết định · phương án đã bỏ · hệ quả | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/adr/_index.md`](architecture/adr/_index.md) |
+| [`wireframes/`](wireframes/) | 画面一覧, 画面遷移, wireframe chi tiết của các màn không có Screen Specification đầy đủ | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
+| `AI-report.md` | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa | — | **Mới** (yêu cầu đề) | PL | *(viết ở P4)* |
+| [`prototype/`](prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](prototype/README.md) |
+
+Nhóm thư mục mức repo khác (`.github/`, `docs/`, `scripts/`, `webhook/`) là phần của template quản lý dự án Sun* — xem từ mục "GitHub Project Management Template" trở xuống.
+
+## 2. Quy ước của dự án theo QC-01
+
+| Điểm QC-01 để dự án chọn | Dự án chọn |
+|---|---|
+| Kiểu tên nhánh version (§2) | Theo **milestone / phase** của khóa học: `ver/lab-4`, `ver/lab-5`, … — không trộn kiểu version sản phẩm |
+| Chia `specs/{screen-or-feature}/` (§2 ghi chú) | Theo **feature** (cụm nghiệp vụ, kebab-case tiếng Anh). Danh sách feature chốt ở P2-C, ghi vào `specs/_index.md` |
+| Screen ID | Giữ ID màn hình của LAB-1 (`SC-xx-yy`) để truy được về 画面一覧 LAB-1 và prototype LAB-2; tên file `SC-xx-yy_SPEC.md`. *Lệch quy tắc §4 (`{tiền tố}_{TÊN}` viết HOA) — xem §3* |
+| Nguồn khuôn `_templates/` | `spec-standards` nhánh `main`, commit `72c1dda` (2026-11-05). Hai thư mục `_templates/` copy cùng một lượt |
+
+## 3. Ngoại lệ có chủ đích so với QC-01
+
+| # | Quy định QC-01 | Dự án làm | Lý do |
+|---|---|---|---|
+| 1 | §1: spec nằm trong Management Repository riêng, **không** để trong repo code | Spec đặt chung repo với `prototype/` | Bài lab: một repo để reviewer xem prototype và thiết kế cạnh nhau, đối chiếu thiết kế với bảng dữ liệu thật của LAB-2. Dự án thật sẽ tách hai repo, trỏ nhau qua README |
+| 2 | §2: chỉ có `requirements/`, `specs/` là nhóm chuẩn | Thêm `architecture/`, `wireframes/` và hai file `PREMISE.md`, `AI-report.md` ở gốc | §1 cho phép thêm nhóm cùng cấp nếu có dòng trong README; đề LAB-4 yêu cầu các nhóm này |
+| 3 | §2: viết trên nhánh `ver/{tên}` mở từ `main`, merge lên `main` khi release | Nhánh `ver/lab-4` mở từ `main` (bản LAB-2 `0a99d10`), merge lên `main` lúc nộp LAB-4 | Đúng quy tắc; "release" ở đây là lúc nộp bài |
+| 4 | §4: Screen ID dạng `{tiền tố}_{TÊN}` | Giữ `SC-xx-yy` | Truy vết LAB-1 → LAB-2 → LAB-4 → task LAB-5 bằng một ID |
+| 5 | §2: tên bản mẫu `sample-AUTH_DB.md`, `sample-AUTH_FUNC.md`, `sample-AUTH_LOGIN_TECH.md` | Giữ tên thật trong `spec-standards/03-specs/02-samples/` (`sample-AUTH_DATABASE.md`, `sample-AUTH_FUNCTIONS.md`, `sample-AUTH_LOGIN_DETAIL.md`) | Ràng buộc 5: không sửa khuôn/bản mẫu tại chỗ. Cây ở QC-01 §2 và bộ bản mẫu thật đang lệch nhau ở repo chuẩn |
+| 6 | Bản mẫu chỉ có một cho mỗi loại | Screen Specification dùng `sample-LOGIN_SPEC.md` (bản mẫu của `BM-2-901-51`); không copy `BM-01-spec-template.md` và `sample-AD_LOGIN_SPEC.md` | Dự án dùng khuôn ISO `BM-2-901-51`; BM-01 là khuôn thứ hai cho cùng việc, chuẩn chưa chốt bỏ cái nào |
+
+Link tương đối bên trong các file bản mẫu (`../01-templates/…`) trỏ theo cấu trúc của repo chuẩn nên không mở được trong repo này — giữ nguyên theo ràng buộc 5.
+
+## 4. Kế thừa từ spec-standards và tạo mới
+
+*Khung — P4 điền đủ khi bộ thiết kế xong.*
+
+| File / template | Vị trí | Kế thừa / mới | Bản nguồn | Ghi chú |
+|---|---|---|---|---|
+| `BM-2-901-50-database-design-template.md` + `sample-AUTH_DATABASE.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
+| `BM-2-901-51-screen-specification-template.md` + `sample-LOGIN_SPEC.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
+| `BM-2-901-52-api-design-template.md` + `sample-AUTH_LOGIN_API.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
+| `BM-2-901-53-technical-design-template.md` + `sample-AUTH_LOGIN_DETAIL.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | Thay bản cũ `BM-2-901-53-detail-design-template.md` |
+| `BM-2-901-54-function-specifications-template.md` + `sample-AUTH_FUNCTIONS.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
+| `BM-2-901-63-requirement-document-template.md` + `sample-REQ-2609-01.md` | `requirements/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
+| `log-convention.md` | `specs/_common/` | Kế thừa, thêm mục 4 áp dụng cho dự án | `72c1dda` | |
+| Các `_index.md` | mỗi thư mục | Kế thừa quy định QC-01 §3 | — | |
+| `PREMISE.md` | gốc | Mới | — | |
+| Khuôn kiến trúc, khuôn ADR | `architecture/` | Mới | — | *(P2-A)* |
+| Khuôn 画面一覧 / 画面遷移 / wireframe | `wireframes/` | Mới | — | *(P2-C)* |
+| `AI-report.md` | gốc | Mới | — | *(P4)* |
+| Tài liệu spec theo từng feature | `specs/{feature}/`, `specs/system-design/` | Viết theo khuôn kế thừa | — | *(P2-B, P3)* |
+
+---
 
 # GitHub Project Management Template
 

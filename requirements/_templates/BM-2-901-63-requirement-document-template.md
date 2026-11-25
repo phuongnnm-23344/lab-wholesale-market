@@ -1,5 +1,5 @@
 ---
-id: REQ-YYMM-00
+id: REQ-000
 title:
 type: requirement
 project:
@@ -17,19 +17,21 @@ related: []
   Dựng mới 2026-09-10 từ bản nháp do chủ dự án cung cấp; cấp mã BM-2-901-63 ngày 2026-10-02.
 
   CÁCH DÙNG
-  1. Copy file này thành `01-requirements/{REQ_ID}-{slug}.md`, điền frontmatter trước.
+  1. Copy file này thành `requirements/REQ-{số Story}-{slug}.md`, điền frontmatter trước.
+     `requirements/` là thư mục phẳng, không có cấp feature.
   2. Mục 1 History of change: xoá dòng mẫu, đánh lại từ `1 · 0.1.0 · Add New · Khởi tạo`.
   3. Điền từ trên xuống. Xoá các khối comment và chữ trong {{...}} khi xong.
   4. Mục không áp dụng ghi "N/A + lý do", KHÔNG xoá tiêu đề mục — người đọc cần phân biệt
      "đã cân nhắc, không áp dụng" với "chưa ai viết".
-  5. Tài liệu này mô tả WHAT. Cách làm (màn hình, API, schema, luồng xử lý) thuộc `02-specs/`
+  5. Tài liệu này mô tả WHAT. Cách làm (màn hình, API, schema, luồng xử lý) thuộc `specs/`
      — viết vào đây là lẫn hai loại tài liệu và tạo hai nguồn cho cùng một nội dung.
 
   FRONTMATTER
-    id             `REQ-{YYMM}-{số}` — trùng mã tạm đã cấp ở RMP §V.3 Bước 1 nếu có
+    id             `REQ-{số Story}` — số Issue GitHub của Story (task cha của tính năng), vd `REQ-123`;
+                   dự án không tự cấp số. Trùng phần đầu tên file
     source         tài liệu gốc khách hàng gửi (tên file / link), để trống nếu do dự án tự viết
     received_date  ngày nhận tài liệu gốc
-    related        link sang các spec ở `02-specs/` được sinh ra từ tài liệu này
+    related        link sang các spec ở `specs/` được sinh ra từ tài liệu này
 -->
 
 # {{REQ_ID}} — {{Tên tài liệu yêu cầu}}
@@ -52,7 +54,7 @@ related: []
      Từ khi có version đã được duyệt (ô `Approve`), mỗi lần sửa bắt buộc thêm một dòng và tăng version theo SemVer
      (MAJOR đổi/huỷ yêu cầu, đổi phạm vi · MINOR bổ sung yêu cầu mới · PATCH sửa chữ).
      Dòng cuối bảng này phải khớp `version` / `updated` ở frontmatter và khớp dòng trong
-     `01-requirements/_index.md` — ba nơi không được lệch. -->
+     `requirements/_index.md` — ba nơi không được lệch. -->
 
 ---
 
@@ -111,7 +113,7 @@ related: []
 | **Tiêu chí chấp nhận** | {{1. Người dùng nhập SĐT hợp lệ (10 chữ số).}}<br>{{2. Hệ thống gửi mã OTP 6 chữ số qua SMS.}}<br>{{3. Nhập đúng OTP → đăng nhập thành công và chuyển hướng về Trang chủ.}}<br>{{4. Mã OTP có hiệu lực trong vòng 120 giây.}} |
 | **Độ ưu tiên** | {{High / Medium / Low}} |
 | **Vai trò liên quan** | {{End User}} |
-| **Spec liên quan** | {{link sang `02-specs/{feature}/...` — để trống khi chưa viết spec}} |
+| **Spec liên quan** | {{link sang `specs/...` — để trống khi chưa viết spec}} |
 
 <!-- Lặp lại khối `FR-...` cho mỗi yêu cầu, lặp lại khối `4.x` cho mỗi mô-đun.
      - Tiêu chí chấp nhận nằm trong bảng, đánh số và ngăn nhau bằng `<br>`.
@@ -119,7 +121,7 @@ related: []
        "Hệ thống phải thân thiện" không phải tiêu chí chấp nhận.
      - Mã `FR-*` đã cấp thì không tái sử dụng, kể cả khi yêu cầu bị huỷ — đổi trạng thái
        ở mục 7 chứ không xoá khối.
-     - `Spec liên quan` là chỗ nối sang `02-specs/`; mục 7 dùng chính cột này để soát độ phủ. -->
+     - `Spec liên quan` là chỗ nối sang `specs/`; mục 7 dùng chính cột này để soát độ phủ. -->
 
 ---
 
@@ -161,7 +163,7 @@ related: []
 
 | Mã FR | Trạng thái | Spec đã viết | Ghi chú |
 |---|---|---|---|
-| FR-{{AUTH}}-001 | {{planned / đang viết / đã có spec / đã huỷ}} | {{link `02-specs/...`}} | |
+| FR-{{AUTH}}-001 | {{planned / đang viết / đã có spec / đã huỷ}} | {{link `specs/...`}} | |
 
 <!-- Bảng soát ĐỘ PHỦ: mọi mã `FR-*` khai ở mục 4 đều phải có đúng một dòng ở đây.
      Đây là chỗ trả lời "yêu cầu nào của khách hàng chưa được đặc tả" — không có bảng này

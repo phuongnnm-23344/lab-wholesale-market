@@ -16,9 +16,9 @@ related: [SPEC-LOGIN-001, SPEC-AUTH_LOGIN-001]
 
 # REQ-2609-01 — Quản lý tài khoản và đăng nhập hệ thống quản trị
 
-> **BẢN MẪU** của [`BM-2-901-63-requirement-document-template.md`](./BM-2-901-63-requirement-document-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
+> **BẢN MẪU** của [`requirement-document-template.md`](../01-templates/requirement-document-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
 >
-> Thuộc bộ demo feature `authentication` — các bản mẫu spec cùng bộ nằm ở [`specs/_templates/`](../../specs/_templates/).
+> Thuộc bộ demo feature `authentication` — xem [`README.md`](./README.md) của thư mục này.
 
 > Requirement Document · **chưa cấp mã biểu mẫu ISO** — xem `ISS-42`
 
@@ -93,7 +93,7 @@ related: [SPEC-LOGIN-001, SPEC-AUTH_LOGIN-001]
 | **Tiêu chí chấp nhận** | 1. Nhập đúng email và mật khẩu → đăng nhập thành công, chuyển về Trang chủ.<br>2. Nhập sai → hiện thông báo lỗi **không cho biết sai email hay sai mật khẩu**.<br>3. Email không phân biệt hoa thường: `A@x.com` và `a@x.com` là cùng một tài khoản.<br>4. Phiên đăng nhập hết hạn sau 8 giờ, không tự gia hạn. |
 | **Độ ưu tiên** | High |
 | **Vai trò liên quan** | Nhân viên, Admin, Kiểm toán viên |
-| **Spec liên quan** | [`sample-LOGIN_SPEC.md`](../../specs/_templates/sample-LOGIN_SPEC.md) |
+| **Spec liên quan** | [`sample-LOGIN_SPEC.md`](./sample-LOGIN_SPEC.md) |
 
 #### FR-AUTH-002: Khoá tài khoản khi đăng nhập sai nhiều lần
 
@@ -103,7 +103,7 @@ related: [SPEC-LOGIN-001, SPEC-AUTH_LOGIN-001]
 | **Tiêu chí chấp nhận** | 1. Sai **5 lần** trong vòng **15 phút** → tài khoản chuyển trạng thái bị khoá.<br>2. Đang bị khoá thì nhập đúng mật khẩu cũng bị từ chối.<br>3. Sau **30 phút** hệ thống tự giải khoá, người dùng đăng nhập lại được.<br>4. Đăng nhập thành công làm bộ đếm về 0.<br>5. Thông báo khi bị khoá **giống hệt** thông báo sai mật khẩu (theo FR-AUTH-001 tiêu chí 2). |
 | **Độ ưu tiên** | High |
 | **Vai trò liên quan** | Nhân viên, Admin |
-| **Spec liên quan** | `sample-AD_LOGIN_SPEC.md` mục Page-level Assumptions (A1) |
+| **Spec liên quan** | [`sample-AD_LOGIN_SPEC.md`](./sample-AD_LOGIN_SPEC.md) mục Page-level Assumptions (A1) |
 
 #### FR-AUTH-003: Admin đặt lại mật khẩu
 
@@ -165,8 +165,8 @@ related: [SPEC-LOGIN-001, SPEC-AUTH_LOGIN-001]
 
 | Mã FR | Trạng thái | Spec đã viết | Ghi chú |
 |---|---|---|---|
-| FR-AUTH-001 | đã có spec | [`sample-LOGIN_SPEC.md`](../../specs/_templates/sample-LOGIN_SPEC.md) | |
-| FR-AUTH-002 | đã có spec | `sample-AD_LOGIN_SPEC.md` mục Page-level Assumptions (A1) | |
+| FR-AUTH-001 | đã có spec | [`sample-LOGIN_SPEC.md`](./sample-LOGIN_SPEC.md) | |
+| FR-AUTH-002 | đã có spec | [`sample-AD_LOGIN_SPEC.md`](./sample-AD_LOGIN_SPEC.md) mục Page-level Assumptions (A1) | |
 | FR-AUTH-003 | **đang viết** | — | Màn hình quản trị người dùng chưa có spec. **Đây là đường phục hồi duy nhất của FR-AUTH-002**, xem Q1 |
 | FR-AUTH-004 | **planned** | — | Chờ xác nhận bằng văn bản của khách hàng (Q2) trước khi viết spec |
 

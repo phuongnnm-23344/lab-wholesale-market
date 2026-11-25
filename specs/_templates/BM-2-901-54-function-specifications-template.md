@@ -37,7 +37,8 @@ related: []
   (Input/Output/Error/Detail), file này theo **chữ ký hàm**. Chồng lấn CHƯA CHỐT — ISS-38.
 
   CÁCH DÙNG
-  1. Copy file này thành `{feature}/{TÊN_MODULE}_FUNCTIONS.md`.
+  1. Copy file này thành `specs/{screen-or-feature}/function-specifications/{MODULE_ID}_FUNC.md`
+     — một file một module.
   2. Mục 2 lặp lại khối `2.x` cho mỗi function.
   3. Ô không có dữ liệu thì để trống; mục không áp dụng ghi "N/A + lý do", không xoá tiêu đề.
   4. Dự án không phải dự án Nhật: xoá phần nhãn tiếng Nhật trong tên cột.

@@ -18,9 +18,9 @@ related: [SPEC-AUTH_LOGIN-001]
 
 # Hệ thống quản trị nội bộ — Database Design
 
-> **BẢN MẪU** của [`BM-2-901-50-database-design-template.md`](./BM-2-901-50-database-design-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
+> **BẢN MẪU** của [`BM-2-901-50-database-design-template.md`](../01-templates/BM-2-901-50-database-design-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
 >
-> Thuộc bộ demo feature `authentication` — tài liệu yêu cầu cùng bộ: [`sample-REQ-2609-01.md`](../../requirements/_templates/sample-REQ-2609-01.md).
+> Thuộc bộ demo feature `authentication` — xem [`README.md`](./README.md) của thư mục này.
 
 | | |
 |---|---|

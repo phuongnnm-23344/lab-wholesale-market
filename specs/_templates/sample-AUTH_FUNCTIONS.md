@@ -16,11 +16,11 @@ related: [SPEC-AUTH_DTL-001]
 
 # AuthService — Function Specifications
 
-> **BẢN MẪU** của [`BM-2-901-54-function-specifications-template.md`](./BM-2-901-54-function-specifications-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
+> **BẢN MẪU** của [`BM-2-901-54-function-specifications-template.md`](../01-templates/BM-2-901-54-function-specifications-template.md) — điền sẵn dữ liệu thật để biết mức chi tiết cần đạt. Không phải tài liệu của dự án nào; không copy file này, copy khuôn rỗng rồi đối chiếu sang đây.
 >
 > ⚠️ **Dự án CHƯA chốt có dùng biểu mẫu này hay không — xem `ISS-38`.** Bản mẫu dựng ra để có dữ liệu thật mà cân nhắc, không phải để khuyến khích dùng. Nhận xét sau khi điền nằm ở cuối file.
 >
-> Thuộc bộ demo feature `authentication` — tài liệu yêu cầu cùng bộ: [`sample-REQ-2609-01.md`](../../requirements/_templates/sample-REQ-2609-01.md).
+> Thuộc bộ demo feature `authentication` — xem [`README.md`](./README.md) của thư mục này.
 
 | | |
 |---|---|
