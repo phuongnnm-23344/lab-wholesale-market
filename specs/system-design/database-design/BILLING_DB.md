@@ -3,7 +3,7 @@ id: SPEC-BILLING_DB-001
 title: Database Design — 期のお支払額 / 入金 / phân bổ / batch kế toán IF-ACC-01
 type: system
 subtype: database-design
-version: "0.3.0"
+version: "0.3.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -33,6 +33,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: 期のお支払額 lấy điều chỉnh theo `period_id` (kỳ GD gốc), điều chỉnh của kỳ đã khóa không vào kỳ đang mở (C-02); phân bổ 入金 vào kỳ đã khóa → tính lại thành DELTA (C-01); ví dụ thuế 8% (m-07) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | 4.48, 4.49 | Gate 1 recheck: 4.49 cột 5 chỉ tính GD ghi trước khi kỳ khóa (N-02); định nghĩa "còn nợ" của kỳ đã khóa cho FIFO (n-03) | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.3.1 | Update | 4.48, 4.49 | Khách Q-INC-02: GD 後入力 của kỳ đã khóa vào 期のお支払額 của kỳ `trades.incentive_period_id` (kỳ đang mở), không đi DELTA; "còn nợ" kỳ đã khóa chỉ cộng điều chỉnh | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -329,7 +330,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Phân bổ 入金 vào kỳ | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `payment_allocations` | Sửa bởi / ngày | — |
-| Overview | Bảng riêng, append-only (ADR-007 §2.7, sửa D03): mặc định **FIFO theo kỳ cũ nhất còn nợ** của người đó — "còn nợ" của một kỳ = `period_billings` LOCK (hoặc số hiện hành nếu kỳ còn mở) **+ Σ điều chỉnh / GD LATE_ENTRY gán vào kỳ đó sau khi khóa** − Σ phân bổ; hệ quả: tiền trả cho kỳ mới có thể bị FIFO đem trả khoản chênh của kỳ đã khóa trước, làm kỳ mới mất 完納 — đưa vào OPEN-DB-08 (recheck n-03); có 請求番号 (E-02) thì phân bổ theo số; 照合 có thể gán tay (`MANUAL`, có lý do). Hủy batch → dòng `REVERSE` số âm. 入金 sau 支払期日 vẫn gán kỳ cũ nhưng `is_on_time = false` → kỳ đó không 完納 (L4-A04 (2)). Màn 期ロック đọc bảng này để hiện tiền nào gán vào kỳ nào (OPEN-L4-02). **Chỉ thêm.** | Note | Test vector bắt buộc: nợ kỳ cũ + FIFO làm kỳ mới mất 完納 (OPEN-L4-02) |
+| Overview | Bảng riêng, append-only (ADR-007 §2.7, sửa D03): mặc định **FIFO theo kỳ cũ nhất còn nợ** của người đó — "còn nợ" của một kỳ = `period_billings` LOCK (hoặc số hiện hành nếu kỳ còn mở) **+ Σ điều chỉnh gán vào kỳ đó sau khi khóa** − Σ phân bổ; hệ quả: tiền trả cho kỳ mới có thể bị FIFO đem trả khoản chênh của kỳ đã khóa trước, làm kỳ mới mất 完納 — đưa vào OPEN-DB-08 (recheck n-03); có 請求番号 (E-02) thì phân bổ theo số; 照合 có thể gán tay (`MANUAL`, có lý do). Hủy batch → dòng `REVERSE` số âm. 入金 sau 支払期日 vẫn gán kỳ cũ nhưng `is_on_time = false` → kỳ đó không 完納 (L4-A04 (2)). Màn 期ロック đọc bảng này để hiện tiền nào gán vào kỳ nào (OPEN-L4-02). **Chỉ thêm.** | Note | Test vector bắt buộc: nợ kỳ cũ + FIFO làm kỳ mới mất 完納 (OPEN-L4-02) |
 
 **Định nghĩa cột**
 
@@ -369,7 +370,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 2 | FK | Kỳ | `period_id` | UUID | N/A | Yes | | |
 | 3 | FK | Người tham gia | `participant_id` | UUID | N/A | Yes | | |
 | 4 | | Loại ảnh chụp | `snapshot_kind` | `billing_snapshot_kind` | N/A | Yes | | |
-| 5 | | Tổng 税抜 | `amount_excl_jpy` | BIGINT | N/A | Yes | | = Σ GD có `trade_date` trong kỳ **ghi trước khi kỳ khóa** + Σ `trade_adjustments` có `period_id` = kỳ này **ghi trước khi kỳ khóa**. GD `LATE_ENTRY` có `trade_date` thuộc kỳ đã khóa không vào đây mà đi DELTA (recheck N-02, INCENTIVE_DB TV-13). Điều chỉnh ghi sau 期ロック của kỳ này không vào đây (và không vào kỳ đang mở) mà đi DELTA (Gate 1 C-02) |
+| 5 | | Tổng 税抜 | `amount_excl_jpy` | BIGINT | N/A | Yes | | = Σ GD có **kỳ tính thưởng** = kỳ này (`COALESCE(incentive_period_id, kỳ của trade_date)`) **ghi trước khi kỳ khóa** + Σ `trade_adjustments` có `period_id` = kỳ này **ghi trước khi kỳ khóa**. GD `LATE_ENTRY` ghi khi kỳ của `trade_date` đã khóa **không** vào kỳ gốc; nó vào 期のお支払額 của kỳ `trades.incentive_period_id` (Q-INC-02 [Customer giả lập, 2026-11-25]; ADR-007 §2.3-7a; INCENTIVE_DB TV-13 / TV-15). Điều chỉnh ghi sau 期ロック của kỳ này không vào đây (và không vào kỳ đang mở) mà đi DELTA (Gate 1 C-02) |
 | 6 | | Tổng thuế | `tax_jpy` | BIGINT | N/A | Yes | | = Σ `period_billing_tax_lines.tax_jpy` |
 | 7 | | 期のお支払額 (税込) | `amount_incl_jpy` | BIGINT | N/A | Yes | | |
 | 8 | FK | Version quy chế | `rule_version_id` | UUID | N/A | Yes | | |

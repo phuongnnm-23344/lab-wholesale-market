@@ -3,7 +3,7 @@ id: SPEC-INC_FUNC-001
 title: Function Specifications — module incentive (kỳ, phân bổ 入金, 完納奨励金, 期ロック)
 type: system
 subtype: function-specifications
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 feature: incentive
@@ -26,6 +26,7 @@ Quy ước: hàm ghi chỉ chạy qua role ứng dụng có `EXECUTE`; mọi hà
 | No | Ver | アクション / Action | 対象シート / Sheet | 変更内容 / Description of changes | 更新日 / Change Date | 更新者 / Editor | 承認 / Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | Ver 0.1 | Add New | 2.1–2.13 | Khởi tạo: 12 hàm DB + 1 route handler của engine 完納奨励金 + màn SC-09-04 + mã lỗi `E-INC-001..013` | 2026-11-25 | phuongnnm-23344 | |
+| 2 | Ver 0.1.1 | Update | — | Khách Q-INC-02: 2.1 lọc theo kỳ tính thưởng (GD 後入力 kỳ đã khóa sang kỳ đang mở); Q-INC-01: 2.3 paid_on = 入金日 CSV, 2.12/2.13 tick `paymentCsvImportConfirmed`, mã E-INC-014 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -44,13 +45,13 @@ Quy ước: hàm ghi chỉ chạy qua role ứng dụng có `EXECUTE`; mọi hà
 
 **Function description**
 
-> - Đọc GD hiệu lực (`v_trade_effective`) theo `trade_date` ∈ P, `trade_adjustments.period_id = P`, `payment_allocations.period_id = P`, 修正申請 KANNO / INCENTIVE đã duyệt; `STABLE`, không ghi.
+> - Đọc GD hiệu lực (`v_trade_effective`) có kỳ tính thưởng = P (`incentive_period_id = P`, hoặc NULL và `trade_date` ∈ P — GD 後入力 của kỳ đã khóa chuyển sang kỳ đang mở, TECH §3.4 / Q-INC-02), `trade_adjustments.period_id = P`, `payment_allocations.period_id = P`, 修正申請 KANNO / INCENTIVE đã duyệt; `STABLE`, không ghi.
 > - Lỗi: P không tồn tại → `E-INC-001`; P `LOCKED` → `E-INC-002`.
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|
 | `app.payment_periods` | `v_period` | Ranh giới ngày `start_date` / `end_date` để lọc `trade_date` |
-| `uuid[]` | `v_candidate_ids` | Danh sách Q đã khóa có đầu vào `created_at > Q.locked_at` |
+| `uuid[]` | `v_candidate_ids` | Danh sách Q đã khóa có đầu vào `created_at > Q.locked_at` (điều chỉnh, phân bổ, 修正申請 KANNO / INCENTIVE — **không** gồm GD 後入力) |
 
 ### 2.2. `app.incentive_input_hash`
 
@@ -82,7 +83,7 @@ Quy ước: hàm ghi chỉ chạy qua role ứng dụng có `EXECUTE`; mọi hà
 
 **Function description**
 
-> - K2: phân bổ theo 請求番号 (khi E-02 bật) hoặc FIFO theo kỳ cũ nhất còn nợ; tiền thừa → kỳ `OPEN` cũ nhất; ghi `is_on_time = paid_on ≤ due_date`. Gọi từ hàm nhập CSV (SC-09-01) và khi ánh xạ mã người nộp được sửa (SC-09-02). Chỉ thêm.
+> - K2: phân bổ theo 請求番号 (khi E-02 bật) hoặc FIFO theo kỳ cũ nhất còn nợ; tiền thừa → kỳ `OPEN` cũ nhất; ghi `is_on_time = paid_on ≤ due_date` — `paid_on` = 入金日 trên CSV ngân hàng, không phải ngày import (Q-INC-01). Gọi từ hàm nhập CSV (SC-09-01) và khi ánh xạ mã người nộp được sửa (SC-09-02). Chỉ thêm.
 > - `participant_id` NULL → trả rỗng (không lỗi).
 
 | Variable type | Variable name | Role of variables |
@@ -264,10 +265,11 @@ Quy ước: hàm ghi chỉ chạy qua role ứng dụng có `EXECUTE`; mọi hà
 | `char(64)` | `p_expected_input_hash` | Mã băm lần 試算 người dùng đã xem — khác hiện tại → `E-INC-008` |
 | `jsonb` | `p_judgements` | Judgement cuối cho mọi dòng `SUSPECT` |
 | `int` | `p_ack_warning_count` | Số cảnh báo ⚠ người dùng đã xác nhận — khác → `E-INC-013` |
+| `boolean` | `p_payment_csv_confirmed` | Tick 「支払期日分までの入金CSV取込済」 — khác `true` → `E-INC-014` (Q-INC-01) |
 
 **Function description**
 
-> - K8-2..9 trong transaction của caller: khóa dòng P, kiểm điều kiện (`E-INC-002/003/004/005/009`), gọi 2.10 `LOCK`, ghi `period_billings` LOCK, `incentive_runs`, `incentive_results`, 端数調整, `LOCKED`, kỳ kế, `notifications`, `audit_logs`. MFA đã được route handler xác minh và ghi vào `app.mfa_verified_at`; hàm kiểm mốc này ≤ 60 giây (hỏi lại mã).
+> - K8-2..9 trong transaction của caller: khóa dòng P, kiểm điều kiện (`E-INC-002/003/004/005/009/014`), gọi 2.10 `LOCK`, ghi `period_billings` LOCK, `incentive_runs` (kèm `payment_csv_confirmed_at`, `payment_csv_latest_paid_on`), `incentive_results`, 端数調整, `LOCKED`, kỳ kế, `notifications`, `audit_logs`. MFA đã được route handler xác minh và ghi vào `app.mfa_verified_at`; hàm kiểm mốc này ≤ 60 giây (hỏi lại mã).
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|
@@ -292,7 +294,7 @@ Quy ước: hàm ghi chỉ chạy qua role ứng dụng có `EXECUTE`; mọi hà
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|
-| `LockPeriodBody` | `body` | Body đã kiểm (`expected_input_hash`, `judgements`, `ack_warning_count`; header `X-MFA-Token`) |
+| `LockPeriodBody` | `body` | Body đã kiểm (`expectedInputHash`, `judgements`, `ackWarningCount`, `paymentCsvImportConfirmed`; header `X-MFA-Token`) |
 | `SessionContext` | `session` | Người, thiết bị, vai — đưa vào `set_config` |
 
 ---
@@ -314,5 +316,6 @@ Quy ước: hàm ghi chỉ chạy qua role ứng dụng có `EXECUTE`; mọi hà
 | E-INC-011 | 422 | 要確認ではない買受人に判断が指定されています。 | Judgement sai đối tượng | 2.5; API-INC-002, 003 |
 | E-INC-012 | 404 | この期の確定結果はまだありません（期ロック前）。 | Chưa có kết quả chính thức | API-INC-004 |
 | E-INC-013 | 409 | 確認が必要な注意事項が {count} 件あります。内容を確認してから期ロックしてください。 | Số cảnh báo ⚠ đổi | 2.12; API-INC-003 |
+| E-INC-014 | 422 | 支払期日分までの入金CSVの取込を確認し、チェックを入れてください。 | Chưa tick 「支払期日分までの入金CSV取込済」 (Q-INC-01) | 2.12; SC-09-04 [17]; API-INC-003 |
 
 Mã chung `E-CMN-001..008` (thông điệp JP một bản, HTTP, cách client xử lý): [`_common/error-codes.md`](../../_common/error-codes.md). Body lỗi, MFA, khóa lạc quan: [`_common/api-conventions.md`](../../_common/api-conventions.md).

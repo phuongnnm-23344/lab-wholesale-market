@@ -2,7 +2,7 @@
 id: WF-SC-09-04
 title: Wireframe SC-09-04 奨励金計算・期ロック
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-09-06, FT-09-07, FT-09-08, FT-09-10, BR-INC-01, FR-INC-01, FR-INC-03, PRM-040, PRM-042, PRM-043, PRM-053, PRM-055, E-02, OPEN-L4-02, L4-A04, D01, D02, D03, D04, D05, N13, ADR-007, ADR-002]
@@ -36,6 +36,8 @@ Số tiền ví dụ dùng thuế suất **8% (軽減税率, thủy sản tươi
 │ B11    ¥  324,000   ¥  323,560  2027-08: ¥323,560             要確認  [14]手数料差引の疑い│
 │ [6] 請求番号なし → FIFO で充当（E-02 回答後に変更）                                     │
 │ [15] 前期以前の調整（期ロック済の期に属する訂正）: N04 2027-07期（移行期）−¥41,040 → 下の差額へ │
+│ [18] 前期分の後入力（この期の支払額に含む）: B12 取引日 07/30 ¥200,000                      │
+│ [17] □ 支払期日分までの入金CSV取込済　最新の入金日 2027/09/10（取込 09/13 08:40）           │
 └────────────────────────────────────────────────────────────────────────────┘
 ┌─ [7] 試算結果（記録されません — 最終 14:05 実行）────────────────────────────────┐
 │ [8] タブ: (仲卸 交付率表) (売買参加者 交付率表)                                     │
@@ -67,8 +69,10 @@ Số tiền ví dụ dùng thuế suất **8% (軽減税率, thủy sản tươi
 | 12 | (bỏ) 計算して記録 | — | Bỏ ở 0.2.0 — kết quả chính thức chỉ ghi trong transaction 期ロック (M-02, N13); giữ số theo quy tắc `_common-layout` | ADR-007 §2.1 |
 | 13 | 期ロック | Nút | C-31 (「ロック後は直接修正できません。差額は次期の期ロックで計上されます」) → C-30 MFA (luôn hỏi lại mã — hành động không quay lại được). Trong **cùng transaction**: tính chính thức MAIN + DELTA mọi kỳ đã khóa có đầu vào đổi sau khi khóa (không giới hạn năm TC, theo **version của kỳ cũ**, không hồi tố 完納 — trừ 修正申請 KANNO), ghi kết quả + mã băm đầu vào, sinh 端数調整, đóng kỳ, xếp email | PRM-043, ADR-007 |
 | 14 | 「手数料差引の疑い」 | Nhãn + hộp quyết | Thiếu ≤ mức đánh dấu ở file cấu hình và có 入金 trong hạn → **要確認**, máy **không** tự kết luận. 照合部門長 chọn 完納 / 非完納 + lý do (bắt buộc); gợi ý mặc định 非完納 (phí chuyển khoản do người mua chịu — PRM-040); quyết định ghi vào kết quả khi 期ロック (`kanno_basis = JUDGED`). Chờ 経理部 trả lời về phí chuyển khoản. Khách #7 | BR-INC-01, CAP-HUMAN-01, ADR-007 |
-| 15 | 前期以前の調整 | Dòng thông tin | Điều chỉnh thuộc kỳ đã 期ロック (gán theo kỳ của GD gốc) **không** cộng vào 期のお支払額 kỳ này; đi DELTA. Hiện để 照合 thấy tiền đi đâu | ADR-007, OPEN-DB-08 |
+| 15 | 前期以前の調整 | Dòng thông tin | Điều chỉnh (修正申請 TRADE) thuộc kỳ đã 期ロック (gán theo kỳ của GD gốc) **không** cộng vào 期のお支払額 kỳ này; đi DELTA. GD 後入力 không ở đây — xem [18]. Hiện để 照合 thấy tiền đi đâu | ADR-007, OPEN-DB-08 |
 | 16 | So với lần 試算 trước | Nhãn | Từ dòng 監査ログ của lần 試算 trước | khách #6 |
+| 17 | 入金CSV取込済 | Checkbox | 照合部門長 tick khi đã nhập đủ 入金 CSV có 入金日 tới 支払期日; nhãn bên cạnh hiện 入金日 lớn nhất + giờ nhập; không tick → [13] mờ, server trả `E-INC-014`. 完納 theo 入金日 của ngân hàng, không theo ngày import (không phải ân hạn) | Q-INC-01 [Customer giả lập, 2026-11-25]; BR-INC-01 |
+| 18 | 前期分の後入力 | Dòng thông tin | GD 後入力 của kỳ đã 期ロック **chuyển sang kỳ này**: cộng vào 期のお支払額, xét 完納 theo 支払期日 kỳ này, như tiền bình thường — một quy tắc cho người có / không có GD ở kỳ đã khóa | Q-INC-02 [Customer giả lập, 2026-11-25]; ADR-007 §2.3-7a |
 
 ## 4. Trạng thái
 
@@ -76,13 +80,14 @@ Số tiền ví dụ dùng thuế suất **8% (軽減税率, thủy sản tươi
 |---|---|
 | Chưa có 入金 / kỳ chưa kết thúc | [4] C-21; [13] mờ |
 | Còn dòng 要確認 chưa quyết | [13] mờ; câu 「要確認 1件の判断が必要です」 |
+| Chưa tick [17] | [13] mờ; câu 「入金CSVの取込を確認してください」 |
 | Có dòng ⚠ ở [4] | Không chặn; [13] hỏi 「⚠ 2件を確認しましたか」 |
 | Đã khóa | Chỉ đọc; [7] đổi tiêu đề thành 「確定結果（期ロック 桜 七子 09/14 10:20）」; sửa → 修正申請 → DELTA ở 期ロック kế tiếp (C-24) |
 | Mất mạng | C-28 |
 
 ## 5. Khác biệt theo vai
 
-STL-HEAD: toàn màn. SETTLE: xem [4], [7], nút [11]; không quyết [14], không [13]. OPS-HEAD: chỉ đọc. Vai khác: C-25.
+STL-HEAD: toàn màn. SETTLE: xem [4], [7], [17] (chỉ đọc), [18], nút [11]; không quyết [14], không tick [17], không [13]. OPS-HEAD: chỉ đọc. Vai khác: C-25.
 
 ## 6. To-be khác prototype
 
@@ -104,3 +109,4 @@ STL-HEAD: toàn màn. SETTLE: xem [4], [7], nút [11]; không quyết [14], khô
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: bỏ nút 計算して記録, [7] luôn là 試算 trước khóa, 期ロック = tính chính thức + đóng băng (M-02); 支払期日 lùi theo ngày ngân hàng (M-03); ví dụ tiền 8%, thưởng 9.900 (m-07); DELTA không giới hạn năm TC, CARRY_EXPIRED (C-01, m-05); dòng [15] 前期以前の調整 (C-02); 試算 chạy nhiều lần có audit + [16] (khách #6); 手数料差引の疑い = 要確認 (khách #7). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-05: N01 bậc 3; 2027-07 ghi là kỳ migrate, version go-live | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | Khách Q-INC-01/02: thêm [17] tick 入金CSV取込済, [18] 前期分の後入力; [15] chỉ còn điều chỉnh | 2026-11-25 | phuongnnm-23344 |  |

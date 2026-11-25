@@ -3,7 +3,7 @@ id: SPEC-TRADE_DB-001
 title: Database Design — 相対 (luồng chính) / せり / in phiếu / giao hàng
 type: system
 subtype: database-design
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -33,6 +33,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: `trades.trade_date` (取引日 thật, quyết định kỳ) tách khỏi `business_date` ghi sổ, `deliveries.original_business_date` (M-05, C-02); `delivery_exceptions.settle_reviewed_*` — ngoại lệ giao đổi tiền phải 「確認済」 trước 日次締め (khách #4); 4.36 cho 配送部門責任者 khác xác nhận phiếu giấy khi người ký vắng (khách #16) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Modify | `delivery_exceptions`, `dispute_confirmations`, `trade_status_history` | Gộp P3 (spec delivery, trade): `delivery_exceptions.fix_id` → `trade_fixes` (ngoại lệ đổi tiền ở ngày chưa khóa do vai DELIVERY tạo qua hàm ngoại lệ — ADR-004 0.3.x §2.2; checklist 日次締め không đếm hai lần — Q-DEL-04, Q-DEL-09); `dispute_confirmations.conclusion` (`COMPLETED` / `PARTIAL_RETURN` / `CONTINUE_DISPUTE`) + unique `exception_id` thành unique partial `conclusion <> 'CONTINUE_DISPUTE'` để ghi được nhiều lượt 継続協議 (Q-DEL-07); 差し戻し dòng せり ghi ở `trade_status_history` (`REJECT` + lý do), `seri_status` không thêm giá trị (Q-TRD-04); nhãn sự kiện FIG-012 bỏ chữ 「承認」 cho duyệt nội bộ (L4-D03) | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Modify | `trades` | Gate 2 / khách Q-INC-02: thêm cột 3b `incentive_period_id` (kỳ tính thưởng của GD 後入力 khi kỳ của `trade_date` đã LOCKED lúc ghi) + FK + CHECK — ADR-007 §2.3-7a, INCENTIVE_DB TV-13 / TV-15 | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -194,6 +195,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 2 | UNI | Số GD | `trade_no` | VARCHAR | 20 | Yes | | Qua `day_counters` |
 | 3 | FK | 業務日 ghi sổ | `business_date` | DATE | N/A | Yes | | Ngày `OPEN` lúc ghi; dùng cho sổ ngày, 日次精算, IF-ACC-01 |
 | 3a | | 取引日 (ngày GD thật) | `trade_date` | DATE | N/A | Yes | | = `business_date`, **trừ** GD nhập qua 修正申請 `LATE_ENTRY` cho ngày đã khóa (= ngày trên 紙伝票). **Kỳ của GD = tháng của cột này** (L4-A04 (2); Gate 1 C-02, M-05). CHECK `trade_date <= business_date` |
+| 3b | FK | Kỳ tính thưởng (後入力) | `incentive_period_id` | UUID | N/A | No | | Chỉ cho GD nhập qua 修正申請 `LATE_ENTRY` khi kỳ của `trade_date` đã `LOCKED` lúc ghi: = kỳ chứa `business_date` (luôn `OPEN`). Hàm ghi đọc kỳ gốc `FOR SHARE` (không chạy song song với 期ロック). NULL = kỳ của `trade_date`. Chỉ dùng cho 期のお支払額 / 完納奨励金; sổ ngày, IF-ACC-01 vẫn theo `business_date` / `trade_date`. CHECK `incentive_period_id IS NULL OR (source = 'PAPER_LATE' AND trade_date <> business_date)` (Q-INC-02 [Customer giả lập, 2026-11-25]; ADR-007 §2.3-7a) |
 | 4 | FK | Lô | `lot_id` | UUID | N/A | Yes | | |
 | 5 | FK | Người mua | `buyer_id` | UUID | N/A | Yes | | `NAKAOROSHI` hoặc `BAIBAI` có tư cách `VALID` lúc chốt |
 | 6 | | Kênh | `channel` | `trade_channel` | N/A | Yes | `'AITAI'` | |
@@ -214,7 +216,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 
 **Index** — `trades_pkey`; `uq_trades_trade_no`; `idx_trades_business_date` (`business_date`); `idx_trades_lot` (`lot_id`); `idx_trades_buyer_date` (`buyer_id`, `business_date`) — 精算 người × ngày; `idx_trades_buyer_trade_date` (`buyer_id`, `trade_date`) — 参加上限 và 期のお支払額 theo kỳ; `idx_trades_seri_session` (`seri_session_id`). Không chia bảng (ADR-009 §2.2-7: chỉ `audit_logs` chia theo năm TC); truy vấn danh sách luôn có khoảng `business_date` + phân trang (M23).
 
-**Khoá ngoại** — `business_date` → `business_days`; `lot_id` → `lots.id`; `buyer_id` → `participants.id`; `seri_session_id` → `seri_sessions.id`; `tax_rate_id` → `tax_rates.id`; `rule_version_id` → `rule_versions.id`; `confirmed_by` → `staff_accounts.id`. `over_limit_reason_code`: kiểm trong hàm (FK ghép như 4.25).
+**Khoá ngoại** — `business_date` → `business_days`; `lot_id` → `lots.id`; `buyer_id` → `participants.id`; `seri_session_id` → `seri_sessions.id`; `incentive_period_id` → `payment_periods.id`; `tax_rate_id` → `tax_rates.id`; `rule_version_id` → `rule_versions.id`; `confirmed_by` → `staff_accounts.id`. `over_limit_reason_code`: kiểm trong hàm (FK ghép như 4.25).
 
 ---
 

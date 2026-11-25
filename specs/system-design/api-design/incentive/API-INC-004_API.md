@@ -9,7 +9,7 @@ method: GET
 media_type: application/json
 feature: incentive
 screen_id: [SC-09-04, SC-09-05]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-09-04-001, SPEC-INC_ENGINE-001, SPEC-INCENTIVE_DB-001, ADR-007, FR-INC-01, FR-AUDIT-03]
@@ -26,6 +26,7 @@ related: [SPEC-SC-09-04-001, SPEC-INC_ENGINE-001, SPEC-INCENTIVE_DB-001, ADR-007
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-m01: Note camelCase (`payoutJpy`, `carryExpiredUnpaid`, `buyerNo`, `unpaidJpy`) | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -51,7 +52,7 @@ Trả **kết quả chính thức** đã ghi ở 期ロック của một kỳ: 
 
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
-| 1 | 200 | OK | <pre>{<br>  "periodCode": "2027-09",<br>  "lockedAt": "2027-10-13T10:05:00+09:00",<br>  "lockedBy": { "name": "桜 七子", "delegationId": null },<br>  "runId": "9d9d9d9d-0000-4000-8000-000000000901",<br>  "inputHash": "a07c55…",<br>  "results": [<br>    { "buyerNo": "B02", "participantClass": "BAIBAI", "kind": "DELTA", "refPeriodCode": "2027-08", "kanno": true, "kannoBasis": "AUTO", "judgementNote": null, "payableInclJpy": 1296000, "paidOnTimeJpy": 1080000, "eligibleExclJpy": 1200000, "tierNo": 3, "rateBp": 90, "incentiveJpy": 1980, "ruleVersionLabel": "第3版", "correctionId": null }<br>  ],<br>  "payouts": [ { "buyerNo": "B02", "sumJpy": 1980, "payoutJpy": 1980 } ],<br>  "roundingAdjustments": [ { "taxRatePercent": 8, "amountJpy": 2 } ],<br>  "carryExpiredUnpaid": []<br>}</pre> | Ví dụ chỉ hiện dòng DELTA của TV-02 (INCENTIVE_DB §5): tính lại kỳ 2027-08 bằng version kỳ 08, ghi ở kỳ 09 (MAIN kỳ 09 của B02 không có trong TV nên không ghi số). `payouts[].payout_jpy` = max(0, `sumJpy`). `carry_expired_unpaid[]` (chỉ kỳ tháng 03): `{buyer_no, unpaid_jpy}` = trị tuyệt đối phần âm chưa thu (RPT-07) |
+| 1 | 200 | OK | <pre>{<br>  "periodCode": "2027-09",<br>  "lockedAt": "2027-10-13T10:05:00+09:00",<br>  "lockedBy": { "name": "桜 七子", "delegationId": null },<br>  "runId": "9d9d9d9d-0000-4000-8000-000000000901",<br>  "inputHash": "a07c55…",<br>  "results": [<br>    { "buyerNo": "B02", "participantClass": "BAIBAI", "kind": "DELTA", "refPeriodCode": "2027-08", "kanno": true, "kannoBasis": "AUTO", "judgementNote": null, "payableInclJpy": 1296000, "paidOnTimeJpy": 1080000, "eligibleExclJpy": 1200000, "tierNo": 3, "rateBp": 90, "incentiveJpy": 1980, "ruleVersionLabel": "第3版", "correctionId": null }<br>  ],<br>  "payouts": [ { "buyerNo": "B02", "sumJpy": 1980, "payoutJpy": 1980 } ],<br>  "roundingAdjustments": [ { "taxRatePercent": 8, "amountJpy": 2 } ],<br>  "carryExpiredUnpaid": []<br>}</pre> | Ví dụ chỉ hiện dòng DELTA của TV-02 (INCENTIVE_DB §5): tính lại kỳ 2027-08 bằng version kỳ 08, ghi ở kỳ 09 (MAIN kỳ 09 của B02 không có trong TV nên không ghi số). `payouts[].payoutJpy` = max(0, `sumJpy`). `carryExpiredUnpaid[]` (chỉ kỳ tháng 03): `{buyerNo, unpaidJpy}` = trị tuyệt đối phần âm chưa thu (RPT-07) |
 | 2 | 401 | Chưa đăng nhập | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | |
 | 3 | 403 | Vai không được xem | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | |
 | 4 | 404 | Kỳ không tồn tại | <pre>{ "error": { "code": "E-INC-001", "message": "指定された期が見つかりません。" } }</pre> | |

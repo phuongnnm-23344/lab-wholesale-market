@@ -3,7 +3,7 @@ id: SPEC-INCENTIVE_DB-001
 title: Database Design — 完納奨励金 (lần chạy, kết quả, test vector)
 type: system
 subtype: database-design
-version: "0.3.1"
+version: "0.3.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -34,6 +34,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: phạm vi tính lại DELTA mọi kỳ đã khóa, giới hạn năm TC chỉ cho CARRY, thêm `CARRY_EXPIRED` (C-01, m-05); đầu vào theo `period_id` kỳ GD gốc (C-02); `correction_id` cho 修正申請 KANNO / INCENTIVE (M-10, M-04); `kanno_basis`, `judgement_note` cho 「手数料差引の疑い」 (khách #7); 試算 ghi audit (khách #6, M-02); thêm §5 test vector | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | 4.52, §5 | Gate 1 recheck: nhãn INC-EDGE đúng C.3 (N-01) + TV-12 INC-EDGE-01; GD LATE_ENTRY vào đầu vào DELTA + TV-13 (N-02); CARRY_EXPIRED dương đóng số dư, TV-04 không đếm âm hai lần (n-01); TV-14 修正申請 INCENTIVE (n-02); bảng 仲卸 giả; tham chiếu TV-06 (n-04) | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.3.1 | Update | §5 TV-14 | Kiểm diff 5b0ef16 D-05: ghim ngày khóa kỳ 10 / 11 / 12 và ngày duyệt TRADE 2027-12-20; ghi rõ số tiền INCENTIVE cố định, biến thể duyệt trước khóa → tổng +2.990 tách 2 dòng (+2.000 gắn `correction_id`, +990). (D-04: TV-13 bản DB đã đúng 09-21, sửa phía ADR-007) | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.3.2 | Update | — | Khách Q-INC-01/02: `incentive_runs` thêm `payment_csv_confirmed_at`, `payment_csv_latest_paid_on`; TV-13 viết lại, thêm TV-15 | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
@@ -65,6 +66,8 @@ erDiagram
     uuid period_id FK
     uuid rule_version_id FK
     char input_hash
+    timestamptz payment_csv_confirmed_at
+    date payment_csv_latest_paid_on
   }
   incentive_results {
     uuid id PK
@@ -106,6 +109,8 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 2 | UNI/FK | Kỳ | `period_id` | UUID | N/A | Yes | | |
 | 3 | FK | Version quy chế | `rule_version_id` | UUID | N/A | Yes | | |
 | 4 | | Mã băm đầu vào | `input_hash` | CHAR | 64 | Yes | | SHA-256 của GD hiệu lực + phân bổ + version |
+| 4a | | Giờ xác nhận đã nhập 入金 CSV | `payment_csv_confirmed_at` | TIMESTAMPTZ | N/A | Yes | | Tick 「支払期日分までの入金CSV取込済」 của người khóa (= `created_by`), ghi cùng transaction 期ロック; không có tick thì không khóa được (`E-INC-014`) — Q-INC-01 [Customer giả lập, 2026-11-25] |
+| 4b | | 入金日 lớn nhất đã nhập | `payment_csv_latest_paid_on` | DATE | N/A | No | | MAX(`payments.paid_on`) của batch 入金 CSV chưa hủy tại lúc khóa — chứng cứ đã nhập tới ngày nào; NULL khi chưa có batch nào |
 | 5 | | Cột chung | `created_at`, `created_by` | | | | | Prototype: `run_by`, `run_at` |
 
 **Index** — `incentive_runs_pkey`; `uq_incentive_runs_period`. **Khoá ngoại** — `period_id` → `payment_periods.id`; `rule_version_id` → `rule_versions.id`.
@@ -168,5 +173,6 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | TV-10 | B08: kỳ 2027-11 = 1.080.000, 期日 2027-12-10 (thứ Sáu). Ngày 2027-12-09 nhận **1.079.560** (thiếu 440 ≤ `KANNO_FEE_SUSPECT_MAX_JPY` ở file cấu hình) | Phân bổ vào kỳ 11, đúng hạn | Không | Engine **không** tự kết luận: dòng **要確認 「手数料差引の疑い」**; 照合部門長 chọn trong hộp thoại 期ロック (MFA) + lý do → `kanno_basis = JUDGED`. Gợi ý mặc định 非完納 (FQ-02, PRM-040: phí chuyển khoản người mua chịu) | 非完納 → **0**; chọn 完納 có lý do → **9.900** | Khách #7 [Giả lập]; CAP-HUMAN-01; chờ 経理部 |
 | TV-11 | B09: 完納, 適格金額 1.234.567 税抜, bậc 3 | — | Không | 完納 | 1.234.567 × 0,9% × 1,1 = 12.222,21 → floor **12.222** | INC-EDGE-03 |
 | TV-12 | B10 (売買参加者): kỳ 2027-10 適格金額 **1.000.000** (đúng cận dưới bậc 3, 「以上」); B11: kỳ 2027-10 **999.999**. Version v3 hiệu lực 2027-10-01 (bậc 3 = 90 bp như bảng giả); kỳ 2027-09 dùng v2 (giả định bậc 3 = 80 bp) — B10 kỳ 09 cũng 1.000.000 | GD theo `trade_date` | Không | 完納 | B10 kỳ 10: bậc 3 → floor(1.000.000 × 0,9% × 1,1) = **9.900**; B11 kỳ 10: bậc 2 → floor(999.999 × 0,5% × 1,1) = floor(5.499,99) = **5.499**; B10 kỳ 09 (v2): floor(1.000.000 × 0,8% × 1,1) = **8.800** — chọn version theo **kỳ**, không theo ngày khóa | **INC-EDGE-01**; TBL-RATE-01; PRM-041 |
-| TV-13 | B12: kỳ 08 khóa 2027-09-14 với 適格金額 1.000.000 (MAIN 9.900). 紙伝票 GD ngày **2027-08-31** (+200.000 税抜) phát hiện 2027-09-20 → 修正申請 `LATE_ENTRY` duyệt 2027-09-21 → `trades` mới `trade_date` 2027-08-31, `business_date` 2027-09-21 | Kỳ GD = **2027-08** (theo `trade_date`); **không** vào 期のお支払額 kỳ 08 (đã khóa — 4.49 chỉ tính GD ghi trước khi khóa) lẫn kỳ 09; 216.000 hiện 「前期以前の調整」 | 期ロック kỳ 09: GD có `trade_date` thuộc kỳ 08 và `created_at` > `locked_at` → tính lại kỳ 08 bằng version kỳ 08: floor(1.200.000 × 0,9% × 1,1) = 11.880 → **DELTA +1.980**, `ref_period` 2027-08 | Kỳ 08 giữ 完納 | +1.980 ở kỳ 09 | Gate 1 recheck **N-02**; ADR-005 §2-8; BR-INC-01 |
+| TV-13 | B12: kỳ 08 khóa 2027-09-14 với 適格金額 1.000.000 (MAIN 9.900). Kỳ 09: GD riêng 600.000 税抜. 紙伝票 GD ngày **2027-08-31** (+200.000 税抜) phát hiện 2027-09-20 → 修正申請 `LATE_ENTRY` duyệt 2027-09-21 → `trades` mới `trade_date` 2027-08-31, `business_date` 2027-09-21; kỳ 08 đã `LOCKED` lúc ghi → `incentive_period_id` = **2027-09**. 支払期日 kỳ 09 = 2027-10-08 (TV-05); B12 trả **864.000** ngày 2027-10-07; kỳ 09 khóa 2027-10-13 | Kỳ tính thưởng = **2027-09** (`trade_date` 08-31 giữ cho sổ ngày, IF-ACC-01); 期のお支払額 kỳ 09 = (600.000 + 200.000) × 1,08 = **864.000** (請求 kỳ 09); hiện 「前期分の後入力 08/31 200.000」, **không** ở 「前期以前の調整」 | **Không** — kỳ 08 không vào tập ứng viên (bản 0.3.1 ra DELTA +1.980 với 完納 của kỳ 08 — bỏ theo Q-INC-02) | Kỳ 09 完納 (864.000 đúng hạn). Biến thể: chỉ trả 648.000 (thiếu phần 後入力) → kỳ 09 **非完納** | Kỳ 09: 適格金額 800.000 → bậc 2 → floor(800.000 × 0,5% × 1,1) = **4.400**; biến thể **0**. Kỳ 08 giữ MAIN 9.900 | **Q-INC-02** [Customer giả lập, 2026-11-25]; Gate 1 recheck N-02; ADR-005 §2-8; ADR-007 §2.3-7a; BR-INC-01 |
 | TV-14 | B13: kỳ 2027-10 đã khóa 2027-11-15, MAIN 9.900 tính theo tỷ lệ áp sai; 修正申請 `INCENTIVE` +2.000 duyệt 2 cấp 2027-11-20. Kỳ 11 khóa **2027-12-14**. 修正申請 `TRADE` cho GD kỳ 10 (+100.000 税抜) duyệt **2027-12-20** (sau khi kỳ 11 khóa); kỳ 12 khóa 2028-01-13 | `TRADE`: `period_id` 2027-10, `business_date` 2027-12-20 | 期ロック kỳ 11 (2027-12-14): **DELTA +2.000** (`correction_id` INCENTIVE). 期ロック kỳ 12 (2028-01-13): tính lại kỳ 10 = (1.100.000 → 10.890) **+ 2.000** (INCENTIVE là đầu vào cộng thêm, **số cố định — không tính lại theo 適格金額 mới**) so với tổng đã ghi nhận 9.900 + 2.000 → **DELTA +990**; **không** sinh −2.000. Biến thể: nếu `TRADE` duyệt trước khi kỳ 11 khóa thì cả hai vào cùng lượt 期ロック kỳ 11 → tổng **DELTA +2.990**, ghi 2 dòng: +2.000 gắn `correction_id` INCENTIVE + +990 không gắn (quy tắc tách dòng: `specs/incentive/technical-design/INC_ENGINE_TECH.md` K6) | Giữ | Kỳ 11 +2.000; kỳ 12 +990. Khoản sửa tỷ lệ cần đổi theo 適格金額 mới → 照合部門 lập 修正申請 INCENTIVE mới | Gate 1 recheck n-02, D-05; ADR-007 §2.5-12; R-L4-01 |
+| TV-15 | B14 (売買参加者): **không** có GD kỳ 08 (không có MAIN kỳ 08), không có GD khác ở kỳ 09. 紙伝票 GD ngày **2027-08-30** (600.000 税抜) → 修正申請 `LATE_ENTRY` duyệt **2027-09-22**, `business_date` 2027-09-22; kỳ 08 đã khóa 2027-09-14 → `incentive_period_id` = 2027-09. Hạn kỳ 09 2027-10-08; kỳ 09 khóa 2027-10-13; B14 trả **648.000** ngày **2027-10-05** | Kỳ tính thưởng **2027-09**; 期のお支払額 kỳ 09 = 600.000 × 1,08 = 648.000 | Không | 完納 (648.000 đúng hạn). Biến thể: trả ngày 2027-10-12 → 非完納 | floor(600.000 × 0,5% × 1,1) = **3.300**; biến thể **0**. Bản 0.3.1 (K' = false vì không có MAIN kỳ 08) cho **0** trong mọi trường hợp — cùng quy tắc với TV-13 từ bản này | **Q-INC-02** [Customer giả lập, 2026-11-25]; BR-INC-01 |
