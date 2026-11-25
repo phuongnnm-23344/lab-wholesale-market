@@ -2,17 +2,17 @@
 id: WF-SCREEN-LIST-001
 title: 画面一覧・画面遷移 — 第1期 (70 màn)
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
-related: [PREMISE.md, L4-D02, DEC-031, PRM-126, PRM-127, PRM-129, PRM-130, TBL-ROLE-01, CAP-HUMAN-01]
+related: [PREMISE.md, L4-D02, L4-D03, PRM-121, DEC-031, PRM-126, PRM-127, PRM-129, PRM-130, TBL-ROLE-01, CAP-HUMAN-01]
 ---
 
 # 画面一覧・画面遷移 — 第1期 (70 màn)
 
 Danh sách màn hình to-be của 第1期 theo gói R1 (PREMISE §1.2: 99 FT / 70 màn + 10 batch) và sơ đồ chuyển màn theo cụm. Nguồn ID, tên, vai, thiết bị: 画面一覧 LAB-1 bản 1.7 (`project/04_screen/screen-list.md`, không nằm trong repo này). Trạng thái prototype: danh sách màn LAB-2 bản 1.2 + báo cáo as-built P1 (`plans/reports/pl-261125-lab4-p1-prototype-as-built-extraction.md`).
 
-Nhãn màn giữ tiếng Nhật vì hệ thống dùng tiếng Nhật; giải thích bằng tiếng Việt.
+Nhãn màn giữ tiếng Nhật vì hệ thống dùng tiếng Nhật; giải thích bằng tiếng Việt. **Duyệt nội bộ dùng chữ 決裁 / 確認, không dùng 承認** — chữ 承認 chỉ dành cho 承認（売買参加者）(luật 2, PRM-121). Vì vậy hai màn LAB-1 đổi nhãn (ID giữ nguyên, PREMISE L4-D03): SC-08-03 「修正申請承認・却下」 → 「修正申請決裁・却下」; SC-10-04 「規則版承認・ロールバック」 → 「規則版確認・ロールバック」.
 
 ## 0. Cách đọc
 
@@ -49,7 +49,7 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | SC-00-01 | 社内ログイン | Đăng nhập nội bộ | XT | Mọi vai nội bộ | PC/TAB | Có | List | SYSADM MFA ngay khi đăng nhập; vai khác MFA step-up trước hành động ở PREMISE §3.2 (L4-A07). Prototype không MFA (M02) |
 | 2 | SC-00-02 | 利用者切替（PIN） | Đổi người trên máy chung | XT | INTAKE, JUDGE, TRADE, DELIVERY (+ quyền trưởng) | PC/TAB | Có | List | PIN 4 số; offline có hạn N giờ, không duyệt khi offline (M03, E-18); đổi người = hết hiệu lực MFA |
-| 3 | SC-00-03 | ホーム（業務メニュー） | Trang chủ theo vai | DS | Mọi vai nội bộ | PC/TAB | Có | List | Thêm khung thông báo (gộp SC-00-04, PRM-130), trạng thái mạng + số chưa đồng bộ (M04, M09). TRADE: lối tắt đầu = 相対 |
+| 3 | SC-00-03 | ホーム（業務メニュー） | Trang chủ theo vai | DS | Mọi vai nội bộ | PC/TAB | Có | List | Thêm khung thông báo (gộp SC-00-04, PRM-130), trạng thái mạng + số chưa đồng bộ (M04, M09). TRADE: lối tắt đầu = 相対. **Tablet:** lưới 4–6 nút to theo vai, thứ tự cố định, có số đếm việc chờ; nút 「ホーム」 bằng chữ (không 「≡」) — `_common-layout` C-13, C-14 (Q-WF-02 đã trả lời [Customer giả lập, 2026-11-25]) |
 | 4 | SC-00-05 | エラー・ロック済み案内 | Báo bản ghi đã khóa (dùng chung) | CT | Mọi vai nội bộ | PC/TAB | Thành phần | List | Banner khi API trả 423 `DAY_LOCKED` / kỳ đã 期ロック → nút sang SC-08-01. Mẫu trạng thái dùng chung ở `_common-layout.md` |
 
 ### C2 Người tham gia & tài khoản (SC-01, SC-02)
@@ -70,7 +70,7 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 | # | SC-ID | 画面名 | Tên (VI) | Loại | Vai | Thiết bị | Prototype | Mức | Ghi chú to-be |
 |---|---|---|---|---|---|---|---|---|---|
 | 13 | SC-03-01 | ロット本登録（受付台・PC） | Đăng ký chính thức lô | NH | INTAKE | PC | Có | **Spec** | Mã 出荷者 thay text tự do (D15); 業務日 gắn lô từ 01:00 (E-16) |
-| 14 | SC-03-02 | ロット仮受付（埠頭・タブレット） | Tiếp nhận tạm lô ở bến | NH | INTAKE | TAB | Có | List | Offline lưu cục bộ + 「未同期 n件」 (M04); không chụp ảnh ở 第1期 |
+| 14 | SC-03-02 | ロット仮受付（埠頭・タブレット） | Tiếp nhận tạm lô ở bến | NH | INTAKE | TAB | Có | List | Offline lưu cục bộ + 「未同期 n件」 (M04); không chụp ảnh ở 第1期. Khách xin hình phác (khách #22) — **chưa làm**: ngoài 10 + 4 màn của L4-D02, chờ người dùng quyết có thêm ở P3 không |
 | 15 | SC-03-03 | ロット一覧・検索 | Danh sách lô | DS | INTAKE, JUDGE, TRADE | PC | Có | List | 販売公開 hàng loạt; 販売終了 / 持ち越し (D12, E-12) |
 | 16 | SC-03-04 | ロット詳細 | Chi tiết lô + sổ SL | CT | INTAKE, JUDGE, TRADE, SETTLE | PC | Có | List | Gồm sửa thuộc tính lô (gộp SC-03-06, PRM-128): lý do, before/after |
 | 17 | SC-03-05 | 目利き・下見結果入力 | Ghi kết quả 目利き・下見 | NH | JUDGE | PC/TAB | Có | **Spec** | **Người đánh giá nhập — không AI / OCR** (CAP-HUMAN-01) |
@@ -83,7 +83,7 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 | 19 | SC-04-01 | 相対取引入力・確定 | Nhập & chốt GD 相対 | NH | TRADE | PC | Có | **Spec** | **Màn dùng nhiều nhất**; bắt buộc online; in thẳng 取引確認票 (M05); 参加上限 theo kỳ (M19) |
 | 20 | SC-04-02 | 取引確認票（再発行・印刷プレビュー） | In lại phiếu xác nhận GD | IN | TRADE | PC | Mới | List | Chỉ in lại, có chữ 「再発行」 |
 | 21 | SC-04-03 | 取引一覧・検索 | Danh sách GD | DS | TRADE, SETTLE | PC | Có | List | Mặc định lọc 相対; mới nhất lên đầu |
-| 22 | SC-04-04 | 取引詳細（訂正履歴） | Chi tiết GD & lịch sử 訂正 | CT | TRADE, SETTLE | PC | Có | List | Nút 「当日訂正・取消」 → SC-04-05 khi ngày chưa khóa; 「修正申請」 khi đã khóa |
+| 22 | SC-04-04 | 取引詳細（訂正履歴） | Chi tiết GD & lịch sử 訂正 | CT | TRADE, SETTLE | PC | Có | List | Hiện **một** nút đúng trạng thái ngày: 「当日訂正・取消」 → SC-04-05 khi ngày chưa khóa; 「修正申請」 → SC-08-01 khi đã khóa. Cạnh nút có câu lý do: 「未締めのため、その場で訂正できます（照合が確認します）」 / 「この業務日は締め済のため、修正申請（決裁が必要）になります」. Dòng đầu hiện 業務日 **của chính GD** + nhãn 「締め済」 (GD có thể thuộc ngày khác ngày đang mở). Người sửa khác người chốt gốc → hiện cả hai tên. Q-WF-03 đã trả lời [Customer giả lập, 2026-11-25] — khách #26 |
 | 23 | SC-04-05 | 当日訂正（＋取消） | 訂正 / 取消 trong ngày | NH | TRADE | PC | Mới | **WF** | Gồm nút 取消 riêng (gộp SC-04-06, PRM-127); không duyệt 2 cấp; giữ lịch sử (M17, D11) |
 | 24 | SC-04-07 | 紙伝票後入力 | Nhập bù phiếu giấy | NH | TRADE | PC | Mới | List | Lưới nhập; kiểm 許可 / 承認 theo giờ GD thật; dòng nghi trùng chờ người quyết |
 | 25 | SC-05-01 | せり結果入力 | Nhập kết quả せり | NH | TRADE (入力者) | PC | Có | List | Chỉ ghi kết quả; không có màn đấu giá trực tiếp |
@@ -93,7 +93,7 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 
 | # | SC-ID | 画面名 | Tên (VI) | Loại | Vai | Thiết bị | Prototype | Mức | Ghi chú to-be |
 |---|---|---|---|---|---|---|---|---|---|
-| 27 | SC-06-01 | 引渡し対象一覧 | Danh sách GD cần giao | DS | DELIVERY | PC/TAB | Mới | List | Prototype gộp ô tìm vào SC-06-02; to-be tách lại để PC văn phòng xem |
+| 27 | SC-06-01 | 引渡し対象一覧 | Danh sách GD cần giao | DS | DELIVERY | PC/TAB | Mới | List | Prototype gộp ô tìm vào SC-06-02; to-be tách lại để PC văn phòng trả lời người mua gọi hỏi sau 08:00 (KPI-05). Tablet ở bến vào thẳng SC-06-02. SC-06-01 cũng mở được trên tablet ở **chế độ chỉ đọc** cho 配送部門責任者 đi kiểm lúc 09:30 (khách #30). Q-WF-01 đã trả lời [Customer giả lập, 2026-11-25]: tách |
 | 28 | SC-06-02 | 引渡し記録（タブレット） | Ghi giao hàng (tablet) | NH | DELIVERY | TAB | Có | **Spec** | Offline lưu cục bộ (M04); nút 「例外」 → SC-06-04 |
 | 29 | SC-06-04 | 引渡し例外登録 | Ghi ngoại lệ giao | NH | DELIVERY, DEL-HEAD | PC/TAB | Mới | **WF** | Thiếu / thừa / trả / hủy một phần + lý do + ảnh (PC) (M16) |
 | 30 | SC-06-05 | 争いのある引渡し完了確認 | Xác nhận hoàn tất giao có tranh chấp | DU | DEL-HEAD | PC/TAB | Mới | **WF** | **Người quyết**, MFA, cấm tự xác nhận (S1, PRM-111) |
@@ -103,13 +103,13 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 
 | # | SC-ID | 画面名 | Tên (VI) | Loại | Vai | Thiết bị | Prototype | Mức | Ghi chú to-be |
 |---|---|---|---|---|---|---|---|---|---|
-| 32 | SC-07-01 | 日次照合表 | Bảng đối soát ngày | DS | SETTLE | PC | Có | List | Tách 相対 / せり / 訂正; 要確認（n） |
+| 32 | SC-07-01 | 日次照合表 | Bảng đối soát ngày | DS | SETTLE | PC | Có | List | Tách 相対 / せり / 訂正; 要確認（n）: せり tự xác nhận, GD vượt 参加上限 có lý do (khách #10), 当日訂正 (≥ ngưỡng 2 cấp hoặc đổi 買受人 → phải bấm 「確認済」, khách #25), ngoại lệ giao làm đổi tiền ở ngày chưa khóa (phải 「確認済」, khách #4). Cột 「確認済」 để soát |
 | 33 | SC-07-02 | 日次締め | Khóa ngày nghiệp vụ | DU | STL-HEAD (hoặc 代行) | PC | Có | **Spec** | Checklist + MFA; **không có nút mở lại** (BR-CLOSE-01) |
 | 34 | SC-07-03 | 紛争一覧 | Danh sách tranh chấp | DS | SETTLE, DEL-HEAD | PC | Mới | List | Cột SLA còn lại / quá hạn |
 | 35 | SC-07-04 | 紛争詳細・対応 | Chi tiết & xử lý tranh chấp | NH | SETTLE, DEL-HEAD | PC | Mới | List | Liên kết GD / lần giao / SC-06-05 |
-| 36 | SC-08-01 | 修正申請作成（FORM-CORR-01） | Lập yêu cầu điều chỉnh | NH | TRADE, DELIVERY, SETTLE | PC | Có | List | Hiện trước ảnh hưởng tiền + số cấp duyệt; đính kèm (M11) |
-| 37 | SC-08-02 | 修正申請一覧 | Danh sách 修正申請 | DS | TRADE, DELIVERY, SETTLE, STL-HEAD, OPS-HEAD | PC | Có | List | Người duyệt: mặc định 「自分の承認待ち」 |
-| 38 | SC-08-03 | 修正申請承認・却下 | Duyệt / từ chối 修正申請 | DU | STL-HEAD (cấp 1), OPS-HEAD (cấp 2) | PC | Có | **Spec** | **Người quyết**, MFA; ngưỡng 2 cấp lấy từ quy chế có version (M13, D07) |
+| 36 | SC-08-01 | 修正申請作成（FORM-CORR-01） | Lập yêu cầu điều chỉnh | NH | TRADE, DELIVERY, SETTLE | PC | Có | List | Hiện trước ảnh hưởng tiền + số cấp duyệt (ngưỡng theo tiền thay đổi lớn nhất của một người mua; đổi 買受人 luôn 2 cấp); đính kèm (M11). Loại: TRADE / KANNO / INCENTIVE / LATE_ENTRY (後入力 cho ngày đã khóa, mở từ SC-03-07 / SC-04-07). Mở từ C-24 khi gặp 423 giữa chừng → **điền sẵn** nội dung đang nhập (khách #5) |
+| 37 | SC-08-02 | 修正申請一覧 | Danh sách 修正申請 | DS | TRADE, DELIVERY, SETTLE, STL-HEAD, OPS-HEAD | PC | Có | List | Người duyệt: mặc định 「自分の決裁待ち」 |
+| 38 | SC-08-03 | 修正申請決裁・却下 | Duyệt / từ chối 修正申請 | DU | STL-HEAD (cấp 1), OPS-HEAD (cấp 2) | PC | Có | **Spec** | **Người quyết**, MFA; ngưỡng 2 cấp lấy từ quy chế có version (M13, D07), so với tiền thay đổi lớn nhất của một người mua; nhãn LAB-1 「修正申請承認・却下」 đổi theo L4-D03 |
 
 ### C7 精算 · 完納奨励金 (SC-09)
 
@@ -118,7 +118,7 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 | 39 | SC-09-01 | 入金CSV取込 | Nhập CSV 入金 | NH | SETTLE | PC | Có | List | Định dạng thật chờ E-01 / E-02; dòng lỗi → SC-09-02 |
 | 40 | SC-09-02 | 取引先コード対応表 | Bảng ánh xạ 取引先コード | CĐ | SETTLE | PC | Mới | List | |
 | 41 | SC-09-03 | 期別お支払額・入金状況 | Số phải trả & 入金 theo kỳ | DS | SETTLE, STL-HEAD | PC | Có | List | Gán 入金 vào kỳ qua bảng phân bổ (D03) |
-| 42 | SC-09-04 | 奨励金計算・期ロック | Tính thưởng & khóa kỳ | DU | STL-HEAD | PC | Có | **Spec** | Hiện tiền đã gán vào kỳ nào trước khi khóa (OPEN-L4-02); 2 bảng tỷ lệ (D01) |
+| 42 | SC-09-04 | 奨励金計算・期ロック | Tính thưởng & khóa kỳ | DU | STL-HEAD | PC | Có | **Spec** | Hiện tiền đã gán vào kỳ nào trước khi khóa (OPEN-L4-02); 2 bảng tỷ lệ (D01); chỉ 試算 + 期ロック (tính chính thức trong cùng transaction với khóa — N13) |
 | 43 | SC-09-05 | 奨励金明細 | Chi tiết thưởng người × kỳ | CT | SETTLE, STL-HEAD | PC | Mới | List | Version đã áp, delta, dư âm mang sang |
 
 ### C8 Quy chế · lịch · master (SC-10)
@@ -128,8 +128,8 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 | 44 | SC-10-01 | 規則版一覧 | Danh sách version quy chế | DS | RULE, STL-HEAD | PC | Có | List | Bộ đếm 「今年度 n/4 回」 không tính bộ go-live (D06) |
 | 45 | SC-10-02 | 規則版作成・編集 | Tạo / sửa version (maker) | NH | RULE | PC | Có | List | Chứa cả tham số quy chế §3.1 PREMISE, không chỉ bảng tỷ lệ (D09) |
 | 46 | SC-10-03 | 交付率テーブル編集 | Sửa bảng 交付率 | NH | RULE | PC | Có | List | 2 tab 仲卸 / 売買参加者 (D01) |
-| 47 | SC-10-04 | 規則版承認・ロールバック | Duyệt / rollback version (checker) | DU | STL-HEAD | PC | Có | **Spec** | maker ≠ checker, MFA; rollback khi đủ 4 lần: 2 nhánh chờ E-14 (OPEN-L4-01) |
-| 48 | SC-10-05 | 市場・銀行カレンダー | Lịch chợ – ngân hàng | CĐ | RULE (nhập), STL-HEAD (duyệt gọn) | PC | Mới | List | 臨時休市 / 臨時開市 không tính 4 lần/năm (M10) |
+| 47 | SC-10-04 | 規則版確認・ロールバック | Duyệt / rollback version (checker) | DU | STL-HEAD | PC | Có | **Spec** | maker ≠ checker, MFA; rollback khi đủ 4 lần: 2 nhánh chờ E-14 (OPEN-L4-01); nhãn LAB-1 「規則版承認・ロールバック」 đổi theo L4-D03 |
+| 48 | SC-10-05 | 市場・銀行カレンダー | Lịch chợ – ngân hàng | CĐ | RULE (nhập), STL-HEAD (duyệt gọn) | PC | Mới | List | 臨時休市 / 臨時開市 không tính 4 lần/năm (M10). Cờ ngân hàng dùng cho 支払期日 (rơi ngày ngân hàng nghỉ → ngày ngân hàng mở trước) |
 | 49 | SC-10-07 | マスタ管理（税率・品目・単位・出荷者） | Master thuế suất, 品目, đơn vị, 出荷者 | CĐ | RULE, SYSADM | PC | Mới | List | |
 
 ### C9 Báo cáo · thông báo · audit · vận hành · migrate (SC-11..SC-15)
@@ -183,7 +183,7 @@ Ngoài phạm vi hẳn (option / không làm, luật 6): portal người mua, m�
 | ID | Việc | Màn liên quan |
 |---|---|---|
 | SC-01-B1 | 失効 tự động + cảnh báo sắp hết hạn | SC-01-01, SC-11-04 |
-| SC-07-B1 | Mở 業務日 02:00 JST theo lịch | SC-00-03, SC-10-05 |
+| SC-07-B1 | Mở 業務日 theo lịch: hàm 日次締め mở luôn 業務日 chợ kế tiếp; job lúc giờ nhận lô (`LOT_INTAKE_START_TIME`, tạm 01:00 JST) là lưới an toàn | SC-00-03, SC-10-05, SC-07-02 |
 | SC-07-B2 | Tính 精算 ngày | SC-07-01 |
 | SC-09-B1 | Tính 期のお支払額 + email | SC-09-03 |
 | SC-09-B2 | Delta thưởng kỳ sau | SC-09-05 |
@@ -243,7 +243,7 @@ flowchart LR
   L["SC-00-01 社内ログイン"] -->|SYSADM| M["MFA (ログイン時)"] --> H
   L -->|他ロール| H["SC-00-03 ホーム<br/>業務日・通知・未同期"]
   H -->|共有端末| P["SC-00-02 利用者切替 (PIN)"] --> H
-  H -->|未登録の承認権限者| R["SC-02-02 MFA登録"]
+  H -->|未登録の決裁権限者| R["SC-02-02 MFA登録"]
   H -->|TRADE 先頭| A["SC-04-01 相対取引"]
   H --> X["各業務メニュー"]
   X -.->|API 423 DAY_LOCKED / 期ロック| E["SC-00-05 ロック済み案内"] -.-> C["SC-08-01 修正申請"]
@@ -256,7 +256,9 @@ flowchart LR
   L1["SC-01-01 参加者一覧"] --> D["SC-01-02 参加者詳細<br/>【許可】ブロック / 【承認】ブロック"]
   D -->|仲卸のみ| K["SC-01-03 許可登録・更新"] --> D
   D -->|売買参加者のみ| S["SC-01-04 承認登録・更新<br/>参加上限"] --> D
-  D --> Q["SC-01-05 資格状態変更<br/>起案 → 決裁 (MFA)"]:::human --> D
+  D --> Q["SC-01-05 資格状態変更<br/>起案 → 決裁 / 確認 (MFA)"]
+  Q --> D
+  class Q human
   T["SC-01-06 資格照会 (受付・埠頭)"] -.->|詳細権限あり| D
   A1["SC-02-03 アカウント一覧・詳細<br/>(代行者タブ)"] -->|MFA| A1
   A1 --> MF["SC-02-02 MFA再設定"]
@@ -313,14 +315,17 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-  S["SC-07-01 日次照合表<br/>要確認(n)"] --> K["SC-07-02 日次締め<br/>チェックリスト・MFA"]:::human
+  S["SC-07-01 日次照合表<br/>要確認(n)"] --> K["SC-07-02 日次締め<br/>チェックリスト・MFA"]
+  class K human
   K -->|残件リンク| X["SC-05-02 / SC-04-07 / SC-03-07"]
   K -->|締め後| CSV["SC-11-14 会計CSV"]
   S --> DL["SC-07-03 紛争一覧"] --> DD["SC-07-04 紛争詳細"]
   E["SC-00-05 ロック済み案内"] --> C1["SC-08-01 修正申請作成"]
-  C1 --> C2["SC-08-02 修正申請一覧<br/>自分の承認待ち"] --> C3["SC-08-03 承認・却下<br/>1次 照合部門長 / 2次 運用部門長"]:::human
-  C3 -->|反対・差額 → 未締め業務日| S
-  C3 -->|期ロック済| D9["SC-09-B2 → SC-09-05"]
+  C1 --> C2["SC-08-02 修正申請一覧<br/>自分の決裁待ち"]
+  C2 --> C3["SC-08-03 決裁・却下<br/>1次 照合部門長 / 2次 運用部門長"]
+  class C3 human
+  C3 -->|取消・差額 → 未締め業務日に計上| S
+  C3 -->|元取引の期が期ロック済| D9["SC-09-B2 → SC-09-05"]
   classDef human stroke:#c00,stroke-width:3px
 ```
 
@@ -330,7 +335,8 @@ flowchart LR
 flowchart LR
   I["SC-09-01 入金CSV取込"] -->|未対応コード| M["SC-09-02 取引先コード対応表"] --> I
   I --> P["SC-09-03 期別お支払額・入金状況"]
-  P --> R["SC-09-04 奨励金計算・期ロック<br/>入金確認 → 計算 → 期ロック (MFA)"]:::human
+  P --> R["SC-09-04 奨励金計算・期ロック<br/>入金確認・要確認 → 期ロック＝正式計算 (MFA)"]
+  class R human
   R --> D["SC-09-05 奨励金明細"]
   D --> RPT["SC-11-08 RPT-07"]
   D -.-> MAIL["メール通知 (第1期)"]
@@ -345,11 +351,12 @@ flowchart LR
 flowchart LR
   L["SC-10-01 規則版一覧<br/>今年度 n/4 回"] --> N["SC-10-02 規則版作成 (maker)"]
   N --> T["SC-10-03 交付率テーブル<br/>仲卸 / 売買参加者"] --> N
-  N -->|提出| C["SC-10-04 承認・ロールバック (checker ≠ maker, MFA)"]:::human
-  C -->|承認| L
+  N -->|提出| C["SC-10-04 確認・ロールバック (checker ≠ maker, MFA)"]
+  class C human
+  C -->|確認| L
   C -->|差戻し| N
   L -->|ロールバック起票| N
-  CAL["SC-10-05 市場・銀行カレンダー"] -->|臨時休市: 簡易承認| CAL
+  CAL["SC-10-05 市場・銀行カレンダー"] -->|臨時休市: 簡易確認| CAL
   MS["SC-10-07 マスタ管理"]
   classDef human stroke:#c00,stroke-width:3px
 ```
@@ -372,14 +379,17 @@ flowchart LR
 
 ## 6. Điểm cần khách góp ý (màn / chuyển màn)
 
-| # | Điểm | Giả định tạm | Ảnh hưởng nếu sai |
+Ba câu dưới đây **đã trả lời [Customer giả lập, 2026-11-25]** (`customer-feedback-lab4-wireframes-261125.md`), đã áp vào màn và đóng ở `qa.md`.
+
+| # | Điểm | Câu trả lời | Áp ở |
 |---|---|---|---|
-| Q-WF-01 | SC-06-01 tách khỏi SC-06-02 (prototype đã gộp) — người giao ở bến có cần danh sách riêng không, hay chỉ PC văn phòng? | Tách: tablet vào thẳng SC-06-02 có ô tìm; SC-06-01 cho PC văn phòng | Không tách → bớt 1 màn, đổi cách đếm 70 màn (cần CR) |
-| Q-WF-02 | Menu tablet: ホーム nút to theo vai thay menu trái | Theo góp ý LAB-2 #13 **[Giả lập]** | — |
-| Q-WF-03 | Từ SC-04-04, nút 当日訂正 / 修正申請 hiện theo trạng thái ngày (chưa khóa / đã khóa) — người chốt có hiểu khác biệt? | Hiện một nút đúng trạng thái, có câu giải thích | Nhầm lẫn → thêm hướng dẫn |
+| Q-WF-01 | SC-06-01 tách khỏi SC-06-02 — người giao ở bến có cần danh sách riêng không? | **Tách** như giả định: tablet vào thẳng SC-06-02 có ô tìm; SC-06-01 cho PC văn phòng (KPI-05); Muốn có: SC-06-01 chỉ đọc trên tablet cho 配送部門責任者 | Dòng SC-06-01 |
+| Q-WF-02 | Menu tablet: ホーム nút to theo vai thay menu trái | **Đồng ý**, điều kiện: 4–6 nút / vai, thứ tự cố định, số đếm việc chờ, chữ 「ホーム」/「メニュー」 thay 「≡」, tên người dùng + 利用者切替 luôn thấy | `_common-layout` C-13, C-14; dòng SC-00-03 |
+| Q-WF-03 | Từ SC-04-04, nút 当日訂正 / 修正申請 hiện theo trạng thái ngày — người chốt có hiểu? | **Hiểu được**; thêm câu lý do cạnh nút, nhãn 業務日 + 締め済 của chính GD; gặp 423 khi đang nhập 当日訂正 thì giữ nội dung, mang sang SC-08-01 | Dòng SC-04-04, SC-08-01; WF SC-04-05 |
 
 ## History of change
 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu: 70 màn 第1期 theo 9 cụm, trạng thái prototype / mức thiết kế, 16 ID không tính, 10 batch, 10 sơ đồ chuyển màn | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Gate 1: đổi nhãn duyệt nội bộ 承認 → 決裁 / 確認 (SC-08-02, SC-08-03, SC-10-04, sơ đồ C1, C2, C6, C8) và ghi quy tắc ở §0 (M-06, L4-D03); mermaid tách `:::human` khỏi mũi tên bằng dòng `class` (m-08); batch mở 業務日 theo D3 (M-01); SC-09-04 chỉ 試算 + 期ロック (M-02); dòng SC-00-03 (Q-WF-02, #32), SC-04-04 (Q-WF-03, #26), SC-06-01 (Q-WF-01, #30), SC-07-01 (#4, #10, #25), SC-08-01 (#5, LATE_ENTRY), SC-03-02 (#22 chưa làm); §6 ghi câu trả lời Q-WF-01..03 | 2026-11-25 | phuongnnm-23344 | |

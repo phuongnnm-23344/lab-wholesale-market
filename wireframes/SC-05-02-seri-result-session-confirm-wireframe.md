@@ -2,7 +2,7 @@
 id: WF-SC-05-02
 title: Wireframe SC-05-02 せり結果確認
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-05-02, FT-01-05, FR-SERI-02, FORM-SERI-01, BR-PERM-01, CAP-HUMAN-01, PRM-115, ACT-03, L4-A04, M20, ADR-003]
@@ -33,6 +33,7 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 │ ☑ 1  L…-21  鰤  40kg ¥900  ¥36,000  N03  仲卸      許可 有効          —         │
 │ ☑ 2  L…-22  鰤  35kg ¥850  ¥29,750  B07  売買参加者 承認 有効          ⚠超過 [4]  │
 │ ☐ 3  L…-23  鯖  20kg ¥300  ¥6,000   B11  売買参加者 承認 失効 ✖確定不可 [5]       │
+│      └ この行は確定できません。ロットは販売可能に戻ります（再せり・相対）            │
 │ …                                                                         │
 └────────────────────────────────────────────────────────────────────────────┘
 ┌─ [4] 参加上限超過の理由（売買参加者のみ）───────────────────────────────────────┐
@@ -53,7 +54,7 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 | 2 | Hướng dẫn | Nhãn | — | | FR-SERI-02 |
 | 3 | Bảng kết quả | Bảng chọn | — | Bố cục FORM-SERI-01; cột 資格 ghi đúng **許可 (仲卸) / 承認 (売買参加者)**; kiểm lại tư cách + SL **tại lúc xác nhận** | BR-PERM-01, FT-01-05 |
 | 4 | Khối lý do vượt 参加上限 | Vùng | Khi có dòng vượt | **Chỉ 売買参加者** (仲卸 không có hạn mức); hạn mức theo kỳ, chung 相対 + せり; chọn lý do nhanh + 備考; không chặn cứng | L4-A04 (1), ACT-03, M20 |
-| 5 | Dòng không chốt được | Nhãn đỏ | — | Tư cách 失効 / 一時停止 / SL không đủ → bỏ chọn tự động, lý do cạnh dòng | BR-PERM-01, BR-LOT-02 |
+| 5 | Dòng không chốt được | Nhãn đỏ | — | Tư cách 失効 / 一時停止 / SL không đủ → bỏ chọn tự động, lý do cạnh dòng + câu hướng dẫn 「この行は確定できません。ロットは販売可能に戻ります（再せり・相対）」; SL của dòng không bị trừ, lô vẫn / trở lại 販売公開中 để bán lại (khách #9) | BR-PERM-01, BR-LOT-02, FR-SERI-02 |
 | 6 | Áp cùng lý do | Checkbox | — | Một người mua trong phiên; vẫn lưu từng dòng (Muốn có) | L4-A04 (1) |
 | 7 | Lý do tự xác nhận | Văn bản | Khi 入力者 = 確認者 | Hiện ở tab 要確認 của SC-07-01 và checklist SC-07-02 | S2, PRM-115 |
 | 8 | Tổng | Nhãn | — | | — |
@@ -94,3 +95,4 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Khách #9: dòng せり 確定不可 có câu hướng dẫn, lô quay lại 販売公開中 | 2026-11-25 | phuongnnm-23344 | |

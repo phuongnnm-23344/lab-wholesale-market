@@ -2,7 +2,7 @@
 id: WF-SC-06-05
 title: Wireframe SC-06-05 争いのある引渡し完了確認
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-06-05, CAP-HUMAN-01, PRM-111, FR-DEL-04, M16, ADR-008, ADR-002]
@@ -34,6 +34,7 @@ Không có (M16): enum DEL_HEAD có nhưng không tài khoản demo, không màn
 │ [5] 紙の確認票 D-000123: 紙で確認 07:05（署名: 桜 十郎）／ 入力 09:12（桜 次郎）    │
 │     [6] スキャンを表示（確認票スキャン.pdf）                                     │
 │ [7] 結論 (引渡し完了とする) (一部返品として完了) (継続協議 → 紛争へ)               │
+│ [11] 金額への影響（一部返品のとき）: −¥5,400 → 業務日 未締め: 要確認に表示 ／ 締め済: 修正申請 │
 │ [8] コメント [                                          ]                   │
 │ [9] [ 確認する ]  → C-31 → C-30 MFA     [10] 紛争詳細 → SC-07-04              │
 └──────────────────────────────────────────────────────────────────────────┘
@@ -52,7 +53,8 @@ Không có (M16): enum DEL_HEAD có nhưng không tài khoản demo, không màn
 | 6 | Bản scan | Liên kết | Để đối chiếu chữ ký | E-21 |
 | 7 | Kết luận | Nút chọn | Bắt buộc | CAP-HUMAN-01 |
 | 8 | Bình luận | Văn bản | Bắt buộc khi 継続協議 | — |
-| 9 | 確認する | Nút | Ẩn nếu người xem là người ghi lần giao; với phiếu giấy chỉ **đúng người đã ký** [5] mới thấy nút; C-31 → C-30 MFA | S1, ADR-008 §2.4, ADR-002 |
+| 9 | 確認する | Nút | Ẩn nếu người xem là người ghi lần giao; với phiếu giấy, mặc định **người đã ký** [5] xác nhận. Người ký vắng (nghỉ ca / nghỉ phép) → **配送部門責任者 khác** (hoặc 代行) được xác nhận với **lý do bắt buộc** + phải mở [6] đối chiếu bản scan; 監査ログ ghi "xác nhận thay người ký giấy". Vẫn cấm tự xác nhận lần giao do mình ghi. C-31 → C-30 MFA (khách #16) | S1, ADR-008 §2.4, ADR-002 |
+| 11 | Ảnh hưởng tiền | Nhãn | Khi chọn 「一部返品として完了」: hiện số tiền thay đổi và đường đi — ngày chưa khóa → 要確認 SC-07-01 (dòng ✖ checklist SC-07-02 [20]); ngày đã khóa → 修正申請 (khách #17) | BR-CLOSE-01, FR-DEL-03 |
 | 10 | Tranh chấp | Liên kết | → SC-07-04 | FT-07-05 |
 
 ## 4. Trạng thái
@@ -61,7 +63,7 @@ Không có (M16): enum DEL_HEAD có nhưng không tài khoản demo, không màn
 |---|---|
 | Không có mục chờ | C-21 |
 | Dòng do chính mình ghi | Nhãn 「自分の記録のため確認できません」, [9] ẩn |
-| Phiếu giấy, người xem ≠ người ký | 「紙で署名した 桜 十郎 が確認します」, [9] ẩn |
+| Phiếu giấy, người xem ≠ người ký | 「紙で署名した 桜 十郎 が確認する予定です」; [9] hiện dạng 「署名者に代わって確認する」 + ô lý do bắt buộc, chỉ bật sau khi đã mở [6] |
 | Quá SLA | Dòng đỏ; vẫn xác nhận được |
 | Mất mạng | C-28: 「通信断中は確認できません。紙の確認票に署名してください」 |
 | Đã xác nhận | Chỉ đọc với 3 mốc giờ |
@@ -75,3 +77,4 @@ DEL-HEAD (không phải người ghi): toàn màn. DEL-HEAD = người ghi: ch�
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu, nhãn 「紙で確認 / 入力」 theo ADR-008 §2.4 | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Khách #16: người ký giấy vắng → 配送部門責任者 khác xác nhận với lý do + đối chiếu scan; #17: [11] ảnh hưởng tiền khi 一部返品 | 2026-11-25 | phuongnnm-23344 | |

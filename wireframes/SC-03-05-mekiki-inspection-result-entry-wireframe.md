@@ -2,7 +2,7 @@
 id: WF-SC-03-05
 title: Wireframe SC-03-05 目利き・下見結果入力
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010]
@@ -29,6 +29,7 @@ related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010
 [2] 絞込: 品目 [全て▼] 出荷者/船 [全て▼] 状態 [未下見▼]           [3] 選択中 3件
 ┌─ [4] ─────────────────────────────────────────────────────────────────┐
 │ ☑ ロット番号      出荷者      品目   数量    状態     前回の記録            │
+│ （タブレットでは行のどこを触っても選択／解除）                              │
 │ ☑ L20270802-3   第一丸      真鯛   118kg  受付済   —                     │
 │ ☑ L20270802-4   第一丸      真鯛    95kg  受付済   —                     │
 │ ☐ L20270802-7   第二丸      鰤     60kg  下見済   B / 桜 二郎 03:10       │
@@ -40,6 +41,7 @@ related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010
 │ [9] 取引済ロットの再記録理由 [                ]（取引後のみ必須）            │
 │ [10] [ 記録する（3件） ]                                              │
 └──────────────────────────────────────────────────────────────────────┘
+ [11] 記録前の確認: 「L20270802-3, L20270802-4, L20270802-5 に A を記録します」 [記録する] [戻る]
  記録後: C-12 「目利き記録：3件（A）記録者 桜 二郎 03:25」。前回の記録は消えず履歴に残る
 ```
 
@@ -50,13 +52,14 @@ related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010
 | 1 | Câu nguyên tắc | Nhãn | — | Luôn hiện | CAP-HUMAN-01 |
 | 2 | Bộ lọc | Chọn | — | 品目, 出荷者 / tàu, trạng thái | FT-03-02 |
 | 3 | Số đã chọn | Nhãn | — | | — |
-| 4 | Bảng lô | Bảng chọn nhiều | — | Lô của 業務日 đang mở; cột 前回の記録 = bản ghi gần nhất | FR-LOT-02 |
+| 4 | Bảng lô | Bảng chọn nhiều | — | Lô của 業務日 đang mở; cột 前回の記録 = bản ghi gần nhất. Trên tablet chạm cả dòng là chọn / bỏ chọn (ô ☑ nhỏ khó bấm — khách #14) | FR-LOT-02, PRM-086 |
 | 5 | Khối nhập | Vùng | — | Áp một kết quả cho các lô đã chọn, **lưu từng lô một dòng** | FT-03-02 |
 | 6 | 等級 | Nút chọn | ✓ | Danh mục hạng theo quy chế của chợ (chờ fixture, L4-A02); **không có giá trị mặc định** | CAP-HUMAN-01 |
 | 7 | 所見 | Văn bản | — | ≤ 200 ký tự | — |
 | 8 | 確認者 | Mã nhân viên | — | Người thứ hai (nếu có) | FT-03-02 |
 | 9 | Lý do ghi lại | Văn bản | Khi lô đã có GD | Ghi lại không xóa bản cũ (append-only) | luật 4 |
-| 10 | 記録する | Nút | — | Ghi người ghi + thời điểm; lô → 下見済 | — |
+| 10 | 記録する | Nút | — | Mở [11] trước khi ghi; ghi người ghi + thời điểm; lô → 下見済 | — |
+| 11 | Xác nhận danh sách lô | Hộp thoại | — | Liệt kê đúng mã các lô sẽ ghi + hạng, để không ghi hạng cho lô chưa xem vì bấm nhầm ô (khách #15) | CAP-HUMAN-01 |
 
 ## 4. Trạng thái
 
@@ -66,7 +69,7 @@ related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010
 | Chưa chọn lô / chưa chọn hạng | [10] mờ + lý do ngay cạnh nút |
 | Lô đã có GD | Dòng có nhãn 「取引あり」; [9] bắt buộc |
 | Ngày đã khóa | C-24 |
-| Mất mạng | C-28: tablet giữ dữ liệu đang nhập, không lưu được (màn này không thuộc danh sách offline L4-A05) — **câu hỏi Q-SC0305-01** |
+| Mất mạng | C-28: **giữ nguyên lô đã chọn và hạng đã bấm**; không lưu được (màn này không thuộc danh sách offline L4-A05); có mạng lại bấm [10] lưu ngay. Trong lúc mất mạng 目利き ghi giấy như hiện nay (Q-SC0305-01 đã trả lời) |
 
 ## 5. Khác biệt theo vai
 
@@ -82,10 +85,12 @@ JUDGE: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: xem kết quả ở SC-03-04 (l
 
 ## 7. Câu hỏi
 
-- Q-SC0305-01: 目利き có cần ghi offline ở bến không? Giả định: không (chỉ 仮受付, giao, 紙伝票後入力 — L4-A05). Sai → thêm vào hàng đợi offline, +effort nhỏ ở ADR-008.
+- Q-SC0305-01: 目利き có cần ghi offline ở bến không? **Đã trả lời [Customer giả lập, 2026-11-25]:** không cần ở 第1期 — mất mạng thì 相対 cũng không chốt được, cả chợ chuyển sang giấy. Điều kiện: màn giữ lô / hạng đã chọn, có mạng lại lưu được ngay (đã áp ở §4). Muốn có ô 「下見時刻」 khi nhập bù từ giấy — để sau (không làm ở bản này).
+- Q-SC0305-02 (mới, nối E-13 / OPEN-L4-03): khi mất mạng, lô chưa ghi 目利き trên hệ thống có được bán bằng giấy không? Hỏi 運用部門 cùng lúc với E-13.
 
 ## History of change
 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Khách: chạm cả dòng để chọn trên tablet (#14); hộp xác nhận danh sách lô trước khi ghi (#15); Q-SC0305-01 đã trả lời — giữ lô / hạng khi mất mạng; thêm Q-SC0305-02. Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |

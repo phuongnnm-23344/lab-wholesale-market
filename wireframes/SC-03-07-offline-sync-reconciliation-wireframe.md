@@ -2,10 +2,10 @@
 id: WF-SC-03-07
 title: Wireframe SC-03-07 オフライン同期・照合
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
-related: [FT-03-06, FT-06-07, NFR-AVL-02, DEC-004, BR-LOT-02, L4-A05, M04, ADR-008]
+related: [FT-03-06, FT-06-07, NFR-AVL-02, DEC-004, BR-LOT-02, BR-CLOSE-01, L4-A05, M04, ADR-005, ADR-008]
 ---
 
 # SC-03-07 オフライン同期・照合 — wireframe (màn mới, mức wireframe)
@@ -50,7 +50,8 @@ Không có (M04: prototype chỉ online). Không ảnh.
 | 4 | Quyết định | Nút chọn | Sửa rồi phản ánh / không phản ánh / sang ngoại lệ; **đồng bộ không bao giờ làm SL lô âm** | BR-LOT-02, L4-A05 |
 | 5 | Lý do | Văn bản | Bắt buộc với "không phản ánh" và "sửa" | luật 4 |
 | 6 | 判断を確定 | Nút | Audit ghi người quyết + bản ghi máy gốc (không xóa) | FR-AUDIT-01 |
-| 7 | Liên hệ khóa ngày | Nhãn | Máy còn mục chưa quyết = dòng ✖ ở SC-07-02 [8] | ADR-005 |
+| 7 | Liên hệ khóa ngày | Nhãn | Máy còn bản ghi chưa đồng bộ = dòng ✖ SC-07-02 [8]; bản ghi của ngày đó còn 要判断 = dòng ✖ SC-07-02 [7] | ADR-005 |
+| 8 | Bản ghi của ngày đã khóa | Nút chọn | Hai lối: 「修正申請（後入力）を作成」 → mở SC-08-01 loại `LATE_ENTRY` điền sẵn từ bản ghi máy (GD / lô / lần giao mới, tham chiếu **ngày gốc**); 照合部門長 決裁 (2 cấp nếu ≥ ngưỡng); duyệt xong ghi sổ vào 業務日 đang mở, **ngày GD thật = ngày gốc**, kỳ theo ngày gốc. Hoặc 「反映しない」 + lý do. Cùng một đường với 紙伝票後入力 cho ngày đã khóa (ADR-008 §2.2-6) | BR-CLOSE-01, ADR-005, ADR-008 |
 
 ## 4. Trạng thái
 
@@ -58,7 +59,8 @@ Không có (M04: prototype chỉ online). Không ảnh.
 |---|---|
 | Không xung đột | Tất cả ✔; C-29 rồi đóng |
 | Vẫn mất mạng | C-28; danh sách chờ gửi, không quyết được |
-| Bản ghi thuộc ngày đã khóa | ⚠ 「締め済の業務日です」 → chỉ chọn "không phản ánh" hoặc 修正申請 (C-24) |
+| Bản ghi thuộc ngày đã khóa | ⚠ 「締め済の業務日です」 → [8]: 「修正申請（後入力）を作成」 hoặc 「反映しない」 (C-24). Không ghi thẳng vào ngày đã khóa, không đổi sang ngày khác mà không có duyệt |
+| Bản ghi từ máy đã 「端末回収不能」 | Luôn vào 要判断 với nhãn 「回収不能登録後に届いた記録」; xử lý như trên (đối chiếu với bản nhập lại từ giấy để tránh trùng) |
 | PIN offline hết hạn trên máy | Bản ghi giữ, cần người ghi đăng nhập online để gửi (M03, E-18) |
 
 ## 5. Khác biệt theo vai
@@ -70,3 +72,4 @@ INTAKE thấy bản ghi 仮受付; DELIVERY thấy 引渡し; người dùng ch�
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Gate 1 M-05: bản ghi của ngày đã khóa đi 修正申請 loại LATE_ENTRY (ngày GD thật = ngày gốc, có duyệt) hoặc 反映しない — cùng đường với ADR-008; bản ghi từ máy 端末回収不能 (khách #1) | 2026-11-25 | phuongnnm-23344 | |

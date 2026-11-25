@@ -2,7 +2,7 @@
 id: WF-SC-03-01
 title: Wireframe SC-03-01 ロット本登録（受付台・PC）
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-03-01, FT-03-06, FR-LOT-01, FORM-LOT-01, BR-LOT-02, PRM-116, E-16, FT-10-06, DEC-033, ADR-005, ADR-008]
@@ -32,11 +32,11 @@ related: [FT-03-01, FT-03-06, FR-LOT-01, FORM-LOT-01, BR-LOT-02, PRM-116, E-16, 
 │   (未同期の仮受付があります 2件 → [12]) (C-28/C-29)      │  └───────────────────────────────┘
 └──────────────────────────────────────────────────┘
 ┌─ [2] 本登録 ─────────────────────────────────────────┐
-│ [3] 業務日      2027/08/02(月)（01:00以降の受付は当日扱い）│
+│ [3] 業務日      2027/08/02(月)（{受付開始時刻}以降の受付は当日扱い）│
 │ [4] 出荷者コード [ 0021 ] → サンプル第一丸（候補表示）     │
 │ [5] 品目        [ 真鯛 ▼ ]（仮受付の値、変更可）         │
 │ [6] 単位        [ kg ▼ ]  kg / 箱 / 尾                │
-│ [7] 数量（確定）  [ 118.50 ]  仮受付 120kg との差 −1.5kg │
+│ [7] 数量（確定）  [ 118.5 ]  仮受付 120kg との差 −1.5kg  │
 │ [8] 証憑        紙伝票番号 [        ]（スキャン添付はPC）│
 │ [9] [ 本登録する（Enter） ] [10] クリア（Esc）           │
 └──────────────────────────────────────────────────┘
@@ -50,11 +50,11 @@ related: [FT-03-01, FT-03-06, FR-LOT-01, FORM-LOT-01, BR-LOT-02, PRM-116, E-16, 
 |---|---|---|---|---|---|
 | 1 | Danh sách 仮受付待ち | Bảng chọn | — | Lô PROVISIONAL của 業務日; ↑↓ + Enter để chọn; 「新規ロット」 ở dòng đầu | FT-03-01 |
 | 2 | Khối 本登録 | Vùng | — | | — |
-| 3 | 業務日 | Nhãn | — | Lô nhận từ 01:00 gắn vào 業務日 sáng đó (giờ là **tham số quy chế có version**) | PRM-116, E-16, PREMISE §3.1 |
+| 3 | 業務日 | Nhãn | — | 業務日 D bắt đầu từ giờ nhận lô (`LOT_INTAKE_START_TIME`, tạm 01:00) tới cùng giờ hôm sau; lô nhận 01:30 ngày 1 thuộc 業務日 ngày 1. Giờ trong câu **lấy từ quy chế đang hiệu lực**, không viết cứng (khách #27) | PRM-116, E-16, PREMISE §3.1, ADR-005 |
 | 4 | 出荷者コード | Mã + gợi ý | ✓ | Mã trong master SC-10-07 (không text tự do) | FT-10-06, D15 |
 | 5 | 品目 | Chọn | ✓ | Master 品目 | FT-10-06 |
 | 6 | 単位 | Chọn | ✓ | kg / 箱 / 尾 | FB LAB-2 #5 |
-| 7 | 数量（確定） | Số | ✓ | > 0, 2 số lẻ; hiện chênh lệch so với 仮受付 | BR-LOT-02 |
+| 7 | 数量（確定） | Số | ✓ | > 0; kg 1 chữ số lẻ, 箱 / 尾 số nguyên; hiện chênh lệch so với 仮受付 | BR-LOT-02, N03 |
 | 8 | 紙伝票番号 | Văn bản | — | ≤ 20 ký tự; ảnh chứng từ chỉ scan ở PC (第1期 không chụp ở bến) | E-21, M11 |
 | 9 | 本登録する | Nút | — | Sinh mã lô chính thức + dòng sổ SL 「受入」 | FR-LOT-01 |
 | 10 | クリア | Nút | — | | — |
@@ -81,7 +81,7 @@ INTAKE: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: không có menu nhập, xem �
 |---|---|---|---|
 | 1 | 出荷者 là tên (text) chọn từ danh sách | Mã 出荷者 từ master | D15 |
 | 2 | 仮受付 chọn bằng ô thả xuống | Bảng chờ, chọn bằng phím | NFR-USE-01 |
-| 3 | Không có [3] giải thích 業務日, không job 02:00 | Có, theo quy chế | M10, D22 |
+| 3 | Không có [3] giải thích 業務日, không có job mở ngày | Có, giờ theo quy chế; 業務日 mở từ giờ nhận lô | M10, D22 |
 | 4 | Không có [8], [11], [13] | Có | M11, PRM-116 |
 
 ## History of change
@@ -89,3 +89,4 @@ INTAKE: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: không có menu nhập, xem �
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Gate 1: [3] giờ nhận lô lấy từ quy chế, không viết cứng (khách #27, M-01); số lẻ theo đơn vị (m-11). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |

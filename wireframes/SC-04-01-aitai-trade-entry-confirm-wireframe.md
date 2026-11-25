@@ -2,7 +2,7 @@
 id: WF-SC-04-01
 title: Wireframe SC-04-01 相対取引入力・確定
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-01, FR-AITAI-02, BR-PERM-01, BR-LOT-02, NFR-USE-01, PRM-046, PRM-114, DEC-033, ADR-003, ADR-008]
@@ -35,7 +35,7 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
 │     [4] ┌ 仲卸 許可 有効（〜2028/10/23）        ┐     │ │ …                           │
 │         │ 売買参加者なら: 承認 有効 / 参加上限残 ¥… │     │ │ [11] 取引一覧へ →             │
 │         └ 赤: 失効・一時停止 / 黄: 失効まで30日以内  ┘     │ └────────────────────────────┘
-│[5] 数量（kg）[   2.00 ]                            │
+│[5] 数量（kg）[    2.0 ]                            │
 │[6] 単価（円/kg）[  1,200 ]                         │
 │[7] 金額（税抜） ¥2,400                              │
 │                                                    │
@@ -61,7 +61,7 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
 | 2 | Đơn vị · 残 · 目利き | Nhãn | — | `単位 kg・残 66kg`; kết quả 目利き hiện để tham khảo, **không tự quyết giá** | FR-LOT-03, CAP-HUMAN-01 |
 | 3 | 買受人 | Ô nhập mã + gợi ý | ✓ | 買受人番号 `^[A-Z0-9]{1,10}$`; chỉ 仲卸 / 売買参加者 | TBL-ACTOR-01 |
 | 4 | Tư cách người mua | Nhãn trạng thái | — | **仲卸 → chữ 「許可」; 売買参加者 → chữ 「承認」 + 参加上限残 (theo kỳ)**; không gộp thành "資格OK". Màu + chữ | BR-PERM-01, ADR-003, luật 2 |
-| 5 | 数量 | Số | ✓ | > 0, 2 số lẻ, ≤ 残 (kiểm lại ở server lúc chốt) | BR-LOT-02 |
+| 5 | 数量 | Số | ✓ | > 0, ≤ 残 (kiểm lại ở server lúc chốt). Theo đơn vị của lô: kg **1 chữ số lẻ**; 箱 (ケース) / 尾 **số nguyên** — chặn ngay ở ô (khớp Database Design `NUMERIC(12,1)` + CHECK theo đơn vị; N03) | BR-LOT-02, PRM-053, khách #11 |
 | 6 | 単価 | Số | ✓ | > 0, nguyên; nhãn theo đơn vị lô | FB LAB-2 #5 |
 | 7 | 金額 | Nhãn tính | — | floor(数量 × 単価), 税抜; thuế tính ở 精算 | PRM-053 |
 | 8 | 確定する | Nút chính | — | Online bắt buộc; một phím; ghi người chốt + thời điểm | PRM-114, L4-A05 |
@@ -69,7 +69,7 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
 | 10 | 直前の確定 | Bảng | — | 5 GD gần nhất của chính người dùng, mới nhất trên | FB LAB-2 #7 |
 | 11 | 取引一覧へ | Liên kết | — | → SC-04-03 | — |
 | 12 | Lỗi in | Banner | — | In thẳng phiếu, không xem trước; lỗi → SC-04-02 「再発行」 | M05, FT-04-04 |
-| 13 | Hộp 参加上限 | Hộp thoại | — | Chỉ 売買参加者; hạn mức **theo kỳ**, chung 相対 + せり, mặc định = 保証金額; **không chặn cứng**; chọn lý do bằng phím số | PRM-046, L4-A04 (1), M19 |
+| 13 | Hộp 参加上限 | Hộp thoại | — | Chỉ 売買参加者; hạn mức **theo kỳ**, chung 相対 + せり, mặc định = 保証金額; **không chặn cứng** (người chốt tự quyết lúc cao điểm); chọn lý do bằng phím số. GD vượt có lý do hiện ở tab 要確認 SC-07-01 để 照合 soát (khách #10) | PRM-046, L4-A04 (1), M19 |
 | 14 | 備考 | Văn bản | Khi 「その他」 | ≤ 200 ký tự | FT-01-09 |
 | 15 | Hỏi lại khi trùng | Hộp thoại | — | Cùng lô, người mua, SL, giá trong 3 phút; không chặn | FB LAB-2 #6 |
 
@@ -103,9 +103,11 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
 | 5 | Lý do vượt hạn mức gõ tự do | Chọn bằng phím số + 備考 | L4-A04 (1) |
 | 6 | Không có banner mất mạng | C-28 | M04, ADR-008 |
 | 7 | Mã GD `T20261123-5-1` | Mã ngắn đọc được (vd. 相対-0005) — chờ chốt định dạng ở Database Design | FB LAB-2 #7 |
+| 8 | 数量 tối đa 2 chữ số lẻ cho mọi đơn vị | kg 1 chữ số lẻ, 箱 / 尾 số nguyên | N03, m-11 |
 
 ## History of change
 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Gate 1 m-11 / khách #11: 数量 1 chữ số lẻ với kg, số nguyên với 箱 / 尾; khách #10: GD vượt 参加上限 hiện ở 要確認 SC-07-01. Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |

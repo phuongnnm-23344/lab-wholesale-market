@@ -2,10 +2,10 @@
 id: WF-SC-04-05
 title: Wireframe SC-04-05 当日訂正（＋取消）
 status: draft
-version: "0.1.0"
+version: "0.2.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
-related: [FT-04-05, FT-04-06, FR-AITAI-03, PRM-127, M17, D11, BR-CLOSE-01, ADR-004]
+related: [FT-04-05, FT-04-06, FR-AITAI-03, PRM-127, M17, D11, BR-CLOSE-01, E-08, ADR-004, ADR-005]
 ---
 
 # SC-04-05 当日訂正（＋取消）— wireframe (màn mới, mức wireframe)
@@ -31,8 +31,9 @@ Prototype **không có** màn này (M17): mọi điều chỉnh đi 修正申請
 │ 買受人  N05 サンプル仲卸5    │   │ [4] 買受人  [ N05 ]  → 許可 有効            │
 │ 数量    30kg                │   │ [5] 数量    [ 28 ] kg   ロット残 18 → 20kg   │
 │ 単価    ¥2,700              │   │ [6] 単価    [ 2,700 ]                     │
-│ 金額    ¥81,000             │   │ [7] 金額    ¥75,600（差 −¥5,400）           │
+│ 金額    ¥81,000             │   │ [7] 金額    ¥75,600（差 −¥5,400、税込 −¥5,832）│
 └────────────────────────────┘   └────────────────────────────────────────┘
+[14] （閾値以上または買受人変更のとき）この訂正は締め前に照合部門が確認します
 [8] 理由 [ 計量の誤り ▼ ] [9] 備考 [            ]（必須: その他のとき）
 [10] 引渡し状況: 引渡済 12kg（訂正後の数量は引渡済以上であること）
 [11] [ 訂正する ]   [12] [ 取引を取り消す ]（別ボタン・赤枠）  [13] キャンセル
@@ -47,22 +48,24 @@ Prototype **không có** màn này (M17): mọi điều chỉnh đi 修正申請
 | 1 | GD đích | Nhãn | — | Chỉ vào được khi 業務日 của GD **chưa khóa** | FR-AITAI-03 |
 | 2 | Nội dung hiện tại | Nhãn | — | Giá trị hiệu lực (đã gồm lần 訂正 trước) | ADR-004 |
 | 3 | Khối 訂正後 | Vùng | — | | — |
-| 4 | 買受人 | Mã | ✓ | Kiểm lại 許可 / 承認 + 参加上限 như SC-04-01 | BR-PERM-01 |
-| 5 | 数量 | Số | ✓ | > 0; ≤ SL gốc + 残 lô; ≥ SL đã giao | BR-LOT-02, FR-DEL-01 |
+| 4 | 買受人 | Mã | ✓ | Kiểm lại 許可 / 承認 + 参加上限 như SC-04-01. Đổi 買受人 → luôn hiện [14] | BR-PERM-01 |
+| 5 | 数量 | Số | ✓ | > 0; ≤ SL gốc + 残 lô; ≥ SL đã giao. Theo đơn vị của lô: kg **1 chữ số lẻ**, 箱 / 尾 **số nguyên** — chặn ngay ở ô (khách #11, m-11) | BR-LOT-02, FR-DEL-01, PRM-053 |
 | 6 | 単価 | Số | ✓ | > 0 | — |
-| 7 | 金額 + chênh lệch | Nhãn | — | | — |
+| 7 | 金額 + chênh lệch | Nhãn | — | Hiện cả chênh 税込 theo từng người mua (dùng để so ngưỡng) | — |
 | 8 | 理由 | Chọn | ✓ | Danh sách: 計量の誤り / 買受人の取り違え / 単価の誤り / その他 | FT-04-05 |
 | 9 | 備考 | Văn bản | Khi その他 | ≤ 200 | — |
 | 10 | Tình trạng giao | Nhãn | — | | FR-DEL-05 |
-| 11 | 訂正する | Nút | — | Online bắt buộc; không duyệt 2 cấp; hiện ở tab 要確認 SC-07-01 | PRM-127 |
+| 11 | 訂正する | Nút | — | Online bắt buộc; không duyệt 2 cấp; hiện ở tab 要確認 SC-07-01. Chênh ≥ ngưỡng 2 cấp hoặc đổi 買受人 → dòng ✖ ở checklist SC-07-02 tới khi 照合事務局 bấm 確認済 | PRM-127, Q-SC0405-01 |
 | 12 | 取り消す | Nút | — | Nút riêng, viền đỏ; **chặn nếu đã giao một phần** → dẫn SC-06-04 | FT-04-06, PRM-127 |
 | 13 | キャンセル | Nút | — | | — |
+| 14 | Câu báo 照合 sẽ soát | Nhãn | — | Hiện khi tiền thay đổi lớn nhất của một người mua (税込) ≥ ngưỡng 2 cấp trong quy chế (E-08, không tạo tham số mới) **hoặc** đổi 買受人: 「この訂正は締め前に照合部門が確認します」 — khách Q-SC0405-01 ý 2 | E-08, PRM-127 |
 
 ## 4. Trạng thái
 
 | Trạng thái | Hiển thị |
 |---|---|
-| Ngày đã khóa | Không mở được; C-24 → SC-08-01 (修正申請) |
+| Ngày đã khóa (mở từ SC-04-04) | Không mở được; C-24 → SC-08-01 (修正申請) |
+| **Ngày bị khóa khi đang nhập** (bấm [11] / [12] nhận 423 `DAY_LOCKED`) | **Không mất nội dung đã gõ.** Hiện C-24 với nút 「修正申請として提出 →」: mở SC-08-01 điền sẵn GD đích, 訂正後 ([4]–[6]), lý do [8] + [9]; người chốt chỉ cần thêm chứng từ nếu có rồi nộp. Ca này xảy ra thật vào giờ khóa (khách #5, Q-WF-03 ý 2) |
 | GD đang có 修正申請 chờ | C-27, form chỉ đọc |
 | Đã giao một phần + bấm 取消 | Hộp lỗi 「引渡済のため取り消せません。差異は例外登録で処理してください →」 SC-06-04 |
 | Người mua mới không đủ tư cách | C-22 dưới [4] |
@@ -78,10 +81,11 @@ Toàn bộ màn là mới (M17, D11). Prototype dùng 修正申請 cho mọi đi
 
 ## 7. Câu hỏi
 
-- Q-SC0405-01: 当日訂正 có cần người thứ hai xác nhận khi chênh tiền lớn không? Giả định: không (PRM-127), chỉ hiện ở 要確認 để 照合 soát. Sai → thêm bước xác nhận, ~+0,2 MM.
+- Q-SC0405-01: 当日訂正 có cần người thứ hai xác nhận khi chênh tiền lớn không? **Đã trả lời [Customer giả lập, 2026-11-25]:** không bắt người thứ hai lúc sửa (PRM-127); 当日訂正 / 取消 có tiền thay đổi ≥ ngưỡng 2 cấp (đúng ngưỡng E-08) hoặc đổi 買受人 → dòng ✖ ở checklist 日次締め (SC-07-02 [9]) tới khi 照合事務局 bấm 「確認済」; dưới ngưỡng giữ ⚠. Màn hiện [14]; SC-04-04 và 要確認 hiện cả tên người chốt gốc và người sửa.
 
 ## History of change
 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.2.0 | Update | Gate 1 / khách: số lẻ theo đơn vị (m-11, #11); [14] câu báo 照合 soát khi ≥ ngưỡng / đổi 買受人 (Q-SC0405-01 đã trả lời); gặp 423 giữ nội dung, mang sang SC-08-01 (#5). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
