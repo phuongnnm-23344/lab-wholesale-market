@@ -4,7 +4,7 @@
 
 Nhóm tài liệu **mới, không có trong QC-01**. Tên file `ADR-{số 3 chữ số}-{slug}.md`, số cấp một lần, không tái sử dụng. Mỗi ADR gồm: bối cảnh (kèm ID RFP / DEC- / PRM- / M-) · quyết định · phương án đã bỏ và lý do · hệ quả · truy vết. ADR đã chốt không sửa nội dung quyết định; đổi quyết định thì viết ADR mới và ghi "thay thế ADR-xxx" ở cả hai file.
 
-Trạng thái: **Accepted** = người dùng đã quyết · **Proposed** = PL đề xuất, chờ Gate 1 (bản 0.2.0 = sửa theo Expert Gate 1, chờ recheck). Điểm tích hợp (CSV kế toán, 入金 CSV, email, máy in) đã chốt ở LAB-1 (PRM / DEC) nên không có ADR riêng — xem [ARCHITECTURE.md §9](../ARCHITECTURE.md).
+Trạng thái: **Accepted** = người dùng đã quyết · **Proposed** = PL đề xuất; đã qua Expert Gate 1 (RELEASE sau recheck) và Gate 2 (RELEASE khi đóng), người dùng chưa chốt riêng từng ADR — LAB-5 dùng làm thiết kế hiện hành, đổi quyết định thì viết ADR mới. Điểm tích hợp (CSV kế toán, 入金 CSV, email, máy in) đã chốt ở LAB-1 (PRM / DEC) nên không có ADR riêng — xem [ARCHITECTURE.md §9](../ARCHITECTURE.md).
 
 | ID | Tên tài liệu | Feature | Trạng thái | Version | Updated by | Updated | Link |
 |---|---|---|---|---|---|---|---|

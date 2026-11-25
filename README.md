@@ -9,7 +9,7 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 - **Prototype LAB-2** chạy thật ở `prototype/` (không sửa trong LAB-4).
 - **Bộ thiết kế LAB-4** (requirement, spec, kiến trúc, ADR, wireframe) theo chuẩn công ty [`sun-asterisk-internal/spec-standards`](https://github.com/sun-asterisk-internal/spec-standards) — QC-01 *Quy chuẩn Cấu trúc Thư mục Spec trên GitHub* (`0.32.1`).
 
-Đọc theo thứ tự: **`PREMISE.md` → `architecture/` → `wireframes/` → `specs/`**. Bộ thiết kế này là input để break task ở LAB-5.
+Đọc theo thứ tự: **`PREMISE.md` → `architecture/` → `wireframes/` → `specs/`**; cấu trúc thư mục và phần nào kế thừa chuẩn công ty / phần nào tạo mới ở **mục 4**; cách dùng AI ở **`AI-report.md`**. Bộ thiết kế này là input để break task ở LAB-5.
 
 ## 1. Bảng điều hướng
 
@@ -21,7 +21,7 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 | [`architecture/`](architecture/) | Kiến trúc to-be: thành phần hệ thống, luồng dữ liệu chính, điểm tích hợp | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/_index.md`](architecture/_index.md) |
 | [`architecture/adr/`](architecture/adr/) | ADR: bối cảnh · quyết định · phương án đã bỏ · hệ quả | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/adr/_index.md`](architecture/adr/_index.md) |
 | [`wireframes/`](wireframes/) | 画面一覧 / 画面遷移 (70 màn 第1期), wireframe to-be cho 10 màn cốt lõi + 5 màn bổ sung; Screen Specification đầy đủ cho **12 màn** (10 màn đại diện + 2 màn nối của delivery — PREMISE L4-D07) | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
-| `AI-report.md` | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa | — | **Mới** (yêu cầu đề) | PL | *(viết ở P4)* |
+| [`AI-report.md`](AI-report.md) | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa, tự đánh giá | Frontmatter + History theo quy ước chuẩn | **Mới** (yêu cầu đề) | PL | — |
 | [`prototype/`](prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](prototype/README.md) |
 
 Nhóm thư mục mức repo khác (`.github/`, `docs/`, `webhook/`, các script `*.sh` trong `scripts/`) là phần của template quản lý dự án Sun*; script của bộ thiết kế LAB-4 ở mục 5 — xem từ mục "GitHub Project Management Template" trở xuống.
@@ -53,29 +53,78 @@ Nhóm thư mục mức repo khác (`.github/`, `docs/`, `webhook/`, các script 
 
 Link tương đối bên trong các file bản mẫu (`../01-templates/…`) trỏ theo cấu trúc của repo chuẩn nên không mở được trong repo này — giữ nguyên theo ràng buộc 5.
 
-## 4. Kế thừa từ spec-standards và tạo mới
+## 4. Cấu trúc bộ thiết kế, phần kế thừa và phần tạo mới
 
-*Khung — P4 điền đủ khi bộ thiết kế xong.*
+**Nguồn chuẩn:** repo [`sun-asterisk-internal/spec-standards`](https://github.com/sun-asterisk-internal/spec-standards), nhánh `main`, commit **`72c1dda`** (2026-11-05) — QC-01 `0.32.1`, khuôn ở `03-specs/01-templates/`, bản mẫu ở `03-specs/02-samples/`. Đã đối chiếu lại: thư mục `03-specs/` **không đổi** từ `72c1dda` tới `ae45211`, nên khuôn trong repo này vẫn là bản mới nhất lúc nộp.
 
-| File / template | Vị trí | Kế thừa / mới | Bản nguồn | Ghi chú |
-|---|---|---|---|---|
-| `BM-2-901-50-database-design-template.md` + `sample-AUTH_DATABASE.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
-| `BM-2-901-51-screen-specification-template.md` + `sample-LOGIN_SPEC.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
-| `BM-2-901-52-api-design-template.md` + `sample-AUTH_LOGIN_API.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
-| `BM-2-901-53-technical-design-template.md` + `sample-AUTH_LOGIN_DETAIL.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | Thay bản cũ `BM-2-901-53-detail-design-template.md` |
-| `BM-2-901-54-function-specifications-template.md` + `sample-AUTH_FUNCTIONS.md` | `specs/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
-| `BM-2-901-63-requirement-document-template.md` + `sample-REQ-2609-01.md` | `requirements/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
-| `log-convention.md` | `specs/_common/` | Kế thừa, thêm mục 4 áp dụng cho dự án | `72c1dda` | |
-| `api-conventions.md`, `api-list.md`, `error-codes.md` | `specs/_common/` | **Mới** — khuôn BM-2-901-52 trỏ tới ba file này nhưng repo chuẩn chưa có (ISS-36) | — | P3: body lỗi theo prototype (khác ví dụ `errors[]` của khuôn — lý do ở `api-conventions.md` quy ước 3) |
-| `render-wireframes.py` + `wireframes/html/_shared/` | `scripts/`, `wireframes/html/` | Mới | — | Wireframe HTML → PDF / PNG + ảnh đánh số Screen Specification (mục 5). Thay script vẽ khối `render-annotated-screens.py` (đã xóa ở LAB-4) |
-| `check-api-spec-consistency.py` | `scripts/` | Mới | — | Kiểm API Design (mục 5) — Gate 2 G2-m01 |
-| `export-mermaid-png.py` | `scripts/` | Mới | — | Xuất ảnh sơ đồ Mermaid của Technical Design (mục 5) — FB-EXP-236 |
-| Các `_index.md` | mỗi thư mục | Kế thừa quy định QC-01 §3 | — | |
-| `PREMISE.md` | gốc | Mới | — | |
-| Khuôn kiến trúc, khuôn ADR | `architecture/` | Mới | — | *(P2-A)* |
-| Khuôn 画面一覧 / 画面遷移 / wireframe | `wireframes/` | Mới | — | *(P2-C)* |
-| `AI-report.md` | gốc | Mới | — | *(P4)* |
-| Tài liệu spec theo từng feature | `specs/{feature}/`, `specs/system-design/` | Viết theo khuôn kế thừa | — | *(P2-B, P3)* |
+### 4.1 Cây thư mục nộp (phần LAB-4)
+
+```
+README.md                         bảng điều hướng (QC-01 §1) — file này
+PREMISE.md                        tiền đề LAB-4: thêm / bỏ so với LAB-1, giả định, hướng đi đã chốt (L4-D01..D07)
+AI-report.md                      cách dùng AI trong LAB-4
+requirements/
+  _index.md                       bảng tra (0 tài liệu — REQ theo Story viết ở LAB-5)
+  _templates/                     BM-2-901-63 + sample-REQ-2609-01
+architecture/
+  _index.md                       bảng tra (1 tài liệu)
+  ARCHITECTURE.md                 kiến trúc to-be: module, luồng dữ liệu, điểm tích hợp, NFR
+  adr/_index.md + ADR-001..010    10 quyết định kiến trúc
+wireframes/
+  _index.md                       bảng tra (17 tài liệu)
+  SCREEN-LIST.md                  画面一覧 / 画面遷移 — 70 màn 第1期
+  _common-layout.md               khung màn + mục dùng chung C-1..C-31
+  SC-xx-yy-*-wireframe.md (15)    mô tả + bảng Item có số (= cột ID của Screen Specification)
+  html/SC-xx-yy.html (15)         nguồn hình duy nhất của mỗi màn (biến thể A, B, C…)
+  html/_shared/                   CSS / JS chung (khung PC, khung tablet, 1 trang PDF / màn)
+  png/SC-xx-yy.png (15)           ảnh mọi biến thể (sinh từ HTML)
+  pdf/wireframes-all.pdf          15 trang, một trang / màn (sinh từ HTML)
+  assets/                         14 ảnh as-is chụp prototype LAB-2
+specs/
+  _index.md                       bảng tra SPEC / FUNC / TECH + phụ thuộc chưa đặc tả DEP-01..17
+  _templates/                     BM-2-901-50..54 + 5 bản mẫu (kế thừa nguyên)
+  _common/                        log-convention · api-conventions · api-list · error-codes
+  {feature}/README.md (7)         party · lot · trade · delivery · settle · incentive · rule
+  {feature}/screen-specification/ SC-xx-yy_SPEC.md (12) + assets/{ID}_annotated.png
+  {feature}/function-specifications/  {MODULE}_FUNC.md (7)
+  {feature}/technical-design/     {DESIGN_ID}_TECH.md (15) + assets/{DESIGN_ID}_sequence.png
+  system-design/database-design/  _index + MKT_DB (file tổng) + 9 file theo cụm — 60 bảng
+  system-design/api-design/       _index + {feature}/API-xxx-nnn_API.md (42)
+scripts/                          render-wireframes.py · export-mermaid-png.py · check-api-spec-consistency.py
+```
+
+Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specification + 7 Function Specifications + 15 Technical Design) · 10 Database Design · 42 API Design · 1 kiến trúc + 10 ADR · 17 wireframe / 画面一覧 · PREMISE · AI-report.
+
+### 4.2 Kế thừa từ spec-standards và tạo mới
+
+| File / thư mục / khuôn | Vị trí | Phân loại | Ghi chú |
+|---|---|---|---|
+| `BM-2-901-50-database-design-template.md` + `sample-AUTH_DATABASE.md` | `specs/_templates/` | **Kế thừa nguyên** (`72c1dda`) | Không sửa tại chỗ (ràng buộc 5) |
+| `BM-2-901-51-screen-specification-template.md` + `sample-LOGIN_SPEC.md` | `specs/_templates/` | **Kế thừa nguyên** | Không copy BM-01 và `sample-AD_LOGIN_SPEC.md` (ngoại lệ #6) |
+| `BM-2-901-52-api-design-template.md` + `sample-AUTH_LOGIN_API.md` | `specs/_templates/` | **Kế thừa nguyên** | |
+| `BM-2-901-53-technical-design-template.md` + `sample-AUTH_LOGIN_DETAIL.md` | `specs/_templates/` | **Kế thừa nguyên** | Thay bản cũ `BM-2-901-53-detail-design-template.md` có sẵn trong template repo |
+| `BM-2-901-54-function-specifications-template.md` + `sample-AUTH_FUNCTIONS.md` | `specs/_templates/` | **Kế thừa nguyên** | |
+| `BM-2-901-63-requirement-document-template.md` + `sample-REQ-2609-01.md` | `requirements/_templates/` | **Kế thừa nguyên** | Chưa dùng ở LAB-4 (xem `requirements/_index.md`) |
+| Cấu trúc QC-01: `requirements/`, `specs/{feature}/{screen-specification,function-specifications,technical-design}/`, `specs/system-design/{database-design,api-design}/`, `_index.md` mỗi thư mục, `assets/` cạnh tài liệu, frontmatter + History (SemVer), "N/A + lý do" | toàn repo | **Kế thừa nguyên** | Điểm QC-01 để dự án chọn: §2 |
+| `log-convention.md` | `specs/_common/` | **Kế thừa, có thêm** | Thêm mục 4 "Áp dụng cho dự án" |
+| Các `_index.md` | mỗi thư mục | **Kế thừa quy định** QC-01 §3, nội dung mới | `architecture/`, `adr/`, `wireframes/` dùng cùng dạng bảng tra cho nhóm mới |
+| Screen Specification 12 file | `specs/{feature}/screen-specification/` | **Viết theo khuôn, có điều chỉnh** | Ngoại lệ #9 (cột ID = số item wireframe, `C-xx`), #10 (thêm §4.4 phân quyền theo vai, §6.x trạng thái / offline / câu hỏi mở), #11 (ảnh = biến thể A của wireframe HTML, không Figma) |
+| Function Specifications 7 file, Technical Design 15 file | `specs/{feature}/` | **Viết theo khuôn** | Technical Design: Mermaid giữ làm nguồn, PNG `{DESIGN_ID}_sequence.png` sinh từ đó (khuôn §2 đòi ảnh) |
+| Database Design 10 file | `specs/system-design/database-design/` | **Viết theo khuôn, có điều chỉnh** | Ngoại lệ #7 (thêm file tổng `MKT_DB.md`), #8 (Index / FK viết một dòng) |
+| API Design 42 file | `specs/system-design/api-design/{feature}/` | **Viết theo khuôn** | Body lỗi theo prototype, khác ví dụ `errors[]` của khuôn — lý do ở `api-conventions.md` quy ước 3 |
+| Screen ID `SC-xx-yy`, Spec trong repo code, nhóm thư mục thêm ở gốc, tên bản mẫu thật | — | **Ngoại lệ QC-01** #1–#5 | Lý do từng điểm ở §3 |
+| `api-conventions.md`, `api-list.md`, `error-codes.md` | `specs/_common/` | **Tạo mới** | Khuôn BM-2-901-52 trỏ tới ba file này nhưng repo chuẩn chưa có (ISS-36); 8 mã `E-CMN` + 147 mã theo feature |
+| `PREMISE.md` | gốc | **Tạo mới theo đề** | Frontmatter + History theo quy ước chuẩn |
+| `architecture/ARCHITECTURE.md`, `architecture/adr/ADR-001..010` | `architecture/` | **Tạo mới theo đề** | Chuẩn đã bỏ `architecture-overview` khỏi QC-01 (2026-09-10); ADR theo dạng bối cảnh · quyết định · phương án bỏ · hệ quả · truy vết |
+| `wireframes/` (画面一覧, `_common-layout.md`, 15 wireframe MD, `html/` + `_shared/`, `png/`, `pdf/wireframes-all.pdf`, `assets/`) | `wireframes/` | **Tạo mới theo đề** | Chuẩn đã bỏ `screen-map`; phong cách HTML theo mẫu PDF người dùng đưa (đề khác, chỉ lấy phong cách) |
+| `render-wireframes.py`, `export-mermaid-png.py`, `check-api-spec-consistency.py` | `scripts/` | **Tạo mới** | Mục 5. Script `*.sh` cùng thư mục là của template quản lý dự án |
+| `AI-report.md` | gốc | **Tạo mới theo đề** | |
+
+### 4.3 Phạm vi Screen Specification: 12 màn, không phải 70
+
+- **12 màn có Screen Specification đầy đủ** (field, validation, trạng thái, phân quyền theo vai, Event, API): 10 màn đại diện của 10 cụm nghiệp vụ (PREMISE **L4-D02**: SC-01-02, 03-01, 03-05, 04-01, 05-02, 06-02, 07-02, 08-03, 09-04, 10-04) + **SC-06-04, SC-06-05** vì xác nhận giao có tranh chấp là điểm người quyết cuối (luật 3) và hai màn dùng chung FUNC / TECH của delivery (**L4-D07**, DEC-056).
+- **Vì sao không làm đủ 70 màn của 画面一覧:** đề LAB-4 yêu cầu "các màn hình cốt lõi", không quy định số màn; người dùng chốt 10 màn ở đầu LAB-4 (plan §0, L4-D02) và **quyết không mở rộng thêm** ngày 2026-11-25 sau Gate 2. Ba màn SC-03-02, SC-03-07, SC-04-05 có wireframe nhưng chưa có Screen Specification.
+- **Các màn còn lại** chỉ ở mức dòng trong [`wireframes/SCREEN-LIST.md`](wireframes/SCREEN-LIST.md); phần 12 màn gọi tới mà chưa đặc tả được liệt kê là **DEP-01..17** ở [`specs/_index.md`](specs/_index.md) (A. gọi trực tiếp, B. nguồn dữ liệu đầu vào, mỗi dòng có giả định seed cho test) — input để LAB-5 tách issue.
 
 ## 5. Script của bộ thiết kế
 
