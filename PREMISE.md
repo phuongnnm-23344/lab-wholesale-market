@@ -2,7 +2,7 @@
 id: DOC-PREMISE-001
 title: Tiền đề thiết kế LAB-4 (PREMISE)
 type: premise
-version: "0.3.0"
+version: "0.4.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [DEC-002, DEC-004, DEC-005, DEC-008, DEC-028, DEC-029, DEC-031, DEC-032, DEC-033, PRM-042, PRM-046, PRM-110, PRM-126, PRM-127]
@@ -71,7 +71,7 @@ Thuật ngữ nghiệp vụ: 相対取引 (thỏa thuận mua bán trực tiếp
 | # | Hạng mục | LAB-1 bản cuối | LAB-4 | Lý do | ID |
 |---|---|---|---|---|---|
 | 1 | Danh sách chức năng | 99 FT / 70 màn + 10 batch | Giữ nguyên; 画面一覧 LAB-4 liệt kê đủ 70 màn | Phạm vi hợp đồng | DEC-031 |
-| 2 | Mức chi tiết thiết kế | — (LAB-1 chỉ có list) | **10 màn cốt lõi** có đủ Screen Specification + Function / Technical / API Design; 22 màn còn lại của prototype + 4 màn bổ sung ở mức wireframe; các màn khác chỉ có dòng trong 画面一覧 | Đề LAB-4 không quy định số màn; phân bổ theo plan đã duyệt. Danh sách 10 màn: L4-D02 mục 5 | Plan LAB-4 §0; L4-D02 |
+| 2 | Mức chi tiết thiết kế | — (LAB-1 chỉ có list) | **10 màn cốt lõi** có đủ Screen Specification + Function / Technical / API Design; wireframe to-be cho **10 màn cốt lõi + 4 màn bổ sung** (dòng 3); **22 màn còn lại của prototype và mọi màn khác của 70 màn chỉ ở mức 画面一覧** (`wireframes/SCREEN-LIST.md`) | Đề LAB-4 không quy định số màn; phân bổ theo plan đã duyệt. Danh sách 10 màn: L4-D02 mục 5 | Plan LAB-4 §0; L4-D02 |
 | 3 | 4 màn bổ sung wireframe (không có trong prototype) | Có trong 70 màn | SC-04-05 当日訂正（+取消）, SC-06-04 引渡し例外登録, SC-06-05 争いのある引渡し完了確認, SC-03-07 オフライン同期・照合 | Đây là chỗ prototype thay bằng mock (M04, M16, M17); thiết kế to-be phải lấp | FR-AITAI-03, CAP-HUMAN-01, NFR-AVL-02, DEC-004 |
 | 4 | 参加上限 (hạn mức tham gia của 売買参加者) | Cảnh báo theo **kỳ hiện tại**, mặc định = 保証金額, bắt lý do, không chặn cứng | Theo LAB-1 (sửa lệch của prototype — M19) | Prototype tính theo 業務日 là giản lược | PRM-046, FT-01-09 |
 | 5 | Ngưỡng duyệt 2 cấp của 修正申請 | Giá trị tạm 100.000 JPY, chờ E-08 | Là tham số **trong quy chế có version** (GOV-RULE-01), không phải hằng số, không phải màn SC-10-06 | Giá trị liên quan tiền phải có version + maker-checker (PRM-126); prototype để hằng số (M13) | E-08, PRM-126, GOV-RULE-01 |
@@ -108,8 +108,9 @@ Tiền đề LAB-1 (PRM-001..131) vẫn hiệu lực; dưới đây chỉ là gi
 | Quy tắc giao "khớp 精算" (「残り全部」) | Quy chế có version | Có | Đụng tiền | E-17, PRM-118 |
 | 持ち越し lô khi khóa ngày | **Chưa xếp** — hỏi lại 運用部門 có làm đổi tiền không | — | Tạm thiết kế như quy chế (an toàn hơn) | E-12, PRM-110 |
 | Cho bán trước 下見済 | **Chưa xếp** — như trên | — | Tạm bám FIG-011 (chỉ lô 下見済) | E-13, PRM-117 |
-| Bảng tỷ lệ thưởng, 支払期日, giờ khóa, lịch chợ–ngân hàng thường | Quy chế có version | Có (trừ bộ go-live) | Bảng tỷ lệ chỉ hiệu lực từ ngày 1 của tháng | GOV-RULE-01, PRM-042 |
-| 臨時休市 / 臨時開市 | Lịch (SC-10-05), có duyệt gọn | **Không** **[Giả lập]** | Đổi trong ngày, không cần nhà thầu | 00-02, FB-CUS-239 |
+| Bảng tỷ lệ thưởng, công thức 支払期日 (ngày 10 + quy tắc lùi), giờ khóa | Quy chế có version | Có (trừ bộ go-live) | Bảng tỷ lệ chỉ hiệu lực từ ngày 1 của tháng | GOV-RULE-01, PRM-039, PRM-042 |
+| Lịch chợ–ngân hàng năm (1 bảng, 2 cờ; ルール管理者 nhập lịch năm sau một lần vào tháng 12, 照合部門長 duyệt) | Lịch (SC-10-05) — **dữ liệu master**, không phải version quy chế | **Không** | Công thức tính 期日 dùng lịch này vẫn nằm trong quy chế | PRM-054, PRM-042 |
+| 臨時休市 / 臨時開市 | Lịch (SC-10-05), có duyệt gọn | **Không** **[Giả lập]** | Đổi trong ngày, không cần nhà thầu | 00-02, PRM-054, FB-CUS-239 |
 | Nơi nhận / giờ gửi / mẫu câu thông báo, hạn SLA tranh chấp, cảnh báo sắp hết hạn, timeout máy | File cấu hình có nhật ký | Không | Đổi tài khoản nhận tiền trong mẫu câu phải có 照合部門長 hoặc 財務部門 xác nhận | PRM-126 |
 | Rollback khi đã đủ 4 lần | **Không phải tham số** — cố định trong thiết kế sau workshop | — | Xem §6 | E-14 |
 
@@ -169,7 +170,7 @@ Bảy luật của dự án được giữ ở mọi nơi thiết kế: 相対�
 | ID | Ngày | Quyết định | Phương án đã bỏ | Người quyết | Nguồn |
 |---|---|---|---|---|---|
 | L4-D01 | 2026-11-25 | Kiến trúc to-be chạy trên **AWS Tokyo managed** theo DEC-002 (Next.js + TypeScript, PostgreSQL managed Multi-AZ, object storage). Prototype LAB-2 (Vercel + Supabase) chỉ là bản thử, dùng làm bằng chứng logic nghiệp vụ và mô hình dữ liệu | Vercel + Supabase gói trả phí (ghi vào ADR là phương án đã bỏ); kiến trúc logic trung lập chưa chọn hạ tầng | Người dùng | DEC-002; NFR-AVL-01, NFR-AVL-03, DR-RET-01 |
-| L4-D02 | 2026-11-25 | **Đúng 10 màn** có Screen Specification đầy đủ, mỗi cụm một màn đại diện: SC-03-01 ロット本登録 · SC-04-01 相対取引入力・確定 · SC-05-02 せり結果確認 · SC-03-05 目利き・下見結果入力 · SC-08-03 修正申請承認・却下 · SC-07-02 日次締め · SC-01-02 参加者詳細 · SC-10-04 規則版承認・ロールバック · SC-09-04 奨励金計算・期ロック · SC-06-02 引渡し記録 (nối sang SC-06-04 / SC-06-05). **SC-01-02 thể hiện 許可 (仲卸) và 承認 (売買参加者) bằng hai khối tách riêng** (trường, trạng thái, thao tác, căn cứ khác nhau). Màn khác cùng cụm ở mức wireframe; logic nằm trong Function / Technical Design | Đủ cả cụm (~17 màn); 11 màn tách SC-01-03 / SC-01-04 | Người dùng | Plan LAB-4 §0; luật 2 (許可 ≠ 承認) |
+| L4-D02 | 2026-11-25 | **Đúng 10 màn** có Screen Specification đầy đủ, mỗi cụm một màn đại diện: SC-03-01 ロット本登録 · SC-04-01 相対取引入力・確定 · SC-05-02 せり結果確認 · SC-03-05 目利き・下見結果入力 · SC-08-03 修正申請承認・却下 · SC-07-02 日次締め · SC-01-02 参加者詳細 · SC-10-04 規則版承認・ロールバック · SC-09-04 奨励金計算・期ロック · SC-06-02 引渡し記録 (nối sang SC-06-04 / SC-06-05). **SC-01-02 thể hiện 許可 (仲卸) và 承認 (売買参加者) bằng hai khối tách riêng** (trường, trạng thái, thao tác, căn cứ khác nhau). Màn khác cùng cụm chỉ ở mức 画面一覧; logic của chúng nằm trong Function / Technical Design của màn đại diện | Đủ cả cụm (~17 màn); 11 màn tách SC-01-03 / SC-01-04 | Người dùng | Plan LAB-4 §0; luật 2 (許可 ≠ 承認) |
 
 Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 2026-11-25 (đồng ý 5, đồng ý có điều chỉnh 4, trong đó một điểm con không đồng ý ở L4-A04 (3)); góp ý đã áp ở bản 0.3.0 — xem §3, §3.1, §3.2, §6 **[Giả lập]**.
 
@@ -190,3 +191,4 @@ Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 20
 | 1 | 0.1.0 | Add new | Bản đầu: hướng đi chốt (第1期 gói R1), thêm/bỏ so với LAB-1, giả định L4-A01..A09, xử lý M01–M24, 2 điểm chờ người dùng quyết | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Mục 5 chuyển Q1, Q2 thành quyết định đã chốt L4-D01 (AWS Tokyo, Vercel + Supabase là phương án bỏ) và L4-D02 (10 màn đại diện, SC-01-02 hai khối 許可 / 承認); cập nhật mục 1.2, 2, 3 theo | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | Áp phản hồi khách giả lập 2026-11-25 (FB-CUS-218..239): L4-A01/A02/A05 ghi điều kiện; viết lại L4-A03 (bảng §3.1 quy chế vs file cấu hình, E-14 không là tham số), L4-A04 (せり chỉ 売買参加者 + hạn mức chung, kỳ theo 業務日, rollback khi đủ 4 lần chờ E-14), L4-A07 (bảng §3.2 MFA, hiệu lực 10–15 phút, quản trị MFA khi đăng nhập), L4-A08 (đáp ứng một phần, email tối thiểu, gửi lại ≤ 3), L4-A09 (ngày biên); M02/M09/M10/M15/M20/M21; thêm §6 OPEN-L4-01..03 và rủi ro R-L4-01 | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.4.0 | Update | Gộp sau P2: §2 dòng 2 và L4-D02 sửa mức chi tiết theo plan (wireframe chỉ cho 10 màn cốt lõi + 4 màn bổ sung; 22 màn còn lại của prototype chỉ ở mức 画面一覧); §3.1 tách lịch chợ–ngân hàng năm khỏi quy chế, không tính vào 4 lần/năm theo PRM-054 (đóng OPEN-DB-02) | 2026-11-25 | phuongnnm-23344 | |

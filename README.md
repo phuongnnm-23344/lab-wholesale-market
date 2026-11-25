@@ -20,7 +20,7 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 | [`specs/`](specs/) | **HOW** — Screen Specification · Function Specifications · Technical Design trong `specs/{feature}/`; Database Design · API Design trong `specs/system-design/`; tài liệu dùng chung trong `specs/_common/` | `BM-2-901-50` … `BM-2-901-54` | Kế thừa | PL (BrSE, Tech Lead, Dev) | [`specs/_index.md`](specs/_index.md) |
 | [`architecture/`](architecture/) | Kiến trúc to-be: thành phần hệ thống, luồng dữ liệu chính, điểm tích hợp | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/_index.md`](architecture/_index.md) |
 | [`architecture/adr/`](architecture/adr/) | ADR: bối cảnh · quyết định · phương án đã bỏ · hệ quả | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/adr/_index.md`](architecture/adr/_index.md) |
-| [`wireframes/`](wireframes/) | 画面一覧, 画面遷移, wireframe chi tiết của các màn không có Screen Specification đầy đủ | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
+| [`wireframes/`](wireframes/) | 画面一覧 / 画面遷移 (70 màn 第1期), wireframe to-be cho 10 màn cốt lõi + 4 màn bổ sung | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
 | `AI-report.md` | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa | — | **Mới** (yêu cầu đề) | PL | *(viết ở P4)* |
 | [`prototype/`](prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](prototype/README.md) |
 

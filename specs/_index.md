@@ -6,7 +6,7 @@ Bảng này liệt kê Screen Specification (`SPEC`), Function Specifications (`
 
 | Loại | Bảng tra | Số tài liệu |
 |---|---|---|
-| Database Design | [system-design/database-design/_index.md](system-design/database-design/_index.md) | 0 |
+| Database Design | [system-design/database-design/_index.md](system-design/database-design/_index.md) | 1 |
 | API Design | [system-design/api-design/_index.md](system-design/api-design/_index.md) | 0 |
 
 | ID | Tên tài liệu | Loại | Feature | Version | Updated by | Updated | Link |
