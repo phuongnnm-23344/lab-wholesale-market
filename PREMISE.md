@@ -2,7 +2,7 @@
 id: DOC-PREMISE-001
 title: Tiền đề thiết kế LAB-4 (PREMISE)
 type: premise
-version: "0.6.0"
+version: "0.6.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [DEC-002, DEC-004, DEC-005, DEC-008, DEC-028, DEC-029, DEC-031, DEC-032, DEC-033, PRM-042, PRM-046, PRM-110, PRM-126, PRM-127]
@@ -123,7 +123,7 @@ Tiền đề LAB-1 (PRM-001..131) vẫn hiệu lực; dưới đây chỉ là gi
 | ★ 期ロック 完納奨励金 (gồm chốt dòng 要確認) | Xem báo cáo thường |
 | Xác nhận giao có tranh chấp (SC-06-05) | Đổi người bằng PIN trên máy dùng chung |
 | ★ Checker quy chế, rollback quy chế, hủy version đã duyệt | Nhập GD, tiếp nhận lô, ghi giao hàng thường |
-| 一時停止 / 失効 / phục hồi tư cách người tham gia; 決裁 cấp mới 許可, 確認 cấp mới 承認 [PL — ADR-003 §2.2]; 確認 期限前更新 (gia hạn) 許可 / 承認 **[Giả lập]** (FB-CUS-280) | |
+| 一時停止 / 失効 / phục hồi tư cách người tham gia; 決裁 cấp mới 許可, 確認 cấp mới 承認 [PL — ADR-003 §2.2]; 確認 期限前更新 (gia hạn) 許可 / 承認 **[Giả lập]** (FB-CUS-280); 確認 đổi 参加上限 của 承認 (`LIMIT_CHANGE`) [PL — khớp PARTY_DB 4.15, chờ khách xác nhận Q-PTY-07] | |
 | Xuất CSV kế toán, xuất danh sách có dữ liệu cá nhân, xuất 監査ログ | |
 | Mở khóa / đặt lại PIN cho người khác | |
 | ★ 決裁 xóa vật lý chứng từ hết hạn lưu (B.7) | |
@@ -199,3 +199,4 @@ Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 20
 | 4 | 0.4.0 | Update | Gộp sau P2: §2 dòng 2 và L4-D02 sửa mức chi tiết theo plan (wireframe chỉ cho 10 màn cốt lõi + 4 màn bổ sung; 22 màn còn lại của prototype chỉ ở mức 画面一覧); §3.1 tách lịch chợ–ngân hàng năm khỏi quy chế, không tính vào 4 lần/năm theo PRM-054 (đóng OPEN-DB-02) | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.5.0 | Update | Sửa theo Expert Gate 1 + góp ý khách về wireframe: L4-A04 (2) bỏ định nghĩa 02:00 → 01:59, thêm hai trục thời gian và phạm vi tính lại mọi kỳ đã khóa (C-01, C-02, M-01); L4-A09 ngày biên đúng (lô 01:30, 支払期日 theo ngày ngân hàng — M-03); §3.1 ngưỡng theo người mua, tham số file cấu hình mới; §3.2 thêm MFA cho 期限前更新, 端末回収不能, xóa vật lý, dấu ★ hỏi lại mã (m-06, khách #21); M08 câu CARRY dùng chung (m-05), M10, M11 (M-08), M21; §5 thêm L4-D03 nhãn 決裁 (M-06), L4-D04 tách DB (M-09); §6 OPEN-L4-01 / R-L4-01 viết lại theo đường 修正申請 INCENTIVE (M-04) | 2026-11-25 | phuongnnm-23344 | |
 | 6 | 0.6.0 | Update | Sửa theo Expert Gate 1 recheck: nguồn MFA cấp mới / gia hạn ở §3.2 (N-03); nhãn [PL 0.5.0] cho phần PL thêm ở L4-A04 (2), L4-A09 (n-08); thêm L4-D05 (wireframe SC-03-02 ở P3), L4-D06 (E-14 để mở, F / G là tư liệu) theo quyết định người dùng | 2026-11-25 | phuongnnm-23344 | |
+| 7 | 0.6.1 | Update | Gộp P3: §3.2 thêm 確認 đổi 参加上限 (`LIMIT_CHANGE`) vào danh sách hỏi MFA — khớp PARTY_DB 4.15 (`mfa_verified_at` bắt buộc khi có `decided_by`) và spec PTY_APPROVAL_LIFECYCLE; chọn theo DB vì chặt hơn và 参加上限 là thông số tiền. Q-PTY-07 giữ để khách xác nhận | 2026-11-25 | phuongnnm-23344 | |

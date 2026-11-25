@@ -3,7 +3,7 @@ id: SPEC-ADJUST_DB-001
 title: Database Design — 当日訂正, 修正申請, điều chỉnh REVERSE / DELTA
 type: system
 subtype: database-design
-version: "0.3.0"
+version: "0.3.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -33,6 +33,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: `trade_adjustments.period_id` = kỳ GD gốc, tách khỏi `business_date` ngày áp (C-02); `correction_scope` thêm `INCENTIVE`, `LATE_ENTRY` + nghĩa `KANNO` (M-04, M-05, M-10); ngưỡng 2 cấp theo tiền thay đổi lớn nhất của một người mua, `buyer_changed` (khách #3); `trade_fixes` thêm số đo ngưỡng + `reviewed_*` cho checklist 日次締め (khách #25) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | 4.37, 4.39 | Gate 1 recheck: unique một yêu cầu KANNO / INCENTIVE đang chờ theo người × kỳ (n-02); ví dụ 4.39 dùng kỳ 2027-08 (n-05) | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.3.1 | Update | 4.37 | Gộp P3: `uq_correction_requests_one_pending_period` bỏ cột `scope` — **tối đa một** yêu cầu KANNO **hoặc** INCENTIVE đang chờ cho mỗi người × kỳ, khớp ADR-007 §2.5-12 (bản cũ cho phép một KANNO và một INCENTIVE cùng chờ). Chọn sửa DB vì ADR là quyết định đã duyệt ở Gate 1 và hai loại cùng đổi một kết quả 完納奨励金 của người × kỳ — chờ song song dễ duyệt chồng | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -178,7 +179,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 
 Chứng cứ (sao kê, ảnh) ở `attachments` (`ref_table = 'correction_requests'`). Chờ duyệt quá 2 営業日 → cảnh báo (`notifications`).
 
-**Index** — `correction_requests_pkey`; `uq_correction_requests_one_pending` (`target_trade_id`) unique partial `status IN ('SUBMITTED','FIRST_APPROVED')`; `uq_correction_requests_one_pending_period` (`scope`, `target_period_id`, `target_participant_id`) unique partial `scope IN ('KANNO','INCENTIVE') AND status IN ('SUBMITTED','FIRST_APPROVED')` (recheck n-02); `idx_correction_requests_status` (`status`, `created_at`).
+**Index** — `correction_requests_pkey`; `uq_correction_requests_one_pending` (`target_trade_id`) unique partial `status IN ('SUBMITTED','FIRST_APPROVED')`; `uq_correction_requests_one_pending_period` (`target_period_id`, `target_participant_id`) unique partial `scope IN ('KANNO','INCENTIVE') AND status IN ('SUBMITTED','FIRST_APPROVED')` — tối đa một KANNO / INCENTIVE đang chờ cho mỗi người × kỳ, không tách theo `scope` (ADR-007 §2.5-12; recheck n-02); `idx_correction_requests_status` (`status`, `created_at`).
 
 **Khoá ngoại** — `target_trade_id` → `trades.id`; `target_period_id` → `payment_periods.id`; `target_participant_id` → `participants.id`; `rule_version_id` → `rule_versions.id`; `applied_business_date` → `business_days`. `target_business_date` không FK sang ngày mở (ngày đã khóa vẫn tồn tại ở `business_days`, FK thường).
 

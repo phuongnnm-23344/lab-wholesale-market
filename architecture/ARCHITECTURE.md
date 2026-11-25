@@ -3,7 +3,7 @@ id: ARCH-001
 title: Kiến trúc to-be Product A (第1期)
 type: architecture
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [DOC-PREMISE-001, ADR-001, ADR-002, ADR-003, ADR-004, ADR-005, ADR-006, ADR-007, ADR-008, ADR-009, ADR-010, DEC-002, DEC-004, DEC-005, DEC-009, DEC-012, L4-D01]
@@ -182,7 +182,7 @@ sequenceDiagram
   participant U as Trình duyệt
   participant A as App (route handler)
   participant D as PostgreSQL
-  U->>A: POST /api/... (cookie phiên)
+  U->>A: POST /api/v1/... (cookie phiên)
   A->>A: Kiểm phiên, thiết bị, MFA step-up nếu hành động cần (ADR-002)
   A->>A: Validate input (zod)
   A->>D: BEGIN · set_config app.user_id / app.device_id / app.mfa_at (local)
@@ -353,3 +353,4 @@ Các câu đã có (E-01..E-21, OPEN-L4-01..03) không lặp lại; dưới đâ
 | 1 | 0.1.0 | Add new | Bản đầu: module, thành phần AWS Tokyo, luồng ngày / kỳ, đường ghi, phân quyền 3 lớp, human-in-the-loop, append-only, khóa ngày / kỳ, quy chế 2 nhánh E-14, hiện trường, tích hợp, điểm mở rộng, NFR, mapping prototype → to-be, Q-ARCH-01..10 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: một định nghĩa 業務日, job 01:00 dự phòng (M-01); hai trục thời gian, kỳ khóa chỉ đi DELTA, tính lại mọi kỳ đã khóa (C-01, C-02 — §4.2, §7.2); 支払期日 theo ngày ngân hàng + Q-ARCH-11 (M-03); N1 sửa tiền bằng 修正申請 INCENTIVE, phương án F / G (M-04); 「端末回収不能」, LATE_ENTRY (M-05); khác biệt thủ tục 許可 / 承認 (M-07); lưu chứng từ theo loại, không tự xóa, Q-ARCH-07 viết lại (M-08); Q-ARCH-08 hỏi cách thu (m-05); step-up idle (m-06); Q-ARCH-12 税区分 (m-07); mermaid §3 tách link (m-08); bảng §12 thêm N15 / N16 | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck N-03: thủ tục cấp mới / gia hạn 許可 · 承認 theo PRM-121 (§5, §6) | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | Gộp P3: sơ đồ đường ghi dùng `/api/v1/...` theo `specs/_common/api-conventions.md` (DEC-052) | 2026-11-25 | phuongnnm-23344 | |

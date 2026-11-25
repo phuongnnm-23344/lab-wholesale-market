@@ -3,7 +3,7 @@ id: SPEC-TRADE_DB-001
 title: Database Design — 相対 (luồng chính) / せり / in phiếu / giao hàng
 type: system
 subtype: database-design
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -32,6 +32,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: `trades.trade_date` (取引日 thật, quyết định kỳ) tách khỏi `business_date` ghi sổ, `deliveries.original_business_date` (M-05, C-02); `delivery_exceptions.settle_reviewed_*` — ngoại lệ giao đổi tiền phải 「確認済」 trước 日次締め (khách #4); 4.36 cho 配送部門責任者 khác xác nhận phiếu giấy khi người ký vắng (khách #16) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Modify | `delivery_exceptions`, `dispute_confirmations`, `trade_status_history` | Gộp P3 (spec delivery, trade): `delivery_exceptions.fix_id` → `trade_fixes` (ngoại lệ đổi tiền ở ngày chưa khóa do vai DELIVERY tạo qua hàm ngoại lệ — ADR-004 0.3.x §2.2; checklist 日次締め không đếm hai lần — Q-DEL-04, Q-DEL-09); `dispute_confirmations.conclusion` (`COMPLETED` / `PARTIAL_RETURN` / `CONTINUE_DISPUTE`) + unique `exception_id` thành unique partial `conclusion <> 'CONTINUE_DISPUTE'` để ghi được nhiều lượt 継続協議 (Q-DEL-07); 差し戻し dòng せり ghi ở `trade_status_history` (`REJECT` + lý do), `seri_status` không thêm giá trị (Q-TRD-04); nhãn sự kiện FIG-012 bỏ chữ 「承認」 cho duyệt nội bộ (L4-D03) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -41,7 +42,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 |---|---|---|---|---|---|---|---|
 | 29 | app | transaction | Phiên せり | [`seri_sessions`](#429-seri_sessions) | Nhóm kết quả せり, 入力者 ≠ 確認者 | Prototype: `seri_sessions` | Decision (provisional) |
 | 30 | app | transaction | Giao dịch | [`trades`](#430-trades) | 相対 (chính) và kết quả せり; đóng băng khi 確定 | Prototype: `trades` | Decision (provisional) |
-| 31 | app | history | Lịch sử trạng thái GD | [`trade_status_history`](#431-trade_status_history) | FIG-012: 提出 / 承認 / 確定 / 取消 cùng người + thời điểm | Mới | Decision (provisional) |
+| 31 | app | history | Lịch sử trạng thái GD | [`trade_status_history`](#431-trade_status_history) | FIG-012: 提出 / 確認 / 差し戻し / 確定 / 取消 cùng người + thời điểm | Mới | Decision (provisional) |
 | 33 | app | transaction | Nhật ký in phiếu | [`print_logs`](#433-print_logs) | In / in lại (再発行) 取引確認票, 引渡票 | Mới | Decision (provisional) |
 | 34 | app | transaction | Lần giao | [`deliveries`](#434-deliveries) | Giao nhiều lần, 「残り全部」, tên người nhận | Prototype: `deliveries` | Decision (provisional) |
 | 35 | app | transaction | Ngoại lệ / tranh chấp giao | [`delivery_exceptions`](#435-delivery_exceptions) | SC-06-04, SLA tranh chấp | Mới | Decision (provisional) |
@@ -132,10 +133,12 @@ erDiagram
     exception_status status
     timestamptz sla_due_at
     timestamptz settle_reviewed_at
+    uuid fix_id FK
   }
   dispute_confirmations {
     uuid id PK
-    uuid exception_id FK "UNIQUE"
+    uuid exception_id FK "UNIQUE tru CONTINUE_DISPUTE"
+    varchar conclusion
     uuid confirmed_by FK "DEL_HEAD khac nguoi ghi"
     timestamptz mfa_verified_at
   }
@@ -231,7 +234,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 2 | FK | GD | `trade_id` | UUID | N/A | Yes | | |
 | 3 | | Sự kiện | `event` | `trade_event` | N/A | Yes | | |
 | 4 | | Trạng thái trước / sau | `from_status`, `to_status` | `trade_status` | N/A | No / Yes | | |
-| 5 | | Lý do | `reason` | VARCHAR | 200 | No | | Bắt buộc khi `REJECT`, `CANCEL` |
+| 5 | | Lý do | `reason` | VARCHAR | 200 | No | | Bắt buộc khi `REJECT` (gồm 差し戻し dòng せり về 入力者 — API-TRD-007, `E-TRD-017`), `CANCEL` |
 | 6 | FK | Thiết bị | `device_id` | UUID | N/A | No | | |
 | 7 | | Cột chung | `created_at`, `created_by` | | | | | |
 
@@ -304,7 +307,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Ngoại lệ / tranh chấp giao | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `delivery_exceptions` | Sửa bởi / ngày | — |
-| Overview | SC-06-04 引渡し例外登録 (FT-06-04) và nguồn của 紛争管理・SLA (FT-07-05, RPT-04, RPT-09). Tranh chấp (`is_dispute`) cần 配送部門責任者 xác nhận ở 4.36. GD đang tranh chấp không chặn giao GD khác của cùng người mua (PRM-111). Đường giấy khi mất mạng: số phiếu 争いのある引渡し確認票 + bản scan (ADR-008 §2.4-12). | Note | Chỉ UPDATE `status` → `RESOLVED` (một lần, có `resolved_at`) và `settle_reviewed_*` (một lần) |
+| Overview | SC-06-04 引渡し例外登録 (FT-06-04) và nguồn của 紛争管理・SLA (FT-07-05, RPT-04, RPT-09). Tranh chấp (`is_dispute`) cần 配送部門責任者 xác nhận ở 4.36. GD đang tranh chấp không chặn giao GD khác của cùng người mua (PRM-111). Đường giấy khi mất mạng: số phiếu 争いのある引渡し確認票 + bản scan (ADR-008 §2.4-12). | Note | Chỉ UPDATE `status` → `RESOLVED` (một lần, có `resolved_at`), `settle_reviewed_*` (một lần) và `fix_id` + `affects_amount` (NULL / `false` → giá trị, một lần — lúc ghi ngoại lệ hoặc khi kết luận tranh chấp `PARTIAL_RETURN`) |
 
 **Định nghĩa cột**
 
@@ -325,11 +328,12 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 13 | | Giải quyết lúc | `resolved_at` | TIMESTAMPTZ | N/A | No | | |
 | 13a | | Đổi tiền | `affects_amount` | BOOLEAN | N/A | Yes | `false` | `true` với 不足 / 返品 / 一部取消 sinh REVERSE / DELTA (ADJUST_DB 4.39) |
 | 13b | FK | 照合 確認済 bởi / lúc | `settle_reviewed_by`, `settle_reviewed_at` | UUID / TIMESTAMPTZ | | No | | 照合事務局 bấm 「確認済」 ở 要確認 SC-07-01. `affects_amount = true` mà chưa có → dòng ✖ checklist 日次締め (khách #4) |
+| 13c | FK | 当日訂正 sinh ra | `fix_id` | UUID | N/A | No | | `trade_fixes` do hàm ngoại lệ ghi khi `affects_amount = true` và ngày GD còn `OPEN` (vai DELIVERY — ADR-004 §2.2, giả định Q-DEL-04). Checklist 日次締め đếm dòng `trade_fixes` **không** có ngoại lệ trỏ tới ở mục 当日訂正, phần còn lại đếm ở mục ngoại lệ (Q-DEL-09). Ngày GD đã khóa → NULL, đi 修正申請. Gán một lần trong transaction sinh `trade_fixes`, không đổi sau |
 | 14 | | Cột chung | `created_at`, `created_by` | | | | | `created_by` = người ghi |
 
 **Index** — `delivery_exceptions_pkey`; `idx_delivery_exceptions_open` (`status`, `sla_due_at`) partial `status = 'OPEN'`; `idx_delivery_exceptions_trade` (`trade_id`).
 
-**Khoá ngoại** — `trade_id` → `trades.id`; `delivery_id` → `deliveries.id`; `business_date` → `business_days`; `paper_signed_by` → `staff_accounts.id`. Bản scan ở `attachments` (`ref_table = 'delivery_exceptions'`).
+**Khoá ngoại** — `trade_id` → `trades.id`; `delivery_id` → `deliveries.id`; `business_date` → `business_days`; `paper_signed_by` → `staff_accounts.id`; `fix_id` → `trade_fixes.id` (ADJUST_DB 4.32). Bản scan ở `attachments` (`ref_table = 'delivery_exceptions'`).
 
 ---
 
@@ -346,14 +350,15 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | No. | Key | Tên logic | Tên vật lý | Data Type | Size | Not Null | Default | Note |
 |---|---|---|---|---|---|---|---|---|
 | 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
-| 2 | UNI/FK | Ngoại lệ | `exception_id` | UUID | N/A | Yes | | `is_dispute = true` |
+| 2 | FK | Ngoại lệ | `exception_id` | UUID | N/A | Yes | | `is_dispute = true`; unique partial (xem Index) |
 | 3 | FK | Người xác nhận | `confirmed_by` | UUID | N/A | Yes | | `DEL_HEAD`; ≠ `delivery_exceptions.created_by` và ≠ `deliveries.recorded_by` (hàm) |
 | 4 | FK | 代行 | `delegation_id` | UUID | N/A | No | | |
 | 5 | | MFA lúc | `mfa_verified_at` | TIMESTAMPTZ | N/A | Yes | | |
-| 6 | | Kết luận | `decision_note` | VARCHAR | 500 | Yes | | |
+| 5a | | Kết luận (mã) | `conclusion` | VARCHAR | 20 | Yes | | CHECK ∈ `COMPLETED` 完了 · `PARTIAL_RETURN` 一部返品 · `CONTINUE_DISPUTE` 継続協議. `CONTINUE_DISPUTE` giữ ngoại lệ `OPEN` và được ghi nhiều lượt (Q-DEL-07) |
+| 6 | | Ghi chú kết luận | `decision_note` | VARCHAR | 500 | Yes | | Comment hoặc nhãn kết luận |
 | 6a | | Lý do người ký giấy vắng | `signer_absent_reason` | VARCHAR | 200 | No | | Bắt buộc khi `confirmed_by` ≠ `delivery_exceptions.paper_signed_by`; vẫn cấm tự xác nhận (khách #16 [Giả lập]) |
 | 7 | | Cột chung | `created_at`, `created_by` | | | | | |
 
-**Index** — `dispute_confirmations_pkey`; `uq_dispute_confirmations_exception` (`exception_id`).
+**Index** — `dispute_confirmations_pkey`; `uq_dispute_confirmations_exception` (`exception_id`) unique partial `conclusion <> 'CONTINUE_DISPUTE'` (một kết luận cuối / ngoại lệ, nhiều lượt 継続協議); `idx_dispute_confirmations_exception` (`exception_id`, `created_at`).
 
 **Khoá ngoại** — `exception_id` → `delivery_exceptions.id`; `confirmed_by` → `staff_accounts.id`; `delegation_id` → `delegations.id`.

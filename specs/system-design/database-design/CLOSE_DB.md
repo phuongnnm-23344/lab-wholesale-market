@@ -3,7 +3,7 @@ id: SPEC-CLOSE_DB-001
 title: Database Design — Lịch chợ – ngân hàng, khóa 業務日 / 期ロック, bộ đếm số
 type: system
 subtype: database-design
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -32,6 +32,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: một định nghĩa 業務日 (bắt đầu `LOT_INTAKE_START_TIME`), 日次締め mở luôn ngày chợ kế tiếp, job 01:00 là lưới an toàn (M-01); checklist chuẩn ✖ / ⚠ (M-05, khách #1, #4, #25); 支払期日 lùi theo ngày ngân hàng (M-03); phạm vi tính lại DELTA mọi kỳ đã khóa (C-01); bỏ ghi chú OPEN-DB-02 đã đóng | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | 4.43 | Gộp P3 (spec incentive): kỳ của tháng được tạo ở **lần mở 業務日 đầu tiên của tháng** (日次締め mở ngày kế tiếp / job 01:00), không chờ khóa kỳ trước — vì `trade_adjustments.period_id` NOT NULL cần kỳ của GD tháng mới trước khi kỳ cũ khóa (vd. 修正申請 ngày 09-05 cho GD 09-02 khi kỳ 08 chưa khóa). 期ロック chỉ bảo đảm kỳ kế tồn tại. Giả định [PL] Q-INC-03; lệch prototype 0023 | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -167,7 +168,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Kỳ thanh toán | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `payment_periods` | Sửa bởi / ngày | — |
-| Overview | Kỳ = tháng dương lịch theo 業務日 của **GD gốc** (`trades.trade_date`, L4-A04 (2)); dòng điều chỉnh mang `period_id` của GD gốc (ADJUST_DB 4.39, Gate 1 C-02). 支払期日 tính từ `PAYMENT_DUE_RULE` của version hiệu lực + `market_calendar`: lùi về **ngày ngân hàng mở trước** (sửa D05, Gate 1 M-03). 期ロック: 照合部門長 + MFA, **trong cùng transaction** tính chính thức và ghi kết quả (ADR-007); không mở lại. Sau khi khóa, đầu vào của kỳ đổi (điều chỉnh / phân bổ ghi sau `locked_at`) → được tính lại ở 期ロック kế tiếp thành DELTA — **mọi kỳ đã khóa, không giới hạn năm TC** (Gate 1 C-01, INCENTIVE_DB 4.52). | Note | Kỳ sau được tạo khi khóa kỳ trước (giữ 0023) |
+| Overview | Kỳ = tháng dương lịch theo 業務日 của **GD gốc** (`trades.trade_date`, L4-A04 (2)); dòng điều chỉnh mang `period_id` của GD gốc (ADJUST_DB 4.39, Gate 1 C-02). 支払期日 tính từ `PAYMENT_DUE_RULE` của version hiệu lực + `market_calendar`: lùi về **ngày ngân hàng mở trước** (sửa D05, Gate 1 M-03). 期ロック: 照合部門長 + MFA, **trong cùng transaction** tính chính thức và ghi kết quả (ADR-007); không mở lại. Sau khi khóa, đầu vào của kỳ đổi (điều chỉnh / phân bổ ghi sau `locked_at`) → được tính lại ở 期ロック kế tiếp thành DELTA — **mọi kỳ đã khóa, không giới hạn năm TC** (Gate 1 C-01, INCENTIVE_DB 4.52). | Note | Kỳ của tháng được tạo ở **lần mở 業務日 đầu tiên của tháng** (cùng transaction mở ngày, idempotent theo `period_code`), không chờ khóa kỳ trước — nhiều kỳ `OPEN` cùng lúc là bình thường; 期ロック vẫn theo thứ tự cũ → mới (`E-INC-003`) và chỉ "bảo đảm tồn tại" kỳ kế. Giả định [PL] Q-INC-03 (prototype 0023 tạo kỳ lúc khóa kỳ trước) |
 
 **Định nghĩa cột**
 

@@ -3,7 +3,7 @@ id: ADR-005
 title: Đồng hồ 業務日, 日次締め và 期ロック khóa ở mức DB, không mở lại
 type: adr
 status: proposed
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-119, PRM-120, BR-CLOSE-01, BR-INC-01, L4-A04, L4-A09, E-12, E-16]
@@ -38,11 +38,11 @@ related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-11
 | 3 | Thiết bị còn bản ghi chưa đồng bộ — **trừ máy đã đánh dấu 「端末回収不能」** (§2-6) | ✖ chặn | NFR-AVL-02, L4-A05 |
 | 4 | Bản ghi SC-03-07 của ngày này còn 要確認 | ✖ chặn | ADR-008 §2.2 |
 | 5 | 当日訂正 / 取消 có tiền thay đổi của một người mua ≥ ngưỡng 2 cấp, hoặc đổi 買受人, chưa được 照合事務局 bấm 「確認済」 | ✖ chặn | PRM-127, E-08; [Customer giả lập, 2026-11-25 — Q-SC0405-01, #25] |
-| 6 | Ngoại lệ giao làm đổi tiền (不足 / 返品 / 一部取消) chưa 「確認済」 | ✖ chặn | FR-SETTLE-01, OBJ-05; [Customer giả lập, 2026-11-25 — #4] |
+| 6 | Ngoại lệ giao làm đổi tiền (不足 / 返品 / 一部取消) chưa 「確認済」 — `trade_fixes` sinh từ ngoại lệ (`delivery_exceptions.fix_id`) chỉ đếm ở mục này, không đếm lại ở mục 5 / 9 (Q-DEL-09) | ✖ chặn | FR-SETTLE-01, OBJ-05; [Customer giả lập, 2026-11-25 — #4] |
 | 7 | Lô còn SL → 持ち越し | ⚠ xác nhận | PRM-110, E-12 |
 | 8 | Giao còn dư — phải tick xác nhận | ⚠ xác nhận | PRM-036 |
 | 9 | 当日訂正 dưới ngưỡng (soát) | ⚠ | PRM-127 |
-| 10 | Tranh chấp giao chưa xác nhận → đi tiếp sang ngày sau | ⚠ | PRM-111, ADR-008 §2.4 |
+| 10 | Tranh chấp giao chưa xác nhận (ngoại lệ `is_dispute` còn `OPEN` **đã nhập** hệ thống) → đi tiếp sang ngày sau. Phiếu giấy 争いのある引渡し確認票 đã phát mà chưa nhập bù **không** đếm được (không có sổ phát phiếu) — người khóa soát bằng sổ giấy (giả định [PL] Q-STL-02) | ⚠ | PRM-111, ADR-008 §2.4 |
 | 11 | Phiên せり do chính người nhập xác nhận (có lý do) — soát | ⚠ | PRM-115 |
 
 6. **Lối thoát cho checklist kẹt — 「端末回収不能」:** thiết bị hỏng / mất / hết pin không đồng bộ được → 照合部門長 (hoặc 代行) đánh dấu máy 「端末回収不能」 + lý do + MFA + audit. Máy ra khỏi mục 3 của checklist, phiên và PIN offline của máy bị thu hồi; bản ghi của máy đó nếu về sau → SC-03-07 (要確認) → đường 後入力 ở mục 8. Phần mất hẳn nhập bù từ giấy cũng theo mục 8.
@@ -92,3 +92,4 @@ BR-CLOSE-01, BR-INC-01, FR-SETTLE-01, FR-SETTLE-02, FR-CORR-01..03, FIG-002, FIG
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: một định nghĩa 業務日 [D 01:00, D+1 01:00), mở ngày kế tiếp khi 日次締め + job 01:00 dự phòng (M-01); checklist chuẩn 11 mục (6 ✖ / 5 ⚠) khớp SC-07-02, 「端末回収不能」, 後入力 cho ngày đã khóa qua 修正申請 LATE_ENTRY với ngày GD thật (M-05, khách #1, #4, #25); phương án F, G | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-04: tham chiếu "(mục 6)" → "§2-6" | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | Gộp P3 (spec settle): mục 10 checklist chỉ đếm tranh chấp đã nhập; phiếu giấy đã phát chưa nhập do người khóa tự soát (Q-STL-02). Mục 6 đếm ngoại lệ đổi tiền cả khi đã sinh `trade_fixes` (nối `fix_id`) — mục 5 / 9 không đếm lại `trade_fixes` đó (Q-DEL-09) | 2026-11-25 | phuongnnm-23344 | |

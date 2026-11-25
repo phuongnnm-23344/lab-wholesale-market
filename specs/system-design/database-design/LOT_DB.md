@@ -3,7 +3,7 @@ id: SPEC-LOT_DB-001
 title: Database Design — Lô: 仮受付 / 本登録 / 目利き / sổ số lượng
 type: system
 subtype: database-design
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -32,6 +32,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1 M-05: `lots.original_business_date` cho lô nhập bù (`LATE_ENTRY`) của ngày đã khóa; 業務日 tiếp nhận theo định nghĩa mới (M-01, lô 01:00–02:00 thuộc 業務日 sáng đó) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Modify | `lots`, `lot_inspections` | Gộp P3 (spec lot): `lots.voucher_no` 30 → **20** (WF SC-03-01 [8], `E-LOT-005`, khớp `trades.paper_slip_no`); thêm `lots.registered_at` (giờ 本登録 — sort `-registeredAt` của API-LOT-003); `lot_inspections` thêm `second_checker_id` (確認者, WF SC-03-05 [8]) + `rerecord_reason` (ghi lại lô đã có GD, [9]); `grade` kiểm theo `code_values` `INSPECTION_GRADE` (RULE_DB 0.2.1, Q-LOT-03). `lot_no NOT NULL` giữ nguyên — giả định Q-LOT-01 | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -123,9 +124,10 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 8 | | Đơn vị | `unit` | `unit_code` | N/A | Yes | | |
 | 9 | | SL ban đầu (仮受付) | `qty_provisional` | NUMERIC | 12,1 | No | | |
 | 10 | | SL nhận (本登録) | `qty_received` | NUMERIC | 12,1 | No | | CHECK > 0; bắt buộc từ `RECEIVED` |
-| 11 | | Số chứng từ | `voucher_no` | VARCHAR | 30 | No | | Ảnh chứng từ: `attachments` (chỉ PC — E-21) |
+| 11 | | Số chứng từ | `voucher_no` | VARCHAR | 20 | No | | Chữ và số + 「-」 (`E-LOT-005`); ảnh chứng từ: `attachments` (chỉ PC — E-21) |
 | 12 | | Trạng thái | `status` | `lot_status` | N/A | Yes | `'PROVISIONAL'` | Mỗi lần đổi sinh `lot_status_history` |
 | 13 | FK | Người 仮受付 / 本登録 | `provisional_by`, `registered_by` | UUID | N/A | No | | |
+| 13a | | Giờ 本登録 | `registered_at` | TIMESTAMPTZ | N/A | No | | Ghi lúc chuyển `RECEIVED` (lô 新規 = `created_at`); bắt buộc từ `RECEIVED` (CHECK cùng `shipper_id`). Dùng cho "lô tôi vừa 本登録" SC-03-01 [11] |
 | 14 | FK | Thiết bị 仮受付 | `device_id` | UUID | N/A | No | | |
 | 15 | | Cột chung | `created_at`, `created_by`, `updated_at`, `updated_by` | | | | | |
 
@@ -185,15 +187,17 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
 | 2 | FK | Lô | `lot_id` | UUID | N/A | Yes | | |
 | 3 | FK | 業務日 | `business_date` | DATE | N/A | Yes | | |
-| 4 | | Hạng | `grade` | VARCHAR | 10 | Yes | | Nhãn người đánh giá chọn |
+| 4 | | Hạng | `grade` | VARCHAR | 10 | Yes | | Nhãn người đánh giá chọn; thuộc `code_values` `INSPECTION_GRADE` đang dùng — kiểm trong hàm (RULE_DB 4.23, Q-LOT-03). Không có hạng gợi ý (luật 3) |
 | 5 | | Ghi chú độ tươi | `freshness_note` | VARCHAR | 200 | No | | |
 | 6 | | Mã lượt ghi hàng loạt | `batch_no` | UUID | N/A | No | | Cùng giá trị cho các lô ghi một lần |
 | 7 | FK | Người đánh giá | `inspected_by` | UUID | N/A | Yes | | |
+| 7a | FK | 確認者 (người thứ hai) | `second_checker_id` | UUID | N/A | No | | Tra theo 社員番号 (WF SC-03-05 [8]); CHECK `second_checker_id IS NULL OR second_checker_id <> inspected_by` |
+| 7b | | Lý do ghi lại | `rerecord_reason` | VARCHAR | 200 | No | | Bắt buộc khi lô đã có GD hiệu lực — kiểm trong hàm (`E-LOT-011`), không CHECK vì cần tra `trades` |
 | 8 | | Cột chung | `created_at`, `created_by` | | | | | Lần ghi sau thay kết quả trước (lấy dòng mới nhất), dòng cũ giữ |
 
 **Index** — `lot_inspections_pkey`; `idx_lot_inspections_lot` (`lot_id`, `created_at`).
 
-**Khoá ngoại** — `lot_id` → `lots.id`; `business_date` → `business_days`; `inspected_by` → `staff_accounts.id`.
+**Khoá ngoại** — `lot_id` → `lots.id`; `business_date` → `business_days`; `inspected_by` → `staff_accounts.id`; `second_checker_id` → `staff_accounts.id`.
 
 ---
 

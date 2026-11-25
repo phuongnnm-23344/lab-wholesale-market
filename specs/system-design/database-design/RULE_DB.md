@@ -3,7 +3,7 @@ id: SPEC-RULE_DB-001
 title: Database Design — Quy chế có version (bảng tỷ lệ, tham số) + master mã / thuế
 type: system
 subtype: database-design
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -32,6 +32,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: tham số `TRADE_START_TIME` + nghĩa `LOT_INTAKE_START_TIME` là đầu 業務日 (M-01); `PAYMENT_DUE_RULE` lùi theo ngày ngân hàng là quy tắc chốt, có giả định + câu hỏi (M-03); ngưỡng 2 cấp đo theo tiền thay đổi lớn nhất của một người mua (khách #3); hủy version `APPROVED` có maker-checker (m-09); ghi giả định 110/100 cố định (m-07) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Modify | `code_values`, `rule_versions` | Gộp P3: `code_values` thêm loại `INSPECTION_GRADE` (hạng 目利き A / B / C / 規格外 — giả định Q-LOT-03); `rule_versions` thêm `cancel_requested_by`, `cancel_requested_at`, `cancel_request_reason` (bước 1 của hủy version `APPROVED` có maker-checker — Q-RULE-02, API-RULE-006); ghi rõ trạng thái hiển thị 「決裁待ち」 nhánh N2 = `PENDING` + `checker_id` NOT NULL + `second_approver_id` NULL (không thêm giá trị enum) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -41,7 +42,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 |---|---|---|---|---|---|---|---|
 | 16 | app | master | 出荷者 (người gửi hàng) | [`shippers`](#416-shippers) | Bảng mã 出荷者 | Mới | Decision (provisional) |
 | 17 | app | master | 品目 (mặt hàng) | [`item_codes`](#417-item_codes) | Mã 品目 + đơn vị mặc định | Mới | Decision (provisional) |
-| 18 | app | master | Bảng mã chung | [`code_values`](#418-code_values) | 荷目, lý do chọn nhanh, loại ngoại lệ giao | Mới | Decision (provisional) |
+| 18 | app | master | Bảng mã chung | [`code_values`](#418-code_values) | 荷目, lý do chọn nhanh, loại ngoại lệ giao, hạng 目利き | Mới | Decision (provisional) |
 | 19 | app | master | Thuế suất | [`tax_rates`](#419-tax_rates) | 10% / 8% có ngày hiệu lực | Mới | Decision (provisional) |
 | 21 | app | master | Version quy chế | [`rule_versions`](#421-rule_versions) | Ngày hiệu lực ngày 1, maker-checker, rollback, quota 4 lần / năm TC | Prototype: `rule_versions` | Decision (provisional) |
 | 22 | app | master | Bậc 交付率 | [`incentive_rate_rows`](#422-incentive_rate_rows) | **2 bảng (仲卸 / 売買参加者) × 5 bậc** theo 適格金額 税抜 | Prototype: `incentive_rate_rows` | Decision (provisional) |
@@ -162,7 +163,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Bảng mã chung | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `code_values` | Sửa bởi / ngày | — |
-| Overview | Danh mục nhỏ do người vận hành sửa: `NIME` 荷目, `OVER_LIMIT_REASON` (lý do chọn nhanh khi vượt 参加上限 — L4-A04 (1)), `DELIVERY_EXCEPTION` (loại ngoại lệ giao), `FIX_REASON` (lý do 当日訂正 / 取消). | Note | Thứ đụng tiền **không** đặt ở đây — nằm ở `rule_parameters` |
+| Overview | Danh mục nhỏ do người vận hành sửa: `NIME` 荷目, `OVER_LIMIT_REASON` (lý do chọn nhanh khi vượt 参加上限 — L4-A04 (1)), `DELIVERY_EXCEPTION` (loại ngoại lệ giao), `FIX_REASON` (lý do 当日訂正 / 取消), `INSPECTION_GRADE` (hạng 目利き người đánh giá chọn ở SC-03-05 — dữ liệu ban đầu A / B / C / 規格外, giả định Q-LOT-03; chỉ là nhãn, không có điểm / gợi ý tự động — luật 3). | Note | Thứ đụng tiền **không** đặt ở đây — nằm ở `rule_parameters` |
 
 **Định nghĩa cột**
 
@@ -207,7 +208,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Version quy chế | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `rule_versions` | Sửa bởi / ngày | — |
-| Overview | Một version = bảng tỷ lệ (4.22) + tham số (4.23), hiệu lực từ **ngày 1** của tháng (PRM-042). Maker ルール管理者, checker 照合部門長 (MFA). Vòng đời DRAFT → PENDING → APPROVED (chờ hiệu lực) → ACTIVE → SUPERSEDED; trả về → DRAFT; hủy trước hiệu lực → CANCELLED (ADR-006 §2.2). Quota 4 lần / năm TC (4月→3月) đếm version `CHANGE` + `ROLLBACK` ở `APPROVED` / `ACTIVE` / `SUPERSEDED` có ngày hiệu lực trong năm; **`BASELINE` (go-live) không tính**; `CANCELLED` không tính (L4-A04 (3), sửa D06). Hàm duyệt khóa theo năm TC (advisory lock) để hai checker không cùng vượt quota. Version mới thứ 5 bị chặn. Rollback khi đã đủ 4 lần: **chờ E-14** — cột `second_approver_id` phục vụ nhánh N2 (OPEN-L4-01). **Hủy version `APPROVED` trước ngày hiệu lực:** maker (RULE) đề nghị, checker 照合部門長 決裁 + MFA + lý do (giữ maker-checker; Gate 1 m-09) → `CANCELLED`, không tính quota. Tỷ lệ sai đã duyệt vẫn là version "đúng" của kỳ → engine không tự sinh DELTA; sửa tiền thưởng các kỳ đã khóa bằng 修正申請 `INCENTIVE` (ADJUST_DB 4.37, R-L4-01). | Note | Không có công tắc cấu hình N1 / N2 (PREMISE §6): nhánh được chốt trong hàm sau workshop |
+| Overview | Một version = bảng tỷ lệ (4.22) + tham số (4.23), hiệu lực từ **ngày 1** của tháng (PRM-042). Maker ルール管理者, checker 照合部門長 (MFA). Vòng đời DRAFT → PENDING → APPROVED (chờ hiệu lực) → ACTIVE → SUPERSEDED; trả về → DRAFT; hủy trước hiệu lực → CANCELLED (ADR-006 §2.2). Quota 4 lần / năm TC (4月→3月) đếm version `CHANGE` + `ROLLBACK` ở `APPROVED` / `ACTIVE` / `SUPERSEDED` có ngày hiệu lực trong năm; **`BASELINE` (go-live) không tính**; `CANCELLED` không tính (L4-A04 (3), sửa D06). Hàm duyệt khóa theo năm TC (advisory lock) để hai checker không cùng vượt quota. Version mới thứ 5 bị chặn. Rollback khi đã đủ 4 lần: **chờ E-14** — cột `second_approver_id` phục vụ nhánh N2 (OPEN-L4-01). **「決裁待ち（運用部門長）」 không phải giá trị enum:** = `status = 'PENDING'` + `checker_id IS NOT NULL` + `second_approver_id IS NULL` (checker đã 確認, chờ 運用部門長 決裁 — RULE_VERSION_TECH R5); trả về → `DRAFT` và xóa `checker_id`. **Hủy version `APPROVED` trước ngày hiệu lực:** maker (RULE) đề nghị, checker 照合部門長 決裁 + MFA + lý do (giữ maker-checker; Gate 1 m-09) → `CANCELLED`, không tính quota. Tỷ lệ sai đã duyệt vẫn là version "đúng" của kỳ → engine không tự sinh DELTA; sửa tiền thưởng các kỳ đã khóa bằng 修正申請 `INCENTIVE` (ADJUST_DB 4.37, R-L4-01). | Note | Không có công tắc cấu hình N1 / N2 (PREMISE §6): nhánh được chốt trong hàm sau workshop |
 
 **Định nghĩa cột**
 
@@ -226,7 +227,8 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 11 | FK | Checker | `checker_id` | UUID | N/A | No | | `STL_HEAD`; CHECK `checker_id <> maker_id` |
 | 12 | FK | Người duyệt thứ hai | `second_approver_id` | UUID | N/A | No | | Chỉ nhánh N2 của E-14: rollback khi đã đủ 4 lần cần 運用部門長 (MFA) |
 | 13 | | Duyệt lúc | `approved_at` | TIMESTAMPTZ | N/A | No | | |
-| 13a | FK | Hủy: người 決裁 / lý do | `cancelled_by`, `cancel_reason` | UUID / VARCHAR(500) | | No | | Bắt buộc khi `APPROVED` → `CANCELLED`; `cancelled_by` = `STL_HEAD` ≠ `maker_id`, kèm MFA trong `audit_logs` |
+| 13a | FK | Hủy: người 決裁 / lý do | `cancelled_by`, `cancel_reason` | UUID / VARCHAR(500) | | No | | Bắt buộc khi `APPROVED` → `CANCELLED`; `cancelled_by` = `STL_HEAD` ≠ `maker_id` và ≠ `cancel_requested_by`, kèm MFA trong `audit_logs` |
+| 13b | FK | Đề nghị hủy: người / giờ / lý do | `cancel_requested_by`, `cancel_requested_at`, `cancel_request_reason` | UUID / TIMESTAMPTZ / VARCHAR(500) | | No | | Maker (vai `RULE`) đề nghị hủy version `APPROVED` trước `effective_from` (API-RULE-006). Ba cột cùng NULL hoặc cùng có (CHECK); chỉ ghi khi `status = 'APPROVED'`. Đề nghị đang mở = `status = 'APPROVED' AND cancel_requested_at IS NOT NULL` — điều kiện để checker hủy (`E-RULE-012`). Không ghi đè: đề nghị thứ hai khi đã có → `E-RULE-014` (Q-RULE-02) |
 | 14 | | Cột chung | `created_at`, `created_by`, `updated_at`, `updated_by` | | | | | |
 
 **Index** — `rule_versions_pkey`; `uq_rule_versions_version_no`; `uq_rule_versions_baseline` (`change_kind`) unique partial `change_kind = 'BASELINE'`; `idx_rule_versions_fy_status` (`fiscal_year`, `status`); `uq_rule_versions_active_from` (`effective_from`) unique partial `status = 'ACTIVE'`.

@@ -3,7 +3,7 @@ id: SPEC-PARTY_DB-001
 title: Database Design — Người tham gia và tư cách — 許可 (仲卸) ≠ 承認 (売買参加者)
 type: system
 subtype: database-design
-version: "0.3.0"
+version: "0.3.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -33,6 +33,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1 M-07: thể hiện khác biệt thủ tục 許可 (審査 + 運用部門長 決裁) và 承認 (届出 + 照合部門長 確認), sự kiện `REVIEWED` (許可) và `LIMIT_CHANGED` (承認, 参加上限 không sửa đè), bảng so sánh §3, giả định 失効 tự động, OPEN-DB-09; khách #20 (đổi 保証金 kéo theo 参加上限 khi NULL) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | §3, 4.12–4.15 | Gate 1 recheck N-03: gia hạn bình thường 許可 theo PRM-121 (照合部門長 確認), 審査 + 運用部門長 決裁 chỉ cho cấp mới (giả định PL); 承認 xét nhẹ thay "không 審査" | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.3.1 | Add new | 4.59, 4.60, §2, §3, 4.15 | Gộp P3 (spec party): thêm hai bảng yêu cầu chờ **riêng** `nakaoroshi_permit_requests` (許可) và `baibai_approval_requests` (承認) — nguồn trạng thái 起案中 / 確認待ち của SC-01-02 [19]; cấp mới 許可 ghi `REVIEWED` + `REGISTERED` lúc 決裁. Enum mới `qualification_request_kind`, `qualification_request_status` (MKT_DB 0.3.2 §4.0). 4.15 cột 11: MFA bắt buộc cả `LIMIT_CHANGED` — PREMISE §3.2 sửa khớp (Q-PTY-07 giữ để khách xác nhận) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -47,6 +48,8 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 13 | app | history | Lịch sử 許可 | [`nakaoroshi_permit_events`](#413-nakaoroshi_permit_events) | Đăng ký / gia hạn / 一時停止 / 失効 / 再審査 của 許可 | Mới | Decision (provisional) |
 | 14 | app | master | 承認 (売買参加者) | [`baibai_approvals`](#414-baibai_approvals) | Chấp thuận của 売買参加者 + 参加上限 | Prototype: `baibai_approvals` | Decision (provisional) |
 | 15 | app | history | Lịch sử 承認 | [`baibai_approval_events`](#415-baibai_approval_events) | Như trên, cho 承認 | Mới | Decision (provisional) |
+| 59 | app | transaction | Yêu cầu 許可 đang chờ | [`nakaoroshi_permit_requests`](#459-nakaoroshi_permit_requests) | Nhập / 起案 → 決裁・確認 / 却下 cho 許可 | Mới (P3) | Decision (provisional) |
+| 60 | app | transaction | Yêu cầu 承認 đang chờ | [`baibai_approval_requests`](#460-baibai_approval_requests) | Như trên, cho 承認 (gồm đổi 参加上限) | Mới (P3) | Decision (provisional) |
 
 ---
 
@@ -72,6 +75,10 @@ erDiagram
   participants ||--o{ baibai_approvals : "id -> participant_id (kind BAIBAI)"
   nakaoroshi_permits ||--|{ nakaoroshi_permit_events : "id -> permit_id"
   baibai_approvals ||--|{ baibai_approval_events : "id -> approval_id"
+  participants ||--o{ nakaoroshi_permit_requests : "id -> participant_id"
+  nakaoroshi_permits |o--o{ nakaoroshi_permit_requests : "id -> permit_id"
+  participants ||--o{ baibai_approval_requests : "id -> participant_id"
+  baibai_approvals |o--o{ baibai_approval_requests : "id -> approval_id"
 
   participants {
     uuid id PK
@@ -126,6 +133,18 @@ erDiagram
     bigint old_limit_jpy
     bigint new_limit_jpy
     uuid decided_by FK "kakunin STL_HEAD"
+  }
+  nakaoroshi_permit_requests {
+    uuid id PK
+    uuid permit_id FK "NULL khi NEW"
+    qualification_request_kind request_kind
+    qualification_request_status status
+  }
+  baibai_approval_requests {
+    uuid id PK
+    uuid approval_id FK "NULL khi NEW"
+    qualification_request_kind request_kind "co LIMIT_CHANGE"
+    qualification_request_status status
   }
 ```
 
@@ -350,7 +369,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 8 | | Lý do | `reason` | VARCHAR | 500 | Yes | | |
 | 9 | FK | Người 起案 | `proposed_by` | UUID | N/A | No | | `STL_HEAD` cho 一時停止 / 再開 / 再審査 |
 | 10 | FK | Người 決裁 / 確認 | `decided_by` | UUID | N/A | No | | `STL_HEAD` 確認 cho `REGISTERED` / `RENEWED` / `LIMIT_CHANGED`; `OPS_HEAD` 決裁 cho `SUSPENDED` / `RESUMED` / `REVIEW_STARTED` / `REINSTATED`; NULL cho `EXPIRED` tự động. CHECK `decided_by <> proposed_by` và ≠ `created_by` |
-| 11 | | MFA lúc | `mfa_verified_at` | TIMESTAMPTZ | N/A | No | | Bắt buộc khi `decided_by` có giá trị (PREMISE §3.2) |
+| 11 | | MFA lúc | `mfa_verified_at` | TIMESTAMPTZ | N/A | No | | Bắt buộc khi `decided_by` có giá trị, **kể cả `LIMIT_CHANGED`** (PREMISE §3.2 sửa khớp; Q-PTY-07 chờ khách xác nhận) |
 | 12 | | Cột chung | `created_at`, `created_by` | | | | | `created_by` = 照合事務局 nhập |
 
 **Index** — `baibai_approval_events_pkey`; `idx_approval_events_approval` (`approval_id`, `created_at`).
@@ -360,3 +379,62 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | No. | Tên khoá ngoại | Cột | Bảng đích | Cột đích | Note |
 |---|---|---|---|---|---|
 | 1 | `fk_approval_events_approval` | `approval_id` | `baibai_approvals` | `id` | |
+
+---
+
+### 4.59. `nakaoroshi_permit_requests`
+
+| | | | |
+|---|---|---|---|
+| Tên bảng (logic) | Yêu cầu thay đổi 許可 đang chờ | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
+| Tên bảng (vật lý) | `nakaoroshi_permit_requests` | Sửa bởi / ngày | — |
+| Overview | Giữ yêu cầu 許可 (仲卸) từ lúc nhập / 起案 tới lúc 決裁・確認 hoặc 却下 — nguồn của trạng thái 「起案中」「確認待ち」 ở SC-01-02 [19] (C-27). Khi 決裁 hàm cập nhật 4.12 và thêm dòng 4.13 (cấp mới: `REVIEWED` + `REGISTERED` cùng lúc) trong **cùng transaction**. **Riêng cho 許可** — 承認 dùng 4.60 (ADR-003, luật 2: không bảng yêu cầu chung). Không DELETE; chỉ UPDATE cột quyết định một lần (`ENTERED` / `PROPOSED` → `DECIDED` / `REJECTED`) | Note | Mới (gộp P3 — PTY_PERMIT_LIFECYCLE_TECH §5, giả định [PL]) |
+
+**Định nghĩa cột**
+
+| No. | Key | Tên logic | Tên vật lý | Data Type | Size | Not Null | Default | Note |
+|---|---|---|---|---|---|---|---|---|
+| 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
+| 2 | FK | Người tham gia | `participant_id` | UUID | N/A | Yes | | Loại `NAKAOROSHI` (hàm kiểm) |
+| 3 | FK | 許可 | `permit_id` | UUID | N/A | No | | NULL khi `NEW` (chưa có 許可) |
+| 4 | | Loại yêu cầu | `request_kind` | `qualification_request_kind` | N/A | Yes | | CHECK ≠ `LIMIT_CHANGE` (参加上限 chỉ có ở 承認) |
+| 5 | | Trạng thái | `status` | `qualification_request_status` | N/A | Yes | | `ENTERED` với `NEW` / `RENEW` (照合事務局 nhập); `PROPOSED` khi 照合部門長 起案 (cấp mới sau 審査, 一時停止 / 再開 / 再審査 / 再有効) |
+| 6 | | Nội dung đề nghị | `payload` | JSONB | N/A | Yes | | Số 許可, 有効期間, `permit_conditions`, kết quả 審査 (`review_result`, `reviewed_on`) — kiểm theo `request_kind` trong hàm |
+| 7 | | Lý do | `reason` | VARCHAR | 500 | No | | Bắt buộc với `SUSPEND` / `RESUME` / `REVIEW_START` / `REINSTATE` |
+| 8 | FK | Người nhập / 起案 | `entered_by`, `proposed_by` | UUID | N/A | No | | Ít nhất một có giá trị |
+| 9 | FK | Người 決裁・確認 / 却下 | `decided_by` | UUID | N/A | No | | CHECK `decided_by` ≠ `entered_by`, ≠ `proposed_by` (maker-checker, `E-PTY-012`) |
+| 10 | | 決裁 lúc | `decided_at` | TIMESTAMPTZ | N/A | No | | Có khi `DECIDED` / `REJECTED` |
+| 11 | FK | 代行 | `delegation_id` | UUID | N/A | No | | |
+| 12 | | MFA lúc | `mfa_verified_at` | TIMESTAMPTZ | N/A | No | | Bắt buộc khi `DECIDED` (PREMISE §3.2) |
+| 13 | | Ghi chú quyết định | `decision_comment` | VARCHAR | 500 | No | | Bắt buộc khi `REJECTED` (`E-PTY-023`) |
+| 14 | | Cột chung | `created_at`, `created_by`, `updated_at`, `updated_by` | | | | | |
+
+**Index** — `nakaoroshi_permit_requests_pkey`; `uq_permit_requests_open` (`participant_id`) unique partial `status IN ('ENTERED','PROPOSED')` (một yêu cầu mở / người — giả định Q-PTY-01, `E-PTY-011`); `idx_permit_requests_status` (`status`, `created_at`).
+
+**Khoá ngoại** — `participant_id` → `participants.id`; `permit_id` → `nakaoroshi_permits.id`; `entered_by`, `proposed_by`, `decided_by` → `staff_accounts.id`; `delegation_id` → `delegations.id`.
+
+---
+
+### 4.60. `baibai_approval_requests`
+
+| | | | |
+|---|---|---|---|
+| Tên bảng (logic) | Yêu cầu thay đổi 承認 đang chờ | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
+| Tên bảng (vật lý) | `baibai_approval_requests` | Sửa bởi / ngày | — |
+| Overview | Như 4.59 nhưng cho 承認 (売買参加者) — **bảng riêng**, khác 4.59: có `LIMIT_CHANGE` (đổi 参加上限, `payload` giữ hạn mức cũ / mới + `effectiveOn`), không có bước 起案 cho `NEW` (承認 xét nhẹ, 照合部門長 確認 — PARTY_DB §3). Khi 確認・決裁 hàm cập nhật 4.14 và thêm dòng 4.15 trong cùng transaction. Không DELETE | Note | Mới (gộp P3 — PTY_APPROVAL_LIFECYCLE_TECH §3, giả định [PL]) |
+
+**Định nghĩa cột** — cùng tên cột với 4.59 (không dùng chung bảng), khác ở:
+
+| No. | Key | Tên logic | Tên vật lý | Data Type | Size | Not Null | Default | Note |
+|---|---|---|---|---|---|---|---|---|
+| 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
+| 2 | FK | Người tham gia | `participant_id` | UUID | N/A | Yes | | Loại `BAIBAI` (hàm kiểm) |
+| 3 | FK | 承認 | `approval_id` | UUID | N/A | No | | NULL khi `NEW` |
+| 4 | | Loại yêu cầu | `request_kind` | `qualification_request_kind` | N/A | Yes | | Mọi giá trị, gồm `LIMIT_CHANGE` |
+| 5 | | Trạng thái | `status` | `qualification_request_status` | N/A | Yes | | `ENTERED` với `NEW` / `RENEW` / `LIMIT_CHANGE`; `PROPOSED` với loại 起案 (一時停止 / 再開 / 再審査 / 再有効). CHECK không `PROPOSED` khi `NEW` |
+| 6 | | Nội dung đề nghị | `payload` | JSONB | N/A | Yes | | Số 承認, 有効期間, `limitMode`, `participationLimitJpy`, `oldLimitJpy` (lưu lúc tạo để checker thấy trước / sau), ghi chú xét nhẹ |
+| 7–14 | | (như 4.59) | `reason`, `entered_by`, `proposed_by`, `decided_by`, `decided_at`, `delegation_id`, `mfa_verified_at`, `decision_comment`, cột chung | | | | | CHECK maker-checker như 4.59; `mfa_verified_at` bắt buộc khi `DECIDED` **kể cả `LIMIT_CHANGE`** (PREMISE §3.2 — Q-PTY-07) |
+
+**Index** — `baibai_approval_requests_pkey`; `uq_approval_requests_open` (`participant_id`) unique partial `status IN ('ENTERED','PROPOSED')`; `idx_approval_requests_status` (`status`, `created_at`).
+
+**Khoá ngoại** — `participant_id` → `participants.id`; `approval_id` → `baibai_approvals.id`; `entered_by`, `proposed_by`, `decided_by` → `staff_accounts.id`; `delegation_id` → `delegations.id`.

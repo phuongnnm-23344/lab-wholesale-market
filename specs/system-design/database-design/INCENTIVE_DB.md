@@ -3,7 +3,7 @@ id: SPEC-INCENTIVE_DB-001
 title: Database Design — 完納奨励金 (lần chạy, kết quả, test vector)
 type: system
 subtype: database-design
-version: "0.3.0"
+version: "0.3.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -33,6 +33,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: phạm vi tính lại DELTA mọi kỳ đã khóa, giới hạn năm TC chỉ cho CARRY, thêm `CARRY_EXPIRED` (C-01, m-05); đầu vào theo `period_id` kỳ GD gốc (C-02); `correction_id` cho 修正申請 KANNO / INCENTIVE (M-10, M-04); `kanno_basis`, `judgement_note` cho 「手数料差引の疑い」 (khách #7); 試算 ghi audit (khách #6, M-02); thêm §5 test vector | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | 4.52, §5 | Gate 1 recheck: nhãn INC-EDGE đúng C.3 (N-01) + TV-12 INC-EDGE-01; GD LATE_ENTRY vào đầu vào DELTA + TV-13 (N-02); CARRY_EXPIRED dương đóng số dư, TV-04 không đếm âm hai lần (n-01); TV-14 修正申請 INCENTIVE (n-02); bảng 仲卸 giả; tham chiếu TV-06 (n-04) | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.3.1 | Update | §5 TV-14 | Kiểm diff 5b0ef16 D-05: ghim ngày khóa kỳ 10 / 11 / 12 và ngày duyệt TRADE 2027-12-20; ghi rõ số tiền INCENTIVE cố định, biến thể duyệt trước khóa → tổng +2.990 tách 2 dòng (+2.000 gắn `correction_id`, +990). (D-04: TV-13 bản DB đã đúng 09-21, sửa phía ADR-007) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -168,4 +169,4 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | TV-11 | B09: 完納, 適格金額 1.234.567 税抜, bậc 3 | — | Không | 完納 | 1.234.567 × 0,9% × 1,1 = 12.222,21 → floor **12.222** | INC-EDGE-03 |
 | TV-12 | B10 (売買参加者): kỳ 2027-10 適格金額 **1.000.000** (đúng cận dưới bậc 3, 「以上」); B11: kỳ 2027-10 **999.999**. Version v3 hiệu lực 2027-10-01 (bậc 3 = 90 bp như bảng giả); kỳ 2027-09 dùng v2 (giả định bậc 3 = 80 bp) — B10 kỳ 09 cũng 1.000.000 | GD theo `trade_date` | Không | 完納 | B10 kỳ 10: bậc 3 → floor(1.000.000 × 0,9% × 1,1) = **9.900**; B11 kỳ 10: bậc 2 → floor(999.999 × 0,5% × 1,1) = floor(5.499,99) = **5.499**; B10 kỳ 09 (v2): floor(1.000.000 × 0,8% × 1,1) = **8.800** — chọn version theo **kỳ**, không theo ngày khóa | **INC-EDGE-01**; TBL-RATE-01; PRM-041 |
 | TV-13 | B12: kỳ 08 khóa 2027-09-14 với 適格金額 1.000.000 (MAIN 9.900). 紙伝票 GD ngày **2027-08-31** (+200.000 税抜) phát hiện 2027-09-20 → 修正申請 `LATE_ENTRY` duyệt 2027-09-21 → `trades` mới `trade_date` 2027-08-31, `business_date` 2027-09-21 | Kỳ GD = **2027-08** (theo `trade_date`); **không** vào 期のお支払額 kỳ 08 (đã khóa — 4.49 chỉ tính GD ghi trước khi khóa) lẫn kỳ 09; 216.000 hiện 「前期以前の調整」 | 期ロック kỳ 09: GD có `trade_date` thuộc kỳ 08 và `created_at` > `locked_at` → tính lại kỳ 08 bằng version kỳ 08: floor(1.200.000 × 0,9% × 1,1) = 11.880 → **DELTA +1.980**, `ref_period` 2027-08 | Kỳ 08 giữ 完納 | +1.980 ở kỳ 09 | Gate 1 recheck **N-02**; ADR-005 §2-8; BR-INC-01 |
-| TV-14 | B13: kỳ 2027-10 đã khóa, MAIN 9.900 tính theo tỷ lệ áp sai; 修正申請 `INCENTIVE` +2.000 duyệt 2 cấp 2027-11-20. Tháng 12 có thêm 修正申請 `TRADE` cho GD kỳ 10 (+100.000 税抜) | — | 期ロック kỳ 11: **DELTA +2.000** (`correction_id` INCENTIVE). 期ロック kỳ 12: tính lại kỳ 10 = (1.100.000 → 10.890) **+ 2.000** (INCENTIVE là đầu vào cộng thêm) so với tổng đã ghi nhận 9.900 + 2.000 → **DELTA +990**; **không** sinh −2.000 | Giữ | Kỳ 11 +2.000; kỳ 12 +990 | Gate 1 recheck n-02; ADR-007 §2.5-12; R-L4-01 |
+| TV-14 | B13: kỳ 2027-10 đã khóa 2027-11-15, MAIN 9.900 tính theo tỷ lệ áp sai; 修正申請 `INCENTIVE` +2.000 duyệt 2 cấp 2027-11-20. Kỳ 11 khóa **2027-12-14**. 修正申請 `TRADE` cho GD kỳ 10 (+100.000 税抜) duyệt **2027-12-20** (sau khi kỳ 11 khóa); kỳ 12 khóa 2028-01-13 | `TRADE`: `period_id` 2027-10, `business_date` 2027-12-20 | 期ロック kỳ 11 (2027-12-14): **DELTA +2.000** (`correction_id` INCENTIVE). 期ロック kỳ 12 (2028-01-13): tính lại kỳ 10 = (1.100.000 → 10.890) **+ 2.000** (INCENTIVE là đầu vào cộng thêm, **số cố định — không tính lại theo 適格金額 mới**) so với tổng đã ghi nhận 9.900 + 2.000 → **DELTA +990**; **không** sinh −2.000. Biến thể: nếu `TRADE` duyệt trước khi kỳ 11 khóa thì cả hai vào cùng lượt 期ロック kỳ 11 → tổng **DELTA +2.990**, ghi 2 dòng: +2.000 gắn `correction_id` INCENTIVE + +990 không gắn (quy tắc tách dòng: `specs/incentive/technical-design/INC_ENGINE_TECH.md` K6) | Giữ | Kỳ 11 +2.000; kỳ 12 +990. Khoản sửa tỷ lệ cần đổi theo 適格金額 mới → 照合部門 lập 修正申請 INCENTIVE mới | Gate 1 recheck n-02, D-05; ADR-007 §2.5-12; R-L4-01 |

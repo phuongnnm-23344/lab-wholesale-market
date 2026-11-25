@@ -3,7 +3,7 @@ id: ADR-004
 title: Sổ append-only, sửa bằng REVERSE / DELTA — một cơ chế cho 当日訂正 / 取消 và 修正申請
 type: adr
 status: proposed
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-003, ADR-005, PRM-120, PRM-127, BR-CLOSE-01, BR-LOT-02, FR-CORR-01, FR-CORR-02, FR-CORR-03, FR-AITAI-03, FR-AUDIT-01]
@@ -27,7 +27,7 @@ related: [ARCH-001, ADR-003, ADR-005, PRM-120, PRM-127, BR-CLOSE-01, BR-LOT-02, 
 
 1. **Bản ghi gốc bất biến sau 確定.** GD, kết quả せり, giao hàng, sổ SL lô, 入金, kết quả thưởng, 監査ログ: chỉ INSERT; trigger chặn UPDATE / DELETE; DB role của app không có quyền ghi bảng (ADR-001).
 2. **Mọi thay đổi sau 確定 = cặp REVERSE + DELTA** gắn `adjustment_source`:
-   - `SAME_DAY` — 当日訂正 / 取消 trên SC-04-05, chỉ khi 業務日 của GD **chưa khóa**; người có vai TRADE; bắt lý do; không duyệt. 取消 = REVERSE không có DELTA; SL trả về lô qua sổ SL (BR-LOT-02).
+   - `SAME_DAY` — 当日訂正 / 取消 trên SC-04-05, chỉ khi 業務日 của GD **chưa khóa**; người có vai TRADE; bắt lý do; không duyệt. **Ngoại lệ giao làm đổi tiền** (不足 / 返品 / 一部取消 — SC-06-04, SC-06-05) khi ngày GD còn mở: vai **DELIVERY** (hoặc DEL-HEAD khi kết luận tranh chấp) tạo `trade_fixes` `SAME_DAY` **chỉ qua hàm ngoại lệ giao**, `reason_code = DELIVERY_EXCEPTION`, nối bằng `delivery_exceptions.fix_id` (TRADE_DB 0.2.1); không tự 確認 — 照合事務局 bấm 「確認済」 trước 日次締め (ADR-005 §2.5 mục 6). Giả định [PL], câu hỏi Q-DEL-04. 取消 = REVERSE không có DELTA; SL trả về lô qua sổ SL (BR-LOT-02).
    - `CORRECTION` — 修正申請 khi ngày đã khóa (hoặc khi chọn đi đường duyệt): lý do + chứng cứ, duyệt cấp 1 (照合部門長), cấp 2 (運用部門長) khi **tiền thay đổi lớn nhất của một người mua** (max theo người mua của |Σ chênh 税込|) ≥ ngưỡng **trong quy chế có version** (ADR-006, tạm 100.000 JPY — E-08); **đổi 買受人 luôn 2 cấp** — đổi người mua cùng giá thì net = 0 nhưng tiền dời từ người này sang người khác [Customer giả lập, 2026-11-25 — #3]. Cặp REVERSE / DELTA ghi vào **業務日 chưa khóa sớm nhất** (PRM-120).
    Mỗi dòng điều chỉnh mang **hai ngày**: `business_date` = ngày áp / ghi sổ (sổ ngày, 精算, IF-ACC-01) và `period_id` = **kỳ của GD gốc** (cho 期のお支払額 / 完納奨励金 — ADR-007 §2.3). Không gán kỳ theo ngày áp.
    Phạm vi 修正申請: `TRADE` (SL / giá / người mua của một GD) · `KANNO` (xét lại 完納, luôn 2 cấp — PRM-055) · `INCENTIVE` (sửa tiền thưởng kỳ đã khóa do tỷ lệ sai, luôn 2 cấp — ADR-006 §2.4-8a) · `LATE_ENTRY` (GD / lô / lần giao **mới** của ngày đã khóa — ADR-005 §2.8). KANNO / INCENTIVE sinh dòng DELTA ở `incentive_results` (không qua `trade_adjustments`); LATE_ENTRY sinh bản ghi mới mang ngày GD thật.
@@ -72,3 +72,4 @@ Luật 4; BR-CLOSE-01, BR-LOT-02, BR-INC-01; FR-CORR-01..03, FR-AITAI-03, FR-AUD
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách: hai ngày trên dòng điều chỉnh — ngày áp / kỳ GD gốc (C-02); ngưỡng 2 cấp theo tiền thay đổi lớn nhất của một người mua, đổi 買受人 luôn 2 cấp (khách #3); 4 phạm vi 修正申請 TRADE / KANNO / INCENTIVE / LATE_ENTRY (M-05, M-10) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | Gộp P3 (spec delivery): §2.2 `SAME_DAY` cho phép vai DELIVERY tạo `trade_fixes` qua hàm ngoại lệ giao làm đổi tiền, nối `delivery_exceptions.fix_id`, vẫn cần 照合 「確認済」 (Q-DEL-04, Q-DEL-09) | 2026-11-25 | phuongnnm-23344 | |
