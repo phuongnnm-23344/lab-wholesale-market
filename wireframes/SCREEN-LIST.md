@@ -22,7 +22,7 @@ Nhãn màn giữ tiếng Nhật vì hệ thống dùng tiếng Nhật; giải th
 | Vai | Vai **ghi / duyệt** theo role-list (TBL-ROLE-01). Quyền **đọc** theo cột 閲 của role-list (L4-A06), ghi ở spec từng màn. `INTAKE` 受付 · `JUDGE` 目利き · `TRADE` 取引 · `DELIVERY` 配送 · `SETTLE` 照合事務局 · `RULE` ルール管理 · `SYSADM` システム管理; quyền cộng thêm `STL-HEAD` 照合部門長 · `OPS-HEAD` 運用部門長 · `DEL-HEAD` 配送部門責任者 |
 | Thiết bị | `PC` = PC + テンキー, đi hết bằng bàn phím (NFR-USE-01) · `TAB` = tablet cảm ứng, nút ≥ 48px, đeo găng (PRM-086) · `PC/TAB` = hai bố cục |
 | Prototype | `Có` = có trang chạy thật ở LAB-2 · `Thành phần` = dựng dạng thành phần dùng chung · `Mới` = chưa có ở prototype, thiết kế mới ở LAB-4 |
-| Mức thiết kế LAB-4 | `Spec` = 1 trong 10 màn cốt lõi (L4-D02): wireframe ở đây + Screen Specification BM-2-901-51 ở P3 · `WF` = wireframe chi tiết ở đây (4 màn bổ sung, PREMISE §2 dòng 3) · `List` = chỉ có dòng trong 画面一覧 này; logic nằm trong Function / Technical Design của cụm |
+| Mức thiết kế LAB-4 | `Spec` = 1 trong 10 màn cốt lõi (L4-D02): wireframe ở đây + Screen Specification BM-2-901-51 ở P3 · `WF` = wireframe chi tiết ở đây (4 màn bổ sung theo PREMISE §2 dòng 3 + SC-03-02 thêm ở P3 theo L4-D05) · `List` = chỉ có dòng trong 画面一覧 này; logic nằm trong Function / Technical Design của cụm |
 
 ## 1. Tóm tắt
 
@@ -30,14 +30,14 @@ Nhãn màn giữ tiếng Nhật vì hệ thống dùng tiếng Nhật; giải th
 |---|---|---|---|---|---|---|---|
 | C1 Vào hệ thống | SC-00 | 4 | 3 | 1 (thành phần) | — | — | SC-00-04 (gộp vào SC-00-03) |
 | C2 Người tham gia & tài khoản | SC-01, SC-02 | 8 | 5 | 3 | SC-01-02 | — | SC-01-07, SC-02-01 (第2期); SC-02-05 (tab SC-02-03); SC-02-04 (統合) |
-| C3 Lô | SC-03 | 6 | 5 | 1 | SC-03-01, SC-03-05 | SC-03-07 | SC-03-06 (gộp SC-03-04) |
+| C3 Lô | SC-03 | 6 | 5 | 1 | SC-03-01, SC-03-05 | SC-03-02, SC-03-07 | SC-03-06 (gộp SC-03-04) |
 | C4 Giao dịch — **相対 (luồng chính)** + せり | SC-04, SC-05 | 8 | 5 | 3 | SC-04-01, SC-05-02 | SC-04-05 | SC-04-06 (nút trên SC-04-05); SC-04-08 (bỏ); SC-05-03 (統合) |
 | C5 Giao hàng | SC-06 | 5 | 1 | 4 | SC-06-02 | SC-06-04, SC-06-05 | SC-06-03 (bỏ bố cục PC) |
 | C6 Đối soát · khóa ngày · 修正申請 | SC-07, SC-08 | 7 | 5 | 2 | SC-07-02, SC-08-03 | — | — |
 | C7 精算 · 完納奨励金 | SC-09 | 5 | 3 | 2 | SC-09-04 | — | — |
 | C8 Quy chế · lịch · master | SC-10 | 6 | 4 | 2 | SC-10-04 | — | SC-10-06 (file cấu hình, PRM-126) |
 | C9 Báo cáo · thông báo · audit · vận hành · migrate | SC-11..SC-15 | 21 | 1 | 20 | — | — | SC-13-04, SC-15-01, SC-15-03 (bỏ); SC-11-07, SC-12-01 (統合) |
-| **Tổng** | | **70** | **32** | **38** | **10** | **4** | **12 ngoài 第1期 + 4 統合** |
+| **Tổng** | | **70** | **32** | **38** | **10** | **5** | **12 ngoài 第1期 + 4 統合** |
 
 Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第1期 = **70** (cách đếm theo 機能一覧 §7.4, DEC-031). 4 ID 統合 không tính vào 82. Batch (10) không phải màn, liệt kê ở §4.
 
@@ -70,7 +70,7 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 | # | SC-ID | 画面名 | Tên (VI) | Loại | Vai | Thiết bị | Prototype | Mức | Ghi chú to-be |
 |---|---|---|---|---|---|---|---|---|---|
 | 13 | SC-03-01 | ロット本登録（受付台・PC） | Đăng ký chính thức lô | NH | INTAKE | PC | Có | **Spec** | Mã 出荷者 thay text tự do (D15); 業務日 gắn lô từ 01:00 (E-16) |
-| 14 | SC-03-02 | ロット仮受付（埠頭・タブレット） | Tiếp nhận tạm lô ở bến | NH | INTAKE | TAB | Có | List | Offline lưu cục bộ + 「未同期 n件」 (M04); không chụp ảnh ở 第1期. Khách xin hình phác (khách #22) — **người dùng chốt thêm wireframe ở P3** (chỉ wireframe, không spec đầy đủ — PREMISE L4-D05) |
+| 14 | SC-03-02 | ロット仮受付（埠頭・タブレット） | Tiếp nhận tạm lô ở bến | NH | INTAKE | TAB | Có | **WF** | Offline lưu cục bộ + 「未同期 n件」 (M04); không chụp ảnh ở 第1期. Wireframe [SC-03-02](SC-03-02-lot-provisional-intake-dock-tablet-wireframe.md) làm ở P3 theo khách #22 (chỉ wireframe, không spec đầy đủ — PREMISE L4-D05): 品目 nút to thứ tự cố định, SL để trống + bàn số to, 仮番号 sinh trên máy |
 | 15 | SC-03-03 | ロット一覧・検索 | Danh sách lô | DS | INTAKE, JUDGE, TRADE | PC | Có | List | 販売公開 hàng loạt; 販売終了 / 持ち越し (D12, E-12) |
 | 16 | SC-03-04 | ロット詳細 | Chi tiết lô + sổ SL | CT | INTAKE, JUDGE, TRADE, SETTLE | PC | Có | List | Gồm sửa thuộc tính lô (gộp SC-03-06, PRM-128): lý do, before/after |
 | 17 | SC-03-05 | 目利き・下見結果入力 | Ghi kết quả 目利き・下見 | NH | JUDGE | PC/TAB | Có | **Spec** | **Người đánh giá nhập — không AI / OCR** (CAP-HUMAN-01) |
@@ -393,4 +393,4 @@ Ba câu dưới đây **đã trả lời [Customer giả lập, 2026-11-25]** (`
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu: 70 màn 第1期 theo 9 cụm, trạng thái prototype / mức thiết kế, 16 ID không tính, 10 batch, 10 sơ đồ chuyển màn | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: đổi nhãn duyệt nội bộ 承認 → 決裁 / 確認 (SC-08-02, SC-08-03, SC-10-04, sơ đồ C1, C2, C6, C8) và ghi quy tắc ở §0 (M-06, L4-D03); mermaid tách `:::human` khỏi mũi tên bằng dòng `class` (m-08); batch mở 業務日 theo D3 (M-01); SC-09-04 chỉ 試算 + 期ロック (M-02); dòng SC-00-03 (Q-WF-02, #32), SC-04-04 (Q-WF-03, #26), SC-06-01 (Q-WF-01, #30), SC-07-01 (#4, #10, #25), SC-08-01 (#5, LATE_ENTRY), SC-03-02 (#22 chưa làm); §6 ghi câu trả lời Q-WF-01..03 | 2026-11-25 | phuongnnm-23344 | |
-| 3 | 0.2.1 | Update | SC-03-02: người dùng chốt thêm wireframe ở P3 (L4-D05, khách #22) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | SC-03-02: người dùng chốt thêm wireframe ở P3 (L4-D05, khách #22); §1 cụm C3 cột WF thêm SC-03-02, tổng WF 4 → 5 | 2026-11-25 | phuongnnm-23344 | |

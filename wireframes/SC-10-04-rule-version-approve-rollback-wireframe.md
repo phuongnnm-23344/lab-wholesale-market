@@ -2,7 +2,7 @@
 id: WF-SC-10-04
 title: Wireframe SC-10-04 規則版確認・ロールバック
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-10-01, GOV-RULE-01, NFR-OPS-02, TBL-RATE-01, PRM-042, PRM-054, PRM-121, E-14, OPEN-L4-01, R-L4-01, L4-A03, L4-A04, L4-D03, D05, D06, D09, ADR-006, ADR-002]
@@ -31,7 +31,7 @@ related: [FT-10-01, GOV-RULE-01, NFR-OPS-02, TBL-RATE-01, PRM-042, PRM-054, PRM-
 [5] 今年度（2027年度: 4月〜3月）の発効回数  2 / 4 回   ※移行時の初期版・発効前に取り消した版は数えない
 ┌─ [6] 変更点（この版 vs 現在適用中 第3版）───────────────────────────────────┐
 │ 区分                    項目                         現在        この版   差   │
-│ 交付率（仲卸）            段階2 ¥1,000,000〜           0.9%       1.0%    ▲  │
+│ 交付率（仲卸）            段階3 ¥1,000,000〜           0.9%       1.0%    ▲  │
 │ 交付率（売買参加者）       変更なし                                            │
 │ 修正申請 2段階決裁の閾値   買受人別の変動額（税込）       ¥100,000    ¥150,000 ▲  │
 │ 支払期日                 翌月10日（銀行休業日は前銀行営業日） 変更なし            │
@@ -104,3 +104,4 @@ STL-HEAD: nút [10]–[12]. OPS-HEAD: chỉ thấy nút 決裁 ở nhánh N2. RU
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: đổi nhãn 承認 → 確認 / 決裁 (M-06); 支払期日 lùi theo ngày ngân hàng (M-03); đếm quota theo 発効待ち / 適用中 / 置換済, hủy version đã duyệt cần checker 決裁 + MFA (m-09); thêm trạng thái 発効待ち (N14); N1 nêu đường sửa tiền bằng 修正申請 INCENTIVE (M-04); ví dụ tính [15]. Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-04: tham chiếu hủy version đã duyệt → ADR-006 §2.3-7a | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | P3 gộp: ví dụ [6] 「段階2 ¥1,000,000〜」 → 「段階3」 khớp bảng tỷ lệ giả INCENTIVE_DB §5 (bậc 3 = 1.000.000–<3.000.000) | 2026-11-25 | phuongnnm-23344 | |

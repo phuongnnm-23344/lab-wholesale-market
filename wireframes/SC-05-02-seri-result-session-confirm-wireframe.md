@@ -2,7 +2,7 @@
 id: WF-SC-05-02
 title: Wireframe SC-05-02 せり結果確認
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-05-02, FT-01-05, FR-SERI-02, FORM-SERI-01, BR-PERM-01, CAP-HUMAN-01, PRM-115, ACT-03, L4-A04, M20, ADR-003]
@@ -44,6 +44,13 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 [7] 入力者本人が確認する理由 [            ]  ← 入力者=確認者 のときだけ表示・必須、要確認に表示
 [8] 合計 11件 ¥412,350（相対とは別に集計）
 [9] [ この回の結果を確定する（11件） ]  [10] 差し戻し（チェックを外した行）  [11] キャンセル
+
+── [10] を押したときのダイアログ
+┌─ [12] 差し戻し理由 ───────────────────────────────────────────────┐
+│ 1件を入力者 桜 三郎 に差し戻します                                     │
+│ 理由（必須・200文字以内） [                                        ]   │
+│                                          [ 差し戻す ]  [ 戻る ]      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ## 3. Item
@@ -61,6 +68,7 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 | 9 | 確定する | Nút | — | C-31 → ghi 確認者 + thời điểm, trừ sổ SL; **không MFA** (không ở danh sách PREMISE §3.2); **bắt buộc online** | CAP-HUMAN-01, L4-A05 |
 | 10 | 差し戻し | Nút | — | Dòng bỏ chọn quay về 入力者 sửa ở SC-05-01 | FR-SERI-02 |
 | 11 | キャンセル | Nút | — | | — |
+| 12 | 差し戻し理由 (hộp thoại) | Văn bản + nút | ✓ (≤ 200) | Mở từ [10]: 「{n}件を入力者 {tên} に差し戻します」 + ô 理由 + [差し戻す] [戻る]. Trống → `E-TRD-017` 「差し戻しの理由を入力してください」. Lý do ghi vào lịch sử trạng thái GD (`trade_status_history.reason`), 入力者 nhận thông báo in-app. Thêm ở P3 (số kế tiếp, không chèn) | FR-SERI-02, luật 4 |
 
 ## 4. Trạng thái
 
@@ -79,7 +87,7 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 |---|---|
 | TRADE ≠ 入力者 | Toàn màn |
 | TRADE = 入力者 | Toàn màn + [7] bắt buộc |
-| SETTLE / STL-HEAD / OPS-HEAD | Chỉ đọc (không [4], [6], [7], [9], [10]) |
+| SETTLE / STL-HEAD / OPS-HEAD | Chỉ đọc (không [4], [6], [7], [9], [10], [12]) |
 
 ## 6. To-be khác prototype
 
@@ -96,3 +104,4 @@ Không chụp được màn xác nhận: 業務日 demo chưa có phiên せり 
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Khách #9: dòng せり 確定不可 có câu hướng dẫn, lô quay lại 販売公開中 | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | P3 gộp: thêm item [12] hộp thoại lý do 差し戻し (bắt buộc, E-TRD-017) — khớp SC-05-02_SPEC | 2026-11-25 | phuongnnm-23344 | |

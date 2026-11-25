@@ -2,7 +2,7 @@
 id: WF-SC-07-02
 title: Wireframe SC-07-02 日次締め
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-07-04, FR-SETTLE-01, E-08, PRM-036, PRM-127, FR-SETTLE-02, BR-CLOSE-01, PRM-031, PRM-110, PRM-119, E-12, RACI-01, ADR-005, ADR-002, ADR-008]
@@ -75,7 +75,7 @@ Checklist khớp danh sách chuẩn ở ADR-005 §2.5: 6 mục ✖ chặn khóa,
 | 8 | Máy chưa đồng bộ | Dòng ✖ | Tên máy + giờ đồng bộ cuối + số bản ghi chờ. **Trừ máy đã đánh dấu 「端末回収不能」** | L4-A05, ADR-008 |
 | 9 | 当日訂正 / 取消 có tiền thay đổi ≥ ngưỡng 2 cấp **hoặc đổi 買受人** | Dòng ✖ | Ngưỡng = đúng ngưỡng 2 cấp của 修正申請 trong quy chế (E-08), đo theo tiền thay đổi lớn nhất của một người mua (税込). Mỗi dòng phải được 照合事務局 bấm 「確認済」 ở tab 要確認 SC-07-01; hiện cả tên người chốt gốc và người sửa. Đã trả lời Q-SC0405-01 [Customer giả lập, 2026-11-25] — khách #25 | PRM-127, E-08, FR-SETTLE-02 |
 | 10 | Lô còn SL (持ち越し) | Dòng ⚠ | Cách xử lý 持ち越し tạm theo quy chế (E-12) | PRM-110, E-12 |
-| 11 | Tranh chấp giao chưa xác nhận | Dòng ⚠ | Gồm số phiếu giấy 争いのある引渡し確認票 đã phát mà chưa nhập bù; không chặn, đi tiếp sang ngày sau | ADR-008 §2.4 |
+| 11 | Tranh chấp giao chưa xác nhận | Dòng ⚠ | Chỉ đếm tranh chấp `OPEN` đã nhập; phiếu giấy 争いのある引渡し確認票 đã phát mà chưa nhập bù người khóa tự soát bằng sổ giấy (ADR-005 0.2.2 #10, Q-STL-02); không chặn, đi tiếp sang ngày sau | ADR-008 §2.4 |
 | 12 | 引渡し残 | Dòng ⚠ | Chuyện hằng ngày; phải tick [13] | FR-DEL-05, PRM-036 |
 | 13 | Ô 「確認済み」 | Checkbox | Bắt buộc tick (không chặn bởi số lượng) | PRM-119, PRM-036 |
 | 14 | Câu cảnh báo | Nhãn | Luôn hiện | BR-CLOSE-01 |
@@ -122,3 +122,4 @@ Checklist khớp danh sách chuẩn ở ADR-005 §2.5: 6 mục ✖ chặn khóa,
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: checklist khớp danh sách chuẩn ADR-005 §2.5 (6 ✖ / 4 ⚠ + せり tự xác nhận) (M-05); thêm thao tác [19] 端末回収不能 (khách #1); [9] 当日訂正 ≥ ngưỡng / đổi 買受人 thành ✖ tới khi 確認済 (khách #25, Q-SC0405-01); [20] ngoại lệ giao đổi tiền (khách #4); khóa xong mở 業務日 kế tiếp (M-01). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | P3 gộp: [11] chỉ đếm tranh chấp `OPEN` đã nhập, phiếu giấy chưa nhập bù soát bằng sổ giấy — khớp ADR-005 0.2.2 #10 (Q-STL-02) | 2026-11-25 | phuongnnm-23344 | |

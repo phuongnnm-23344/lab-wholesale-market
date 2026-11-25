@@ -2,7 +2,7 @@
 id: WF-SC-06-04
 title: Wireframe SC-06-04 引渡し例外登録
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, TBL-ATTACH-01, E-21, M16, ADR-008, ADR-004, ADR-005]
@@ -14,7 +14,7 @@ related: [FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, TBL-ATTACH-01, E
 |---|---|
 | Vai trò màn | **Nhập** — ghi ngoại lệ khi giao: thiếu / thừa / trả / hủy một phần / **tranh chấp**; cũng là nơi **nhập bù phiếu giấy 争いのある引渡し確認票** khi mất mạng (ADR-008 §2.4) |
 | Vai ghi | DELIVERY, DEL-HEAD (P21). Đọc: SETTLE, STL-HEAD, OPS-HEAD |
-| Thiết bị | PC/TAB. Tablet: ghi nhanh (offline được); scan đính kèm chỉ ở PC (E-21) |
+| Thiết bị | PC/TAB. Tablet: ghi nhanh khi có mạng (ngoại lệ **không** ghi offline — ADR-008 §2.1); scan đính kèm chỉ ở PC (E-21) |
 
 ## 1. Prototype (as-is)
 
@@ -55,14 +55,14 @@ Không có (M16). Prototype chỉ có SC-06-02; không ảnh.
 | 11 | Đính kèm | File | Khi 後入力 | Chỉ PC; giới hạn dung lượng. Loại chứng từ 「紛争・引渡しの証憑」 → online 3 năm rồi lưu lạnh (TBL-ATTACH-01); xóa vật lý sau hạn phải có duyệt (B.7) | TBL-ATTACH-01, B.7, E-21, M11 |
 | 12 | Ảnh hưởng tiền | Nhãn | — | Đổi tiền (不足 / 返品 / 一部取消) + **ngày chưa khóa** → bản ghi REVERSE / DELTA qua luồng giao **và** dòng ở tab 要確認 SC-07-01 + dòng ✖ ở checklist SC-07-02 [20] tới khi 照合事務局 bấm 「確認済」 (khách #4). Đổi tiền + **ngày đã khóa** → phải 修正申請 | BR-CLOSE-01, ADR-004, FR-SETTLE-01, OBJ-05 |
 | 13 | Liên kết 修正申請 | Nút | — | → SC-08-01, mang mã GD | — |
-| 14 | 登録する | Nút | — | Append-only; offline (tablet, 現場) lưu cục bộ | ADR-008 |
+| 14 | 登録する | Nút | — | Append-only; cần mạng — offline nút khóa (không xếp hàng đợi) | ADR-008 §2.1 |
 | 15 | キャンセル | Nút | — | | — |
 
 ## 4. Trạng thái
 
 | Trạng thái | Hiển thị |
 |---|---|
-| Mất mạng (tablet) | C-28; ghi được ngoại lệ thường; **tranh chấp**: câu 「通信断中は紙の確認票（争いのある引渡し確認票）に記入し、責任者の署名を受けてください」 |
+| Mất mạng (tablet) | C-28 + câu 「通信が回復してから登録してください。争いがある場合は紙の確認票（争いのある引渡し確認票）に記入し、責任者の署名を受けてください」; form khóa, không lưu cục bộ. Có mạng lại → nhập bù phiếu giấy theo đường ADR-008 §2.4 (Q-DEL-01) |
 | Số phiếu đã dùng | C-22 dưới [3] |
 | [5] trùng người ghi giao | C-22: 「記録者本人は確認できません」 |
 | Ngày chưa khóa + đổi tiền | [12] dòng 1; sau 登録 hiện C-12 「照合部門の確認待ち（要確認）に追加しました」 |
@@ -78,3 +78,4 @@ DELIVERY, DEL-HEAD: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: xem ở SC-07-03 /
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu, gồm đường nhập bù phiếu giấy theo ADR-008 §2.4 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 / khách: ngoại lệ đổi tiền ở ngày chưa khóa → 要確認 SC-07-01 + checklist SC-07-02 (#4); 受取人 2 nút (#13); đính kèm theo loại chứng từ TBL-ATTACH-01 (M-08) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | P3 gộp: ngoại lệ không ghi offline theo ADR-008 §2.1 — offline hiện C-28 + hướng dẫn phiếu giấy, form khóa; nhập bù khi có mạng (Q-DEL-01, khớp SC-06-04_SPEC) | 2026-11-25 | phuongnnm-23344 | |
