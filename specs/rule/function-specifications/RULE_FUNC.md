@@ -3,7 +3,7 @@ id: SPEC-RULE_FUNC-001
 title: Function Specifications — module rule (version quy chế, checker, quota, rollback)
 type: system
 subtype: function-specifications
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 feature: rule
@@ -26,6 +26,7 @@ Khối R1–R7 = mục 4 của [RULE_VERSION_TECH](../technical-design/RULE_VERS
 | No | Ver | アクション / Action | 対象シート / Sheet | 変更内容 / Description of changes | 更新日 / Change Date | 更新者 / Editor | 承認 / Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | Ver 0.1 | Add New | 2.1–2.12 | Khởi tạo: 11 hàm DB + 1 route handler phía checker / hiệu lực + mã lỗi `E-RULE-001..014` | 2026-11-25 | phuongnnm-23344 | |
+| 2 | Ver 0.1.1 | Update | 2.10, 2.12 | Gate 2 G2-M01: `forceReentry` cho mọi `confirm` (`CHANGE` / `ROLLBACK`), `second-approval`, `cancel` bản `APPROVED` (PREMISE §3.2 ★); bảng `purpose` theo hành động | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -215,7 +216,7 @@ Khối R1–R7 = mục 4 của [RULE_VERSION_TECH](../technical-design/RULE_VERS
 
 **Function description**
 
-> - R7-2 (`DRAFT` / `PENDING`: maker hoặc checker) và R7-4 (`APPROVED`: checker ≠ người đề nghị, cần đề nghị mở, MFA). Lỗi: `E-RULE-001/002/007/008/012`.
+> - R7-2 (`DRAFT` / `PENDING`: maker hoặc checker) và R7-4 (`APPROVED`: checker ≠ người đề nghị, cần đề nghị mở, MFA luôn hỏi lại mã — route handler bắt token `RULE_CANCEL_DECIDE`). Lỗi: `E-RULE-001/002/007/008/012`.
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|
@@ -252,12 +253,13 @@ Khối R1–R7 = mục 4 của [RULE_VERSION_TECH](../technical-design/RULE_VERS
 
 **Function description**
 
-> - zod kiểm body; `requireSession`; MFA: `confirm` của `ROLLBACK`, `second-approval` → `forceReentry: true` (bắt `X-MFA-Token` đúng `purpose`); các hành động khác chấp nhận step-up còn hiệu lực; gọi hàm DB 2.6–2.10; ánh xạ `E-RULE-*` → HTTP theo API-RULE-002..006.
+> - zod kiểm body; `requireSession`; MFA theo PREMISE §3.2 ★: `forceReentry: true` (bắt `X-MFA-Token` đúng `purpose`, step-up không thay được) cho `confirm` `CHANGE` → `RULE_CHANGE_CONFIRM`, `confirm` `ROLLBACK` → `RULE_ROLLBACK_CONFIRM`, `second-approval` → `RULE_SECOND_APPROVAL`, `cancel` bản `APPROVED` → `RULE_CANCEL_DECIDE`; `return`, `cancel` bản `DRAFT` / `PENDING` chấp nhận step-up còn hiệu lực; `cancel-request` không MFA; gọi hàm DB 2.6–2.10; ánh xạ `E-RULE-*` → HTTP theo API-RULE-002..006.
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|
 | `RuleVersionActionBody` | `body` | Body đã kiểm |
-| `boolean` | `forceReentry` | Có bắt nhập lại mã MFA không (theo hành động + `change_kind`) |
+| `boolean` | `forceReentry` | Có bắt nhập lại mã MFA không (theo hành động + `change_kind` / trạng thái version) |
+| `string \| null` | `mfaPurpose` | `purpose` token phải khớp khi `forceReentry` |
 
 ---
 

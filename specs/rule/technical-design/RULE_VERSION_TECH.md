@@ -8,7 +8,7 @@ function: confirm_rule_version / second_approve_rule_version / return_rule_versi
 endpoint: POST /api/v1/rule-versions/{versionId}/confirm · …/second-approval · …/return · …/cancel-request · …/cancel
 component: RuleVersionService
 feature: rule
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ADR-006, ADR-002, ADR-007, SPEC-RULE_DB-001, SPEC-CLOSE_DB-001, SPEC-SC-10-04-001, SPEC-RULE_FUNC-001, SPEC-RULE_API-001, SPEC-RULE_API-002, SPEC-RULE_API-003, SPEC-RULE_API-004, SPEC-RULE_API-005, SPEC-RULE_API-006, GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, TBL-RATE-01, PRM-042, PRM-054, PRM-126, E-14, OPEN-L4-01, R-L4-01, L4-A03, L4-A04, L4-D06]
@@ -27,6 +27,7 @@ Thuật ngữ: **規則版** (version quy chế — gói 2 bảng 交付率 + th
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3): 7 khối R1–R7, hàm chính sách E-14 vẽ đủ N1 / N2 (F / G chỉ là tư liệu — L4-D06), test vector RV-01..17 | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | — | Gate 2 G2-M01: confirm `CHANGE` và cancel `APPROVED` luôn hỏi lại mã (`RULE_CHANGE_CONFIRM`, `RULE_CANCEL_DECIDE`) theo PREMISE §3.2 ★; thêm RV-18; G2-m04: bỏ `;` trong thông điệp Mermaid | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -48,10 +49,10 @@ sequenceDiagram
     participant DB as PostgreSQL (app)
 
     C->>FE: 確認して発効待ちにする → C-31 → C-30
-    FE->>API: POST /rule-versions/{id}/confirm (reason) + X-MFA-Token?
-    API->>API: R1 phiên, vai STL_HEAD, MFA (ROLLBACK: luôn hỏi lại mã)
+    FE->>API: POST /rule-versions/{id}/confirm (reason) + X-MFA-Token
+    API->>API: R1 phiên, vai STL_HEAD, MFA luôn hỏi lại mã (CHANGE và ROLLBACK)
     API->>SVC: confirm_rule_version(id, reason)
-    SVC->>DB: R1 SELECT rule_versions FOR UPDATE; maker ≠ checker; PENDING
+    SVC->>DB: R1 SELECT rule_versions FOR UPDATE · maker ≠ checker · PENDING
     SVC->>DB: R2 kiểm lại nội dung + 発効日 > 業務日 hiện tại, trùng 発効日
     SVC->>DB: R3 pg_advisory_xact_lock(年度) + đếm quota
     SVC->>SVC: R4 can_approve_rule_version(kind, used, stage)
@@ -130,7 +131,7 @@ N2: stage = CHECKER → ALLOW (needs_second = true, reason bắt buộc)
 |---|---|---|
 | Chưa đăng nhập | Dừng, `E-CMN-001` | 401 |
 | Không có quyền `STL_HEAD` (confirm / return / cancel) hoặc `OPS_HEAD` (second-approval) hoặc vai `RULE` (cancel-request) | Dừng, `E-CMN-002` | 403 |
-| MFA không đạt (ROLLBACK và second-approval: cần `X-MFA-Token` đúng `purpose`; CHANGE / return / cancel: step-up 10 phút còn hiệu lực hoặc token) | Dừng, `E-CMN-005` | 403 |
+| MFA không đạt — PREMISE §3.2 ★, cần `X-MFA-Token` đúng `purpose` (step-up không thay được): confirm `CHANGE` (`RULE_CHANGE_CONFIRM`), confirm `ROLLBACK` (`RULE_ROLLBACK_CONFIRM`), second-approval (`RULE_SECOND_APPROVAL`), cancel bản `APPROVED` (`RULE_CANCEL_DECIDE`); return và cancel bản `DRAFT` / `PENDING`: step-up 10 phút còn hiệu lực | Dừng, `E-CMN-005` | 403 |
 | v không tồn tại | Dừng, `E-RULE-001` | 404 |
 | Người gọi = `maker_id` khi confirm / return / second-approval | Dừng, `E-RULE-002` | 403 |
 
@@ -142,7 +143,7 @@ N2: stage = CHECKER → ALLOW (needs_second = true, reason bắt buộc)
 | 2 | `SELECT * FROM rule_versions WHERE id = v FOR UPDATE` (chờ, không `NOWAIT` — thao tác ngắn). |
 | 3 | `assert_caller(...)` theo hành động; kiểm S4: `caller ≠ maker_id` (ràng buộc CHECK `checker_id <> maker_id` là lưới cuối). |
 
-**DoD R1:** RV-02 (maker tự confirm → `E-RULE-002`); OPS-HEAD gọi confirm → 403; confirm ROLLBACK không gửi `X-MFA-Token` dù step-up còn hiệu lực → 403 `E-CMN-005`.
+**DoD R1:** RV-02 (maker tự confirm → `E-RULE-002`); OPS-HEAD gọi confirm → 403; RV-18 (confirm `CHANGE` / `ROLLBACK`, cancel `APPROVED` không gửi `X-MFA-Token` dù step-up còn hiệu lực → 403 `E-CMN-005`; token `purpose` khác → 403; cancel `DRAFT` có step-up, không token → 200).
 
 ### 4.2. R2 — Kiểm trạng thái, nội dung và 発効日
 
@@ -286,7 +287,7 @@ N2: stage = CHECKER → ALLOW (needs_second = true, reason bắt buộc)
 | 1 | return (checker): `PENDING` → `DRAFT`, xóa `checker_id` nếu là N2 chờ 決裁 (bắt đầu lại); thông báo maker kèm lý do. |
 | 2 | cancel `DRAFT` / `PENDING`: maker hoặc checker, lý do bắt buộc → `CANCELLED` (không tính quota). |
 | 3 | cancel-request (maker, vai `RULE`): v `APPROVED` và `effective_from > d_bd` → ghi đề nghị (người, giờ, lý do) + thông báo 照合部門長. **Lưu đề nghị:** cột `cancel_requested_by`, `cancel_requested_at`, `cancel_request_reason` của `rule_versions` (RULE_DB 0.2.1 §4.21 cột 13b — ba cột cùng NULL hoặc cùng có giá trị; đề nghị mở = `APPROVED` và `cancel_requested_at` có giá trị); `audit_logs` `RULE_VERSION_CANCEL_REQUEST` vẫn ghi. | |
-| 4 | cancel `APPROVED` (checker 照合部門長, ≠ người đề nghị, MFA): cần đề nghị đang mở → `CANCELLED`, `cancelled_by`, `cancel_reason`; quota được trả lại (used giảm 1); thông báo maker. |
+| 4 | cancel `APPROVED` (checker 照合部門長, ≠ người đề nghị, MFA luôn hỏi lại mã `RULE_CANCEL_DECIDE`): cần đề nghị đang mở → `CANCELLED`, `cancelled_by`, `cancel_reason`; quota được trả lại (used giảm 1); thông báo maker. |
 
 **DoD R7:** RV-12 (ba ca); return rồi maker sửa, nộp lại → về `PENDING` không mất lịch sử (audit có cả hai lượt).
 
@@ -317,6 +318,7 @@ Giả định chung: go-live 2027-08-01 với v1 `BASELINE` (FY2027); bảng t�
 | RV-15 | Hai version cùng hiệu lực 2027-10-01, một đã `APPROVED` | Confirm bản kia → `E-RULE-005` | `uq_rule_versions_active_from` |
 | RV-16 | Thêm 臨時休市 2027-10-15 ở SC-10-05 | used không đổi (lịch không phải version) | PRM-054 |
 | RV-17 | v hiệu lực 2027-10-01 được duyệt khi kỳ 2027-09 `OPEN` | Kỳ 2027-09 giữ version cũ; kỳ 2027-10 tạo với v; DELTA kỳ 09 sau này vẫn tra version kỳ 09 | ADR-006 §2.2-5, ADR-007 K4 |
+| RV-18 | Step-up phiên còn hiệu lực (MFA 2 phút trước), không có `X-MFA-Token`: (a) confirm v4 `CHANGE`; (b) confirm `ROLLBACK`; (c) cancel v `APPROVED` có đề nghị; (d) cancel v `DRAFT`; (e) confirm `CHANGE` kèm token `purpose = RULE_ROLLBACK_CONFIRM` | (a)(b)(c)(e) 403 `E-CMN-005`, v không đổi; (d) `CANCELLED` | PREMISE §3.2 ★, ADR-002 §2.2-6a |
 
 ### 5.2 Ranh giới
 

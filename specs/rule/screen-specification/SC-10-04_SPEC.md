@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-10-04
 feature: rule
 feature_id: RULE
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-10-04, SPEC-RULE_VERSION-001, SPEC-RULE_FUNC-001, SPEC-RULE_API-001, SPEC-RULE_API-002, SPEC-RULE_API-003, SPEC-RULE_API-004, SPEC-RULE_API-005, SPEC-RULE_API-006, ADR-006, ADR-002, FT-10-01, GOV-RULE-01, NFR-OPS-02, TBL-RATE-01, PRM-042, PRM-054, E-14, OPEN-L4-01, R-L4-01, L4-D03, L4-D06]
@@ -22,6 +22,7 @@ related: [WF-SC-10-04, SPEC-RULE_VERSION-001, SPEC-RULE_FUNC-001, SPEC-RULE_API-
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe SC-10-04 0.2.1 (LAB-4 P3); vẽ đủ nhánh N1 / N2 của E-14 | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-M01: C-30 theo PREMISE §3.2 ★ — 確認 (`CHANGE` và `ROLLBACK`), 決裁 N2, 取消 bản `APPROVED` luôn hỏi lại mã; 差し戻す, 取消 `DRAFT` / `PENDING` dùng step-up | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -76,7 +77,7 @@ Màn **quyết định** của checker 照合部門長 (STL-HEAD) cho một vers
 | 14 | 4回到達後のロールバック | Label (banner) + Button | - | Chỉ khi `ROLLBACK` và used ≥ 4. **N1:** 「4回到達後のロールバックは確認できません。誤った率で計算された期は修正申請『奨励金』で個別に訂正してください」 + liên kết SC-08-01. **N2:** 「理由必須。照合部門長の確認後、運用部門長の決裁（MFA）が必要です。経営層へ自動通知し、RPT-12 に回数として表示します」; ở trạng thái 決裁待ち hiện nút 「決裁する（運用部門長）」 cho OPS-HEAD |
 | C-27 | Nhãn chờ | Label | - | 「確認待ち」 / 「決裁待ち（運用部門長）」 cạnh [1] |
 | C-31 | Xác nhận | Dialog | - | 確認: 「発効日 {date} から適用されます。今年度 {used+1} / 4 回目になります。」; ROLLBACK thêm 「第{n}版の内容に戻します」; 取消: 「取り消した版は回数に数えません」 |
-| C-30 | MFA | Dialog + Text box | Có | 確認 `CHANGE`, 差し戻す, 取消: dùng step-up 10 phút nếu còn; **確認 ROLLBACK và 決裁 N2: luôn hỏi lại mã** |
+| C-30 | MFA | Dialog + Text box | Có | **Luôn hỏi lại mã** (PREMISE §3.2 ★, token một lần): 確認 `CHANGE` (`RULE_CHANGE_CONFIRM`), 確認 `ROLLBACK` (`RULE_ROLLBACK_CONFIRM`), 決裁 N2 (`RULE_SECOND_APPROVAL`), 取消 bản `APPROVED` (`RULE_CANCEL_DECIDE`). Dùng step-up 10 phút nếu còn: 差し戻す, 取消 bản `DRAFT` / `PENDING` |
 | C-10 | Nút góc phải | Button | - | 「規則版一覧へ」 → SC-10-01 |
 
 ### 4.2 Validation
@@ -124,10 +125,10 @@ Ký hiệu: **T** thao tác · **R** chỉ đọc · **H** ẩn · `—` không 
 | - | `versionId` hợp lệ, vai được phép | Mở màn | 1. Gọi `API-RULE-001` (C-20 khi > 300 ms)<br>2. Hiện [1]–[8], [15]<br>3. Hiện [13] nếu `policy.blockedReason = QUOTA`; [14] nếu `ROLLBACK` và `quota.used ≥ 4`<br>4. Ẩn / hiện nút theo `permissions` (4.4) | |
 | - | Người xem là maker | Mở màn | [10], [11] ẩn; câu 「起票者本人は確認できません」 | S4 |
 | **Standard Process（通常処理）** | | | | |
-| 10 | `PENDING`, used < 4 (hoặc `ROLLBACK` ở N2) | Bấm 確認 | Kiểm [9] nếu `ROLLBACK` → C-31 → C-30 → `API-RULE-002`. 200: toast C-12 「第{n}版を確認しました（発効日 {date}・今年度 {used}/4 回）」 hoặc (N2) 「運用部門長の決裁待ちにしました」; tải lại màn | |
+| 10 | `PENDING`, used < 4 (hoặc `ROLLBACK` ở N2) | Bấm 確認 | Kiểm [9] nếu `ROLLBACK` → C-31 → C-30 (luôn hỏi mã, cả `CHANGE`) → `API-RULE-002`. 200: toast C-12 「第{n}版を確認しました（発効日 {date}・今年度 {used}/4 回）」 hoặc (N2) 「運用部門長の決裁待ちにしました」; tải lại màn | |
 | 14 | N2, 決裁待ち, vai OPS-HEAD | Bấm 「決裁する（運用部門長）」 | Kiểm [9] → C-31 (「4回到達後のロールバックです。経営層へ通知されます」) → C-30 (luôn hỏi mã) → `API-RULE-003`; 200: toast 「決裁しました（今年度 {used}/4 回超）」 | |
 | 11 | `PENDING` | Bấm 差し戻す | Kiểm [9] → C-31 → C-30 (step-up) → `API-RULE-004`; 200: toast 「差し戻しました」, chuyển SC-10-01 | Maker sửa ở SC-10-02 |
-| 12 | `DRAFT` / `PENDING` (maker hoặc checker), hoặc `APPROVED` có đề nghị (checker) | Bấm 取り消す | Kiểm [9] → C-31 → C-30 → `API-RULE-005`; 200: toast 「取り消しました（回数に数えません）」 | |
+| 12 | `DRAFT` / `PENDING` (maker hoặc checker), hoặc `APPROVED` có đề nghị (checker) | Bấm 取り消す | Kiểm [9] → C-31 → C-30 (`APPROVED`: luôn hỏi mã; `DRAFT` / `PENDING`: step-up) → `API-RULE-005`; 200: toast 「取り消しました（回数に数えません）」 | |
 | 12 | `APPROVED`, vai RULE | Bấm 取消を依頼する | Kiểm [9] → C-31 → `API-RULE-006`; 200: toast 「取消を依頼しました（照合部門長の決裁待ち）」; C-27 hiện 「取消依頼中」 | |
 | 5 | — | Bấm 「RPT-12 へ」 | Chuyển SC-11-13 lọc năm TC | |
 | 14 (N1) | — | Bấm liên kết 修正申請 | Chuyển SC-08-01 với loại `INCENTIVE` | |
@@ -164,7 +165,7 @@ Ký hiệu: **T** thao tác · **R** chỉ đọc · **H** ẩn · `—` không 
 
 ### 6.2 Quy tắc / tiền đề
 
-- Logic duyệt, quota, chính sách E-14, test vector RV-01..17: [RULE_VERSION_TECH](../technical-design/RULE_VERSION_TECH.md).
+- Logic duyệt, quota, chính sách E-14, test vector RV-01..18: [RULE_VERSION_TECH](../technical-design/RULE_VERSION_TECH.md).
 - Nhánh E-14 cài **một** trong hai (N1 mặc định tới khi có workshop — Q-RULE-01); màn đọc `policy.branch` từ API, **không** có công tắc cấu hình. Phương án F / G (ADR-006 §3) không có trên màn (L4-D06).
 - 発効日 chỉ ngày 1, phải sau 業務日 hiện tại khi bấm 確認 (PRM-042).
 - Version đã có hiệu lực không sửa / hủy được; tỷ lệ sai phát hiện sau 発効日 → 修正申請 INCENTIVE từng người × kỳ (R-L4-01).

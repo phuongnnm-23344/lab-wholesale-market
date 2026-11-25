@@ -9,7 +9,7 @@ method: POST
 media_type: application/json
 feature: rule
 screen_id: [SC-10-04]
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-10-04-001, SPEC-RULE_VERSION-001, SPEC-RULE_FUNC-001, ADR-006]
@@ -26,6 +26,7 @@ related: [SPEC-SC-10-04-001, SPEC-RULE_VERSION-001, SPEC-RULE_FUNC-001, ADR-006]
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | Gate 2 G2-m08: bỏ header `X-MFA-Token` (API step-up theo phiên, không dùng token một lần) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -44,7 +45,6 @@ Checker trả version `PENDING` về maker: `PENDING` → `DRAFT` (kể cả ver
 | 1 | Path Parameters | `versionId` | string | `a1b2c3d4-0000-4000-8000-000000000004` | Version `PENDING` | |
 | 2 | Header Parameters | `X-CSRF-Token` | string | `<csrf-token>` | | |
 | 3 | Body Parameters | `reason` | string | `段階4の上限額の入力誤り` | 1..500 ký tự | |
-| 4 | Header Parameters | `X-MFA-Token` | string | `mfa_01JD…` | Token MFA do iam cấp sau C-30 | `[optional]` khi step-up còn hiệu lực |
 
 ---
 
@@ -55,7 +55,7 @@ Checker trả version `PENDING` về maker: `PENDING` → `DRAFT` (kể cả ver
 | 1 | 200 | Đã trả về | <pre>{<br>  "versionNo": 4,<br>  "status": "DRAFT"<br>}</pre> | |
 | 2 | 401 | Chưa đăng nhập / phiên hết hạn | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | Client về SC-00-01, giữ URL |
 | 3 | 422 | Thiếu lý do | <pre>{ "error": { "code": "E-RULE-007", "message": "理由を入力してください（500文字以内）。" } }</pre> | |
-| 4 | 403 | Token MFA thiếu / hết hạn / đã dùng (chưa đăng nhập → 401 `E-CMN-001`) | <pre>{ "error": { "code": "E-CMN-005", "message": "この操作の前に本人確認（MFA）が必要です" } }</pre> | |
+| 4 | 403 | Step-up MFA hết hiệu lực (quá 10 phút hoặc idle > 3 phút) (chưa đăng nhập → 401 `E-CMN-001`) | <pre>{ "error": { "code": "E-CMN-005", "message": "この操作の前に本人確認（MFA）が必要です" } }</pre> | |
 | 5 | 403 | Không có quyền / maker | <pre>{ "error": { "code": "E-RULE-002", "message": "起票者本人は確認・取消できません。" } }</pre> | `E-CMN-002` khi thiếu quyền |
 | 6 | 404 | Version không tồn tại | <pre>{ "error": { "code": "E-RULE-001", "message": "指定された規則版が見つかりません。" } }</pre> | |
 | 7 | 409 | Không ở `PENDING` | <pre>{ "error": { "code": "E-RULE-003", "message": "この版は確認待ちではありません（現在: APPROVED）。", "detail": { "status": "APPROVED" } } }</pre> | |

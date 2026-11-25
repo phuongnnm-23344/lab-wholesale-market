@@ -8,7 +8,7 @@ Feature `rule` (module ở `architecture/ARCHITECTURE.md` §2): version quy ch�
 |---|---|---|---|
 | Screen Specification (BM-2-901-51) | SPEC-SC-10-04-001 | [screen-specification/SC-10-04_SPEC.md](screen-specification/SC-10-04_SPEC.md) + [ảnh đánh số](screen-specification/assets/SC-10-04_annotated.png) | 0.1.0 |
 | Function Specifications (BM-2-901-54) | SPEC-RULE_FUNC-001 | [function-specifications/RULE_FUNC.md](function-specifications/RULE_FUNC.md) — chữ ký 12 hàm + bảng mã lỗi `E-RULE-001..014` | 0.1.0 |
-| Technical Design (BM-2-901-53) | SPEC-RULE_VERSION-001 | [technical-design/RULE_VERSION_TECH.md](technical-design/RULE_VERSION_TECH.md) — khối R1–R7, hàm chính sách E-14, test vector RV-01..17 | 0.1.0 |
+| Technical Design (BM-2-901-53) | SPEC-RULE_VERSION-001 | [technical-design/RULE_VERSION_TECH.md](technical-design/RULE_VERSION_TECH.md) — khối R1–R7, hàm chính sách E-14, test vector RV-01..18 | 0.1.0 |
 
 ## Liên kết sang system-design
 
@@ -21,4 +21,4 @@ Feature `rule` (module ở `architecture/ARCHITECTURE.md` §2): version quy ch�
 
 ## Gợi ý tách task cho LAB-5
 
-R1 xác thực + khóa dòng · R2 kiểm trạng thái / 発効日 / nội dung · R3 quota + advisory lock · R4 hàm chính sách (hai thân N1 / N2, 24 ca chân trị) · R5 ghi + audit + outbox · R6 kích hoạt theo ngày + `rule_at` (nối hàm mở 業務日 của settle) · R7 trả về / đề nghị hủy / hủy. Thêm: API-RULE-001..006, màn SC-10-04, fixture RV-01..17. Phương án F / G (ADR-006 §3) **không** thuộc phạm vi — tách issue làm rõ riêng (L4-D06).
+R1 xác thực + khóa dòng · R2 kiểm trạng thái / 発効日 / nội dung · R3 quota + advisory lock · R4 hàm chính sách (hai thân N1 / N2, 24 ca chân trị) · R5 ghi + audit + outbox · R6 kích hoạt theo ngày + `rule_at` (nối hàm mở 業務日 của settle) · R7 trả về / đề nghị hủy / hủy. Thêm: API-RULE-001..006, màn SC-10-04, fixture RV-01..18. Phương án F / G (ADR-006 §3) **không** thuộc phạm vi — tách issue làm rõ riêng (L4-D06).

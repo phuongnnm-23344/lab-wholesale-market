@@ -3,7 +3,7 @@ id: SPEC-API_CONV-001
 title: Quy ước chung của API (Common Conventions · Status code · Appendix)
 type: system
 subtype: api-conventions
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 design_id: API_CONV
@@ -24,6 +24,7 @@ related: ["BM-2-901-52", "SPEC-ERROR_CODES-001", "SPEC-API_LIST-001", "ADR-002",
 | No. | Version | Action | Thay đổi | Ngày | Người sửa | Ghi chú |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu khi gộp P3: chốt URL `/api/v1`, body lỗi `{ "error": {…} }` theo prototype, 422 cho mọi lỗi nhập, MFA step-up + token dùng một lần, khóa lạc quan, idempotency, 423 ngày đã khóa | 2026-11-25 | phuongnnm-23344 | LAB-4 P3 gộp 3 luồng |
+| 2 | 0.1.1 | Update | Gate 2: §4 xếp lại theo PREMISE §3.2 ★ — checker 確認 version `CHANGE` và hủy bản `APPROVED` chuyển sang token một lần, thêm `purpose` `RULE_CHANGE_CONFIRM`, `RULE_CANCEL_DECIDE` (G2-M01); quy tắc khai báo header `X-MFA-Token` (G2-m08); câu dẫn chứng prototype 400 `BAD_JSON` / body `{code, message}` + dòng lệch (G2-m02) | 2026-11-25 | phuongnnm-23344 | Gate 2 |
 
 ---
 
@@ -36,7 +37,7 @@ Số thứ tự giữ đúng cách khuôn BM-2-901-52 gọi ("quy ước chung s
 | 0 | Một request — một ca response | Mỗi request trả **đúng một** dòng ở mục 4 của file API. Lỗi đầu tiên gặp theo thứ tự kiểm ở mục 5 của file API thì dừng. |
 | 1 | Param bắt buộc mặc định | Mọi param bắt buộc; param không bắt buộc ghi `[optional]` ở cột `Note`. |
 | 2 | URL và version | `/api/v1/{tài nguyên}` — tài nguyên danh từ số nhiều, kebab-case (`/api/v1/delivery-exceptions`); path param camelCase trong ngoặc nhọn (`{participantId}`). Hành động không phải CRUD là danh từ con (`/close`, `/confirm`, `/transitions`). Route handler Next.js ở `src/app/api/v1/**/route.ts`. Đổi hợp đồng không tương thích → mở `/api/v2/…` song song, giữ `v1` tới khi client cuối cùng chuyển. Prototype LAB-2 dùng `/api/...` không version — chỉ còn trong bảng lệch `MKT_DB.md` (as-is). |
-| 3 | Body lỗi | `{ "error": { "code", "message", "field"?, "detail"?, "traceId"? } }` — chi tiết ở mục 3.2. **Khác** ví dụ `errors[]` trong khuôn: dự án giữ format của prototype (`prototype/src/lib/http/api-error-response.ts`) để code LAB-2 dùng lại được; mỗi response chỉ có một lỗi (quy ước 0). |
+| 3 | Body lỗi | `{ "error": { "code", "message", "field"?, "detail"?, "traceId"? } }` — chi tiết ở mục 3.2. **Mở rộng** format của prototype: prototype chỉ có `{ code, message }` (`prototype/src/lib/http/api-error-response.ts:5`); `field`, `detail`, `traceId` là phần to-be thêm vào. **Khác** ví dụ `errors[]` trong khuôn — khuôn giao định dạng lỗi cho quy ước chung số 3 nên đây không phải lệch khuôn; dự án giữ hình dạng của prototype để code LAB-2 dùng lại được; mỗi response chỉ có một lỗi (quy ước 0). |
 | 4 | Tên khóa JSON | camelCase cho mọi khóa request / response (`expectedInputHash`, `buyerNo`). Cột DB snake_case — route handler ánh xạ. Giá trị enum viết HOA theo DB (`APPROVED`, `NAKAOROSHI`). |
 | 5 | Kiểu giá trị | Tiền: `Integer` yên, chưa thuế trừ khi tên trường có `Incl`. Ngày 業務日: `YYYY-MM-DD`. Thời điểm: ISO-8601 có múi giờ `+09:00`. ID: UUID v4 dạng chuỗi. Số lượng kg: `number` 1 chữ số thập phân; 箱 / 尾: `Integer`. |
 | 6 | Xác thực | Cookie phiên server-side `sid` (HttpOnly, Secure, SameSite=Lax — ADR-002). Mọi request ghi (POST / PUT / PATCH / DELETE) kèm header `X-CSRF-Token`. Thiết bị dùng chung gửi `X-Device-Id` khi API cần biết máy (sync, offline). |
@@ -67,7 +68,12 @@ Mã ngoài bảng này không được dùng trong file API (khuôn BM-2-901-52 
 | 423 | Ngày 業務日 đã 日次締め / kỳ đã 期ロック | `E-CMN-003`, `E-INC-002` | C-24 (= SC-00-05), giữ nội dung, nút sang 修正申請 |
 | 500 | Lỗi không lường trước; transaction đã rollback | `E-CMN-004` | C-26 kèm `traceId` |
 
-**Không dùng 400.** Prototype trả 422 cho mọi lỗi nhập (`rpc-error-mapper.ts`); dự án giữ một mã để client chỉ có một nhánh xử lý lỗi nhập.
+**Không dùng 400.** Prototype trả 422 cho lỗi schema / quy tắc (`rpc-error-mapper.ts`) và **400 `BAD_JSON`** khi body không parse được (`prototype/src/lib/http/parse-json-body.ts:14`). To-be gộp JSON hỏng vào 422 `E-CMN-007` để client chỉ có một nhánh xử lý lỗi nhập.
+
+| Lệch as-is → to-be | Prototype | To-be |
+|---|---|---|
+| JSON hỏng | 400 `BAD_JSON` | 422 `E-CMN-007` |
+| Body lỗi | `{ code, message }` | `{ code, message, field?, detail?, traceId? }` |
 
 ### 3.2 Body lỗi
 
@@ -93,12 +99,14 @@ Theo ADR-002 §2.2. Hai mức, **một** mã lỗi `E-CMN-005` (403) cho mọi c
 
 | Mức | Dùng cho | Server kiểm | Client |
 |---|---|---|---|
-| Step-up theo phiên | Hành động duyệt ở PREMISE §3.2 **có thể đảo** (確認 version `CHANGE`, 差し戻す, 決裁 許可 / 承認, 修正申請 決裁…) | `app.mfa_verified_at` của (người, thiết bị, phiên) còn ≤ 10 phút **và** không idle > 3 phút | Thiếu → nhận 403 `E-CMN-005` → mở C-30 → gọi API xác thực của iam → gửi lại request |
-| Token dùng một lần | Hành động **không quay lại được** — luôn hỏi lại mã (ADR-002 §2.2-6a): 日次締め, 端末回収不能, 期ロック, 確認 version `ROLLBACK`, 決裁 N2 của 運用部門長 | Header `X-MFA-Token`: chưa dùng, ≤ 120 giây, cùng người + thiết bị, đúng `purpose` | C-31 xác nhận → C-30 nhập mã → nhận token → gửi kèm header |
+| Step-up theo phiên | Hành động ở PREMISE §3.2 **không** có dấu ★: 差し戻す version quy chế, hủy version `DRAFT` / `PENDING`, 決裁 許可 / 確認 承認, 修正申請 決裁 cấp 1 và cấp 2, xác nhận giao có tranh chấp… | `app.mfa_verified_at` của (người, thiết bị, phiên) còn ≤ 10 phút **và** không idle > 3 phút | Thiếu → nhận 403 `E-CMN-005` → mở C-30 → gọi API xác thực của iam → gửi lại request |
+| Token dùng một lần | Hành động có dấu ★ ở PREMISE §3.2 — luôn hỏi lại mã dù step-up còn hiệu lực (ADR-002 §2.2-6a): 日次締め, 端末回収不能, 期ロック, **checker 確認 version quy chế (`CHANGE` và `ROLLBACK`)**, 決裁 N2 **rollback quy chế** (E-14) của 運用部門長, **hủy version `APPROVED`**, 決裁 xóa vật lý chứng từ | Header `X-MFA-Token`: chưa dùng, ≤ 120 giây, cùng người + thiết bị, đúng `purpose` | C-31 xác nhận → C-30 nhập mã → nhận token → gửi kèm header |
 
-`purpose` đã dùng: `DAY_CLOSE`, `DEVICE_LOST` (settle), `PERIOD_LOCK` (incentive), `RULE_ROLLBACK_CONFIRM`, `RULE_SECOND_APPROVAL` (rule). Thêm `purpose` mới → thêm vào đây.
+`purpose` đã dùng: `DAY_CLOSE`, `DEVICE_LOST` (settle), `PERIOD_LOCK` (incentive), `RULE_CHANGE_CONFIRM`, `RULE_ROLLBACK_CONFIRM`, `RULE_SECOND_APPROVAL`, `RULE_CANCEL_DECIDE` (rule). Xóa vật lý chứng từ (B.7) chưa có API trong bộ spec này — thêm `purpose` khi đặc tả. Thêm `purpose` mới → thêm vào đây.
 
-Mã 6 số sai, khóa tạm sau 5 lần sai: do **API xác thực MFA của module iam** trả — API này chưa có đặc tả (ngoài 10 màn, xem [`specs/_index.md`](../_index.md) mục phụ thuộc). Đề xuất: `POST /api/v1/auth/mfa/verify` `{ code, purpose? }` → làm mới step-up của phiên và, khi có `purpose`, trả `{ mfaToken, expiresAt }`. API nghiệp vụ không nhận mã 6 số trong body.
+**Khai báo header (G2-m08):** API dùng token một lần khai `X-MFA-Token` ở Request Params, bắt buộc, ghi rõ `purpose`. API chỉ dùng step-up theo phiên **không** khai `X-MFA-Token` (server không đọc header này); thiếu step-up → 403 `E-CMN-005`. API mà mức MFA phụ thuộc dữ liệu (vd API-RULE-005 theo trạng thái version) khai header kèm điều kiện ở cột Note.
+
+Mã 6 số sai, khóa tạm sau 5 lần sai: do **API xác thực MFA của module iam** trả — API này chưa có đặc tả (ngoài 12 màn — DEP-01, xem [`specs/_index.md`](../_index.md) mục phụ thuộc). Đề xuất: `POST /api/v1/auth/mfa/verify` `{ code, purpose? }` → làm mới step-up của phiên và, khi có `purpose`, trả `{ mfaToken, expiresAt }`. API nghiệp vụ không nhận mã 6 số trong body.
 
 ---
 
