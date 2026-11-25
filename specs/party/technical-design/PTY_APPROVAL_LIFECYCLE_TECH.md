@@ -8,7 +8,7 @@ function: approval request lifecycle (create → decide / reject) + limit change
 endpoint: POST /api/v1/participants/{participantId}/approval-requests · POST /api/v1/approval-requests/{requestId}/transitions
 component: ApprovalService
 feature: party
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001, API-PTY-003, API-PTY-006, API-PTY-007, SPEC-PARTY_DB-001, ADR-003, PRM-046, PRM-121, FIG-010, L4-A04, OPEN-DB-09]
@@ -26,12 +26,15 @@ related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001,
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); G2-M03: RENEW khi 承認 đã 失効 → 409 E-PTY-013; khách Q-PTY-06: LIMIT_CHANGE một bước do 照合部門長 (§4.2b) | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/PTY_APPROVAL_LIFECYCLE_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh PNG: N/A — Mermaid là nguồn duy nhất (Gate 1 m-08). Khi render được: `./assets/PTY_APPROVAL_LIFECYCLE_sequence.png`.
+![PTY_APPROVAL_LIFECYCLE sequence](./assets/PTY_APPROVAL_LIFECYCLE_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py PTY_APPROVAL_LIFECYCLE` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 ```mermaid
 sequenceDiagram

@@ -8,7 +8,7 @@ function: app.fn_register_lot
 endpoint: POST /api/v1/lots
 component: LotRegisterService
 feature: lot
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, ADR-004, ADR-005, ADR-008]
@@ -26,12 +26,15 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, AD
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Khách Q-LOT-01: thêm DoD (g), (h) — mã chính thức không dùng lại, lô 仮受付 hủy giữ số | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/LOT_REGISTER_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh `./assets/LOT_REGISTER_sequence.png`: **N/A — chưa xuất**. Nguồn duy nhất của sơ đồ là khối Mermaid dưới đây (dạng văn bản như PlantUML, diff đọc được); máy làm P3 chưa có `mmdc`, ảnh PNG xuất khi có công cụ (Gate 1 m-08, FB-EXP-236 Waiting) — xuất từ chính khối này để hai bản không lệch.
+![LOT_REGISTER sequence](./assets/LOT_REGISTER_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py LOT_REGISTER` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 **File nguồn của sơ đồ:** khối Mermaid trong file này.
 

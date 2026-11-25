@@ -8,7 +8,7 @@ function: getCloseChecklist · closeBusinessDay
 endpoint: GET /api/v1/business-days/{businessDate}/close-checklist · POST /api/v1/business-days/{businessDate}/close
 component: DayCloseService
 feature: settle
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-07-02-001, SPEC-SETTLE_FUNC-001, SPEC-STL_DEVICE_LOST-001, API-STL-001, API-STL-002, SPEC-CLOSE_DB-001, ADR-005, ADR-002, ADR-008, BR-CLOSE-01, PRM-031, PRM-119]
@@ -26,12 +26,15 @@ related: [SPEC-SC-07-02-001, SPEC-SETTLE_FUNC-001, SPEC-STL_DEVICE_LOST-001, API
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); G2-M03: `detail.blocking` là mảng `{adrNo, label, count}`; khách Q-STL-02: checklist 12 mục, #12 tick, E-STL-013 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/STL_DAY_CLOSE_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh PNG: N/A — Mermaid là nguồn duy nhất (Gate 1 m-08).
+![STL_DAY_CLOSE sequence](./assets/STL_DAY_CLOSE_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py STL_DAY_CLOSE` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 ```mermaid
 sequenceDiagram

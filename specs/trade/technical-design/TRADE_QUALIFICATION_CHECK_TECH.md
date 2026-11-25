@@ -8,7 +8,7 @@ function: app.fn_check_buyer_qualification
 endpoint:
 component: BuyerQualificationCheck
 feature: trade
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_SERI_CONFIRM-001, SPEC-TRADE_SAME_DAY_FIX-001, SPEC-PARTY_DB-001, ADR-003]
@@ -26,12 +26,15 @@ related: [SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_SERI_CON
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Khách Q-TRD-02: so 参加上限 với 税込 = floor(Σ税抜 × (100 + suất) / 100), thêm DoD d2, d3 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/TRADE_QUALIFICATION_CHECK_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh `./assets/TRADE_QUALIFICATION_CHECK_sequence.png`: **N/A — chưa xuất** (máy làm P3 chưa có `mmdc`); nguồn duy nhất là khối Mermaid dưới đây, ảnh xuất từ chính khối này.
+![TRADE_QUALIFICATION_CHECK sequence](./assets/TRADE_QUALIFICATION_CHECK_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py TRADE_QUALIFICATION_CHECK` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 **File nguồn của sơ đồ:** khối Mermaid trong file này.
 

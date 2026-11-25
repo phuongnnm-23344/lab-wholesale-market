@@ -8,7 +8,7 @@ function: app.fn_confirm_seri_session, app.fn_send_back_seri_results
 endpoint: POST /api/v1/seri-sessions/{sessionId}/confirm
 component: SeriConfirmService
 feature: trade
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-TRD-005, API-TRD-006, API-TRD-007, SPEC-TRADE_DB-001]
@@ -26,12 +26,15 @@ related: [SPEC-SC-05-02-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-m03: sửa câu as-is (lý do vượt hạn mức chỉ UI hiện cho mọi dòng; S7 của 0027 là approve_correction); khách Q-TRD-05: 差し戻し / 取消, DoD b–b5 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/TRADE_SERI_CONFIRM_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh `./assets/TRADE_SERI_CONFIRM_sequence.png`: **N/A — chưa xuất** (chưa có `mmdc`); nguồn duy nhất là khối Mermaid.
+![TRADE_SERI_CONFIRM sequence](./assets/TRADE_SERI_CONFIRM_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py TRADE_SERI_CONFIRM` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 **File nguồn của sơ đồ:** khối Mermaid trong file này.
 

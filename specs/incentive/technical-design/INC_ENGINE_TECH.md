@@ -8,7 +8,7 @@ function: compute_period_incentives / preview_incentives / lock_period
 endpoint: POST /api/v1/periods/{periodId}/incentive-previews · POST /api/v1/periods/{periodId}/lock
 component: IncentiveEngine
 feature: incentive
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ADR-007, ADR-005, ADR-006, ADR-004, ADR-002, SPEC-INCENTIVE_DB-001, SPEC-BILLING_DB-001, SPEC-CLOSE_DB-001, SPEC-ADJUST_DB-001, SPEC-RULE_DB-001, SPEC-SC-09-04-001, SPEC-INC_FUNC-001, SPEC-INC_API-002, SPEC-INC_API-003, BR-INC-01, FR-INC-01, FR-INC-03, FR-CORR-02, FR-AUDIT-03, PRM-040, PRM-041, PRM-042, PRM-043, PRM-053, PRM-055]
@@ -28,12 +28,15 @@ Thuật ngữ dùng trong file: **完納奨励金** (かんのうしょうれい
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3): 9 khối K1–K9 có điều kiện hoàn thành để LAB-5 tách task; biến số, công thức số nguyên, thứ tự tính, quy tắc tách dòng DELTA, ánh xạ TV-01..14 (INCENTIVE_DB §5) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Khách Q-INC-02: GD 後入力 của kỳ đã khóa sang kỳ tính thưởng đang mở (`incentive_period_id`), xét 完納 theo 支払期日 kỳ đó, không DELTA, một quy tắc cho mọi người mua (§3.4, K1/K2/K6/K9, TV-15, +0,5 MD); Q-INC-01: 完納 theo 入金日 CSV, 期ロック cần tick (K8, E-INC-014) | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/INC_ENGINE_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-N/A (ảnh PNG) — chưa xuất ảnh: máy làm P3 chưa có `mmdc` (Gate 1 m-08, FB-EXP-236 Waiting). Bản Mermaid dưới đây là nguồn duy nhất tới khi xuất ảnh `./assets/INC_ENGINE_sequence.png`; khi xuất phải giữ cùng nội dung.
+![INC_ENGINE sequence](./assets/INC_ENGINE_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py INC_ENGINE` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 <details open>
 <summary>Bản Mermaid — 試算 và 期ロック (số bước khớp mục 4)</summary>

@@ -8,7 +8,7 @@ function: permit request lifecycle (create → propose → decide / reject) + ex
 endpoint: POST /api/v1/participants/{participantId}/permit-requests · POST /api/v1/permit-requests/{requestId}/transitions
 component: PermitService
 feature: party
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001, SPEC-PTY_APPROVAL_LIFECYCLE-001, API-PTY-004, API-PTY-005, SPEC-PARTY_DB-001, ADR-003, ADR-002, PRM-121, FIG-010, OPEN-DB-09]
@@ -26,12 +26,15 @@ related: [SPEC-SC-01-02-001, SPEC-PARTY_FUNC-001, SPEC-PTY_APPROVAL_LIFECYCLE-00
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); G2-M03: RENEW khi 許可 đã 失効 → 409 E-PTY-013 + `detail.nextAction`, E-PTY-014 chỉ 422, bỏ khóa lỗi cũ (thay bằng `detail` / `field`); đóng Q-PTY-01/04/05 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/PTY_PERMIT_LIFECYCLE_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh PNG: N/A — repo dùng Mermaid làm nguồn duy nhất cho sơ đồ (chưa có công cụ render được cấp quyền, xem Gate 1 m-08). Khi render được thì xuất `./assets/PTY_PERMIT_LIFECYCLE_sequence.png` từ đúng khối dưới.
+![PTY_PERMIT_LIFECYCLE sequence](./assets/PTY_PERMIT_LIFECYCLE_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py PTY_PERMIT_LIFECYCLE` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 ```mermaid
 sequenceDiagram

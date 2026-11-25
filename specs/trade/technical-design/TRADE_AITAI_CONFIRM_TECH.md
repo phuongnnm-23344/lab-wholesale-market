@@ -8,7 +8,7 @@ function: app.fn_confirm_aitai_trade
 endpoint: POST /api/v1/trades/aitai
 component: AitaiTradeService
 feature: trade
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-TRD-002, API-TRD-004, SPEC-TRADE_DB-001, SPEC-LOT_FUNC-001, ADR-003, ADR-004, ADR-008]
@@ -26,12 +26,15 @@ related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-m03: sửa câu as-is (mã GD prototype đã dùng `next_day_counter` 0025/0026) | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/TRADE_AITAI_CONFIRM_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh `./assets/TRADE_AITAI_CONFIRM_sequence.png`: **N/A — chưa xuất** (chưa có `mmdc`); nguồn duy nhất là khối Mermaid.
+![TRADE_AITAI_CONFIRM sequence](./assets/TRADE_AITAI_CONFIRM_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py TRADE_AITAI_CONFIRM` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 **File nguồn của sơ đồ:** khối Mermaid trong file này.
 

@@ -8,7 +8,7 @@ function: markDeviceLost
 endpoint: POST /api/v1/devices/{deviceId}/lost
 component: DayCloseService
 feature: settle
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-07-02-001, SPEC-STL_DAY_CLOSE-001, API-STL-003, SPEC-IAM_AUDIT_DB-001, ADR-005, ADR-008, ADR-002, NFR-AVL-02]
@@ -26,12 +26,15 @@ related: [SPEC-SC-07-02-001, SPEC-STL_DAY_CLOSE-001, API-STL-003, SPEC-IAM_AUDIT
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5) | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/STL_DEVICE_LOST_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh PNG: N/A — Mermaid là nguồn duy nhất (Gate 1 m-08).
+![STL_DEVICE_LOST sequence](./assets/STL_DEVICE_LOST_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py STL_DEVICE_LOST` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 ```mermaid
 sequenceDiagram

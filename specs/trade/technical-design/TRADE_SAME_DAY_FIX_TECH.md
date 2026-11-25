@@ -8,7 +8,7 @@ function: app.fn_fix_trade
 endpoint: POST /api/v1/trades/{tradeId}/fixes
 component: TradeFixService
 feature: trade
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-04-05, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-TRD-008, SPEC-ADJUST_DB-001, SPEC-TRADE_DB-001, ADR-004, ADR-005]
@@ -25,12 +25,15 @@ related: [WF-SC-04-05, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK-001, 
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/TRADE_SAME_DAY_FIX_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh `./assets/TRADE_SAME_DAY_FIX_sequence.png`: **N/A — chưa xuất** (chưa có `mmdc`); nguồn duy nhất là khối Mermaid.
+![TRADE_SAME_DAY_FIX sequence](./assets/TRADE_SAME_DAY_FIX_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py TRADE_SAME_DAY_FIX` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 **File nguồn của sơ đồ:** khối Mermaid trong file này.
 

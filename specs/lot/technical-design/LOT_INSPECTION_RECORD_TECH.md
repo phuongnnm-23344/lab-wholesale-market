@@ -8,7 +8,7 @@ function: app.fn_record_inspections
 endpoint: POST /api/v1/lots/inspections
 component: LotInspectionService
 feature: lot
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-03-05-001, SPEC-LOT_FUNC-001, API-LOT-004, SPEC-LOT_DB-001, ADR-010]
@@ -25,12 +25,15 @@ related: [SPEC-SC-03-05-001, SPEC-LOT_FUNC-001, API-LOT-004, SPEC-LOT_DB-001, AD
 | No | Version | Action | Mục / Bước | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/LOT_INSPECTION_RECORD_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh `./assets/LOT_INSPECTION_RECORD_sequence.png`: **N/A — chưa xuất** (cùng lý do [LOT_REGISTER_TECH §2](LOT_REGISTER_TECH.md#2-sequence-diagram)); nguồn duy nhất là khối Mermaid.
+![LOT_INSPECTION_RECORD sequence](./assets/LOT_INSPECTION_RECORD_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py LOT_INSPECTION_RECORD` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 **File nguồn của sơ đồ:** khối Mermaid trong file này.
 

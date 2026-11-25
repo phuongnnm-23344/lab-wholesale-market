@@ -8,7 +8,7 @@ function: getCorrectionDetail · decideCorrection
 endpoint: GET /api/v1/corrections/{correctionId} · POST /api/v1/corrections/{correctionId}/decisions
 component: CorrectionService
 feature: settle
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [SPEC-SC-08-03-001, SPEC-SETTLE_FUNC-001, API-STL-004, API-STL-005, SPEC-ADJUST_DB-001, ADR-004, ADR-005, ADR-006, ADR-007, ADR-002, FR-CORR-01, FR-CORR-02, FR-CORR-03, PRM-120, E-08, L4-D03]
@@ -26,12 +26,15 @@ related: [SPEC-SC-08-03-001, SPEC-SETTLE_FUNC-001, API-STL-004, API-STL-005, SPE
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); G2-M03: LATE_ENTRY bị từ chối → 409 E-STL-029 + `detail.sourceCode`; khách Q-STL-04: quyền cấp 1; Q-INC-02: GD LATE_ENTRY kỳ đã khóa ghi `incentive_period_id` | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/STL_CORRECTION_DECIDE_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
 
 ---
 
 ## 2. Sequence diagram
 
-Ảnh PNG: N/A — Mermaid là nguồn duy nhất (Gate 1 m-08).
+![STL_CORRECTION_DECIDE sequence](./assets/STL_CORRECTION_DECIDE_sequence.png)
+
+Nguồn: khối Mermaid dưới (bản để sửa); ảnh sinh từ chính khối đó bằng `python scripts/export-mermaid-png.py STL_CORRECTION_DECIDE` — sửa Mermaid thì chạy lại để hai bản không lệch.
 
 ```mermaid
 sequenceDiagram

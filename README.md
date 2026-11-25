@@ -69,6 +69,7 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 | `api-conventions.md`, `api-list.md`, `error-codes.md` | `specs/_common/` | **Mới** — khuôn BM-2-901-52 trỏ tới ba file này nhưng repo chuẩn chưa có (ISS-36) | — | P3: body lỗi theo prototype (khác ví dụ `errors[]` của khuôn — lý do ở `api-conventions.md` quy ước 3) |
 | `render-annotated-screens.py` + `annotated_screens/` | `scripts/` | Mới | — | Dựng ảnh đánh số cho Screen Specification (mục 5) |
 | `check-api-spec-consistency.py` | `scripts/` | Mới | — | Kiểm API Design (mục 5) — Gate 2 G2-m01 |
+| `export-mermaid-png.py` | `scripts/` | Mới | — | Xuất ảnh sơ đồ Mermaid của Technical Design (mục 5) — FB-EXP-236 |
 | Các `_index.md` | mỗi thư mục | Kế thừa quy định QC-01 §3 | — | |
 | `PREMISE.md` | gốc | Mới | — | |
 | Khuôn kiến trúc, khuôn ADR | `architecture/` | Mới | — | *(P2-A)* |
@@ -90,6 +91,20 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 
 - Phụ thuộc: Python 3.10+, Pillow, font tiếng Nhật (Meiryo / Yu Gothic trên Windows, Hiragino trên macOS, Noto Sans CJK trên Linux) — hoặc đặt biến `ANNOT_FONT_REGULAR` / `ANNOT_FONT_BOLD` trỏ tới file font.
 - Mã nguồn: `scripts/render-annotated-screens.py` (danh sách màn → thư mục feature) · `scripts/annotated_screens/` (`lot_trade.py`, `party.py`, `delivery.py`, `settle.py`, `incentive_rule.py`: dữ liệu bố cục từng màn; `box_layout.py`: hàm vẽ chung của party / delivery / settle; `common.py`: tìm font).
+
+### Script xuất ảnh sơ đồ Mermaid (Technical Design)
+
+Khuôn BM-2-901-53 §2 yêu cầu ảnh `./assets/{DESIGN_ID}_sequence.png`. Khối Mermaid trong `specs/{feature}/technical-design/{DESIGN_ID}_TECH.md` là bản để sửa; ảnh PNG sinh từ chính khối đó nên hai bản không lệch. Sửa Mermaid thì chạy lại script.
+
+| Việc | Lệnh (chạy ở gốc repo) |
+|---|---|
+| Xuất cả 15 TECH | `python scripts/export-mermaid-png.py` |
+| Xuất một vài TECH | `python scripts/export-mermaid-png.py TRADE_AITAI_CONFIRM RULE_VERSION` |
+| Xem Design ID + đường dẫn ảnh | `python scripts/export-mermaid-png.py --list` |
+
+- Phụ thuộc: Python 3.10+, Node.js (`npx`); script gọi `@mermaid-js/mermaid-cli@11.4.2` (ghim phiên bản), nền trắng, scale 2.
+- Font: Segoe UI / Arial cho chữ Latin + tiếng Việt, rồi Yu Gothic / Meiryo (Windows), Hiragino (macOS), Noto Sans CJK (Linux) cho tiếng Nhật. Để font Nhật đứng đầu thì chữ Việt có dấu chồng (ố, ữ…) bị tách thành chữ + dấu rời.
+- Đặt tên: khối thứ nhất `{DESIGN_ID}_sequence.png`, khối thứ n ≥ 2 `{DESIGN_ID}_sequence-{n}.png`. Một khối lỗi cú pháp → script in `FAILED …` và thoát mã 1, các khối khác vẫn xuất.
 
 ### Script kiểm API Design
 
