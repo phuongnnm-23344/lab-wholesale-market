@@ -2,7 +2,7 @@
 id: WF-SC-04-01
 title: Wireframe SC-04-01 相対取引入力・確定
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-01, FR-AITAI-02, BR-PERM-01, BR-LOT-02, NFR-USE-01, PRM-046, PRM-114, DEC-033, ADR-003, ADR-008]
@@ -25,6 +25,11 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
 `/trades/new`, tài khoản trade@ (dữ liệu 「サンプル」). Đã có: 4 ô, gõ số ngắn hoặc chọn gợi ý, Enter sang ô kế, Enter ở 単価 chốt, ở lại form sau khi chốt (DEC-033).
 
 ## 2. Wireframe to-be
+
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-04-01.html`](html/SC-04-01.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-04-01.png`](png/SC-04-01.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-04-01 wireframe — mọi biến thể](png/SC-04-01.png)
+
 
 ```
 [C-11] ┌ オフライン時: 「通信が回復するまで確定できません。紙伝票で継続してください」(C-28) ┐
@@ -112,3 +117,4 @@ related: [FT-04-01, FT-04-02, FT-04-03, FT-01-05, FT-01-09, FT-03-04, FR-AITAI-0
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 m-11 / khách #11: 数量 1 chữ số lẻ với kg, số nguyên với 箱 / 尾; khách #10: GD vượt 参加上限 hiện ở 要確認 SC-07-01. Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Khách Q-TRD-02: 使用額 税込 / 税抜 | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.2.2 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-04-01.html`, nhúng `png/SC-04-01.png` | 2026-11-25 | phuongnnm-23344 | |

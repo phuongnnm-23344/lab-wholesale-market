@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-06-04
 feature: delivery
 feature_id: DEL
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-06-04, SPEC-SC-06-02-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEPTION_DISPUTE-001, API-DEL-004, SPEC-TRADE_DB-001, SPEC-ADJUST_DB-001, ADR-004, ADR-005, ADR-008, FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, TBL-ATTACH-01, E-21]
@@ -23,14 +23,19 @@ related: [WF-SC-06-04, SPEC-SC-06-02-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-06-04 0.2.0 (màn nối của SC-06-02) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách: đóng Q-DEL-01/04/05/06 (Q-DEL-04: 配送 chỉ nhập SL thực giao, tiền tự tính theo đơn giá đã chốt); dòng 10.1 tên 代理 không bắt buộc | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-06-04.html` (WF 0.2.2); ghi badge không có trên ảnh; link HTML / PNG / PDF; §4.1 dòng 10.1 tên 代理 → tùy chọn (khớp §4.2 / Q-DEL-03) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-06-04 0.2.1](../../../wireframes/SC-06-04-delivery-exception-registration-wireframe.md). Prototype không có màn này (M16) → ảnh dựng từ wireframe to-be (`scripts/render-annotated-screens.py`).
+**Design:** [Wireframe SC-06-04 0.2.2](../../../wireframes/SC-06-04-delivery-exception-registration-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-06-04.html`](../../../wireframes/html/SC-06-04.html) · mọi biến thể: [`wireframes/png/SC-06-04.png`](../../../wireframes/png/SC-06-04.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md)
 
 ![SC-06-04 annotated](./assets/SC-06-04_annotated.png)
+
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 13 (B), C-24 (B), C-12 (C), C-28 (D), C-22 (E) → xem biến thể tương ứng trong [`wireframes/png/SC-06-04.png`](../../../wireframes/png/SC-06-04.png) / PDF.
+> - Prototype không có màn này (M16).
 
 ---
 
@@ -68,7 +73,7 @@ Tranh chấp → trạng thái 「確認待ち（配送部門責任者）」, hi
 | 8 | 理由 | Text box (chọn ▼) | Có | Danh sách lý do theo loại (`code_values`) |
 | 9 | 内容 | Text box (nhiều dòng) | Có khi 争いあり | |
 | 10 | 買受人側の受取人 本人 / 代理 | Button | Không | Chọn 代理 → hiện 10.1 |
-| 10.1 | 代理人氏名 | Text box | Có khi 代理 | |
+| 10.1 | 代理人氏名 | Text box | Không (tùy chọn khi 代理 — Q-DEL-03, như SC-06-02 11.1) | |
 | 11 | 添付 | Button (file) | Có khi 後入力 | **Chỉ PC**; tablet ẩn và hiện câu 「スキャンはPCで添付してください」 |
 | **D** | **Ảnh hưởng + hành động** | | | |
 | 12 | 影響 | Label | - | Tính khi chọn [6] / nhập [7]: 「金額変更あり（{±¥}）」 + một trong hai câu: 「業務日が未締め → 取消・差額を記録し、照合の『要確認』に表示」 / 「業務日が締め済 → 修正申請が必要です」. Không đổi tiền → 「金額への影響はありません」 |

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-07-02 日次締め — wireframe</title>
+<!-- Source: wireframes/SC-07-02-daily-close-business-day-lock-wireframe.md (0.2.2) + specs/settle/screen-specification/SC-07-02_SPEC.md (0.1.1).
+     Checklist = 12 items of ADR-005 §2.5 / CLOSE_DB 4.24 (6 ✖ block, 6 ⚠; #8 [13] and #12 [22] must be ticked).
+     Badge numbers = item No / spec ID. Do not renumber. Sample data is fictional. No "reopen day" button anywhere. -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-07-02</span>日次締め<span class="code">SC07_02_DAILY_CLOSE_BUSINESS_DAY_LOCK</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">照合部門長（または指定された代行）が業務日を締める。締めた後はこの業務日のデータを直接修正できず、訂正は修正申請だけ。<b>締めの解除（ボタン）はどの画面にもない。</b>✖ の項目が残っている間は締められない。目標 10:00、遅くとも 10:30。</div>
+
+  <!-- ===== A: main ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 A — 締める前の確認（代行で表示）：✖ が残っているため「締める」は押せない</div>
+    <div class="browser" data-url="/settlement/close/2027-08-02" data-crumb="ホーム › 照合・締め › 日次締め" data-user="照合部門長代行 桜 六郎"
+         data-menu="ホーム|照合・締め:日次照合表,日次締め*,紛争一覧|修正申請:修正申請一覧|入金・奨励金:期別お支払額・入金状況">
+      <div class="main">
+        <div class="page-title">日次締め <b class="n c">C-9</b></div>
+        <div class="row" style="font-size:15px">
+          <b>業務日 2027/08/02(月)</b><span class="chip">未締め</span><b class="n">1</b>
+          <span style="margin-left:24px">合計（税抜）<b>¥12,381,000</b>（相対 ¥11,140,000 ／ せり ¥1,241,000）</span><b class="n">2</b>
+        </div>
+        <div class="card mt">
+          <div class="card-title">締める前の確認 <b class="n">3</b><span class="hint" style="font-weight:400">（✖ は締め不可 ／ ⚠ は確認して締められる）</span></div>
+          <table class="tbl">
+            <tr><th>区分</th><th class="num">件数</th><th>締めへの影響</th><th>対応</th></tr>
+            <tr><td>確定待ちの取引（下書き・確認待ち） <b class="n">6</b></td><td class="num">0件</td><td class="imp">✖ 締め不可</td><td class="muted">取引一覧 → SC-04-02</td></tr>
+            <tr class="hl"><td>未確認のせり結果 <b class="n">4</b></td><td class="num">1件</td><td class="imp">✖ 締め不可</td><td><span class="btn link">確認する → SC-05-02</span></td></tr>
+            <tr class="hl"><td>未同期の端末（最終同期時刻） <b class="n">8</b></td><td class="num">1台</td><td class="imp">✖ 締め不可</td><td>TAB-03（第2バース）07:12・未同期 5件 <span class="btn link">→ SC-03-07</span> <span class="btn sm">端末回収不能</span><b class="n">19</b></td></tr>
+            <tr class="hl"><td>オフライン同期・後入力の要確認 <b class="n">7</b></td><td class="num">2件</td><td class="imp">✖ 締め不可</td><td><span class="btn link">判断する → SC-03-07 / SC-04-07</span></td></tr>
+            <tr class="hl"><td>閾値以上・買受人変更の当日訂正（未確認） <b class="n">9</b></td><td class="num">1件</td><td class="imp">✖ 締め不可</td><td><span class="btn link">確認済にする → SC-07-01 要確認</span></td></tr>
+            <tr class="hl"><td>金額が変わる引渡し例外（不足・返品・一部取消） <b class="n">20</b></td><td class="num">1件</td><td class="imp">✖ 締め不可</td><td><span class="btn link">確認済にする → SC-07-01 要確認</span></td></tr>
+            <tr><td>入力者本人が確認したせり <b class="n">5</b></td><td class="num">1件</td><td class="imp warn">⚠ 要確認</td><td><span class="btn link">理由を見る → SC-07-01 要確認</span></td></tr>
+            <tr><td>閾値未満の当日訂正・取消 <b class="n">21</b></td><td class="num">2件</td><td class="imp warn">⚠ 要確認</td><td><span class="btn link">一覧 → SC-07-01</span></td></tr>
+            <tr><td>販売残のあるロット（持ち越し） <b class="n">10</b></td><td class="num">4件</td><td class="imp warn">⚠ 持ち越し</td><td><span class="btn link">一覧 → SC-03-03</span></td></tr>
+            <tr><td>未確認の争いのある引渡し <b class="n">11</b></td><td class="num">1件</td><td class="imp warn">⚠ 翌日へ</td><td><span class="btn link">→ SC-06-05 / SC-07-03</span></td></tr>
+            <tr><td>引渡し残（翌日以降も記録可） <b class="n">12</b></td><td class="num">12件</td><td class="imp warn">⚠ 要確認</td><td><span class="btn link">一覧を確認 → SC-06-01</span>　<span class="cb">確認済み</span><b class="n">13</b></td></tr>
+            <tr><td>未入力の引渡し確認票なし（紙台帳で確認） <b class="n">22</b></td><td class="num">—</td><td class="imp warn">⚠ 要確認</td><td><span class="cb">未入力の引渡し確認票なし（紙台帳で確認）</span><div class="hint">配送部門の紙台帳（連番）と照合してください</div></td></tr>
+          </table>
+        </div>
+        <div class="alert solid mt"><b class="h">締めた後は、この業務日のデータを直接修正できません（締めの解除もできません）。訂正は修正申請で行います。</b><b class="n">14</b></div>
+        <div class="row"><b>照合部門長 桜 七子 の代行として締めます</b><b class="n">15</b></div>
+        <div class="field mt" style="grid-template-columns:200px 1fr"><label>確認のため業務日を入力 <b class="n">16</b></label>
+          <div class="row"><span class="input w-m mono"><span class="ph">2027/08/02</span></span><span class="hint">「/」と「-」のどちらも可</span></div></div>
+        <div class="row mt"><span class="btn primary off">この業務日を締める</span><b class="n">17</b><span class="btn">キャンセル</span><b class="n">18</b>
+          <b style="margin-left:8px">✖ の項目を解消すると締められます（残り 5 項目）</b></div>
+        <div class="hint mt">締める → 確認（C-31）→ 本人確認（C-30、毎回コード入力）→ 完了。完了と同時に次の業務日を開き、会計CSVの作成を開始（SC-11-14、11:00まで）。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B + C: device lost dialog + confirm dialog ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 B — 端末回収不能（故障・紛失・水没で同期できない端末をチェックから外す）</div>
+      <div class="overlay">
+        <div class="ghost">日次締め（背景）— 未同期の端末 TAB-03 の行で「端末回収不能」</div>
+        <div class="dialog">
+          <div class="dialog-title">端末回収不能として登録 <b class="n">19</b></div>
+          <div class="row"><b>端末 TAB-03（第2バース）最終同期 07:12 未同期 5件</b><b class="n">19.1</b></div>
+          <div class="field mt" style="grid-template-columns:110px 1fr"><label>理由（必須） <b class="n">19.2</b></label><div><span class="input w-l focus">水没して起動しない</span><span class="sub hint">200文字以内</span></div></div>
+          <div class="alert">この端末を締めの確認から外します。未同期の記録は失われたものとして扱い、紙から後入力してください。後で届いた記録は「オフライン同期・照合」で要確認になります。この端末のログインとオフラインPINは無効になります。<b class="n">19.3</b></div>
+          <div class="dialog-foot"><span class="btn">キャンセル</span><b class="n">19.5</b><span class="btn primary">端末回収不能として登録</span><b class="n">19.4</b></div>
+          <div class="hint" style="text-align:right">登録時に本人確認（C-30、毎回コード入力）</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 C — 「この業務日を締める」の確認（解除できないことを明示）→ 本人確認</div>
+      <div class="overlay">
+        <div class="ghost">日次締め（背景）— ✖ 0件、確認済み ☑ ／ 紙台帳 ☑ ／ 業務日 2027/08/02</div>
+        <div class="dialog" style="width:470px">
+          <div class="dialog-title">2027/08/02 を締めます <b class="n c">C-31</b></div>
+          <div>締めた後は解除できません。この業務日のデータは修正申請でしか訂正できません。</div>
+          <div class="kv mt"><span>合計（税抜）</span><b>¥12,381,000</b><span>内訳</span><span>相対 ¥11,140,000 ／ せり ¥1,241,000</span></div>
+          <div class="dialog-foot"><span class="btn">戻る</span><span class="btn primary">締める</span></div>
+        </div>
+        <div class="dialog mt" style="width:400px">
+          <div class="dialog-title">この操作の前に本人確認を行います <b class="n c">C-30</b></div>
+          <div class="row"><span>確認コード</span><span class="input w-s mono focus">______</span></div>
+          <div class="hint">締めは元に戻せない操作のため、毎回コードを入力します</div>
+          <div class="dialog-foot"><span class="btn">キャンセル</span><span class="btn primary">確認</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== D: ready ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 D — 締められる状態：✖ がすべて 0件、確認済み・紙台帳にチェック、業務日一致（照合部門長本人なので代行表示なし）</div>
+    <div class="browser" data-url="/settlement/close/2027-08-02" data-crumb="ホーム › 照合・締め › 日次締め" data-user="照合部門長 桜 七子"
+         data-menu="ホーム|照合・締め:日次照合表,日次締め*,紛争一覧|修正申請:修正申請一覧|入金・奨励金:期別お支払額・入金状況">
+      <div class="main">
+        <div class="page-title">日次締め</div>
+        <div class="row"><b>業務日 2027/08/02(月)</b><span class="chip">未締め</span><b class="n">1</b><span style="margin-left:24px">合計（税抜）<b>¥12,381,000</b>（相対 ¥11,140,000 ／ せり ¥1,241,000）</span><b class="n">2</b></div>
+        <div class="card mt">
+          <div class="card-title">締める前の確認 <b class="n">3</b></div>
+          <table class="tbl">
+            <tr><th>区分</th><th class="num">件数</th><th>締めへの影響</th></tr>
+            <tr><td>✖ 6項目（確定待ち・せり未確認・未同期端末・要確認・当日訂正・引渡し例外）</td><td class="num">すべて 0件</td><td>解消済み（TAB-03 は端末回収不能として除外）</td></tr>
+            <tr><td>⚠ 本人確認のせり 1 ／ 閾値未満の訂正 2 ／ 持ち越し 4 ／ 争い 1</td><td class="num">8件</td><td>確認して締められる</td></tr>
+            <tr><td>引渡し残 <b class="n">12</b></td><td class="num">12件</td><td><span class="cb on">確認済み</span><b class="n">13</b></td></tr>
+            <tr><td>未入力の引渡し確認票なし（紙台帳で確認） <b class="n">22</b></td><td class="num">—</td><td><span class="cb on">紙台帳と照合済み</span></td></tr>
+          </table>
+        </div>
+        <div class="alert solid mt"><b class="h">締めた後は、この業務日のデータを直接修正できません（締めの解除もできません）。訂正は修正申請で行います。</b><b class="n">14</b></div>
+        <div class="row"><b>確認のため業務日を入力</b><b class="n">16</b><span class="input w-m mono">2027-08-02</span><span class="hint">一致</span></div>
+        <div class="row mt"><span class="btn primary">この業務日を締める</span><b class="n">17</b><span class="btn">キャンセル</span><b class="n">18</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== E: closed, read only ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 E — 締めた直後：締め済み（読み取り専用）。締めの解除ボタンはない。次の業務日を開き、会計CSVの作成を開始</div>
+    <div class="browser" data-url="/settlement/close/2027-08-02" data-crumb="ホーム › 照合・締め › 日次締め" data-user="照合部門長 桜 七子" data-day="2027/08/03(火)"
+         data-menu="ホーム|照合・締め:日次照合表,日次締め*,紛争一覧|修正申請:修正申請一覧|入金・奨励金:期別お支払額・入金状況">
+      <div class="main">
+        <div class="toast">2027/08/02 を締めました（桜 七子 10:04）。次の業務日 2027/08/03 を開きました <b class="n c">C-12</b></div>
+        <div class="banner row">会計CSVの作成を開始しました（11:00まで）<span class="muted" style="font-weight:400">→ SC-11-14</span><b class="n c">C-11</b></div>
+        <div class="page-title">日次締め <span class="chip">読み取り専用</span></div>
+        <div class="row"><b>業務日 2027/08/02(月)</b><span class="chip dark">締め済（桜 七子 10:04、MFA済）</span><b class="n">1</b><span style="margin-left:24px">合計（税抜）<b>¥12,381,000</b></span><b class="n">2</b></div>
+        <div class="card mt">
+          <div class="card-title">締め時点の確認内容（記録） <b class="n">3</b></div>
+          <div class="kv"><span>✖ 項目</span><span>すべて 0件（端末回収不能：TAB-03 水没）</span><span>⚠ 項目</span><span>8件を確認 ／ 引渡し残 12件 確認済み ／ 紙台帳と照合済み</span></div>
+        </div>
+        <div class="alert mt">この業務日は締め済みです。締めの解除はできません。訂正は修正申請で行います。<span class="btn sm">訂正は修正申請へ → SC-08-01</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== F: SETTLE read-only ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 F — 照合事務局で表示：チェックリストとリンクのみ（締め・チェック・端末回収不能は表示しない）</div>
+    <div class="browser" data-url="/settlement/close/2027-08-02" data-crumb="ホーム › 照合・締め › 日次締め" data-user="照合事務局 桜 三郎"
+         data-menu="ホーム|照合・締め:日次照合表,日次締め*,紛争一覧|修正申請:修正申請一覧">
+      <div class="main">
+        <div class="page-title">日次締め <span class="chip">閲覧のみ</span></div>
+        <div class="row"><b>業務日 2027/08/02(月)</b><span class="chip">未締め</span><b class="n">1</b></div>
+        <div class="card mt" style="max-width:880px">
+          <div class="card-title">締める前の確認 <b class="n">3</b></div>
+          <table class="tbl">
+            <tr><th>区分</th><th class="num">件数</th><th>締めへの影響</th><th>対応</th></tr>
+            <tr class="hl"><td>閾値以上・買受人変更の当日訂正（未確認） <b class="n">9</b></td><td class="num">1件</td><td>✖ 締め不可</td><td><span class="btn link">確認済にする → SC-07-01 要確認</span></td></tr>
+            <tr class="hl"><td>金額が変わる引渡し例外 <b class="n">20</b></td><td class="num">1件</td><td>✖ 締め不可</td><td><span class="btn link">確認済にする → SC-07-01 要確認</span></td></tr>
+            <tr><td class="muted" colspan="4">… ほかの項目は A と同じ（件数とリンクのみ）</td></tr>
+          </table>
+        </div>
+        <div class="hint mt">[9]・[20] の「確認済」は照合事務局が SC-07-01 で行う。締めは照合部門長または代行のみ。</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -2,7 +2,7 @@
 id: WF-SC-03-01
 title: Wireframe SC-03-01 ロット本登録（受付台・PC）
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-03-01, FT-03-06, FR-LOT-01, FORM-LOT-01, BR-LOT-02, PRM-116, E-16, FT-10-06, DEC-033, ADR-005, ADR-008]
@@ -23,6 +23,11 @@ related: [FT-03-01, FT-03-06, FR-LOT-01, FORM-LOT-01, BR-LOT-02, PRM-116, E-16, 
 `/lots/new`, intake@. Có: chọn từ 仮受付 hoặc 新規, 出荷者 / 品目 / 単位 bằng ô chọn, 数量, 本登録する（Enter）.
 
 ## 2. Wireframe to-be
+
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-03-01.html`](html/SC-03-01.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-03-01.png`](png/SC-03-01.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-03-01 wireframe — mọi biến thể](png/SC-03-01.png)
+
 
 ```
 ┌─ [1] 仮受付待ち（3件）────────────────────────────────┐  ┌─ [11] 本日登録済（直近10件）──────┐
@@ -90,3 +95,4 @@ INTAKE: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: không có menu nhập, xem �
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: [3] giờ nhận lô lấy từ quy chế, không viết cứng (khách #27, M-01); số lẻ theo đơn vị (m-11). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-03-01.html`, nhúng `png/SC-03-01.png` | 2026-11-25 | phuongnnm-23344 | |

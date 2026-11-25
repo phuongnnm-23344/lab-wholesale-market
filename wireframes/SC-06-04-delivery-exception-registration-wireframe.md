@@ -2,7 +2,7 @@
 id: WF-SC-06-04
 title: Wireframe SC-06-04 引渡し例外登録
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, TBL-ATTACH-01, E-21, M16, ADR-008, ADR-004, ADR-005]
@@ -21,6 +21,11 @@ related: [FT-06-04, FR-DEL-03, FR-DEL-04, FR-SETTLE-01, OBJ-05, TBL-ATTACH-01, E
 Không có (M16). Prototype chỉ có SC-06-02; không ảnh.
 
 ## 2. Wireframe to-be
+
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-06-04.html`](html/SC-06-04.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-06-04.png`](png/SC-06-04.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-06-04 wireframe — mọi biến thể](png/SC-06-04.png)
+
 
 ```
 [1] 対象取引 相対-0005 鰹（N01 サンプル仲卸1） 確定 30kg ／ 引渡済 12kg ／ 残 18kg
@@ -79,3 +84,4 @@ DELIVERY, DEL-HEAD: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: xem ở SC-07-03 /
 | 1 | 0.1.0 | Add new | Bản đầu, gồm đường nhập bù phiếu giấy theo ADR-008 §2.4 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 / khách: ngoại lệ đổi tiền ở ngày chưa khóa → 要確認 SC-07-01 + checklist SC-07-02 (#4); 受取人 2 nút (#13); đính kèm theo loại chứng từ TBL-ATTACH-01 (M-08) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | P3 gộp: ngoại lệ không ghi offline theo ADR-008 §2.1 — offline hiện C-28 + hướng dẫn phiếu giấy, form khóa; nhập bù khi có mạng (Q-DEL-01, khớp SC-06-04_SPEC) | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-06-04.html`, nhúng `png/SC-06-04.png` | 2026-11-25 | phuongnnm-23344 | |

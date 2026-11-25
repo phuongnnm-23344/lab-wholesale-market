@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-10-04
 feature: rule
 feature_id: RULE
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-10-04, SPEC-RULE_VERSION-001, SPEC-RULE_FUNC-001, SPEC-RULE_API-001, SPEC-RULE_API-002, SPEC-RULE_API-003, SPEC-RULE_API-004, SPEC-RULE_API-005, SPEC-RULE_API-006, ADR-006, ADR-002, FT-10-01, GOV-RULE-01, NFR-OPS-02, TBL-RATE-01, PRM-042, PRM-054, E-14, OPEN-L4-01, R-L4-01, L4-D03, L4-D06]
@@ -23,17 +23,19 @@ related: [WF-SC-10-04, SPEC-RULE_VERSION-001, SPEC-RULE_FUNC-001, SPEC-RULE_API-
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe SC-10-04 0.2.1 (LAB-4 P3); vẽ đủ nhánh N1 / N2 của E-14 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Gate 2 G2-M01: C-30 theo PREMISE §3.2 ★ — 確認 (`CHANGE` và `ROLLBACK`), 決裁 N2, 取消 bản `APPROVED` luôn hỏi lại mã; 差し戻す, 取消 `DRAFT` / `PENDING` dùng step-up | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-10-04.html` (WF 0.2.3); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-10-04 0.2.1](../../../wireframes/SC-10-04-rule-version-approve-rollback-wireframe.md) (to-be) · ảnh as-is prototype: [`SC-10-04_prototype.png`](../../../wireframes/assets/SC-10-04_prototype.png)
+**Design:** [Wireframe SC-10-04 0.2.3](../../../wireframes/SC-10-04-rule-version-approve-rollback-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-10-04.html`](../../../wireframes/html/SC-10-04.html) · mọi biến thể: [`wireframes/png/SC-10-04.png`](../../../wireframes/png/SC-10-04.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [`SC-10-04_prototype.png`](../../../wireframes/assets/SC-10-04_prototype.png)
 
 ![SC-10-04 annotated](./assets/SC-10-04_annotated.png)
 
-> - Ảnh đánh số **dựng từ wireframe to-be** (script `scripts/render-annotated-screens.py`): to-be khác prototype ở bộ đếm năm TC [5], so sánh cả tham số quy chế [6], ví dụ tính [15], banner [13] / [14], nút 決裁 của 運用部門長. Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe.
-> - Ảnh vẽ đồng thời [13] và [14] để thấy vị trí; trên màn thật chỉ hiện banner đúng tình huống (mục 6.1). Nút 「決裁する（運用部門長）」 thuộc item [14] (luồng N2), không đánh số riêng.
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: C-31 (B), C-30 (C), 13 banner N1 (D), 14 banner N2 + nút 「決裁する（運用部門長）」 (E) → xem biến thể tương ứng trong [`wireframes/png/SC-10-04.png`](../../../wireframes/png/SC-10-04.png) / PDF.
+> - Banner [13] / [14] chỉ hiện đúng tình huống (mục 6.1) nên tách thành biến thể D / E; nút 「決裁する（運用部門長）」 thuộc item [14], không đánh số riêng.
 
 ---
 

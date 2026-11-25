@@ -67,7 +67,7 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 | `BM-2-901-63-requirement-document-template.md` + `sample-REQ-2609-01.md` | `requirements/_templates/` | Kế thừa, giữ nguyên | `72c1dda` | |
 | `log-convention.md` | `specs/_common/` | Kế thừa, thêm mục 4 áp dụng cho dự án | `72c1dda` | |
 | `api-conventions.md`, `api-list.md`, `error-codes.md` | `specs/_common/` | **Mới** — khuôn BM-2-901-52 trỏ tới ba file này nhưng repo chuẩn chưa có (ISS-36) | — | P3: body lỗi theo prototype (khác ví dụ `errors[]` của khuôn — lý do ở `api-conventions.md` quy ước 3) |
-| `render-annotated-screens.py` + `annotated_screens/` | `scripts/` | Mới | — | Dựng ảnh đánh số cho Screen Specification (mục 5) |
+| `render-wireframes.py` + `wireframes/html/_shared/` | `scripts/`, `wireframes/html/` | Mới | — | Wireframe HTML → PDF / PNG + ảnh đánh số Screen Specification (mục 5). Thay script vẽ khối `render-annotated-screens.py` (đã xóa ở LAB-4) |
 | `check-api-spec-consistency.py` | `scripts/` | Mới | — | Kiểm API Design (mục 5) — Gate 2 G2-m01 |
 | `export-mermaid-png.py` | `scripts/` | Mới | — | Xuất ảnh sơ đồ Mermaid của Technical Design (mục 5) — FB-EXP-236 |
 | Các `_index.md` | mỗi thư mục | Kế thừa quy định QC-01 §3 | — | |
@@ -79,18 +79,22 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 
 ## 5. Script của bộ thiết kế
 
-### Script dựng ảnh annotated (Screen Specification)
+### Script render wireframe HTML (wireframe + ảnh annotated của Screen Specification)
 
-Ảnh đánh số `specs/{feature}/screen-specification/assets/{SCREEN_ID}_annotated.png` được dựng từ wireframe to-be (không từ ảnh prototype). Số đỏ trên ảnh = cột ID / No ở §4.1 của Screen Specification, khớp 1-1. Wireframe đổi item thì sửa dữ liệu bố cục trong `scripts/annotated_screens/*.py` rồi chạy lại.
+Mỗi màn có **một nguồn hình duy nhất** `wireframes/html/{SCREEN_ID}.html` (nhiều biến thể A, B, C…; biến thể A = màn chính, nhiều badge nhất). CSS / JS chung ở `wireframes/html/_shared/` (`wireframe.css` + `wireframe-tablet.css`: danh mục class ở comment đầu file; `build-app-frame.js`: khung PC C-1..C-8; `fit-print-page-to-content.js`: 1 trang PDF / màn). Badge `<b class="n">3</b>` = cột ID / No ở §4.1 của Screen Specification, không đánh số lại.
 
 | Việc | Lệnh (chạy ở gốc repo) |
 |---|---|
-| Dựng cả 12 màn | `python scripts/render-annotated-screens.py` |
-| Dựng một vài màn | `python scripts/render-annotated-screens.py SC-05-02 SC-03-05` |
-| Xem danh sách màn + đường dẫn ảnh | `python scripts/render-annotated-screens.py --list` |
+| Render cả 15 màn → `wireframes/pdf/wireframes-all.pdf` (1 trang / màn, theo mã màn) + `wireframes/png/{SCREEN_ID}.png` | `python scripts/render-wireframes.py` |
+| Như trên + ảnh BM-51 `specs/{feature}/screen-specification/assets/{SCREEN_ID}_annotated.png` = **chỉ biến thể A** (12 màn có SPEC) | `python scripts/render-wireframes.py --spec` |
+| Một vài màn (PDF khi đó chỉ chứa các màn này — trước khi commit nhớ chạy lại cả bộ) | `python scripts/render-wireframes.py SC-05-02 SC-03-05` |
+| Xem danh sách màn + SPEC tương ứng | `python scripts/render-wireframes.py --list` |
 
-- Phụ thuộc: Python 3.10+, Pillow, font tiếng Nhật (Meiryo / Yu Gothic trên Windows, Hiragino trên macOS, Noto Sans CJK trên Linux) — hoặc đặt biến `ANNOT_FONT_REGULAR` / `ANNOT_FONT_BOLD` trỏ tới file font.
-- Mã nguồn: `scripts/render-annotated-screens.py` (danh sách màn → thư mục feature) · `scripts/annotated_screens/` (`lot_trade.py`, `party.py`, `delivery.py`, `settle.py`, `incentive_rule.py`: dữ liệu bố cục từng màn; `box_layout.py`: hàm vẽ chung của party / delivery / settle; `common.py`: tìm font).
+- Phụ thuộc: Python 3.10+, PyMuPDF (`pymupdf`) và một trình duyệt họ Chromium. Trên máy dự án dùng venv có sẵn PyMuPDF: `~/.claude/skills/.venv/Scripts/python.exe -I scripts/render-wireframes.py …` (không `pip install` toàn cục).
+- **Trình duyệt: dùng Microsoft Edge** (script tìm Edge trước; có thể đặt `CHROME_PATH`). Chrome 148 / 154 trong cache puppeteer bị treo khi `--print-to-pdf` trên Windows (script bỏ qua trình duyệt treo sau 60 giây).
+- **Chạy tuần tự, không chạy song song** nhiều lệnh render: Edge headless chạy đồng thời bị timeout. Cả bộ 15 màn + 12 ảnh spec mất khoảng 2 phút.
+- Biến thể A cho ảnh spec: script in lại trang với `?variant=A` (JS chỉ giữ tiêu đề + phần tử `.variant` đầu tiên), nên ảnh spec và PDF luôn từ cùng một HTML. Badge không có ở biến thể A được ghi dưới ảnh trong từng SPEC.
+- Thêm class mới: viết vào `_shared/*.css` (cập nhật danh mục ở comment đầu file), không để `<style>` riêng trong HTML của màn.
 
 ### Script xuất ảnh sơ đồ Mermaid (Technical Design)
 

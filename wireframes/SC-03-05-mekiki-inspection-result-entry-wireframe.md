@@ -2,7 +2,7 @@
 id: WF-SC-03-05
 title: Wireframe SC-03-05 目利き・下見結果入力
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010]
@@ -24,6 +24,11 @@ related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010
 
 ## 2. Wireframe to-be
 
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-03-05.html`](html/SC-03-05.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-03-05.png`](png/SC-03-05.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-03-05 wireframe — mọi biến thể](png/SC-03-05.png)
+
+
 ```
 [1] 等級・鮮度は担当者が判断して入力します（システムは判定しません）
 [2] 絞込: 品目 [全て▼] 出荷者/船 [全て▼] 状態 [未下見▼]           [3] 選択中 3件
@@ -32,7 +37,8 @@ related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010
 │ （タブレットでは行のどこを触っても選択／解除）                              │
 │ ☑ L20270802-3   第一丸      真鯛   118kg  受付済   —                     │
 │ ☑ L20270802-4   第一丸      真鯛    95kg  受付済   —                     │
-│ ☐ L20270802-7   第二丸      鰤     60kg  下見済   B / 桜 二郎 03:10       │
+│ ☐ L20270802-6   第三丸      鯖     40箱  受付済   —                     │
+│ ☑ L20270802-7   第二丸      鰤     60kg  下見済(取引あり) B / 桜 二郎 03:10 │
 └──────────────────────────────────────────────────────────────────────┘
 ┌─ [5] 結果入力（選択した 3件に同じ内容を記録）──────────────────────────────┐
 │ [6] 等級   ( A ) ( B ) ( C ) ( 規格外 )   ← 大きなボタン                  │
@@ -41,7 +47,7 @@ related: [FT-03-02, FR-LOT-02, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, ADR-010
 │ [9] 取引済ロットの再記録理由 [                ]（取引後のみ必須）            │
 │ [10] [ 記録する（3件） ]                                              │
 └──────────────────────────────────────────────────────────────────────┘
- [11] 記録前の確認: 「L20270802-3, L20270802-4, L20270802-5 に A を記録します」 [記録する] [戻る]
+ [11] 記録前の確認: 「L20270802-3, L20270802-4, L20270802-7 に A を記録します」 [記録する] [戻る]
  記録後: C-12 「目利き記録：3件（A）記録者 桜 二郎 03:25」。前回の記録は消えず履歴に残る
 ```
 
@@ -94,3 +100,4 @@ JUDGE: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: xem kết quả ở SC-03-04 (l
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Khách: chạm cả dòng để chọn trên tablet (#14); hộp xác nhận danh sách lô trước khi ghi (#15); Q-SC0305-01 đã trả lời — giữ lô / hạng khi mất mạng; thêm Q-SC0305-02. Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-03-05.html`, nhúng `png/SC-03-05.png`; lô đang chọn thống nhất -3, -4, -7 (-7 取引あり → [9] bắt buộc), [11] liệt kê đúng 3 lô | 2026-11-25 | phuongnnm-23344 | |

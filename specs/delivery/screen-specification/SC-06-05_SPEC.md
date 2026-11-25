@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-06-05
 feature: delivery
 feature_id: DEL
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-06-05, SPEC-SC-06-04-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEPTION_DISPUTE-001, API-DEL-005, API-DEL-006, SPEC-TRADE_DB-001, ADR-002, ADR-008, FT-06-05, CAP-HUMAN-01, PRM-111, FR-DEL-04]
@@ -23,14 +23,19 @@ related: [WF-SC-06-05, SPEC-SC-06-04-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_EXCEP
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-06-05 0.2.0 (màn nối của SC-06-02) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-DEL-07: nhu cầu RPT-04 lọc 継続協議 + lịch sử từng lần họp (DEP-17); đóng Q-DEL-08 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-06-05.html` (WF 0.2.1); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-06-05 0.2.0](../../../wireframes/SC-06-05-disputed-delivery-completion-confirm-wireframe.md). Prototype không có (M16) → ảnh dựng từ wireframe.
+**Design:** [Wireframe SC-06-05 0.2.1](../../../wireframes/SC-06-05-disputed-delivery-completion-confirm-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-06-05.html`](../../../wireframes/html/SC-06-05.html) · mọi biến thể: [`wireframes/png/SC-06-05.png`](../../../wireframes/png/SC-06-05.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md)
 
 ![SC-06-05 annotated](./assets/SC-06-05_annotated.png)
+
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 8.1 lý do xác nhận thay người ký (B), C-12 (E), C-28 (F) → xem biến thể tương ứng trong [`wireframes/png/SC-06-05.png`](../../../wireframes/png/SC-06-05.png) / PDF.
+> - Prototype không có màn này (M16). C-30 / C-31 ở biến thể A chỉ là chú thích cạnh [9]; hộp thoại thật xem biến thể C (C-31) và D (C-30).
 
 ---
 

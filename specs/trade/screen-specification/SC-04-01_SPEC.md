@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-04-01
 feature: trade
 feature_id: TRD
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-LOT-003, API-TRD-001, API-TRD-002, API-TRD-003, API-TRD-004, SPEC-TRADE_DB-001]
@@ -23,16 +23,18 @@ related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONF
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-04-01 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-TRD-02: hiện 使用額 税込 / 税抜; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-04-01.html` (WF 0.2.2); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [WF-SC-04-01 to-be wireframe 0.2.0](../../../wireframes/SC-04-01-aitai-trade-entry-confirm-wireframe.md) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is [SC-04-01_prototype.png](../../../wireframes/assets/SC-04-01_prototype.png)
-
-Ảnh `_layout.png`: N/A — chưa có Figma. Ảnh đánh số dựng khối từ wireframe to-be (to-be thêm [4] 参加上限残, [10], [12], [13] chọn lý do, [15] so với prototype); **số đỏ = cột ID mục 4**.
+**Design:** [Wireframe SC-04-01 0.2.2](../../../wireframes/SC-04-01-aitai-trade-entry-confirm-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-04-01.html`](../../../wireframes/html/SC-04-01.html) · mọi biến thể: [`wireframes/png/SC-04-01.png`](../../../wireframes/png/SC-04-01.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [SC-04-01_prototype.png](../../../wireframes/assets/SC-04-01_prototype.png)
 
 ![SC-04-01 annotated](./assets/SC-04-01_annotated.png)
+
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 12 (E), 13 (B), 14 (C), 15 (D), C-12 (E), C-24 (F) → xem biến thể tương ứng trong [`wireframes/png/SC-04-01.png`](../../../wireframes/png/SC-04-01.png) / PDF.
 
 ---
 

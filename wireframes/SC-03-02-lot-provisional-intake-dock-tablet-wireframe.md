@@ -2,7 +2,7 @@
 id: WF-SC-03-02
 title: Wireframe SC-03-02 ロット仮受付（埠頭・タブレット）
 status: draft
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-03-01, FR-LOT-01, BR-LOT-02, PRM-086, PRM-112, PRM-116, E-16, E-21, PERSONA-DOCK-01, NFR-USE-01, DEC-004, ADR-005, ADR-008, ADR-010, L4-A05, L4-D05, FB-CUS-281]
@@ -25,6 +25,11 @@ related: [FT-03-01, FR-LOT-01, BR-LOT-02, PRM-086, PRM-112, PRM-116, E-16, E-21,
 Không có ảnh trong `assets/`: prototype có `/lots/provisional` (INTAKE, **chỉ online**, 3 ô text tự do 出荷者 / 魚種 / 数量概算 — mock M04 cho offline) — xem `prototype/src/app/(app)/lots/provisional/page.tsx`, hàm `provisional_receive_lot` (0014). Không chụp thêm vì ghi 仮受付 là **ghi dữ liệu** vào bản demo.
 
 ## 2. Wireframe to-be
+
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-03-02.html`](html/SC-03-02.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-03-02.png`](png/SC-03-02.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-03-02 wireframe — mọi biến thể](png/SC-03-02.png)
+
 
 ```
 [C-13]ホーム  業務日 2027/08/02  ●オフライン  受付担当 桜 一郎  [C-5]利用者切替
@@ -113,3 +118,4 @@ INTAKE: toàn màn. Vai khác: không vào (C-25). SETTLE / STL-HEAD xem máy c�
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu theo khách #22 (FB-CUS-281), L4-D05 — chỉ wireframe (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-SC0302-02: 出荷者 không bắt buộc; 「いま荷揚げ中の船」 là mục Muốn có (để sau); Q-LOT-01 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-03-02.html`, nhúng `png/SC-03-02.png` | 2026-11-25 | phuongnnm-23344 | |

@@ -2,7 +2,7 @@
 id: WF-SC-01-02
 title: Wireframe SC-01-02 参加者詳細・編集 (許可 / 承認 hai khối)
 status: draft
-version: "0.2.4"
+version: "0.2.5"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-01-01, FT-01-02, FT-01-03, FT-01-04, FR-PARTY-01, TBL-ACTOR-01, 02-08, B.2, BR-PERM-01, PRM-044, PRM-046, PRM-121, FIG-010, L4-D02, ADR-003, OPEN-DB-09]
@@ -27,6 +27,11 @@ related: [FT-01-01, FT-01-02, FT-01-03, FT-01-04, FR-PARTY-01, TBL-ACTOR-01, 02-
 
 ## 2. Wireframe to-be
 
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-01-02.html`](html/SC-01-02.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-01-02.png`](png/SC-01-02.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-01-02 wireframe — mọi biến thể](png/SC-01-02.png)
+
+
 Hai khối không bao giờ hiện cùng lúc; tiêu đề khối chữ to, khung màu khác nhau (許可: khung xanh đậm; 承認: khung cam) để phân biệt bằng mắt — khách #18. Trạng thái tư cách nằm **trong từng khối**, đúng enum của Database Design (有効 VALID · 一時停止 SUSPENDED · 失効 EXPIRED · 再審査中 UNDER_REVIEW); mức doanh nghiệp chỉ có 取引中 / 退会.
 
 ```
@@ -42,12 +47,13 @@ Hai khối không bao giờ hiện cùng lúc; tiêu đề khối chữ to, khun
 ── 種別 = 仲卸 のときだけ表示 ───────────────────────────────────────────────
 ┏━ [12] 【許可】仲卸 ─ 根拠: 市場業務規程（許可・審査あり） ━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ [13] 許可番号  有効期間                 許可条件            状態   失効まで            ┃
-┃      サンプル許可-N01 2025/10/19〜2028/10/23  （審査結果の条件）  有効   698日          ┃
+┃      サンプル許可-N01 2025/10/19〜2028/10/23  （審査結果の条件）  有効   448日          ┃
 ┃      （履歴: 更新前の許可は「更新済」で残る）                                        ┃
 ┃ [14] [ 許可の申請受付・審査・更新 → SC-01-03 ]  新規: 審査→起案→運用部門長決裁／更新: 照合部門長確認（MFA） ┃
 ┃ [17] 許可の状態  有効   [ 一時停止を起案 ] [ 再審査を起案 ] [ 期限前更新を入力 ]  → SC-01-05 ┃
 ┃      （一時停止・再審査: 運用部門長 決裁, MFA／期限前更新: 照合事務局 入力 → 照合部門長 確認, MFA） ┃
-┃ [19] 進行中: 「一時停止 起案中（決裁待ち）」(C-27)                                    ┃
+┃      （一時停止中は [ 再開を起案 ]。申請が決裁待ちの間は状態変更ボタンを隠す）             ┃
+┃ [19] 進行中の申請: なし（申請中は「一時停止 起案中（決裁待ち）」(C-27) を表示）          ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 ── 種別 = 売買参加者 のときだけ表示 ─────────────────────────────────────────
@@ -84,15 +90,15 @@ Hai khối không bao giờ hiện cùng lúc; tiêu đề khối chữ to, khun
 | 10 | Lịch sử 保証金 | Bảng gập | — | | Đọc | D14 |
 | 11 | 保存する | Nút | — | Ghi audit before/after | SETTLE, STL-HEAD | FR-AUDIT-01 |
 | 12 | **Khối 許可** | Vùng | — | **Chỉ hiện khi 種別 = 仲卸.** Tiêu đề to 「【許可】仲卸」, khung riêng. Không có cột 参加上限 | Đọc: SETTLE, STL-HEAD, OPS-HEAD | 02-08, S5, khách #18 |
-| 13 | Bảng 許可 | Bảng | — | Số, hiệu lực, **điều kiện 許可 (kết quả 審査)**, trạng thái, số ngày tới 失効; bản cũ giữ nhãn 「更新済」 | — | FT-01-02, ADR-003 |
+| 13 | Bảng 許可 | Bảng | — | Số, hiệu lực, **điều kiện 許可 (kết quả 審査)**, trạng thái, số ngày tới 失効 (tính từ 業務日 hiện tại, vd 業務日 2027/08/02 → 2028/10/23 = 448日); bản cũ giữ nhãn 「更新済」 | — | FT-01-02, ADR-003 |
 | 14 | 許可の申請受付・審査・更新 | Nút | — | → SC-01-03. **Cấp mới 許可 (có xét duyệt):** 照合事務局 nhập hồ sơ → 照合部門長 ghi kết quả 審査 + điều kiện và 起案 → **運用部門長 決裁 (MFA)** (giả định [PL], OPEN-DB-09). **Gia hạn bình thường (PRM-121):** 照合事務局 nhập 失効日 mới → **照合部門長 確認 (MFA)**, ghi xem lại điều kiện; không 審査 lại | SETTLE, STL-HEAD, OPS-HEAD | FT-01-02, PRM-121, ADR-003 §2.2 |
 | 15 | **Khối 承認** | Vùng | — | **Chỉ hiện khi 種別 = 売買参加者.** Tiêu đề to 「【承認】売買参加者」, khung màu khác [12] | Đọc như [12] | 02-08, S5, khách #18 |
 | 16 | Bảng 承認 + 参加上限 | Bảng | — | 参加上限 mặc định = 保証金額; **今期使用額 / 残** tính theo kỳ, chung 相対 + せり; so **税込** (tổng 税抜 × hệ số thuế, làm tròn xuống), hiện cả 税込 / 税抜 (Q-TRD-02 [Customer giả lập, 2026-11-25]) | — | PRM-046, L4-A04 |
-| 17 | Trạng thái 許可 | Nhãn + nút | — | 有効 / 一時停止 / 失効 / 再審査中. 一時停止 / 再審査 / phục hồi = 照合部門長 起案 → 運用部門長 決裁 (MFA). Quá 失効日 → 失効 tự động (giả định PL — FIG-010 không vẽ 有効 → 失効 trực tiếp). Ai 決裁 đình chỉ / thu hồi 許可 và có 弁明の機会 không: chờ 運用部門 (OPEN-DB-09) | Nút theo vai | FT-01-04, PRM-121, FIG-010 |
+| 17 | Trạng thái 許可 | Nhãn + nút | — | 有効 / 一時停止 / 失効 / 再審査中; nút 「一時停止を起案」「再審査を起案」「再開を起案」(khi 一時停止)「期限前更新を入力」 theo trạng thái. 一時停止 / 再審査 / phục hồi = 照合部門長 起案 → 運用部門長 決裁 (MFA). Quá 失効日 → 失効 tự động (giả định PL — FIG-010 không vẽ 有効 → 失効 trực tiếp). Ai 決裁 đình chỉ / thu hồi 許可 và có 弁明の機会 không: chờ 運用部門 (OPEN-DB-09) | Nút theo vai | FT-01-04, PRM-121, FIG-010 |
 | 18 | 承認の届出入力・更新 | Nút | — | → SC-01-04. **Thủ tục 承認 (nhẹ hơn):** 届出 → 照合事務局 nhập → **照合部門長 確認 (MFA)** kèm xét nhẹ điều kiện 保証金 / 資力 → 有効; không có bước 審査 riêng như 許可 | SETTLE, STL-HEAD | P03, PRM-121 |
-| 19 | Yêu cầu đang chờ | Nhãn | — | C-27 dùng nhãn 「決裁待ち」/「確認待ち」 — **không bao giờ** 「承認待ち」 (tránh lẫn với khối 承認 bên cạnh) — khách #19 | Đọc | luật 2, S6 |
+| 19 | Yêu cầu đang chờ | Nhãn | — | C-27 dùng nhãn 「決裁待ち」/「確認待ち」 — **không bao giờ** 「承認待ち」 (tránh lẫn với khối 承認 bên cạnh) — khách #19. Khi có yêu cầu chờ, nút đổi trạng thái ở [17] / [21] **ẩn** (SPEC §6.1) | Đọc | luật 2, S6 |
 | 20 | Lịch sử audit | Liên kết | — | → SC-13-01 lọc theo người tham gia | SETTLE, STL-HEAD | FR-AUDIT-01 |
-| 21 | Trạng thái 承認 | Nhãn + nút | — | 有効 / 一時停止 / 失効 / 再審査中. 一時停止 / 再審査 / phục hồi = 照合部門長 起案 → 運用部門長 決裁 (MFA). 期限前更新 = SETTLE nhập + STL-HEAD 確認 **(MFA)**, không qua 再審査. MFA cho 期限前更新 cần thêm vào danh sách PREMISE §3.2 (khách #21) | Nút theo vai | FT-01-04, PRM-121, NFR-SEC-01 |
+| 21 | Trạng thái 承認 | Nhãn + nút | — | 有効 / 一時停止 / 失効 / 再審査中; nút 「一時停止を起案」「再開を起案」(khi 一時停止)「期限前更新を入力」「参加上限の変更」 theo trạng thái và vai. 一時停止 / 再審査 / phục hồi = 照合部門長 起案 → 運用部門長 決裁 (MFA). 期限前更新 = SETTLE nhập + STL-HEAD 確認 **(MFA)**, không qua 再審査. MFA cho 期限前更新 cần thêm vào danh sách PREMISE §3.2 (khách #21) | Nút theo vai | FT-01-04, PRM-121, NFR-SEC-01 |
 | 22 | Lịch sử 参加上限 | Bảng gập | — | 参加上限 **không sửa đè**: mỗi lần đổi là một sự kiện `LIMIT_CHANGED` (cũ / mới / lý do / người) trong lịch sử 承認. Đổi = 照合部門長 một bước, MFA (Q-PTY-06) | Đọc; đổi qua SC-01-04 (STL-HEAD) | luật 4, PRM-046, ADR-003 |
 
 ## 4. Trạng thái
@@ -139,3 +145,4 @@ Hai khối không bao giờ hiện cùng lúc; tiêu đề khối chữ to, khun
 | 4 | 0.2.2 | Update | Gate 1 recheck D-01 (kiểm diff 5b0ef16): bảng §5 theo N-03 / PRM-121 — gia hạn 許可 và 承認 đều 照合事務局 nhập + 照合部門長 確認 (MFA); 運用部門長 chỉ 決裁 cấp mới 許可 (giả định [PL]) và 再審査 / 一時停止 / phục hồi | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.2.3 | Update | P3 gộp (D-01 còn lệch nhỏ): hình vẽ [17] thêm nút 「期限前更新を入力」 cho khối 許可 và chú thích thủ tục, khớp bảng §5 và SC-01-02_SPEC | 2026-11-25 | phuongnnm-23344 | |
 | 6 | 0.2.4 | Update | Khách Q-PTY-06 (chỉ 照合部門長 đổi 保証金 / 参加上限), Q-TRD-02 (税込 / 税抜) | 2026-11-25 | phuongnnm-23344 |  |
+| 7 | 0.2.5 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-01-02.html`, nhúng `png/SC-01-02.png`; [19] nút đổi trạng thái ẩn khi có yêu cầu chờ, thêm 「再開を起案」 ở [17]/[21] (khớp SPEC §6); 失効まで tính từ 業務日 (448日) | 2026-11-25 | phuongnnm-23344 | |

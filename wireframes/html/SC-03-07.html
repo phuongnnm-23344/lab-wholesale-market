@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-03-07 オフライン同期・照合 — wireframe</title>
+<!-- Source: wireframes/SC-03-07-offline-sync-reconciliation-wireframe.md (0.2.0). Wireframe only — no SPEC.
+     Badge numbers = item No of the wireframe MD. Do not renumber. Sample data is fictional. -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-03-07</span>オフライン同期・照合<span class="code">SC03_07_OFFLINE_SYNC_RECONCILIATION</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">通信断の間に端末へ保存した記録（仮受付・引渡し・紙伝票後入力）を送信した結果を確認する。サーバーの現在値とぶつかった記録は、システムが自動でまとめず、担当者が「直して反映／反映しない／例外登録へ」を判断する。端末の元の記録は消さない。</div>
+
+  <!-- ===== A: tablet, delivery device ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">タブレット</span>主画面 A — 配送端末 TAB-03：送信結果と「要判断」2件、引渡し記録の判断</div>
+    <div class="t-side">
+      <div class="tablet" style="width:800px"><div class="tablet-screen">
+        <div class="t-head">
+          <span class="t-btn">ホーム</span><b class="n c">C-13</b>
+          <span>業務日 2027/08/02(月)</span><b class="n c">C-2</b>
+          <span class="chip">● オンライン</span><b class="n c">C-3</b>
+          <span class="right"><b>配送担当 桜 次郎</b><b class="n c">C-4</b><span class="t-btn" style="min-height:40px;font-size:15px">利用者切替</span><b class="n c">C-5</b></span>
+        </div>
+        <div class="main">
+          <div style="font-size:19px;font-weight:700;margin-bottom:6px">オフライン同期・照合 <b class="n c">C-9</b></div>
+          <div class="t-preview" style="border-style:solid;margin-bottom:8px"><b>端末 TAB-03（配送）</b>　最終同期 07:12　未同期 5件 → 送信済 3件 ／ <b>要判断 2件</b> <b class="n">1</b></div>
+          <table class="t-tbl" style="font-size:14px">
+            <tr><th>記録時刻</th><th>種類</th><th>対象</th><th>内容</th><th>記録者</th><th>結果 <b class="n">2</b></th></tr>
+            <tr><td>06:52</td><td>引渡し</td><td>相対-0020 N03</td><td>5箱</td><td>桜 次郎</td><td>✔ 反映済</td></tr>
+            <tr><td>07:03</td><td>引渡し</td><td>相対-0011 N01</td><td>2箱</td><td>桜 次郎</td><td>✔ 反映済</td></tr>
+            <tr><td>07:04</td><td>引渡し</td><td>せり-0302 N01</td><td>10.0kg</td><td>桜 次郎</td><td>✔ 反映済</td></tr>
+            <tr class="sel"><td>07:05</td><td>引渡し</td><td>相対-0005 N01</td><td>残り全部（18.0kg）</td><td>桜 次郎</td><td>⚠ 要判断：残を超える</td></tr>
+            <tr><td>07:08</td><td>仮受付</td><td>K3-020 鯖</td><td>50.0kg</td><td>桜 一郎</td><td>⚠ 要判断：重複の疑い K3-019</td></tr>
+          </table>
+          <div class="hint">端末の記録時刻と記録者（PIN）をそのまま残します。自分の役割の記録だけ判断できます（仮受付は受付担当）。</div>
+          <div class="t-card">
+            <div class="t-card-title">要判断：相対-0005 引渡し <b class="n">3</b></div>
+            <div class="kv" style="font-size:15px;margin-bottom:8px">
+              <span>端末の記録</span><b>残り全部 18.0kg（07:05・TAB-03）</b>
+              <span>サーバーの現在</span><b>残 12.0kg（別端末 TAB-05 で 6.0kg 記録 06:58）</b>
+            </div>
+            <div class="t-row"><span class="t-lbl">判断 <b class="n">4</b></span><span class="t-btn on">12.0kg に修正して反映</span><span class="t-btn">反映しない</span><span class="t-btn">例外登録へ →</span></div>
+            <div class="hint" style="margin:-4px 0 8px 128px">同期で数量がマイナスになる反映はできません</div>
+            <div class="t-row"><span class="t-lbl">理由 <b class="n">5</b></span><span class="t-in" style="font-size:16px;font-weight:400;flex:1">サンプル：別端末で一部引渡し済みのため残数に合わせる</span></div>
+            <div class="hint" style="margin:-4px 0 8px 128px">「修正して反映」「反映しない」は理由必須</div>
+            <div class="t-row" style="margin-bottom:0"><span class="t-btn xl" style="min-width:240px">判断を確定</span><b class="n">6</b><span class="hint">判断した人と端末の元の記録を監査ログに残します（元の記録は消しません）</span></div>
+          </div>
+          <div class="alert mt" style="font-size:14px">すべて判断済になるまで、この端末は「未同期あり」として日次締めのチェックに表示されます <b class="n">7</b></div>
+        </div>
+      </div></div>
+      <div class="notes">
+        <div class="card">
+          <div class="card-title">この画面のきまり</div>
+          <div>・送信はオンライン時と同じ処理を通ります。ぶつかった記録だけ「要判断」に残します。</div>
+          <div>・自動でまとめない／上書きしない。判断は人が行い、理由を残します。</div>
+          <div>・<b class="n">7</b> 端末に未同期が残る → 日次締めチェック（SC-07-02）で ✖。要判断が残る → 同じく ✖。</div>
+          <div>・締め済の業務日の記録は <b class="n">8</b>（主画面 B）。</div>
+          <div>・照合事務局・照合部門長はすべての端末を閲覧のみ（主画面 D）。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B + D ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 B — 締め済の業務日の記録：修正申請（後入力）か「反映しない」</div>
+      <div class="tablet half"><div class="tablet-screen">
+        <div class="t-head"><span class="t-btn">ホーム</span><span>業務日 2027/08/03(火)</span><span class="chip">● オンライン</span><span class="right"><b>受付担当 桜 一郎</b></span></div>
+        <div class="main">
+          <div class="alert solid" style="font-size:15px"><b class="h">締め済の業務日です（2027/08/02）。直接は反映できません。</b> <b class="n c">C-24</b></div>
+          <div class="t-card" style="margin-top:0">
+            <div class="t-card-title">要判断：仮受付 K1-031 真鯛 40.0kg</div>
+            <div class="kv" style="font-size:14px;margin-bottom:8px"><span>記録</span><span>2027/08/02 03:50・TAB-01・桜 一郎</span>
+              <span>ラベル</span><span><span class="chip">回収不能登録後に届いた記録</span></span></div>
+            <div class="t-lbl" style="margin-bottom:6px">判断 <b class="n">8</b></div>
+            <div class="t-row"><span class="t-btn on wide">修正申請（後入力）を作成 →</span></div>
+            <div class="hint" style="margin:-4px 0 8px">SC-08-01（LATE_ENTRY）に端末の記録を引き継ぎ。照合部門長の決裁後、開いている業務日に記帳（取引日＝元の日、期も元の日）</div>
+            <div class="t-row"><span class="t-btn wide">反映しない</span></div>
+            <div class="t-row"><span class="t-lbl">理由 <b class="n">5</b></span><span class="t-in" style="font-size:16px;font-weight:400;flex:1"><span class="ph">紙から入力し直した記録と重複 など</span></span></div>
+          </div>
+          <div class="hint mt">別の業務日へ勝手に移すことはしません（決裁を通す）。回収不能の端末の記録は、紙から入力し直した分と重ならないか照らし合わせます。</div>
+        </div>
+      </div></div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 C — まだオフライン：送信待ちのみ、判断はできない</div>
+      <div class="tablet half"><div class="tablet-screen">
+        <div class="t-head"><span class="t-btn">ホーム</span><span>業務日 2027/08/02(月)</span><span class="chip dark">● オフライン</span><span class="right"><b>配送担当 桜 次郎</b></span></div>
+        <div class="t-off">オフライン — 未同期 5件（最終同期 07:12）— 端末に保存しています <b class="n c">C-28</b></div>
+        <div class="main">
+          <div class="t-preview" style="border-style:solid;margin-bottom:8px"><b>端末 TAB-03（配送）</b> 送信待ち 5件 <b class="n">1</b></div>
+          <table class="t-tbl" style="font-size:14px">
+            <tr><th>記録時刻</th><th>種類</th><th>対象</th><th>結果 <b class="n">2</b></th></tr>
+            <tr><td>07:05</td><td>引渡し</td><td>相対-0005 N01</td><td>送信待ち</td></tr>
+            <tr><td>07:04</td><td>引渡し</td><td>せり-0302 N01</td><td>送信待ち</td></tr>
+            <tr><td>…</td><td></td><td></td><td></td></tr>
+          </table>
+          <div class="t-row mt"><span class="t-btn xl wide off">判断を確定</span><b class="n">6</b></div>
+          <div class="hint">通信が回復すると自動で送信します。PIN の期限が切れた記録は、記録者がオンラインでログインするまで端末に残ります。</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ===== C: PC read-only (settlement) ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 D — 照合事務局・照合部門長：すべての端末を閲覧のみ（締め前の確認）</div>
+    <div class="browser" data-url="/sync/reconciliation" data-crumb="ホーム › 照合・締め › オフライン同期・照合" data-user="照合事務局 桜 花子"
+         data-menu="ホーム|照合・締め:照合（要確認）,オフライン同期・照合*,日次締め|取引:取引一覧">
+      <div class="main">
+        <div class="page-title">オフライン同期・照合 <span class="chip">閲覧のみ</span></div>
+        <table class="tbl">
+          <tr><th>端末 <b class="n">1</b></th><th>用途</th><th>最終同期</th><th class="num">未同期</th><th class="num">要判断</th><th>判断する人</th><th>日次締めチェック <b class="n">7</b></th></tr>
+          <tr class="hl"><td>TAB-03</td><td>配送</td><td>07:12</td><td class="num">0</td><td class="num">2</td><td>配送担当・受付担当</td><td>✖ 要判断あり</td></tr>
+          <tr><td>TAB-01</td><td>受付</td><td>03:58</td><td class="num">0</td><td class="num">0</td><td>—</td><td>✔</td></tr>
+          <tr><td>TAB-05</td><td>配送</td><td>06:40</td><td class="num">3</td><td class="num">—</td><td>—</td><td>✖ 未同期あり</td></tr>
+        </table>
+        <div class="hint mt">照合事務局はここでは判断しません（判断は記録した役割の担当者）。判断ボタンは表示しません。</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

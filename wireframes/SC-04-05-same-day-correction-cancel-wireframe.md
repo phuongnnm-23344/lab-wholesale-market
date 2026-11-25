@@ -2,7 +2,7 @@
 id: WF-SC-04-05
 title: Wireframe SC-04-05 当日訂正（＋取消）
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-04-05, FT-04-06, FR-AITAI-03, PRM-127, M17, D11, BR-CLOSE-01, E-08, ADR-004, ADR-005]
@@ -24,6 +24,11 @@ related: [FT-04-05, FT-04-06, FR-AITAI-03, PRM-127, M17, D11, BR-CLOSE-01, E-08,
 Prototype **không có** màn này (M17): mọi điều chỉnh đi 修正申請 duyệt 1–2 cấp, kể cả GD trong ngày. Ảnh là 取引確認票 (SC-04-04) — nơi to-be đặt nút vào SC-04-05.
 
 ## 2. Wireframe to-be
+
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-04-05.html`](html/SC-04-05.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-04-05.png`](png/SC-04-05.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-04-05 wireframe — mọi biến thể](png/SC-04-05.png)
+
 
 ```
 [1] 対象取引 相対-0005（2027/08/02 04:31・未締め）  ロット L…-5 鰹  入力者 桜 三郎
@@ -89,3 +94,4 @@ Toàn bộ màn là mới (M17, D11). Prototype dùng 修正申請 cho mọi đi
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 / khách: số lẻ theo đơn vị (m-11, #11); [14] câu báo 照合 soát khi ≥ ngưỡng / đổi 買受人 (Q-SC0405-01 đã trả lời); gặp 423 giữ nội dung, mang sang SC-08-01 (#5). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-04-05.html`, nhúng `png/SC-04-05.png` | 2026-11-25 | phuongnnm-23344 | |

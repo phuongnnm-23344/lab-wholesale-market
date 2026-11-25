@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-07-02
 feature: settle
 feature_id: STL
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-07-02, SPEC-SETTLE_FUNC-001, SPEC-STL_DAY_CLOSE-001, SPEC-STL_DEVICE_LOST-001, API-STL-001, API-STL-002, API-STL-003, SPEC-CLOSE_DB-001, ADR-005, ADR-002, ADR-008, FT-07-04, FR-SETTLE-01, FR-SETTLE-02, BR-CLOSE-01, PRM-031, PRM-036, PRM-119, PRM-127]
@@ -23,16 +23,18 @@ related: [WF-SC-07-02, SPEC-SETTLE_FUNC-001, SPEC-STL_DAY_CLOSE-001, SPEC-STL_DE
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-07-02 0.2.0; checklist 11 mục khớp ADR-005 §2.5 / CLOSE_DB 4.24 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-STL-02: item [22] tick 「未入力の引渡し確認票なし（紙台帳で確認）」, checklist 12 mục; đóng Q-STL-01/02/03; G2-M03: lỗi đọc từ `detail.blocking[]`; ảnh annotated dựng lại | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-07-02.html` (WF 0.2.3); ghi badge không có trên ảnh; link HTML / PNG / PDF; §2 tham chiếu WF hiện hành (trước ghi 0.2.0) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-07-02 0.2.0](../../../wireframes/SC-07-02-daily-close-business-day-lock-wireframe.md). To-be khác prototype nhiều (11 dòng thay 4, 代行, MFA, 端末回収不能) → ảnh dựng từ wireframe.
+**Design:** [Wireframe SC-07-02 0.2.3](../../../wireframes/SC-07-02-daily-close-business-day-lock-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-07-02.html`](../../../wireframes/html/SC-07-02.html) · mọi biến thể: [`wireframes/png/SC-07-02.png`](../../../wireframes/png/SC-07-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-07-02_prototype.png`
 
 ![SC-07-02 annotated](./assets/SC-07-02_annotated.png)
 
-Ảnh prototype as-is: `wireframes/assets/SC-07-02_prototype.png`. Hộp thoại [19] 端末回収不能 mô tả trong file này (D).
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 19.1–19.5 hộp thoại 端末回収不能 (B), C-30 · C-31 (C), C-11 · C-12 (E) → xem biến thể tương ứng trong [`wireframes/png/SC-07-02.png`](../../../wireframes/png/SC-07-02.png) / PDF.
 
 ---
 

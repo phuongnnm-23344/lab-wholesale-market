@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-03-02 ロット仮受付（埠頭・タブレット） — wireframe</title>
+<!-- Source: wireframes/SC-03-02-lot-provisional-intake-dock-tablet-wireframe.md (0.1.1). Wireframe only — no SPEC (L4-D05).
+     Badge numbers = item No of the wireframe MD. Do not renumber. Sample data is fictional. -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-03-02</span>ロット仮受付（埠頭・タブレット）<span class="code">SC03_02_LOT_PROVISIONAL_INTAKE_DOCK_TABLET</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">荷揚げ（01:00〜04:00）の埠頭で「何が・どれだけ」だけを素早く記録する入荷の第 1 段階。出荷者や伝票は本登録（SC-03-01）で補う。手袋・濡れた手・不安定な通信が前提：大きなボタンとテンキー、通信が切れても端末に保存して続けられる。品目は人が選ぶ（写真・文字認識は使わない）。</div>
+
+  <!-- ===== A: main (offline) ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">タブレット</span>主画面 A — オフライン中：品目「真鯛」を選んだ直後（数量は空欄・カーソルはここ）</div>
+    <div class="t-side">
+      <div class="tablet"><div class="tablet-screen">
+        <div class="t-head">
+          <span class="t-btn">ホーム</span><b class="n c">C-13</b>
+          <span>業務日 2027/08/02(月)</span><b class="n c">C-2</b>
+          <span class="chip dark">● オフライン</span><b class="n c">C-3</b>
+          <span class="right"><b>受付担当 桜 一郎</b><b class="n c">C-4</b><span class="t-btn" style="min-height:40px;font-size:15px">利用者切替</span><b class="n c">C-5</b></span>
+        </div>
+        <div class="t-off">オフライン — 未同期 3件（最終同期 01:52）— 端末に保存しています <b class="n c">C-28</b></div>
+        <div class="main">
+          <div class="t-row" style="font-size:17px"><b>仮番号 K1-014</b><span class="hint">（この端末の次の番号）</span><span>受付時刻 02:05（端末時刻）</span><b class="n">1</b></div>
+          <div class="t-lbl" style="margin-bottom:6px">品目 <b class="n">2</b> <span class="hint" style="font-weight:400">並びは固定（よく使う順に入れ替わりません）</span></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px">
+            <span class="t-btn on">真鯛 ✓選択中</span><span class="t-btn">鰹</span><span class="t-btn">鰤</span><span class="t-btn">鯖</span>
+            <span class="t-btn">鯵</span><span class="t-btn">烏賊</span><span class="t-btn">蛸</span><span class="t-btn">その他… <b class="n">3</b></span>
+          </div>
+          <div class="t-row"><span class="t-lbl">単位 <b class="n">4</b></span><span class="t-btn on" style="min-width:90px">kg</span><span class="t-btn" style="min-width:90px">箱</span><span class="t-btn" style="min-width:90px">尾</span><span class="hint">品目の既定値。押して変更</span></div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="flex:1">
+              <div class="t-row"><span class="t-lbl">数量（概算） <b class="n">5</b></span><span class="t-in focus empty"></span><span style="font-size:17px">kg</span></div>
+              <div class="hint" style="margin:-4px 0 12px 128px">kg は小数第1位まで／箱・尾は整数</div>
+              <div class="t-row"><span class="t-lbl">出荷者<br><span style="font-weight:400;font-size:13px">（分かれば）</span> <b class="n">7</b></span><span class="t-in">0021</span><span style="font-size:16px">→ サンプル第一丸</span></div>
+              <div class="hint" style="margin:-4px 0 0 128px">空欄のまま記録できます（本登録で入力）</div>
+            </div>
+            <div><div class="t-pad"><span>7</span><span>8</span><span>9</span><span>4</span><span>5</span><span>6</span><span>1</span><span>2</span><span>3</span><span>.</span><span>0</span><span>←</span></div>
+              <div class="hint" style="margin-top:4px">テンキー（端末のキーボードは出さない）<b class="n">6</b></div></div>
+          </div>
+          <div class="t-row mt"><span class="t-btn xl wide">記録する</span><b class="n">8</b></div>
+          <div class="t-card">
+            <div class="t-card-title">この端末の直近の仮受付（5件） <b class="n">9</b></div>
+            <table class="t-tbl">
+              <tr><th>仮番号</th><th>時刻</th><th>品目</th><th class="num">数量</th><th>状態</th></tr>
+              <tr><td>K1-013</td><td>02:01</td><td>鰹</td><td class="num">80.0kg</td><td>未同期</td></tr>
+              <tr><td>K1-012</td><td>01:58</td><td>鯖</td><td class="num">50.0kg</td><td>未同期</td></tr>
+              <tr><td>K1-011</td><td>01:55</td><td>鯵</td><td class="num">30.0kg</td><td>未同期</td></tr>
+              <tr><td>K1-010</td><td>01:48</td><td>烏賊</td><td class="num">12箱</td><td><b>⚠ 要確認</b></td></tr>
+              <tr><td>K1-009</td><td>01:42</td><td>真鯛</td><td class="num">60.0kg</td><td>送信済</td></tr>
+            </table>
+            <div class="t-row mt" style="margin-bottom:0"><span class="t-btn">直前の記録を取り消す（K1-013・未同期）</span><b class="n">10</b>
+              <span class="t-btn" style="margin-left:auto">照合が必要 1件 → 同期・照合へ</span><b class="n">11</b></div>
+          </div>
+        </div>
+      </div></div>
+      <div class="notes">
+        <div class="card">
+          <div class="card-title">この画面のきまり</div>
+          <div>・仮番号 <b class="n">1</b> は端末が付けます（K{端末番号}-{連番}、業務日ごとに 001 から）。本当の業務日は同期時にサーバーが決めます。</div>
+          <div>・数量 <b class="n">5</b> は空欄で始まります（自動で数字を入れない）。</div>
+          <div>・出荷者 <b class="n">7</b> は任意。本登録（SC-03-01）では必須です。</div>
+          <div>・<b class="n">8</b> 記録する：オンラインは即送信、オフラインは端末に保存して順に送信。本人確認（MFA）は不要。</div>
+          <div>・<b class="n">10</b> 取り消せるのは自分の未同期の最新 1 件だけ。送信済みは本登録で直します（サーバー上で消さない）。</div>
+          <div>・写真・文字認識・魚の自動判定は使いません。品目は人が選びます。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B + C ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 B — 重複の疑い（同じ品目・数量を 3 分以内に記録）：止めずに確認</div>
+      <div class="overlay">
+        <div class="ghost">仮受付（背景）— 鰹 80.0kg を入力して「記録する」</div>
+        <div class="dialog" style="width:520px">
+          <div class="dialog-title" style="font-size:17px">同じ品目・数量を 3分前に記録しています（K1-013）。もう一度記録しますか？ <b class="n">12</b></div>
+          <div class="kv" style="font-size:15px"><span>前の記録</span><span>K1-013 02:01 鰹 80.0kg（未同期）</span><span>今回</span><span>鰹 80.0kg</span></div>
+          <div class="dialog-foot"><span class="t-btn">戻る</span><span class="t-btn on xl">記録する</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 C — 「その他…」：頭文字ボタンから品目を探す（マスタは端末に保存済み）</div>
+      <div class="tablet half"><div class="tablet-screen">
+        <div class="t-head"><span class="t-btn">ホーム</span><span>業務日 2027/08/02(月)</span><span class="chip dark">● オフライン</span><span class="right"><b>受付担当 桜 一郎</b></span></div>
+        <div class="main">
+          <div class="t-card-title">品目を選ぶ <b class="n">3</b></div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:10px">
+            <span class="t-btn">ア</span><span class="t-btn on">カ</span><span class="t-btn">サ</span><span class="t-btn">タ</span><span class="t-btn">ナ</span>
+            <span class="t-btn">ハ</span><span class="t-btn">マ</span><span class="t-btn">ヤ</span><span class="t-btn">ラ</span><span class="t-btn">ワ</span>
+          </div>
+          <table class="t-tbl">
+            <tr><th>「カ」で始まる品目</th></tr>
+            <tr><td>カサゴ</td></tr><tr><td>カツオ（鰹）</td></tr><tr><td>カレイ</td></tr><tr><td>カワハギ</td></tr><tr><td>カンパチ</td></tr>
+          </table>
+          <div class="t-row mt" style="margin-bottom:0"><span class="t-btn">戻る</span><span class="hint">1 件をタップすると品目に入ります</span></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ===== D: online after record + input error ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 D — オンライン：記録直後のトースト（送信済）</div>
+      <div class="tablet half"><div class="tablet-screen">
+        <div class="t-head"><span class="t-btn">ホーム</span><span>業務日 2027/08/02(月)</span><span class="chip">● オンライン</span><span class="right"><b>受付担当 桜 一郎</b></span></div>
+        <div class="main">
+          <div class="t-toast">仮受付：K1-014 真鯛 120.0kg（送信済） <b class="n c">C-12</b></div>
+          <div class="t-row" style="font-size:17px"><b>仮番号 K1-015</b><span>受付時刻 02:07</span><b class="n">1</b></div>
+          <table class="t-tbl">
+            <tr><th>仮番号</th><th>時刻</th><th>品目</th><th class="num">数量</th><th>状態 <b class="n">9</b></th></tr>
+            <tr class="sel"><td>K1-014</td><td>02:05</td><td>真鯛</td><td class="num">120.0kg</td><td>送信済</td></tr>
+            <tr><td>K1-013</td><td>02:01</td><td>鰹</td><td class="num">80.0kg</td><td>送信済</td></tr>
+          </table>
+          <div class="hint mt">オフライン時のトースト：「仮受付：K1-014 真鯛 120.0kg（端末に保存・未同期 4件）」</div>
+        </div>
+      </div></div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 E — 入力エラー：箱・尾に小数（その場で止め、ボックスの下に表示）</div>
+      <div class="tablet half"><div class="tablet-screen">
+        <div class="t-head"><span class="t-btn">ホーム</span><span>業務日 2027/08/02(月)</span><span class="chip">● オンライン</span><span class="right"><b>受付担当 桜 一郎</b></span></div>
+        <div class="main">
+          <div class="t-row"><span class="t-lbl">品目 <b class="n">2</b></span><span class="t-btn on">烏賊 ✓選択中</span></div>
+          <div class="t-row"><span class="t-lbl">単位 <b class="n">4</b></span><span class="t-btn">kg</span><span class="t-btn on">箱</span><span class="t-btn">尾</span></div>
+          <div class="t-row" style="margin-bottom:4px"><span class="t-lbl">数量（概算） <b class="n">5</b></span><span class="t-in err">12.5</span><span style="font-size:17px">箱</span></div>
+          <div class="t-err" style="margin-left:128px">箱・尾は整数で入力してください <b class="n c">C-22</b></div>
+          <div class="t-row mt"><span class="t-btn xl wide off">記録する</span><b class="n">8</b></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

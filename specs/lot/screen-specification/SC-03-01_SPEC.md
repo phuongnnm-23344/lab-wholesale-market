@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-03-01
 feature: lot
 feature_id: LOT
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-03-01, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001, API-LOT-001, API-LOT-002, API-LOT-003, API-LOT-005, API-LOT-006, SPEC-LOT_DB-001]
@@ -23,16 +23,18 @@ related: [WF-SC-03-01, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_REGISTER-001, 
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-03-01 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-LOT-01: tìm theo 仮番号, lô 取消 giữ số; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-03-01.html` (WF 0.2.1); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [WF-SC-03-01 to-be wireframe 0.2.0](../../../wireframes/SC-03-01-lot-main-registration-wireframe.md) · khung chung [_common-layout C-1..C-31](../../../wireframes/_common-layout.md) · ảnh as-is [SC-03-01_prototype.png](../../../wireframes/assets/SC-03-01_prototype.png)
-
-Ảnh `_layout.png`: N/A — dự án chưa có Figma; layout to-be là wireframe ASCII ở link trên. Ảnh đánh số dưới đây dựng lại khối từ wireframe to-be (bố cục to-be khác prototype: thêm [1] bảng chờ, [3], [8], [11], [13]), **số đỏ = cột ID ở mục 4**.
+**Design:** [Wireframe SC-03-01 0.2.1](../../../wireframes/SC-03-01-lot-main-registration-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-03-01.html`](../../../wireframes/html/SC-03-01.html) · mọi biến thể: [`wireframes/png/SC-03-01.png`](../../../wireframes/png/SC-03-01.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [SC-03-01_prototype.png](../../../wireframes/assets/SC-03-01_prototype.png)
 
 ![SC-03-01 annotated](./assets/SC-03-01_annotated.png)
+
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 13 hộp thoại (C), C-12 (B), C-22 (D), C-24 (E), C-28 (F), C-21 (G), C-23 (H) → xem biến thể tương ứng trong [`wireframes/png/SC-03-01.png`](../../../wireframes/png/SC-03-01.png) / PDF.
 
 ---
 

@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-01-02 参加者詳細・編集 — wireframe</title>
+<!-- Source: wireframes/SC-01-02-participant-detail-kyoka-shonin-wireframe.md (0.2.4) + specs/party/screen-specification/SC-01-02_SPEC.md (0.1.1).
+     Badge numbers = item No / spec ID. Do not renumber. Sample data is fictional.
+     許可 (仲卸) and 承認 (売買参加者) are two separate blocks; only one shows on the real screen (A shows both for numbering). -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-01-02</span>参加者詳細・編集<span class="code">SC01_02_PARTICIPANT_DETAIL_KYOKA_SHONIN</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">参加者 1 件の基本情報を管理し、取引資格を確認する。<b>【許可】仲卸</b>（許可・審査あり）と<b>【承認】売買参加者</b>（承認・届出）は根拠も手続も別のため、別ブロックで表示する。資格の変更は SC-01-03 / 04 / 05 で行い、この画面は状態・申請中・履歴を表示する。</div>
+
+  <!-- ===== A: main (both blocks for numbering) ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 A — 全項目（番号付けのため【許可】と【承認】を並べて表示。実画面は種別で一方のみ、ボタンは役割で出し分け）</div>
+    <div class="browser" data-url="/participants/P-0001" data-crumb="ホーム › 参加者 › 参加者詳細" data-user="照合部門長 桜 七子"
+         data-menu="ホーム|参加者:参加者一覧・検索,参加者詳細・編集*,許可登録・更新（仲卸）,承認登録・更新（売買参加者）,資格状態変更,資格照会|照合・締め:日次照合表,日次締め">
+      <div class="main">
+        <div class="page-title">参加者詳細：サンプル仲卸1 <b class="n c">C-9</b><span class="tools"><span class="btn">一覧へ戻る</span><b class="n c">C-10</b></span></div>
+        <div class="card">
+          <div class="card-title">基本情報 <b class="n">1</b></div>
+          <div class="grid-even">
+            <div>
+              <div class="field"><label>種別 <b class="n">2</b></label><div><b>仲卸</b><span class="hint">（登録後変更不可）</span></div></div>
+              <div class="field"><label>名称 <b class="n">4</b></label><div><span class="input w-m">サンプル仲卸1</span></div></div>
+              <div class="field"><label>通知メール1 <b class="n">6</b></label><div><span class="input w-l mono">nakaoroshi1@sakura-sample.example</span></div></div>
+              <div class="field"><label>保証金額 <b class="n">8</b></label>
+                <div class="row"><b>¥3,000,000</b><span class="btn sm">保証金の変更</span><b class="n">9</b><span class="btn sm">履歴を見る ▼</span><b class="n">10</b></div></div>
+            </div>
+            <div>
+              <div class="field"><label>事業者の状態 <b class="n">3</b></label><div><span class="chip">取引中</span><span class="hint">（取引中 / 退会）</span></div></div>
+              <div class="field"><label>買受人番号 <b class="n">5</b></label><div><span class="input w-s mono">N01</span></div></div>
+              <div class="field"><label>通知メール2 <b class="n">7</b></label><div><span class="input w-l"><span class="ph">example@example.co.jp</span></span><span class="sub hint">最大2件</span></div></div>
+              <div class="row" style="justify-content:flex-end"><span class="btn primary">保存する</span><b class="n">11</b></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-even mt">
+          <div class="qual kyoka">
+            <div class="qual-head">【許可】仲卸 <b class="n">12</b><span class="basis">根拠：市場業務規程（許可・審査あり）</span></div>
+            <div class="body">
+              <div class="hint">種別＝仲卸のときだけ表示（参加上限はありません）</div>
+              <table class="tbl mt"><tr><th>許可番号 <b class="n">13</b></th><th>有効期間</th><th>許可条件</th><th>状態</th><th class="num">失効まで</th></tr>
+                <tr><td class="mono">サンプル許可-N01</td><td>2025/10/19〜2028/10/23</td><td>審査結果の条件（サンプル）</td><td>有効</td><td class="num">448日</td></tr>
+                <tr><td class="mono muted">サンプル許可-N01</td><td class="muted">2022/10/19〜2025/10/18</td><td class="muted">—</td><td class="muted">更新済</td><td class="num muted">—</td></tr></table>
+              <div class="row mt"><span class="btn">許可の申請受付・審査・更新 → SC-01-03</span><b class="n">14</b></div>
+              <div class="proc">新規：審査 → 起案 → 運用部門長 決裁（MFA）／更新：照合事務局 入力 → 照合部門長 確認（MFA）</div>
+              <div class="row"><b>許可の状態</b><span class="chip dark">有効</span><b class="n">17</b></div>
+              <div class="row mt"><span class="btn sm">一時停止を起案</span><span class="btn sm">再審査を起案</span><span class="btn sm">期限前更新を入力</span><span class="hint">→ SC-01-05</span></div>
+              <div class="proc">一時停止・再審査：照合部門長 起案 → 運用部門長 決裁（MFA）／期限前更新：照合事務局 入力 → 照合部門長 確認（MFA）</div>
+              <div class="row"><b>進行中の申請</b><span class="muted">なし</span><b class="n">19</b><span class="hint">（申請中は「一時停止 起案中（決裁待ち）」を表示）</span></div>
+            </div>
+          </div>
+          <div class="qual shonin">
+            <div class="qual-head">【承認】売買参加者 <b class="n">15</b><span class="basis">根拠：市場業務規程（承認・届出）</span></div>
+            <div class="body">
+              <div class="hint">種別＝売買参加者のときだけ表示</div>
+              <table class="tbl mt"><tr><th>承認番号 <b class="n">16</b></th><th>有効期間</th><th class="num">参加上限</th><th class="num">今期使用額 / 残</th><th>状態</th></tr>
+                <tr><td class="mono">サンプル承認-B01</td><td>2025/10/19〜<br>2028/10/23</td><td class="num">¥5,000,000<br><span class="hint">保証金額に連動</span></td><td class="num">¥1,188,000（税込）<br>/ 残 ¥3,812,000</td><td>有効</td></tr></table>
+              <div class="hint">今期使用額 税抜 ¥1,100,000 ・ 2027年8月期・相対＋せり・上限は税込で比較</div>
+              <div class="row mt"><span class="btn">承認の届出入力・更新 → SC-01-04</span><b class="n">18</b></div>
+              <div class="proc">手続：届出 → 照合事務局 入力 → 照合部門長 確認（MFA）</div>
+              <div class="row"><b>承認の状態</b><span class="chip dark">有効</span><b class="n">21</b></div>
+              <div class="row mt"><span class="btn sm">一時停止を起案</span><span class="btn sm">期限前更新を入力</span><span class="btn sm">参加上限の変更</span><span class="hint">→ SC-01-05 / 04</span></div>
+              <div class="proc">参加上限の変更：照合部門長のみ・理由必須・MFA（確認の手続なし）</div>
+              <div class="row"><span class="btn link">参加上限の変更履歴 ▼</span><b class="n">22</b><span class="hint">変更前 / 変更後 / 理由 / 変更者 / 変更日時</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt"><span class="btn link">変更履歴（監査）→ SC-13-01</span><b class="n">20</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B: 売買参加者 as SETTLE ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 B — 種別＝売買参加者（照合事務局で表示）：【承認】ブロックだけ。失効まで30日以内の注意、参加上限の履歴を開いた状態</div>
+    <div class="browser" data-url="/participants/P-0013" data-crumb="ホーム › 参加者 › 参加者詳細" data-user="照合事務局 桜 三郎"
+         data-menu="ホーム|参加者:参加者一覧・検索,参加者詳細・編集*,許可登録・更新（仲卸）,承認登録・更新（売買参加者）,資格状態変更,資格照会|照合・締め:日次照合表">
+      <div class="main">
+        <div class="page-title">参加者詳細：サンプル売買参加者3 <span class="tools"><span class="btn">一覧へ戻る</span></span></div>
+        <div class="card">
+          <div class="card-title">基本情報 <b class="n">1</b></div>
+          <div class="grid-even">
+            <div>
+              <div class="field"><label>種別 <b class="n">2</b></label><div><b>売買参加者</b><span class="hint">（登録後変更不可）</span></div></div>
+              <div class="field"><label>名称 <b class="n">4</b></label><div><span class="input w-m">サンプル売買参加者3</span></div></div>
+              <div class="field"><label>保証金額 <b class="n">8</b></label><div class="row"><b>¥5,000,000</b><span class="btn sm">履歴を見る ▼</span><b class="n">10</b><span class="hint">保証金の変更は照合部門長のみ</span></div></div>
+            </div>
+            <div>
+              <div class="field"><label>事業者の状態 <b class="n">3</b></label><div><span class="chip">取引中</span></div></div>
+              <div class="field"><label>買受人番号 <b class="n">5</b></label><div><span class="input w-s mono">B03</span></div></div>
+              <div class="row" style="justify-content:flex-end"><span class="btn primary off">保存する</span><b class="n">11</b><span class="hint">変更なし</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="qual shonin mt">
+          <div class="qual-head">【承認】売買参加者 <b class="n">15</b><span class="basis">根拠：市場業務規程（承認・届出）</span></div>
+          <div class="body">
+            <table class="tbl"><tr><th>承認番号 <b class="n">16</b></th><th>有効期間</th><th class="num">参加上限</th><th class="num">今期使用額（税込）</th><th class="num">税抜</th><th class="num">残</th><th>状態</th></tr>
+              <tr class="hl"><td class="mono">サンプル承認-B03</td><td>2024/08/21〜2027/08/20 <span class="chip dash">⚠ 失効まで 18日</span></td><td class="num">¥5,000,000<br><span class="hint">保証金額に連動</span></td><td class="num">¥4,989,600</td><td class="num">¥4,620,000</td><td class="num">¥10,400</td><td>有効</td></tr></table>
+            <div class="row mt"><span class="btn">承認の届出入力・更新 → SC-01-04</span><b class="n">18</b><span class="hint">手続：届出 → 照合事務局 入力 → 照合部門長 確認（MFA）</span></div>
+            <div class="row mt"><b>承認の状態</b><span class="chip dark">有効</span><b class="n">21</b><span class="btn sm">期限前更新を入力</span><span class="hint">→ SC-01-05（照合事務局 入力 → 照合部門長 確認、MFA）</span></div>
+            <div class="mt"><span class="btn link">参加上限の変更履歴 ▲</span><b class="n">22</b></div>
+            <table class="tbl"><tr><th>発効日</th><th class="num">変更前</th><th class="num">変更後</th><th>理由</th><th>変更者（照合部門長）</th><th>変更日時</th></tr>
+              <tr><td>2026/04/01</td><td class="num">¥3,000,000</td><td class="num">¥5,000,000</td><td>保証金の追加（サンプル）</td><td>桜 七子</td><td>2026/03/25 09:12</td></tr>
+              <tr><td>2024/08/21</td><td class="num">—</td><td class="num">¥3,000,000</td><td>承認時の初期設定</td><td>桜 七子</td><td>2024/08/20 14:30</td></tr></table>
+          </div>
+        </div>
+        <div class="hint mt">照合事務局には「一時停止を起案」「参加上限の変更」「保証金の変更」は表示しない（役割で出し分け）。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== C + D: deposit dialog + MFA ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 C — 保証金の変更ダイアログ（照合部門長のみ・履歴に追加、上書きしない）</div>
+      <div class="overlay">
+        <div class="ghost">参加者詳細（背景）— サンプル売買参加者3 ／ 保証金額 ¥5,000,000 ／ 参加上限 保証金額に連動</div>
+        <div class="dialog">
+          <div class="dialog-title">保証金の変更 <b class="n">9</b></div>
+          <div class="field"><label>新しい保証金額 <b class="n">9.1</b></label><div><span class="input w-m num focus">¥6,000,000</span></div></div>
+          <div class="field"><label>発効日 <b class="n">9.2</b></label><div><span class="input w-m mono">2027/09/01</span><span class="sub hint">本日（業務日）以降</span></div></div>
+          <div class="field"><label>理由 <b class="n">9.3</b></label><div><span class="input w-l">保証金の追加差入れ（サンプル）</span></div></div>
+          <div class="alert">参加上限は保証金額に連動しているため ¥6,000,000 に変わります <b class="n">9.4</b>
+            <div class="hint">（個別設定の場合：「参加上限は個別設定のため ¥5,000,000 のまま変わりません」）</div></div>
+          <div class="dialog-foot"><span class="btn">キャンセル</span><b class="n">9.6</b><span class="btn primary">変更する</span><b class="n">9.5</b></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 D — 「変更する」の前に本人確認（MFA ステップアップ）</div>
+      <div class="overlay">
+        <div class="ghost">保証金の変更（背景）— ¥6,000,000 ／ 発効日 2027/09/01</div>
+        <div class="dialog" style="width:460px">
+          <div class="dialog-title">この操作の前に本人確認を行います <b class="n c">C-30</b></div>
+          <div class="field" style="grid-template-columns:90px 1fr"><label>確認コード</label><div><span class="input w-m mono focus">______</span><span class="sub hint">認証アプリの6桁</span></div></div>
+          <div class="hint">確認後 10 分間、同じ利用者・同じ端末では再入力不要です（3 分操作がないと無効）</div>
+          <div class="dialog-foot"><span class="btn">キャンセル</span><span class="btn primary">確認</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== E: 仲卸, permit suspended + pending request (OPS-HEAD) ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 E — 種別＝仲卸・許可 一時停止中、再開を起案中（運用部門長で表示：閲覧のみ、決裁は SC-01-05）</div>
+    <div class="browser" data-url="/participants/P-0005" data-crumb="ホーム › 参加者 › 参加者詳細" data-user="運用部門長 桜 五郎"
+         data-menu="ホーム|参加者:参加者一覧・検索,参加者詳細・編集*,資格状態変更|照合・締め:日次照合表">
+      <div class="main">
+        <div class="banner row">決裁待ち：許可の再開（起案 照合部門長 桜 七子 2027/08/01 15:20）<span class="btn sm">決裁へ → SC-01-05</span><b class="n c">C-11</b></div>
+        <div class="page-title">参加者詳細：サンプル仲卸5 <span class="tools"><span class="btn">一覧へ戻る</span></span></div>
+        <div class="card">
+          <div class="card-title">基本情報 <b class="n">1</b></div>
+          <div class="kv"><span>種別 <b class="n">2</b></span><b>仲卸</b><span>事業者の状態 <b class="n">3</b></span><span>取引中</span>
+            <span>名称 <b class="n">4</b></span><span>サンプル仲卸5</span><span>買受人番号 <b class="n">5</b></span><span class="mono">N05</span>
+            <span>保証金額 <b class="n">8</b></span><span>¥3,000,000</span></div>
+        </div>
+        <div class="qual kyoka mt" style="max-width:820px">
+          <div class="qual-head">【許可】仲卸 <b class="n">12</b><span class="basis">根拠：市場業務規程（許可・審査あり）</span></div>
+          <div class="body">
+            <table class="tbl"><tr><th>許可番号 <b class="n">13</b></th><th>有効期間</th><th>許可条件</th><th>状態</th><th class="num">失効まで</th></tr>
+              <tr><td class="mono">サンプル許可-N05</td><td>2026/04/01〜2029/03/31</td><td>審査結果の条件（サンプル）</td><td><b>一時停止</b></td><td class="num">607日</td></tr></table>
+            <div class="row mt"><b>許可の状態</b><span class="chip dark">✕ 一時停止</span><b class="n">17</b><span class="hint">申請中のため状態変更ボタンは表示しません</span></div>
+            <div class="row mt"><b>進行中の申請</b><span class="chip">再開 起案中（決裁待ち）</span><b class="n">19</b><b class="n c">C-27</b><span class="btn link">→ SC-01-05</span></div>
+          </div>
+        </div>
+        <div class="row mt"><span class="btn link">変更履歴（監査）→ SC-13-01</span><b class="n">20</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== F: 仲卸 without permit + duplicate buyer no ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 F — 種別＝仲卸・許可が未登録（取引の確定不可）、買受人番号の重複エラー（保存時）</div>
+    <div class="browser" data-url="/participants/P-0021" data-crumb="ホーム › 参加者 › 参加者詳細" data-user="照合事務局 桜 三郎"
+         data-menu="ホーム|参加者:参加者一覧・検索,参加者詳細・編集*,許可登録・更新（仲卸）,承認登録・更新（売買参加者）,資格状態変更,資格照会|照合・締め:日次照合表">
+      <div class="main">
+        <div class="page-title">参加者詳細：サンプル仲卸9 <span class="tools"><span class="btn">一覧へ戻る</span></span></div>
+        <div class="card" style="max-width:820px">
+          <div class="card-title">基本情報 <b class="n">1</b></div>
+          <div class="field"><label>種別 <b class="n">2</b></label><div><b>仲卸</b><span class="hint">（登録後変更不可）</span></div></div>
+          <div class="field"><label>名称 <b class="n">4</b></label><div><span class="input w-m">サンプル仲卸9</span></div></div>
+          <div class="field"><label>買受人番号 <b class="n">5</b></label><div><span class="input w-s mono err">N01</span><b class="n c">C-22</b></div>
+            <div class="sub err-text">この買受人番号は既に使われています</div></div>
+          <div class="row"><span class="btn primary">保存する</span><b class="n">11</b></div>
+        </div>
+        <div class="qual kyoka mt" style="max-width:820px">
+          <div class="qual-head">【許可】仲卸 <b class="n">12</b><span class="basis">根拠：市場業務規程（許可・審査あり）</span></div>
+          <div class="body">
+            <div class="alert">許可が登録されていません。取引の確定はできません <b class="n">13</b><b class="n c">C-21</b></div>
+            <div class="row"><span class="btn">許可の申請受付・審査・更新 → SC-01-03</span><b class="n">14</b><span class="hint">新規：審査 → 起案 → 運用部門長 決裁（MFA）</span></div>
+          </div>
+        </div>
+        <div class="hint mt">卸売業者・買出人のときは両ブロックを表示せず「この種別は許可・承認の対象外です」と表示（買受人番号も非表示）。</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

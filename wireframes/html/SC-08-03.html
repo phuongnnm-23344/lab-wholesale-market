@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-08-03 修正申請決裁・却下 — wireframe</title>
+<!-- Source: wireframes/SC-08-03-correction-request-approve-reject-wireframe.md (0.2.2) + specs/settle/screen-specification/SC-08-03_SPEC.md.
+     Badge numbers = item No / spec ID. Do not renumber. Sample data is fictional.
+     Internal approval label is 決裁 (the 売買参加者 qualification word is never used here). Level 1 = 照合部門長 or a pre-assigned 代行;
+     運用部門長 decides level 2 only. A decision never edits the original trade: it adds 取消 (REVERSE) + 差額 (DELTA). -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-08-03</span>修正申請決裁・却下<span class="code">SC08_03_CORRECTION_REQUEST_DECIDE_REJECT</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">締め後の訂正（修正申請）を決裁または却下する。決裁しても元の取引は変えず、取消と差額の記録を「未締めの最も早い業務日」に計上し、対象期は元取引の期のまま。決裁前に、作られる記録と期・奨励金への影響を確認できる。決裁・却下は本人確認（MFA）付き。1次＝照合部門長（不在時は事前指定の代行）、2次＝運用部門長。</div>
+
+  <!-- ===== A: main (level 1 pending) ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 A — 1次決裁待ち（照合部門長が開く）：買受人の変更があるため 2段階</div>
+    <div class="browser" data-url="/corrections/C0123" data-crumb="ホーム › 修正申請 › 修正申請一覧 › 修正申請決裁・却下" data-user="照合部門長 桜 七郎" data-day="2027/09/15(水)"
+         data-menu="ホーム|照合・締め:日次照合表,日次締め|修正申請:修正申請一覧*">
+      <div class="main">
+        <div class="page-title">修正申請決裁・却下<b class="n c">C-9</b></div>
+        <div class="banner">あなたの決裁待ちです（1次）<b class="n c">C-11</b><b class="n c">C-27</b></div>
+        <div class="card">
+          <div class="row"><span class="chip dark">決裁待ち（1次）</span><b class="n">1</b>
+            <span>必要な決裁 <b>2段階</b>（買受人変更あり／買受人別の変動額 最大 ¥447,120 ≥ 閾値 ¥100,000 — 規則版 第3版）</span><b class="n">2</b></div>
+          <div class="kv mt" style="grid-template-columns:90px 1fr">
+            <span>対象取引</span><span><span class="btn link">相対-0005（業務日 2027/08/02・締め済・2027-08期）→ 取引詳細</span><b class="n">3</b></span>
+            <span>種類</span><span>数量・単価・買受人の訂正 <b class="n">4</b></span>
+            <span>理由</span><span>買受人の取り違え。紙伝票と照合し、単価の記入誤りも判明 <b class="n">5</b></span>
+            <span>証憑</span><span><span class="btn link">伝票スキャン.pdf</span>（1件）<b class="n">6</b></span>
+            <span>申請・決裁</span><span>申請者 桜 三郎 09/15 08:40 ／ 1次 — ／ 2次 — <b class="n">7</b></span>
+            <span>経過</span><span>1営業日 <span class="hint">（2営業日超で警告）</span><b class="n">8</b></span>
+          </div>
+        </div>
+        <div class="grid2 mt" style="grid-template-columns:1fr 1fr">
+          <div class="card">
+            <div class="card-title">訂正内容 <b class="n">9</b></div>
+            <table class="tbl">
+              <tr><th></th><th>買受人</th><th class="num">数量</th><th class="num">単価</th><th class="num">金額（税抜）</th></tr>
+              <tr><td>訂正前</td><td>N04 サンプル仲卸4</td><td class="num">60.0kg</td><td class="num">¥1,900</td><td class="num">¥114,000</td></tr>
+              <tr class="hl"><td>訂正後</td><td>N01 サンプル仲卸1</td><td class="num">60.0kg</td><td class="num">¥6,900</td><td class="num">¥414,000</td></tr>
+            </table>
+            <div class="mt">買受人別の変動額（税込 8%）：N04 −¥123,120 ／ N01 +¥447,120</div>
+          </div>
+          <div class="card">
+            <div class="card-title">決裁すると作成される記録（元の取引は変更しません） <b class="n">10</b></div>
+            <div>計上業務日 <b>2027/09/15</b>（未締めの最も早い業務日）／ 対象期 <b>2027-08</b>（元取引の期）</div>
+            <table class="tbl mt">
+              <tr><th>記録</th><th>買受人</th><th class="num">数量</th><th class="num">金額（税抜）</th></tr>
+              <tr><td>取消</td><td>N04</td><td class="num">−60.0kg</td><td class="num">−¥114,000</td></tr>
+              <tr><td>差額</td><td>N01</td><td class="num">+60.0kg</td><td class="num">+¥414,000</td></tr>
+            </table>
+            <div class="alert mt" style="margin-bottom:0">影響 <b class="n">11</b>：2027-08期は期ロック済 → 2027-09期の請求額には入れず、2027-09期の期ロック時に 2027-08期を再計算し奨励金差分を計上（完納判定は変えない）</div>
+          </div>
+        </div>
+        <div class="card mt">
+          <div class="field"><label>却下理由 <b class="n">12</b></label>
+            <div><span class="input w-l"><span class="ph">却下するときは必須（200文字以内）</span></span></div></div>
+          <div class="row"><span class="btn primary">1次決裁する</span><b class="n">13</b><span class="btn">却下する</span><b class="n">14</b>
+            <span class="hint">押すと 確認（C-31）→ 本人確認 MFA（C-30）</span></div>
+        </div>
+        <div class="card mt">
+          <div class="card-title">決裁履歴 <b class="n">15</b> <span class="btn link" style="font-weight:400">監査ログへ →</span></div>
+          <table class="tbl">
+            <tr><th>日時</th><th>段階</th><th>氏名</th><th>代行</th><th>結果</th><th>コメント</th></tr>
+            <tr><td>09/15 08:40</td><td>申請</td><td>桜 三郎</td><td>—</td><td>申請</td><td>証憑 1件</td></tr>
+          </table>
+        </div>
+        <div class="hint mt">決裁・却下の後に「次の決裁待ちへ →」を表示（<b class="n">16</b> → 主画面 E）。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B: level 2 pending ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 B — 2次決裁待ち（運用部門長が開く）：1次は代行が決裁済み。運用部門長に 1次のボタンはない</div>
+    <div class="browser" data-url="/corrections/C0123" data-crumb="ホーム › 修正申請 › 修正申請一覧 › 修正申請決裁・却下" data-user="運用部門長 桜 九郎" data-day="2027/09/15(水)"
+         data-menu="ホーム|照合・締め:日次照合表|修正申請:修正申請一覧*">
+      <div class="main">
+        <div class="page-title">修正申請決裁・却下</div>
+        <div class="card">
+          <div class="row"><span class="chip dark">決裁待ち（2次）</span><b class="n">1</b><span>必要な決裁 2段階（買受人変更あり — 規則版 第3版）</span><b class="n">2</b></div>
+          <div class="mt">申請者 桜 三郎 09/15 08:40 ／ 1次 <b>桜 八郎（桜 七郎 の代行）</b> 09/15 09:05 ／ 2次 — <b class="n">7</b></div>
+        </div>
+        <div class="alert mt">影響 <b class="n">11</b>：2027-08期は期ロック済 → 2027-09期の期ロック時に 2027-08期を再計算し奨励金差分を計上（完納判定は変えない）</div>
+        <div class="row mt"><span class="btn primary">2次決裁する（反映）</span><b class="n">13</b><span class="btn">却下する</span><b class="n">14</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== C: C-31 + C-30 ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 C — 決裁の確認（C-31）：計上業務日と対象期を文で示す</div>
+      <div class="overlay">
+        <div class="ghost">修正申請（背景）— 相対-0005 ／ 決裁待ち（2次）</div>
+        <div class="dialog" style="width:470px">
+          <div class="dialog-title">2次決裁します <b class="n">13</b><b class="n c">C-31</b></div>
+          <div>2次決裁します。計上業務日 2027/09/15、対象期 2027-08。元の取引は変更しません。</div>
+          <div class="kv mt"><span>作成される記録</span><span>取消 N04 −¥114,000 ／ 差額 N01 +¥414,000</span></div>
+          <div class="dialog-foot"><span class="btn">戻る</span><span class="btn primary">2次決裁する（反映）</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 D — 本人確認（C-30 MFA）：決裁・却下の前に</div>
+      <div class="overlay">
+        <div class="ghost">確認（C-31）のあと</div>
+        <div class="dialog" style="width:430px">
+          <div class="dialog-title">この操作の前に本人確認を行います <b class="n c">C-30</b></div>
+          <div class="row"><span class="input w-m mono focus">4 8 2 _ _ _</span><span class="hint">6桁の確認コード</span></div>
+          <div class="hint mt">確認後 10 分間、同じ利用者・同じ端末では再入力不要です（3 分操作がないと無効）</div>
+          <div class="dialog-foot"><span class="btn">キャンセル</span><span class="btn primary">確認</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== D: reflected ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 E — 2次決裁の直後：反映済み（読み取り専用）、作成した記録を表示、次の決裁待ちへ</div>
+    <div class="browser" data-url="/corrections/C0123" data-crumb="ホーム › 修正申請 › 修正申請一覧 › 修正申請決裁・却下" data-user="運用部門長 桜 九郎" data-day="2027/09/15(水)"
+         data-menu="ホーム|照合・締め:日次照合表|修正申請:修正申請一覧*">
+      <div class="main">
+        <div class="toast">決裁しました。取消・差額を記録しました（計上 2027/09/15）<b class="n c">C-12</b></div>
+        <div class="page-title">修正申請決裁・却下 <span class="chip dark">決裁・反映済</span><b class="n">1</b><span class="tools"><span class="btn primary">次の決裁待ちへ →</span><b class="n">16</b></span></div>
+        <div class="card">
+          <div class="card-title">作成した記録（元の取引は変更していません） <b class="n">10</b></div>
+          <table class="tbl">
+            <tr><th>記録番号</th><th>種類</th><th>買受人</th><th class="num">数量</th><th class="num">金額（税抜）</th><th>計上業務日</th><th>対象期</th></tr>
+            <tr><td>相対-0005-R1</td><td>取消</td><td>N04</td><td class="num">−60.0kg</td><td class="num">−¥114,000</td><td>2027/09/15</td><td>2027-08</td></tr>
+            <tr><td>相対-0005-D1</td><td>差額</td><td>N01</td><td class="num">+60.0kg</td><td class="num">+¥414,000</td><td>2027/09/15</td><td>2027-08</td></tr>
+          </table>
+        </div>
+        <div class="card mt">
+          <div class="card-title">決裁履歴 <b class="n">15</b></div>
+          <table class="tbl">
+            <tr><th>日時</th><th>段階</th><th>氏名</th><th>代行</th><th>結果</th></tr>
+            <tr><td>09/15 08:40</td><td>申請</td><td>桜 三郎</td><td>—</td><td>申請</td></tr>
+            <tr><td>09/15 09:05</td><td>1次</td><td>桜 八郎</td><td>桜 七郎 の代行</td><td>決裁</td></tr>
+            <tr><td>09/15 09:30</td><td>2次</td><td>桜 九郎</td><td>—</td><td>決裁・反映</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== E + F: applicant view / reject error ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 F — 申請者本人が開いた場合：決裁・却下のボタンは出さない</div>
+      <div class="card">
+        <div class="row"><span class="chip dark">決裁待ち（1次）</span><b class="n">1</b></div>
+        <div class="alert mt">申請者本人は決裁できません</div>
+        <div class="hint">同じ人が 1次と 2次を決裁することもできません（「1次と2次を同じ人は決裁できません」）。</div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 G — 却下理由なしで却下（C-22）</div>
+      <div class="card">
+        <div class="field"><label>却下理由 <b class="n">12</b></label>
+          <div><span class="input w-l err focus"></span></div>
+          <div class="sub err-text">却下理由を入力してください（200文字以内）</div></div>
+        <div class="row"><span class="btn primary">1次決裁する</span><b class="n">13</b><span class="btn">却下する</span><b class="n">14</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== G + H: open period / offline ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 H — 元取引の期がまだ期ロック前のときの影響表示</div>
+      <div class="card">
+        <div>計上業務日 2027/08/20 ／ 対象期 2027-08 <b class="n">10</b></div>
+        <div class="alert mt" style="margin-bottom:0">影響 <b class="n">11</b>：元取引の期（2027-08）はまだ期ロック前のため、同期の請求額に反映されます</div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 I — 通信断（C-28）：決裁はオフラインでは行わない</div>
+      <div class="card">
+        <div class="banner">オフライン — 通信が回復するまで確定できません<b class="n c">C-28</b></div>
+        <div class="row"><span class="btn primary off">1次決裁する</span><b class="n">13</b><span class="btn off">却下する</span><b class="n">14</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-01-02
 feature: party
 feature_id: PTY
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-01-02, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-PTY_APPROVAL_LIFECYCLE-001, API-PTY-001, API-PTY-002, API-PTY-003, SPEC-PARTY_DB-001, ADR-003, FR-PARTY-01, BR-PERM-01, PRM-044, PRM-045, PRM-046, PRM-121, FIG-010, L4-D02]
@@ -23,16 +23,19 @@ related: [WF-SC-01-02, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-01-02 0.2.2 (đã sửa D-01 Gate 1 recheck) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-PTY-06: bảng quyền, [9], [21], [22] — chỉ 照合部門長 đổi 保証金 / 参加上限, một bước, MFA; Q-TRD-02: [16] hiện 税込 / 税抜 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-01-02.html` (WF 0.2.5); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-01-02 0.2.3](../../../wireframes/SC-01-02-participant-detail-kyoka-shonin-wireframe.md) — chưa có Figma; ảnh dưới dựng từ wireframe to-be bằng script vẽ khung `scripts/render-annotated-screens.py` (bố cục to-be khác prototype: hai khối tách, trạng thái nằm trong khối, có lịch sử 参加上限).
+**Design:** [Wireframe SC-01-02 0.2.5](../../../wireframes/SC-01-02-participant-detail-kyoka-shonin-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-01-02.html`](../../../wireframes/html/SC-01-02.html) · mọi biến thể: [`wireframes/png/SC-01-02.png`](../../../wireframes/png/SC-01-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-01-02_prototype-nakaoroshi.png`, `wireframes/assets/SC-01-02_prototype-baibai.png`
 
 ![SC-01-02 annotated](./assets/SC-01-02_annotated.png)
 
-Ảnh prototype as-is để đối chiếu: `wireframes/assets/SC-01-02_prototype-nakaoroshi.png`, `SC-01-02_prototype-baibai.png`. Hộp thoại [9] mô tả trong file này.
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 9.1–9.6 hộp thoại 保証金の変更 (C), C-30 (D), C-11 · C-27 (E), C-21 · C-22 (F) → xem biến thể tương ứng trong [`wireframes/png/SC-01-02.png`](../../../wireframes/png/SC-01-02.png) / PDF.
+> - Biến thể A đặt khối 【許可】 [12]–[14], [17], [19] và khối 【承認】 [15], [16], [18], [21], [22] cạnh nhau **chỉ để đánh số**; màn thật chỉ hiện một khối theo 種別 (mục 3, §6). Hộp thoại [9] = biến thể C.
 
 ---
 

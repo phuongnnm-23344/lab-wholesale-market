@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-06-02
 feature: delivery
 feature_id: DEL
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-06-02, SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, SPEC-DEL_RECORD-001, API-DEL-001, API-DEL-002, API-DEL-003, SPEC-TRADE_DB-001, ADR-008, ADR-005, FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, PRM-086, PRM-118, E-17, DEC-004]
@@ -23,16 +23,19 @@ related: [WF-SC-06-02, SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-06-02 0.2.0 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-DEL-03: nút 本人 mặc định, 代理 + tên tùy chọn; đóng Q-DEL-01/02/03; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-06-02.html` (WF 0.2.2); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-06-02 0.2.0](../../../wireframes/SC-06-02-delivery-record-tablet-wireframe.md) — chưa có Figma. Ảnh dưới dựng từ wireframe to-be (khung tablet dọc 1024 × 1366); to-be khác prototype ở [8] (không điền sẵn), [13], [15], [16], [17], C-28.
+**Design:** [Wireframe SC-06-02 0.2.2](../../../wireframes/SC-06-02-delivery-record-tablet-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-06-02.html`](../../../wireframes/html/SC-06-02.html) · mọi biến thể: [`wireframes/png/SC-06-02.png`](../../../wireframes/png/SC-06-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-06-02_prototype-tablet.png`
 
 ![SC-06-02 annotated](./assets/SC-06-02_annotated.png)
 
-Ảnh prototype as-is: `wireframes/assets/SC-06-02_prototype-tablet.png`. Hộp xác nhận của [17] mô tả trong file này (D).
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 11.1 tên người nhận thay (B), C-12 · C-22 (C), 17.1–17.4 hộp xác nhận giao hết (D), C-21 · C-29 (E) → xem biến thể tương ứng trong [`wireframes/png/SC-06-02.png`](../../../wireframes/png/SC-06-02.png) / PDF.
+> - [14] ở biến thể A vẽ dạng giữ chỗ để đặt số; màn thật chỉ hiện khi đã nhập số lượng [8] (mục 4).
 
 ---
 

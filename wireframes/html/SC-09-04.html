@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-09-04 奨励金計算・期ロック — wireframe</title>
+<!-- Source: wireframes/SC-09-04-incentive-calc-period-lock-wireframe.md (0.2.2) + specs/incentive/screen-specification/SC-09-04_SPEC.md (0.1.1).
+     Before lock only 試算 (not recorded, any number of times); 期ロック = official calculation + freeze in one transaction.
+     No 12 (計算して記録) was removed — number kept, not shown. Amounts: goods tax 8%; incentive = floor(適格金額 × 交付率 × 110/100) (INC_ENGINE_TECH).
+     Badge numbers = item No / spec ID. Do not renumber. Sample data is fictional. -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-09-04</span>奨励金計算・期ロック<span class="code">SC09_04_INCENTIVE_CALC_PERIOD_LOCK</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">照合部門長が ① 入金がどの期に充当されたかを確認し、要確認を判断 → ② 期ロック（正式計算と確定を同時に行う）。期ロック前は<b>試算だけ</b>（記録しない・何度でも可）。期ロック後の差は次の期ロックで差額として計上する。完納奨励金 = 適格金額（税抜）× 交付率 × 110/100（切り捨て）。</div>
+
+  <!-- ===== A: main ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 A — ① 入金の割当・要確認（試算済み）：要確認 1件が未判断・入金CSV未チェックのため期ロックは押せない</div>
+    <div class="browser" data-url="/periods/2027-08/incentive-lock" data-crumb="ホーム › 入金・奨励金 › 奨励金計算・期ロック" data-user="照合部門長 桜 七子" data-day="2027/09/13(月)"
+         data-menu="ホーム|入金・奨励金:入金CSV取込,取引先コード対応表,期別お支払額・入金状況,奨励金計算・期ロック*,奨励金明細|照合・締め:日次照合表,日次締め">
+      <div class="main">
+        <div class="page-title">奨励金計算・期ロック <b class="n c">C-9</b><span class="tools"><span class="btn">入金状況へ</span><b class="n c">C-10</b></span></div>
+        <div class="row"><b>対象期 2027-08</b>（2027/08/01〜08/31、業務日基準）　<b>支払期日 2027/09/10(金)</b><span class="hint">（翌月10日・銀行休業日は前銀行営業日）</span><b class="n">1</b>
+          <span style="margin-left:18px">適用規則版 <b>第3版</b></span><b class="n">2</b></div>
+        <div class="row mt"><span class="steps"><span class="st on">① 入金の割当・要確認 ●</span><span class="st">② 期ロック（正式計算）○</span></span><b class="n">3</b><span class="hint">要確認 1件の判断が必要です</span></div>
+
+        <div class="card mt">
+          <div class="card-title">① 入金の割当（どの期に充当したか） <b class="n">4</b></div>
+          <table class="tbl">
+            <tr><th>買受人</th><th class="num">期のお支払額</th><th class="num">期日内入金</th><th>充当先の内訳</th><th>完納</th><th>注意</th></tr>
+            <tr><td class="mono">N01</td><td class="num">¥1,080,000</td><td class="num">¥1,080,000</td><td>2027-08: ¥1,080,000</td><td>○</td><td></td></tr>
+            <tr><td class="mono">B07</td><td class="num">¥54,000</td><td class="num">¥66,000</td><td>2027-07: ¥12,000（FIFO）／ 08: ¥54,000</td><td>○</td><td><span class="chip dash">⚠ 旧期充当</span><b class="n">5</b></td></tr>
+            <tr class="hl"><td class="mono">B11</td><td class="num">¥324,000</td><td class="num">¥323,560</td><td>2027-08: ¥323,560</td><td>要確認</td><td><span class="btn link">手数料差引の疑い</span><b class="n">14</b></td></tr>
+          </table>
+          <div class="hint mt">請求番号なし → FIFO で充当（E-02 回答後に変更） <b class="n">6</b></div>
+          <div class="mt">前期以前の調整（期ロック済の期に属する訂正）：N04 2027-07期（移行期）−¥41,040 → 下の差額へ <b class="n">15</b></div>
+          <div>前期分の後入力（この期の支払額に含む）：B12 取引日 07/30 ¥200,000 <b class="n">18</b></div>
+          <div class="row mt" style="border-top:1px solid #ddd;padding-top:6px"><span class="cb">支払期日分までの入金CSV取込済</span><b class="n">17</b><span class="hint">最新の入金日 2027/09/10（取込 09/13 08:40）・完納は銀行の入金日で判定</span></div>
+        </div>
+
+        <div class="card mt">
+          <div class="card-title">試算結果（記録されません — 最終 14:05 実行） <b class="n">7</b></div>
+          <div class="row"><div class="tabs"><span class="tab on">仲卸 交付率表</span><span class="tab">売買参加者 交付率表</span></div><b class="n">8</b></div>
+          <table class="tbl">
+            <tr><th>買受人</th><th>種別</th><th class="num">適格金額(税抜)</th><th class="num">段階</th><th class="num">交付率</th><th class="num">奨励金</th><th>区分</th><th>参照期</th><th>版</th></tr>
+            <tr><td class="mono">N01</td><td>仲卸</td><td class="num">¥1,000,000</td><td class="num">3</td><td class="num">0.9%</td><td class="num">¥9,900</td><td>本計算</td><td>—</td><td>第3版</td></tr>
+            <tr><td class="mono">N04</td><td>仲卸</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">−¥1,320</td><td>差額</td><td>2027-07</td><td>稼働時の版（移行期）</td></tr>
+          </table>
+          <div class="mt">端数調整行：+¥2（税率別合計との差） <b class="n">9</b></div>
+          <div>負の差額の繰越：N04 −¥1,320 → 2027-09期以降の奨励金から差引（年度末 2028-03期まで） <b class="n">10</b></div>
+          <div>前回の試算（13:40）との差：合計 −¥1,320（N04 差額が増加） <b class="n">16</b></div>
+        </div>
+
+        <div class="row mt"><span class="btn">試算（記録しない・何度でも可）</span><b class="n">11</b>
+          <span class="btn primary off">期ロック（正式計算・確定）</span><b class="n">13</b>
+          <span class="hint">要確認 1件の判断と入金CSVの取込確認が必要です ／ 期ロック → 確認（C-31）→ 本人確認（C-30、毎回）</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B: judgement open, ready to lock ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 B — 「手数料差引の疑い」を照合部門長が判断（機械は結論を出さない・既定は非完納）、入金CSVにチェック → ② 期ロックへ</div>
+    <div class="browser" data-url="/periods/2027-08/incentive-lock" data-crumb="ホーム › 入金・奨励金 › 奨励金計算・期ロック" data-user="照合部門長 桜 七子" data-day="2027/09/13(月)"
+         data-menu="ホーム|入金・奨励金:入金CSV取込,取引先コード対応表,期別お支払額・入金状況,奨励金計算・期ロック*,奨励金明細|照合・締め:日次照合表,日次締め">
+      <div class="main">
+        <div class="page-title">奨励金計算・期ロック<span class="tools"><span class="btn">入金状況へ</span></span></div>
+        <div class="row"><span class="steps"><span class="st">① 入金の割当・要確認 ✓</span><span class="st on">② 期ロック（正式計算）●</span></span><b class="n">3</b></div>
+        <div class="card mt">
+          <table class="tbl">
+            <tr><th>買受人</th><th class="num">期のお支払額</th><th class="num">期日内入金</th><th>充当先の内訳</th><th>完納</th><th>注意</th></tr>
+            <tr class="hl"><td class="mono">B11</td><td class="num">¥324,000</td><td class="num">¥323,560</td><td>2027-08: ¥323,560</td><td>✖（判断）</td><td>手数料差引の疑い <b class="n">14</b></td></tr>
+          </table>
+          <div class="judge">
+            <div><b>判断</b>（不足額 ¥440・判定基準（設定値）以下・期日内の入金あり）</div>
+            <div class="mt"><span class="rb">完納とする</span><span class="rb on">非完納とする</span><span class="hint">振込手数料は買受人負担（既定は非完納）</span></div>
+            <div class="field mt" style="grid-template-columns:70px 1fr"><label>判断理由</label><div><span class="input w-l">振込手数料の差引のため（規程どおり買受人負担）サンプル</span><span class="sub hint">500文字以内・期ロック時に結果へ記録（判断）</span></div></div>
+          </div>
+          <div class="row"><span class="cb on">支払期日分までの入金CSV取込済</span><b class="n">17</b><span class="hint">最新の入金日 2027/09/10（取込 09/13 08:40）</span></div>
+        </div>
+        <div class="row mt"><span class="btn">試算（記録しない・何度でも可）</span><b class="n">11</b><span class="btn primary">期ロック（正式計算・確定）</span><b class="n">13</b><span class="hint">判断を変えたら試算し直してから期ロック</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== C + D: confirm + MFA ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 C — 期ロックの確認（ロック後は直接修正不可・差額は次期）</div>
+      <div class="overlay">
+        <div class="ghost">奨励金計算・期ロック（背景）— 2027-08期 ／ 試算 14:05</div>
+        <div class="dialog">
+          <div class="dialog-title">2027-08期を期ロックします <b class="n c">C-31</b></div>
+          <div>期ロックすると、この期の奨励金が確定し、直接修正できません。差額は次の期ロックで計上されます。</div>
+          <div class="kv mt"><span>本計算</span><b>4件 合計 ¥9,900</b><span>差額</span><b>1件 合計 −¥1,320</b><span>要確認の判断</span><span>B11 非完納（判断）</span></div>
+          <div class="mt"><span class="cb on">注意事項 1 件を確認しました</span><span class="hint">（B07 旧期充当）</span></div>
+          <div class="dialog-foot"><span class="btn">戻る</span><span class="btn primary">期ロックする</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 D — 本人確認（期ロックは元に戻せないため毎回コード入力）</div>
+      <div class="overlay">
+        <div class="ghost">期ロックの確認（背景）— 期ロックする</div>
+        <div class="dialog" style="width:420px">
+          <div class="dialog-title">この操作の前に本人確認を行います <b class="n c">C-30</b></div>
+          <div class="row"><span>確認コード</span><span class="input w-s mono focus">______</span><span class="hint">6桁</span></div>
+          <div class="hint">期ロックは元に戻せない操作のため、10 分以内でも毎回入力します。5 回間違えると一時ロック</div>
+          <div class="dialog-foot"><span class="btn">キャンセル</span><span class="btn primary">確認</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== E: locked ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 E — 期ロック済み（読み取り専用）：確定結果を表示。試算・期ロック・判断は表示しない。訂正は修正申請 → 次の期ロックで差額</div>
+    <div class="browser" data-url="/periods/2027-08/incentive-lock" data-crumb="ホーム › 入金・奨励金 › 奨励金計算・期ロック" data-user="照合部門長 桜 七子" data-day="2027/09/14(火)"
+         data-menu="ホーム|入金・奨励金:入金CSV取込,取引先コード対応表,期別お支払額・入金状況,奨励金計算・期ロック*,奨励金明細|照合・締め:日次照合表,日次締め">
+      <div class="main">
+        <div class="toast">2027-08期を期ロックしました（本計算 4 件・差額 1 件） <b class="n c">C-12</b></div>
+        <div class="alert solid"><b class="h">この期は期ロック済みです。訂正は修正申請で行い、差額は次の期ロックで計上されます。</b><b class="n c">C-24</b><span class="btn sm">修正申請を作成 → SC-08-01</span></div>
+        <div class="page-title">奨励金計算・期ロック <span class="chip">読み取り専用</span><span class="tools"><span class="btn">奨励金明細へ</span><b class="n c">C-10</b></span></div>
+        <div class="row"><b>対象期 2027-08</b>　支払期日 2027/09/10(金)<b class="n">1</b><span style="margin-left:18px">適用規則版 第3版</span><b class="n">2</b></div>
+        <div class="card mt">
+          <div class="card-title">確定結果（期ロック 桜 七子 09/14 10:20） <b class="n">7</b></div>
+          <div class="row"><div class="tabs"><span class="tab">仲卸 交付率表</span><span class="tab on">売買参加者 交付率表</span></div><b class="n">8</b></div>
+          <table class="tbl">
+            <tr><th>買受人</th><th>種別</th><th class="num">適格金額(税抜)</th><th class="num">段階</th><th class="num">交付率</th><th class="num">奨励金</th><th>区分</th><th>参照期</th><th>版</th></tr>
+            <tr><td class="mono">B07</td><td>売買参加者</td><td class="num">¥50,000</td><td class="num">1</td><td class="num">0.0%</td><td class="num">¥0</td><td>本計算</td><td>—</td><td>第3版</td></tr>
+            <tr><td class="mono">B11</td><td>売買参加者</td><td class="num">¥0</td><td class="num">1</td><td class="num">0.0%</td><td class="num">¥0</td><td>本計算（非完納・判断）</td><td>—</td><td>第3版</td></tr>
+            <tr><td class="mono">B12</td><td>売買参加者</td><td class="num">¥200,000</td><td class="num">1</td><td class="num">0.0%</td><td class="num">¥0</td><td>本計算</td><td>—</td><td>第3版</td></tr>
+          </table>
+          <div class="mt">端数調整行：+¥2 <b class="n">9</b>　／　負の差額の繰越：N04 −¥1,320 → 2027-09期以降 <b class="n">10</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== F: SETTLE view ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 F — 照合事務局で表示：試算はできるが、要確認の判断・入金CSVのチェック・期ロックは表示しない</div>
+    <div class="browser" data-url="/periods/2027-08/incentive-lock" data-crumb="ホーム › 入金・奨励金 › 奨励金計算・期ロック" data-user="照合事務局 桜 三郎" data-day="2027/09/13(月)"
+         data-menu="ホーム|入金・奨励金:入金CSV取込,取引先コード対応表,期別お支払額・入金状況,奨励金計算・期ロック*,奨励金明細">
+      <div class="main">
+        <div class="page-title">奨励金計算・期ロック <span class="chip">閲覧・試算のみ</span></div>
+        <div class="card" style="max-width:900px">
+          <table class="tbl">
+            <tr><th>買受人</th><th class="num">期のお支払額</th><th class="num">期日内入金</th><th>完納</th><th>注意</th></tr>
+            <tr class="hl"><td class="mono">B11</td><td class="num">¥324,000</td><td class="num">¥323,560</td><td>要確認</td><td>手数料差引の疑い — 照合部門長の判断待ち <b class="n">14</b></td></tr>
+          </table>
+          <div class="row mt"><span>入金CSV取込確認：未チェック（照合部門長が確認）</span><b class="n">17</b><span class="hint">最新の入金日 2027/09/10（取込 09/13 08:40）</span></div>
+        </div>
+        <div class="row mt"><span class="btn">試算（記録しない・何度でも可）</span><b class="n">11</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

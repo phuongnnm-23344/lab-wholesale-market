@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-03-05 目利き・下見結果入力 — wireframe</title>
+<!-- Source: wireframes/SC-03-05-mekiki-inspection-result-entry-wireframe.md (0.2.0) + specs/lot/screen-specification/SC-03-05_SPEC.md.
+     Badge numbers = item No / spec ID. Do not renumber. Sample data is fictional.
+     The system never grades, never suggests a grade, no OCR/AI (CAP-HUMAN-01, SCOPE-OUT-01/02). -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-03-05</span>目利き・下見結果入力<span class="code">SC03_05_MEKIKI_INSPECTION_RESULT_ENTRY</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">等級・鮮度は目利き担当者が判断して入力する（システムは判定しない・等級の候補も出さない）。選んだ複数ロットに同じ結果を記録し、ロットごとに1行ずつ保存する。前回の記録は消えず履歴に残る。PC とタブレットの2つの配置。</div>
+
+  <!-- ===== A: main (PC) ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 A — 3件を選択、等級 A を選択中（取引ありのロットを含むため再記録理由が必須）</div>
+    <div class="browser" data-url="/lots/inspection" data-crumb="ホーム › ロット › 目利き・下見結果入力" data-user="目利き担当 桜 二郎"
+         data-menu="ホーム|ロット:目利き・下見結果入力*,ロット一覧">
+      <div class="main">
+        <div class="page-title">目利き・下見結果入力</div>
+        <div class="banner">等級・鮮度は担当者が判断して入力します（システムは判定しません）<b class="n">1</b></div>
+        <div class="row">絞込 <b class="n">2</b>
+          品目 <span class="select">全て</span> 出荷者/船 <span class="select">全て</span> 状態 <span class="select">全て</span><span class="hint">（初期値は未下見）</span>
+          <span style="margin-left:auto"><b>選択中 3件</b><b class="n">3</b></span></div>
+        <div class="card mt">
+          <div class="card-title">ロット <b class="n">4</b></div>
+          <table class="tbl">
+            <tr><th>☐</th><th>ロット番号</th><th>出荷者</th><th>品目</th><th class="num">数量</th><th>状態</th><th>前回の記録</th></tr>
+            <tr class="hl"><td>☑</td><td>L20270802-3</td><td>サンプル第一丸</td><td>真鯛</td><td class="num">118.0kg</td><td>受付済</td><td>—</td></tr>
+            <tr class="hl"><td>☑</td><td>L20270802-4</td><td>サンプル第一丸</td><td>真鯛</td><td class="num">95.0kg</td><td>受付済</td><td>—</td></tr>
+            <tr><td>☐</td><td>L20270802-6</td><td>サンプル第三丸</td><td>鯖</td><td class="num">40箱</td><td>受付済</td><td>—</td></tr>
+            <tr class="hl"><td>☑</td><td>L20270802-7</td><td>サンプル第二丸</td><td>鰤</td><td class="num">60.0kg</td><td>下見済 <span class="chip">取引あり</span></td><td>B / 桜 二郎 03:10</td></tr>
+          </table>
+        </div>
+        <div class="card mt">
+          <div class="card-title">結果入力（選択した 3件に同じ内容を記録） <b class="n">5</b></div>
+          <div class="field"><label>等級 <b class="n">6</b></label>
+            <div class="row"><span class="grade on">A</span><span class="grade">B</span><span class="grade">C</span><span class="grade">規格外</span>
+              <span class="hint">初期値なし（担当者が選ぶ）</span></div></div>
+          <div class="field"><label>所見 <b class="n">7</b></label>
+            <div><span class="input w-l">色つや良好、身締まりやや弱い</span></div><div class="sub hint">200文字以内</div></div>
+          <div class="field"><label>確認者 <b class="n">8</b></label>
+            <div class="row"><span class="input w-s mono">1042</span> → 桜 六郎<span class="hint">任意。二人で確認した場合</span></div></div>
+          <div class="field"><label>再記録理由 <b class="n">9</b></label>
+            <div><span class="input w-l focus">サンプル：再検品で身質の変化を確認</span></div>
+            <div class="sub hint">取引済ロット（L20270802-7）を含むため必須。前回の記録は消えません</div></div>
+          <div class="row mt"><span class="btn primary">記録する（3件）</span><b class="n">10</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B + C: confirm dialog / after record ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 B — 記録前の確認：記録するロット番号と等級を全部表示（押し間違い防止）</div>
+      <div class="overlay">
+        <div class="ghost">結果入力（背景）— 選択中 3件 ／ 等級 A</div>
+        <div class="dialog" style="width:470px">
+          <div class="dialog-title">記録前の確認 <b class="n">11</b></div>
+          <div>L20270802-3, L20270802-4, L20270802-7 に <b>A</b> を記録します</div>
+          <div class="hint">10件を超える場合は一覧をスクロールして確認</div>
+          <div class="dialog-foot"><span class="btn primary">記録する</span><span class="btn">戻る</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 C — 記録直後：選択と等級はクリア（次の記録に持ち越さない）</div>
+      <div class="card">
+        <div class="toast">目利き記録：3件（A）記録者 桜 二郎 03:25<b class="n c">C-12</b></div>
+        <div class="row"><b>選択中 0件</b><b class="n">3</b></div>
+        <table class="tbl mt">
+          <tr><th>☐</th><th>ロット番号</th><th>品目</th><th>状態</th><th>前回の記録</th></tr>
+          <tr><td>☐</td><td>L20270802-6</td><td>鯖</td><td>受付済</td><td>—</td></tr>
+          <tr><td>☐</td><td>L20270802-8</td><td>烏賊</td><td>受付済</td><td>—</td></tr>
+        </table>
+        <div class="row mt"><span class="grade">A</span><span class="grade">B</span><span class="grade">C</span><span class="grade">規格外</span><b class="n">6</b></div>
+        <div class="row mt"><span class="btn primary off">記録する</span><b class="n">10</b><span class="hint">ロットを選択してください</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== D: tablet ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 D — タブレット配置：行のどこを触っても選択／解除、等級ボタンは大きく</div>
+      <div class="tablet"><div class="tablet-screen">
+        <div class="tablet-head"><span class="btn">ホーム</span><b class="n c">C-13</b><span>業務日 2027/08/02</span><span class="chip">● オンライン</span><b style="margin-left:auto">目利き担当 桜 二郎</b></div>
+        <div class="main">
+          <div class="banner" style="font-size:14px">等級・鮮度は担当者が判断して入力します（システムは判定しません）<b class="n">1</b></div>
+          <div class="row"><b>選択中 2件</b><b class="n">3</b></div>
+          <table class="tbl mt">
+            <tr><th>ロット番号</th><th>品目</th><th class="num">数量</th><th>前回</th></tr>
+            <tr class="hl"><td>☑ L20270802-3</td><td>真鯛</td><td class="num">118.0kg</td><td>—</td></tr>
+            <tr class="hl"><td>☑ L20270802-4</td><td>真鯛</td><td class="num">95.0kg</td><td>—</td></tr>
+            <tr><td>☐ L20270802-6</td><td>鯖</td><td class="num">40箱</td><td>—</td></tr>
+          </table>
+          <div class="hint">行全体が選択範囲 <b class="n">4</b></div>
+          <div class="mt"><b>等級</b> <b class="n">6</b></div>
+          <div class="row"><span class="grade">A</span><span class="grade on">B</span><span class="grade">C</span><span class="grade">規格外</span></div>
+          <div class="row mt"><span class="btn primary" style="font-size:18px;padding:12px 28px">記録する（2件）</span><b class="n">10</b></div>
+        </div>
+      </div></div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 E — 通信断（C-28）：選んだロットと等級は保持、記録は復旧後（その間は紙に記録）</div>
+      <div class="card">
+        <div class="banner">オフライン — 通信が回復するまで記録できません<b class="n c">C-28</b></div>
+        <div class="row"><b>選択中 2件</b><b class="n">3</b><span class="hint">選択は保持</span></div>
+        <div class="row mt"><span class="grade">A</span><span class="grade on">B</span><span class="grade">C</span><span class="grade">規格外</span><b class="n">6</b></div>
+        <div class="row mt"><span class="btn primary off">記録する（2件）</span><b class="n">10</b><span class="hint">通信が回復するまで記録できません</span></div>
+        <div class="hint mt">復旧すると（C-29）そのまま押して保存できます。</div>
+      </div>
+      <div class="variant-label mt"><span class="dev">PC</span>主画面 F — 対象ロットなし（C-21）</div>
+      <div class="card">
+        <div class="empty">下見対象のロットはありません<b class="n c">C-21</b><div class="hint">絞込の状態を「全て」にすると下見済のロットも表示します</div></div>
+      </div>
+      <div class="variant-label mt"><span class="dev">PC</span>主画面 G — 記録中に状態が変わったロット（409・C-23）：どのロットも記録しない</div>
+      <div class="card">
+        <div class="alert"><b class="h">ロット L20270802-4 は下見を記録できない状態です（引渡し完了）</b><b class="n c">C-23</b>
+          <div class="hint">一覧を読み込み直しました。等級と所見は残しています。</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

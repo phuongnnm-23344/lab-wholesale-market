@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-06-05 争いのある引渡し完了確認 — wireframe</title>
+<!-- Source: wireframes/SC-06-05-disputed-delivery-completion-confirm-wireframe.md (0.2.0) + specs/delivery/screen-specification/SC-06-05_SPEC.md (0.1.1).
+     Badge numbers = item No / spec ID. Do not renumber. Sample data is fictional. -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-06-05</span>争いのある引渡し完了確認<span class="code">SC06_05_DISPUTED_DELIVERY_COMPLETION_CONFIRM</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">争いのある引渡しを、配送部門責任者が人の判断で結論づける（システムは結論を出さない）。自分が記録した引渡し・例外は確認できない。確認の前に本人確認（MFA）。紙の確認票から後入力したものは、原則として紙に署名した責任者が確認する。通信断の間は確認できない（紙の確認票に署名）。</div>
+
+  <!-- ===== A: PC, signer confirms ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 A — 紙に署名した責任者本人が確認：結論「一部返品として完了」（金額への影響を表示）</div>
+    <div class="browser" data-url="/deliveries/disputes" data-crumb="ホーム › 引渡し › 争いのある引渡し完了確認" data-user="配送部門責任者 桜 十郎"
+         data-menu="ホーム|引渡し:引渡し状況,引渡し記録,引渡し例外登録,争いのある引渡し完了確認*">
+      <div class="main">
+        <div class="page-title">争いのある引渡し完了確認 <b class="n c">C-9</b></div>
+        <div class="row" style="margin-bottom:6px"><b>確認待ち（3件）</b><b class="n">1</b><span class="muted">絞込：</span><span class="chip dark">自分が確認できるもの</span><span class="chip">すべて</span></div>
+        <table class="tbl">
+          <tr><th>受付時刻</th><th>取引</th><th>買受人</th><th>内容</th><th>記録者</th><th>入力方法</th><th>SLA残</th></tr>
+          <tr class="hl"><td>▶ 07:20</td><td>相対-0005</td><td>N01</td><td>鮮度不良の申し出</td><td>桜 次郎</td><td>紙→後入力 D-000123</td><td>3h10m</td></tr>
+          <tr><td>08:02</td><td>せり-0302</td><td>B07</td><td>数量の相違</td><td>桜 三郎</td><td>現場</td><td>2日 4h</td></tr>
+          <tr><td>2027/07/28</td><td>相対-0042</td><td>N05</td><td>箱数の相違</td><td>桜 次郎</td><td>現場</td><td><b>SLA超過</b></td></tr>
+        </table>
+        <div class="card mt">
+          <div class="card-title">相対-0005 の詳細 <b class="n">2</b></div>
+          <div class="grid2">
+            <div>
+              <div class="kv" style="margin-bottom:6px">
+                <span>数量 <b class="n">3</b></span><b>確定 30.0kg ／ 引渡済 12.0kg ／ 例外 2.0kg</b>
+                <span>申し出内容 <b class="n">4</b></span><span>「一部の鰹に身割れがある」（サンプル）</span>
+                <span>紙の確認票 <b class="n">5</b></span><b>D-000123：紙で確認 07:05（署名：桜 十郎）／ 入力 09:12（桜 次郎）</b>
+              </div>
+              <div class="row"><span class="btn sm">スキャンを表示（確認票スキャン.pdf）</span><b class="n">6</b><span class="hint">署名の照合用。開いたことを記録</span></div>
+              <div class="field mt"><label>結論 <b class="n">7</b></label>
+                <div class="row"><span class="chip">引渡し完了とする</span><span class="chip dark">一部返品として完了</span><span class="chip">継続協議 → 紛争へ</span></div></div>
+              <div class="field"><label>返品数量 <b class="n">11.1</b></label><div class="row"><span class="input w-s num">2.0</span>kg<span class="hint">例外の数量を初期表示・上限 引渡済 12.0kg</span></div></div>
+              <div class="field"><label>コメント <b class="n">8</b></label><div><span class="input w-l"><span class="ph">継続協議のときは必須（500文字以内）</span></span></div></div>
+            </div>
+            <div>
+              <div class="alert">
+                <b>金額への影響 <b class="n">11</b></b>
+                <div style="font-size:15px;font-weight:700">−¥5,400</div>
+                <div>業務日 未締め：照合の「要確認」に表示 ／ 締め済：修正申請</div>
+                <div class="hint">この取引の業務日 2027/08/02 は未締め → 要確認へ（日次締めチェック SC-07-02 に表示）</div>
+              </div>
+              <div class="row mt"><span class="btn primary">確認する</span><b class="n">9</b><span class="hint">→ 確定の確認 <b class="n c">C-31</b> → 本人確認 <b class="n c">C-30</b></span></div>
+              <div class="row mt"><span class="btn link">紛争詳細 → SC-07-04</span><b class="n">10</b></div>
+              <div class="hint mt">「確認する」は紙に署名した本人（または署名者に代わる責任者）だけに表示。自分が記録した行では表示しません。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B: PC, another DEL-HEAD (signer absent) ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 B — 署名者が不在（休み・交代）：別の配送部門責任者が理由を書き、スキャンを開いてから確認</div>
+    <div class="browser" data-url="/deliveries/disputes" data-crumb="ホーム › 引渡し › 争いのある引渡し完了確認" data-user="配送部門責任者 桜 五郎"
+         data-menu="ホーム|引渡し:引渡し状況,引渡し記録,引渡し例外登録,争いのある引渡し完了確認*">
+      <div class="main">
+        <div class="page-title">争いのある引渡し完了確認</div>
+        <div class="card">
+          <div class="card-title">相対-0005 の詳細 <b class="n">2</b></div>
+          <div class="kv"><span>紙の確認票 <b class="n">5</b></span><b>D-000123：紙で確認 07:05（署名：桜 十郎）／ 入力 09:12（桜 次郎）</b></div>
+          <div class="banner mt" style="font-weight:400">紙で署名した <b>桜 十郎</b> が確認する予定です</div>
+          <div class="row"><span class="btn sm">スキャンを表示（確認票スキャン.pdf）</span><b class="n">6</b><span class="chip dash">未表示</span></div>
+          <div class="field mt"><label>結論 <b class="n">7</b></label><div class="row"><span class="chip dark">引渡し完了とする</span><span class="chip">一部返品として完了</span><span class="chip">継続協議 → 紛争へ</span></div></div>
+          <div class="field"><label>代わって確認する理由 <b class="n">8.1</b></label><div><span class="input w-l">サンプル：桜 十郎 は本日休み。スキャンの署名を確認</span><div class="hint">必須・200文字以内。監査ログに「紙の署名者に代わって確認」と記録</div></div></div>
+          <div class="row mt"><span class="btn primary off">署名者に代わって確認する</span><b class="n">9</b><span class="hint">スキャン <b class="n">6</b> を開くまで押せません</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== C: C-31 + C-30 ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 C — 確定の確認（取り消せないことを文章で）</div>
+      <div class="overlay">
+        <div class="ghost">争いのある引渡し完了確認（背景）— 相対-0005 ／ 一部返品として完了 2.0kg</div>
+        <div class="dialog" style="width:500px">
+          <div class="dialog-title">この争いを「一部返品として完了」として確定します <b class="n c">C-31</b></div>
+          <div class="kv"><span>取引</span><span>相対-0005 鰹（N01 サンプル仲卸1）</span><span>返品数量</span><span>2.0kg</span><span>金額</span><span>−¥5,400 → 照合の「要確認」</span></div>
+          <div class="mt"><b>確定後は取り消せません。</b></div>
+          <div class="dialog-foot"><span class="btn">戻る</span><span class="btn primary">確定する</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 D — 本人確認（MFA）：大きなテンキーで 6 桁</div>
+      <div class="overlay">
+        <div class="ghost">争いのある引渡し完了確認（背景・タブレット）</div>
+        <div class="dialog" style="width:430px">
+          <div class="dialog-title" style="font-size:17px">この操作の前に本人確認を行います <b class="n c">C-30</b></div>
+          <div class="t-row"><span class="t-in" style="min-width:220px;letter-spacing:6px">4 8 1 ▢ ▢ ▢</span></div>
+          <div class="t-pad" style="margin:0 0 8px;justify-content:center"><span>7</span><span>8</span><span>9</span><span>4</span><span>5</span><span>6</span><span>1</span><span>2</span><span>3</span><span>C</span><span>0</span><span>←</span></div>
+          <div class="hint">確認後 10 分間、同じ利用者・同じ端末では再入力不要です（3 分操作がないと無効）</div>
+          <div class="dialog-foot"><span class="t-btn">キャンセル</span><span class="t-btn on">確認</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== E + F ===== -->
+  <div class="variant">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 E — 確認後（閲覧のみ・3 つの時刻）と、絞込「すべて」での自分の記録</div>
+      <div class="browser" data-url="/deliveries/disputes" data-crumb="ホーム › 引渡し › 争いのある引渡し完了確認" data-user="配送部門責任者 桜 十郎"
+         data-menu="ホーム|引渡し:引渡し状況,引渡し記録,引渡し例外登録,争いのある引渡し完了確認*">
+        <div class="main">
+          <div class="toast">確認しました：相対-0005（一部返品として完了） <b class="n c">C-12</b></div>
+          <div class="kv"><span>記録</span><b>紙で確認 07:05 ／ 入力 09:12 ／ システム確認 09:20（桜 十郎、MFA済）</b></div>
+          <div class="row mt" style="margin-bottom:4px"><b>確認待ち（3件）</b><b class="n">1</b><span class="chip">自分が確認できるもの</span><span class="chip dark">すべて</span></div>
+          <table class="tbl">
+            <tr><th>取引</th><th>記録者</th><th>状態</th></tr>
+            <tr><td>せり-0302</td><td>桜 三郎</td><td>確認待ち</td></tr>
+            <tr class="hl"><td>相対-0077</td><td>桜 十郎</td><td>自分の記録のため確認できません</td></tr>
+          </table>
+          <div class="hint">自分の記録の行は結論・確認ボタン（<b class="n">7</b> <b class="n">9</b>）を表示しません。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="variant">
+    <div>
+      <div class="variant-label"><span class="dev">タブレット</span>主画面 F — オフライン：確認できない（紙の確認票に署名）</div>
+      <div class="tablet half"><div class="tablet-screen">
+        <div class="t-head"><span class="t-btn">ホーム</span><span>業務日 2027/08/02(月)</span><span class="chip dark">● オフライン</span><span class="right"><b>配送部門責任者 桜 十郎</b></span></div>
+        <div class="t-off">オフライン — 未同期 0件（最終同期 07:12） <b class="n c">C-28</b></div>
+        <div class="main">
+          <div class="alert solid" style="font-size:15px">通信断中は確認できません。紙の確認票に署名してください。</div>
+          <div class="muted" style="font-size:14px">確認待ち（07:12 時点・閲覧のみ）</div>
+          <table class="t-tbl"><tr><td>相対-0005 N01</td><td>鮮度不良の申し出</td></tr><tr><td>せり-0302 B07</td><td>数量の相違</td></tr></table>
+          <div class="t-row mt"><span class="t-btn xl off" style="min-width:200px">確認する</span><b class="n">9</b></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

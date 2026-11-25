@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-09-04
 feature: incentive
 feature_id: INC
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-09-04, SPEC-INC_ENGINE-001, SPEC-INC_FUNC-001, SPEC-INC_API-001, SPEC-INC_API-002, SPEC-INC_API-003, SPEC-INC_API-004, ADR-007, ADR-002, FT-09-06, FT-09-07, FT-09-08, FT-09-10, BR-INC-01, FR-INC-01, FR-INC-03, PRM-040, PRM-042, PRM-043, PRM-053, PRM-055, OPEN-L4-02, E-02]
@@ -23,17 +23,18 @@ related: [WF-SC-09-04, SPEC-INC_ENGINE-001, SPEC-INC_FUNC-001, SPEC-INC_API-001,
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe SC-09-04 0.2.1 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-INC-01/02: item [17] tick 「支払期日分までの入金CSV取込済」, [18] 前期分の後入力; validation, mapping, vai, E-INC-014; ảnh annotated dựng lại | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-09-04.html` (WF 0.2.3); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-09-04 0.2.1](../../../wireframes/SC-09-04-incentive-calc-period-lock-wireframe.md) (to-be) · ảnh as-is prototype: [`SC-09-04_prototype.png`](../../../wireframes/assets/SC-09-04_prototype.png)
+**Design:** [Wireframe SC-09-04 0.2.3](../../../wireframes/SC-09-04-incentive-calc-period-lock-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-09-04.html`](../../../wireframes/html/SC-09-04.html) · mọi biến thể: [`wireframes/png/SC-09-04.png`](../../../wireframes/png/SC-09-04.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [`SC-09-04_prototype.png`](../../../wireframes/assets/SC-09-04_prototype.png)
 
 ![SC-09-04 annotated](./assets/SC-09-04_annotated.png)
 
-> - Ảnh đánh số **dựng từ wireframe to-be** (script `scripts/render-annotated-screens.py`, nguồn là bảng chữ của wireframe), không từ ảnh prototype: to-be khác prototype nhiều (bảng phân bổ 入金 [4], 2 bảng tỷ lệ [8], bỏ nút 計算して記録 [12], 要確認 [14], 前期以前の調整 [15], so 試算 [16]). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; **No 12 là số bỏ** (giữ số, không dùng lại — quy tắc `_common-layout`).
-> - Chưa có Figma: dự án LAB-4 dùng wireframe Markdown làm thiết kế (PREMISE, mức chi tiết wireframe). Hộp thoại C-31 / C-30 và hộp quyết 要確認 mô tả ngay trong file này.
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: C-31 (C), C-30 (D), C-12 · C-24 (E). Số 12 (bỏ 計算して記録) cố ý không vẽ — giữ số, không hiển thị (mục 4.1) → xem biến thể tương ứng trong [`wireframes/png/SC-09-04.png`](../../../wireframes/png/SC-09-04.png) / PDF.
 
 ---
 

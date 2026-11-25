@@ -2,7 +2,7 @@
 id: WF-SC-09-04
 title: Wireframe SC-09-04 奨励金計算・期ロック
 status: draft
-version: "0.2.2"
+version: "0.2.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-09-06, FT-09-07, FT-09-08, FT-09-10, BR-INC-01, FR-INC-01, FR-INC-03, PRM-040, PRM-042, PRM-043, PRM-053, PRM-055, E-02, OPEN-L4-02, L4-A04, D01, D02, D03, D04, D05, N13, ADR-007, ADR-002]
@@ -23,6 +23,11 @@ related: [FT-09-06, FT-09-07, FT-09-08, FT-09-10, BR-INC-01, FR-INC-01, FR-INC-0
 `/periods/[id]/incentives`, stlhead@, kỳ 2026-11 chưa tính. Có: version áp dụng, 試算 / 計算して記録 / 期ロック, câu 「試算ロジックは簡略化しています」. Ba bước tách (試算 → ghi kết quả khi kỳ còn mở → khóa) là lệch **Sai** N13 của Database Design — to-be bỏ bước giữa.
 
 ## 2. Wireframe to-be
+
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-09-04.html`](html/SC-09-04.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-09-04.png`](png/SC-09-04.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-09-04 wireframe — mọi biến thể](png/SC-09-04.png)
+
 
 Số tiền ví dụ dùng thuế suất **8% (軽減税率, thủy sản tươi)**. Hệ số 110/100 của 奨励金 là quy tắc cố định của BR-INC-01 / 13-06, không theo thuế suất hàng.
 
@@ -110,3 +115,4 @@ STL-HEAD: toàn màn. SETTLE: xem [4], [7], [17] (chỉ đọc), [18], nút [11]
 | 2 | 0.2.0 | Update | Gate 1: bỏ nút 計算して記録, [7] luôn là 試算 trước khóa, 期ロック = tính chính thức + đóng băng (M-02); 支払期日 lùi theo ngày ngân hàng (M-03); ví dụ tiền 8%, thưởng 9.900 (m-07); DELTA không giới hạn năm TC, CARRY_EXPIRED (C-01, m-05); dòng [15] 前期以前の調整 (C-02); 試算 chạy nhiều lần có audit + [16] (khách #6); 手数料差引の疑い = 要確認 (khách #7). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-05: N01 bậc 3; 2027-07 ghi là kỳ migrate, version go-live | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | Khách Q-INC-01/02: thêm [17] tick 入金CSV取込済, [18] 前期分の後入力; [15] chỉ còn điều chỉnh | 2026-11-25 | phuongnnm-23344 |  |
+| 5 | 0.2.3 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-09-04.html`, nhúng `png/SC-09-04.png` | 2026-11-25 | phuongnnm-23344 | |

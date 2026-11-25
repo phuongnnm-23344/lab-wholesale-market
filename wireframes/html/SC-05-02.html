@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-05-02 せり結果確認 — wireframe</title>
+<!-- Source: wireframes/SC-05-02-seri-result-session-confirm-wireframe.md (0.2.2) + specs/trade/screen-specification/SC-05-02_SPEC.md.
+     Badge numbers = item No / spec ID (incl. 5.1 / 5.2). Do not renumber. Sample data is fictional.
+     The system only records results decided on the floor by the せり人; no live auction screen. せり is the minor flow (~10%). -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-05-02</span>せり結果確認<span class="code">SC05_02_SERI_RESULT_SESSION_CONFIRM</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">せり場でせり人が決めた最終結果を、確認者が1回分まとめて確定する（システムは結果を記録するだけ）。確定時に許可（仲卸）／承認（売買参加者）と数量を再確認。参加上限は売買参加者だけ・期ごと・相対＋せり合算で、超えても止めず理由を記録。せりの合計は相対とは別に集計。</div>
+
+  <!-- ===== A: main ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 A — 確認者（入力者とは別の人）：超過理由を入力済み、確定不可の行は取消を選択、チェックを外した行が1件残っている</div>
+    <div class="browser" data-url="/seri-sessions/3/confirm" data-crumb="ホーム › せり › せり結果確認" data-user="取引担当 桜 四郎"
+         data-menu="ホーム|取引:相対取引入力・確定,取引一覧,取引確認票 再発行,紙伝票後入力|せり:せり結果入力,せり結果確認*|ロット:販売公開ロット一覧">
+      <div class="main">
+        <div class="page-title">せり結果確認：第3回（2027/08/02）<b class="n c">C-9</b><span class="tools"><span class="btn sm">回の一覧へ</span><b class="n c">C-10</b></span></div>
+        <div class="row">入力者 桜 三郎（03:40 入力終了） ／ 確認者 <b>桜 四郎（あなた）</b><b class="n">1</b></div>
+        <div class="hint" style="color:#333;font-size:12.5px">せり場で決まった最終結果を確認します。誤りがある行はチェックを外し、入力者に差し戻してください。<b class="n">2</b></div>
+        <div class="card mt">
+          <div class="card-title">結果一覧（12件・選択 10件） <b class="n">3</b></div>
+          <table class="tbl">
+            <tr><th>☑</th><th>No</th><th>ロット</th><th>品目</th><th class="num">数量</th><th class="num">単価</th><th class="num">金額</th><th>買受人</th><th>種別</th><th>資格</th><th>上限</th></tr>
+            <tr><td>☑</td><td>1</td><td>L20270802-21</td><td>鰤</td><td class="num">40.0kg</td><td class="num">¥900</td><td class="num">¥36,000</td><td>N03</td><td>仲卸</td><td>許可 有効</td><td>—</td></tr>
+            <tr><td>☑</td><td>2</td><td>L20270802-22</td><td>鰤</td><td class="num">35.0kg</td><td class="num">¥850</td><td class="num">¥29,750</td><td>B07</td><td>売買参加者</td><td>承認 有効</td><td><b>▲超過</b> → 4</td></tr>
+            <tr class="ng"><td>☐</td><td>3</td><td>L20270802-23</td><td>鯖</td><td class="num">20.0kg</td><td class="num">¥300</td><td class="num">¥6,000</td><td>B11</td><td>売買参加者</td><td>承認 失効</td><td>✖確定不可 <b class="n">5</b></td></tr>
+            <tr class="sub"><td colspan="11">
+              <div>この行は確定できません。番号誤りなら差し戻し、資格なしなら取消を選んでください。</div>
+              <div class="row" style="margin-top:3px"><span class="btn sm">差し戻し（番号誤り）</span><b class="n">5.1</b>
+                <span class="btn sm primary">取消（資格なし・不成立）✓</span><b class="n">5.2</b>
+                <b>取消予定：ロットは販売公開中に戻ります（再せり・相対）</b></div></td></tr>
+            <tr><td>☐</td><td>4</td><td>L20270802-24</td><td>鯖</td><td class="num">25.0kg</td><td class="num">¥320</td><td class="num">¥8,000</td><td>N06</td><td>仲卸</td><td>許可 有効</td><td>—</td></tr>
+            <tr><td colspan="11" class="muted">… 5〜12（8件・すべて選択）</td></tr>
+          </table>
+        </div>
+        <div class="card mt">
+          <div class="card-title">参加上限超過の理由（売買参加者のみ） <b class="n">4</b></div>
+          <div>B07 サンプル売買参加者7：今期上限 ¥3,000,000 ／ 確定済 ¥2,989,440（税込） ／ 本回 ¥32,130（税込）</div>
+          <div class="hint">税抜：確定済 ¥2,768,000 ／ 本回 ¥29,750</div>
+          <div class="row mt">理由 <span class="chip">(1) 事前了承済</span><span class="chip dark">(2) 保証金追加予定</span><span class="chip">(3) その他</span>
+            備考 <span class="input w-m"><span class="ph">「その他」のときは必須</span></span></div>
+          <div class="row mt">☑ この買受人の本回の超過行すべてに同じ理由を適用（各行に記録）<b class="n">6</b></div>
+        </div>
+        <div class="row mt"><b>合計 10件 ¥404,350</b><span class="muted">（相対とは別に集計）</span><b class="n">8</b></div>
+        <div class="row mt"><span class="btn primary off">この回の結果を確定する（10件）</span><b class="n">9</b>
+          <span class="btn">差し戻し（チェックを外した行）</span><b class="n">10</b>
+          <span class="btn">キャンセル</span><b class="n">11</b></div>
+        <div class="hint">確定ボタン：チェックを外した行を先に差し戻してください（No 4）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B: entrant = confirmer ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 B — 入力者本人が確認する場合：理由が必須（照合の要確認とチェックリストに表示）。全行処理済みで確定できる</div>
+    <div class="browser" data-url="/seri-sessions/4/confirm" data-crumb="ホーム › せり › せり結果確認" data-user="取引担当 桜 三郎"
+         data-menu="ホーム|取引:相対取引入力・確定,取引一覧,取引確認票 再発行,紙伝票後入力|せり:せり結果入力,せり結果確認*|ロット:販売公開ロット一覧">
+      <div class="main">
+        <div class="page-title">せり結果確認：第4回（2027/08/02）<span class="tools"><span class="btn sm">回の一覧へ</span></span></div>
+        <div class="row">入力者 桜 三郎（04:10 入力終了） ／ 確認者 <b>桜 三郎（あなた）</b><span class="chip dash">⚠ 入力者本人による確認</span><b class="n">1</b></div>
+        <div class="card mt">
+          <div class="card-title">結果一覧（5件・選択 5件） <b class="n">3</b></div>
+          <table class="tbl">
+            <tr><th>☑</th><th>No</th><th>ロット</th><th>品目</th><th class="num">数量</th><th class="num">単価</th><th class="num">金額</th><th>買受人</th><th>種別</th><th>資格</th><th>上限</th></tr>
+            <tr><td>☑</td><td>1</td><td>L20270802-31</td><td>鯵</td><td class="num">18箱</td><td class="num">¥2,400</td><td class="num">¥43,200</td><td>N01</td><td>仲卸</td><td>許可 有効</td><td>—</td></tr>
+            <tr><td>☑</td><td>2</td><td>L20270802-32</td><td>鯵</td><td class="num">10箱</td><td class="num">¥2,350</td><td class="num">¥23,500</td><td>B03</td><td>売買参加者</td><td>承認 有効</td><td>—</td></tr>
+            <tr><td colspan="11" class="muted">… 3〜5（3件）</td></tr>
+          </table>
+        </div>
+        <div class="field mt" style="grid-template-columns:200px 1fr"><label>入力者本人が確認する理由 <b class="n">7</b></label>
+          <div><span class="input w-l focus">サンプル：早朝で確認者が不在のため</span></div><div class="sub hint">必須・200文字以内</div></div>
+        <div class="row"><b>合計 5件 ¥128,900</b><span class="muted">（相対とは別に集計）</span><b class="n">8</b></div>
+        <div class="row mt"><span class="btn primary">この回の結果を確定する（5件）</span><b class="n">9</b><span class="btn">キャンセル</span><b class="n">11</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== C + D: send-back dialog / confirm dialog ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 C — 差し戻し理由（10 または 5.1 から開く）</div>
+      <div class="overlay">
+        <div class="ghost">結果一覧（背景）— 第3回 ／ No 4 L20270802-24 N06</div>
+        <div class="dialog" style="width:470px">
+          <div class="dialog-title">差し戻し理由 <b class="n">12</b></div>
+          <div>1件を入力者 桜 三郎 に差し戻します</div>
+          <div class="field mt" style="grid-template-columns:60px 1fr"><label>理由</label>
+            <span class="input w-l focus">サンプル：数量がせり原票（24.0kg）と違う</span>
+            <span class="sub hint">必須・200文字以内</span></div>
+          <div class="dialog-foot"><span class="btn primary">差し戻す</span><span class="btn">戻る</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 D — 確定の確認（C-31）：取消予定の行も一緒に表示</div>
+      <div class="overlay">
+        <div class="ghost">結果一覧（背景）— 第3回 ／ 選択 10件（No 4 は差し戻し済）</div>
+        <div class="dialog" style="width:470px">
+          <div class="dialog-title">この回の結果を確定します <b class="n">9</b><b class="n c">C-31</b></div>
+          <div>第3回の結果 10件 ¥404,350 を確定します。確定後の修正は当日訂正（締め後は修正申請）になります。</div>
+          <div class="kv mt"><span>取消</span><span>1件（ロットは販売公開中に戻ります）— No 3 L20270802-23</span></div>
+          <div class="dialog-foot"><span class="btn">戻る</span><span class="btn primary">確定する</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== E: confirmed (read-only) ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 E — 確定直後：トーストに件数・金額と取消した行。確定・取消した行は読み取り専用、差し戻し行は入力者の再提出待ち</div>
+    <div class="browser" data-url="/seri-sessions/3/confirm" data-crumb="ホーム › せり › せり結果確認" data-user="取引担当 桜 四郎"
+         data-menu="ホーム|取引:相対取引入力・確定,取引一覧,取引確認票 再発行,紙伝票後入力|せり:せり結果入力,せり結果確認*|ロット:販売公開ロット一覧">
+      <div class="main">
+        <div class="toast">せり確定：第3回 10件 ¥404,350（取消：せり-0023）<b class="n c">C-12</b></div>
+        <div class="page-title">せり結果確認：第3回（2027/08/02） <span class="chip">確定 10件・差し戻し中 1件</span></div>
+        <div class="row">入力者 桜 三郎 ／ 確認者 桜 四郎<b class="n">1</b></div>
+        <div class="card mt">
+          <div class="card-title">結果一覧（確定 10件・取消 1件・差し戻し中 1件） <b class="n">3</b></div>
+          <table class="tbl">
+            <tr><th>No</th><th>ロット</th><th>品目</th><th class="num">金額</th><th>買受人</th><th>資格</th><th>状態</th></tr>
+            <tr><td>1</td><td>L20270802-21</td><td>鰤</td><td class="num">¥36,000</td><td>N03</td><td>許可 有効</td><td>確定</td></tr>
+            <tr><td>2</td><td>L20270802-22</td><td>鰤</td><td class="num">¥29,750</td><td>B07</td><td>承認 有効</td><td>確定（超過理由：保証金追加予定）</td></tr>
+            <tr><td>3</td><td>L20270802-23</td><td>鯖</td><td class="num">¥6,000</td><td>B11</td><td>承認 失効</td><td>取消（ロットは販売公開中）</td></tr>
+            <tr><td>4</td><td>L20270802-24</td><td>鯖</td><td class="num">¥8,000</td><td>N06</td><td>許可 有効</td><td>差し戻し中（入力者 桜 三郎）</td></tr>
+          </table>
+        </div>
+        <div class="row mt"><b>合計 10件 ¥404,350</b><span class="muted">（相対とは別に集計）</span><b class="n">8</b><span class="hint">差し戻し行は入力者の再提出を待つ。全行の処理後に「確定済（桜 四郎 03:52）」の読み取り専用。修正は当日訂正（SC-04-05）／締め後は修正申請（SC-08-01）</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== F + G: conflict / offline ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 F — 確認中に状態が変わった行（409・C-23）：どの行も記録しない</div>
+      <div class="card">
+        <div class="alert"><b class="h">確認中に状態が変わった行があります（せり-0021）</b><b class="n c">C-23</b>
+          <div class="hint">相対取引が先に確定し、残数量が 12.0kg に変わりました。一覧を読み込み直しました。</div></div>
+        <table class="tbl">
+          <tr class="ng"><td>☐</td><td>1</td><td>L20270802-21</td><td>N03</td><td>許可 有効</td><td>✖確定不可：数量不足 <b class="n">5</b></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 G — 通信断（C-28）：確定・差し戻しはできない。選択と理由は保持</div>
+      <div class="card">
+        <div class="banner">オフライン — 通信が回復するまで確定できません<b class="n c">C-28</b></div>
+        <div class="row"><span class="btn primary off">この回の結果を確定する（10件）</span><b class="n">9</b><span class="btn off">差し戻し</span><b class="n">10</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

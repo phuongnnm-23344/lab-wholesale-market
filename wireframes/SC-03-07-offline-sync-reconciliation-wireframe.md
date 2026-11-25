@@ -2,7 +2,7 @@
 id: WF-SC-03-07
 title: Wireframe SC-03-07 オフライン同期・照合
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-03-06, FT-06-07, NFR-AVL-02, DEC-004, BR-LOT-02, BR-CLOSE-01, L4-A05, M04, ADR-005, ADR-008]
@@ -22,17 +22,23 @@ Không có (M04: prototype chỉ online). Không ảnh.
 
 ## 2. Wireframe to-be
 
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-03-07.html`](html/SC-03-07.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-03-07.png`](png/SC-03-07.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-03-07 wireframe — mọi biến thể](png/SC-03-07.png)
+
+
 ```
 [1] 端末 TAB-03（配送）  最終同期 07:12  未同期 5件 → 送信済 3件 ／ 要判断 2件
 ┌─ [2] 同期結果 ───────────────────────────────────────────────────────────────┐
 │ 記録時刻 種類    対象          内容            記録者   結果                       │
-│ 06:58   引渡し  相対-0005 N01  6kg             桜 次郎  ✔ 反映済                  │
+│ 06:52   引渡し  相対-0020 N03  5箱             桜 次郎  ✔ 反映済                  │
 │ 07:03   引渡し  相対-0011 N01  2箱             桜 次郎  ✔ 反映済                  │
+│ 07:04   引渡し  せり-0302 N01  10kg            桜 次郎  ✔ 反映済                  │
 │ 07:05   引渡し  相対-0005 N01  残り全部(18kg)    桜 次郎  ⚠ 要判断: 残を超える [3]    │
-│ 07:08   仮受付  K-020 鯖 50kg                  桜 一郎  ⚠ 要判断: 重複の疑い K-019  │
+│ 07:08   仮受付  K3-020 鯖 50kg                 桜 一郎  ⚠ 要判断: 重複の疑い K3-019 │
 └──────────────────────────────────────────────────────────────────────────┘
 ┌─ [3] 要判断: 相対-0005 引渡し ─────────────────────────────────────────────────┐
-│ 端末の記録: 残り全部 18kg（07:05）  ／ サーバーの現在: 残 12kg（別端末で 6kg 記録 06:58）│
+│ 端末の記録: 残り全部 18kg（07:05）  ／ サーバーの現在: 残 12kg（別端末 TAB-05 で 6kg 記録 06:58）│
 │ [4] 判断 (12kg に修正して反映) (反映しない) (例外登録へ → SC-06-04)                │
 │ [5] 理由 [                    ]                                               │
 │ [6] [ 判断を確定 ]                                                            │
@@ -45,7 +51,7 @@ Không có (M04: prototype chỉ online). Không ảnh.
 | No | Item | Loại | Quy tắc | Nguồn |
 |---|---|---|---|---|
 | 1 | Tóm tắt máy | Nhãn | Mã máy, giờ đồng bộ cuối, số chưa / đã gửi / cần quyết | ADR-008 |
-| 2 | Danh sách | Bảng | Giữ giờ ghi thật trên máy + người ghi (PIN) | NFR-AVL-02 |
+| 2 | Danh sách | Bảng | Giữ giờ ghi thật trên máy + người ghi (PIN). Số dòng = 未同期 của [1] (vd 5 = 3 送信済 + 2 要判断). 仮番号 theo dạng `K{端末番号}-{連番}` của SC-03-02 (vd `K3-020`). Ví dụ đặt bản ghi 仮受付 trên máy TAB-03 (máy dùng chung bến / giao) — xem lại khi có danh sách máy thật | NFR-AVL-02, SC-03-02 [1] |
 | 3 | Chi tiết xung đột | Vùng | So bản ghi máy với dữ liệu server hiện tại | — |
 | 4 | Quyết định | Nút chọn | Sửa rồi phản ánh / không phản ánh / sang ngoại lệ; **đồng bộ không bao giờ làm SL lô âm** | BR-LOT-02, L4-A05 |
 | 5 | Lý do | Văn bản | Bắt buộc với "không phản ánh" và "sửa" | luật 4 |
@@ -73,3 +79,4 @@ INTAKE thấy bản ghi 仮受付; DELIVERY thấy 引渡し; người dùng ch�
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 M-05: bản ghi của ngày đã khóa đi 修正申請 loại LATE_ENTRY (ngày GD thật = ngày gốc, có duyệt) hoặc 反映しない — cùng đường với ADR-008; bản ghi từ máy 端末回収不能 (khách #1) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-03-07.html`, nhúng `png/SC-03-07.png`; [2] đủ 5 dòng khớp 「未同期 5件」, 仮番号 dạng K{端末}- (K3-020) | 2026-11-25 | phuongnnm-23344 | |

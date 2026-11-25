@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-03-05
 feature: lot
 feature_id: LOT
-version: "0.1.0"
+version: "0.1.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-03-05, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_INSPECTION_RECORD-001, API-LOT-003, API-LOT-004, API-LOT-005, API-LOT-006, SPEC-LOT_DB-001, ADR-010]
@@ -22,16 +22,19 @@ related: [WF-SC-03-05, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_INSPECTION_REC
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-03-05 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 0.1.1 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-03-05.html` (WF 0.2.1); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [WF-SC-03-05 to-be wireframe 0.2.0](../../../wireframes/SC-03-05-mekiki-inspection-result-entry-wireframe.md) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is [SC-03-05_prototype.png](../../../wireframes/assets/SC-03-05_prototype.png)
-
-Ảnh `_layout.png`: N/A — chưa có Figma; layout to-be là wireframe ASCII. Ảnh đánh số dựng khối từ wireframe to-be (to-be thêm [2], [8], [9], [11] và nút hạng to so với prototype); **số đỏ = cột ID mục 4**. Bố cục tablet (dọc 1024 × 1366): cùng item, xếp [4] trên [5], nút [6] ≥ 64 px.
+**Design:** [Wireframe SC-03-05 0.2.1](../../../wireframes/SC-03-05-mekiki-inspection-result-entry-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-03-05.html`](../../../wireframes/html/SC-03-05.html) · mọi biến thể: [`wireframes/png/SC-03-05.png`](../../../wireframes/png/SC-03-05.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [SC-03-05_prototype.png](../../../wireframes/assets/SC-03-05_prototype.png)
 
 ![SC-03-05 annotated](./assets/SC-03-05_annotated.png)
+
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 11 hộp thoại xác nhận (B), C-12 (C), C-13 tablet (D), C-28 (E), C-21 (F), C-23 (G) → xem biến thể tương ứng trong [`wireframes/png/SC-03-05.png`](../../../wireframes/png/SC-03-05.png) / PDF.
+> - Bố cục tablet (cùng item, nút [6] ≥ 64 px) = biến thể D.
 
 ---
 

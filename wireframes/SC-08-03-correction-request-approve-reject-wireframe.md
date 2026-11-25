@@ -2,7 +2,7 @@
 id: WF-SC-08-03
 title: Wireframe SC-08-03 修正申請決裁・却下
 status: draft
-version: "0.2.2"
+version: "0.2.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-08-02, FT-08-03, FR-CORR-02, FR-CORR-03, 07-03, D.4, CAP-HUMAN-01, PRM-120, PRM-121, E-08, GOV-RULE-01, M13, D07, ADR-004, ADR-006, ADR-007, ADR-002, L4-D03]
@@ -25,12 +25,17 @@ related: [FT-08-02, FT-08-03, FR-CORR-02, FR-CORR-03, 07-03, D.4, CAP-HUMAN-01, 
 
 ## 2. Wireframe to-be (yêu cầu đang chờ cấp 1)
 
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-08-03.html`](html/SC-08-03.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-08-03.png`](png/SC-08-03.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-08-03 wireframe — mọi biến thể](png/SC-08-03.png)
+
+
 Ví dụ: GD 相対-0005 có 業務日 2027/08/02 → thuộc **kỳ 2027-08**. 修正申請 nộp 2027/09/15, lúc đó kỳ 2027-08 đã 期ロック (khóa 09/14 10:20 — SC-09-04) (khóa sau 支払期日 2027/09/10).
 
 ```
 [1] 状態 決裁待ち（1次）  [2] 必要な決裁 2段階（買受人変更あり／買受人別の変動額 最大 ¥447,120 ≥ 閾値 ¥100,000 — 規則版 第3版）
 [3] 対象取引 相対-0005（業務日 2027/08/02・締め済・2027-08期）→ 取引詳細
-[4] 種類 単価・買受人の訂正   [5] 理由 「買受人の取り違え…」   [6] 証憑 伝票スキャン.pdf（1件）
+[4] 種類 数量・単価・買受人の訂正 [5] 理由 「買受人の取り違え…」   [6] 証憑 伝票スキャン.pdf（1件）
 [7] 申請者 桜 三郎 09/15 08:40 ／ 1次 — ／ 2次 —        [8] 経過 1営業日（2営業日超で警告）
 ┌─ [9] 訂正内容 ────────────────────────────────────────────────────┐
 │        買受人             数量   単価     金額（税抜）                │
@@ -110,3 +115,4 @@ Ví dụ: GD 相対-0005 có 業務日 2027/08/02 → thuộc **kỳ 2027-08**. 
 | 2 | 0.2.0 | Update | Gate 1: đổi nhãn 承認 → 決裁 (M-06); ví dụ [10]/[11] tách 計上業務日 và 対象期 = kỳ GD gốc, sửa ví dụ kỳ sai (C-02); ngưỡng 2 cấp theo tiền thay đổi lớn nhất của một người mua, đổi 買受人 luôn 2 cấp (khách #3); thêm loại KANNO / INCENTIVE / LATE_ENTRY ở [4]; nút [16] 次の決裁待ちへ (khách #29). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-05: ví dụ nộp 修正申請 2027/09/15 cho khớp giờ khóa kỳ 08 ở SC-09-04 | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | Khách Q-STL-04: bỏ nút cấp 1 của 運用部門長 (chỉ 照合部門長 / 代行) | 2026-11-25 | phuongnnm-23344 |  |
+| 5 | 0.2.3 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-08-03.html`, nhúng `png/SC-08-03.png`; nhãn [4] 「数量・単価・買受人の訂正」 (khớp SPEC) | 2026-11-25 | phuongnnm-23344 | |

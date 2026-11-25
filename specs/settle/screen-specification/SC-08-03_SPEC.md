@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-08-03
 feature: settle
 feature_id: STL
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-08-03, SPEC-SETTLE_FUNC-001, SPEC-STL_CORRECTION_DECIDE-001, API-STL-004, API-STL-005, SPEC-ADJUST_DB-001, ADR-004, ADR-006, ADR-007, ADR-002, FT-08-02, FT-08-03, FR-CORR-02, FR-CORR-03, PRM-120, E-08, L4-D03]
@@ -23,16 +23,19 @@ related: [WF-SC-08-03, SPEC-SETTLE_FUNC-001, SPEC-STL_CORRECTION_DECIDE-001, API
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-08-03 0.2.1 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-STL-04: cấp 1 = 照合部門長 hoặc 代行 chỉ định trước, 運用部門長 chỉ cấp 2; đóng Q-STL-04/05; G2-M03: lỗi LATE_ENTRY hiện `message` + `detail.sourceCode` | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-08-03.html` (WF 0.2.3); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [Wireframe SC-08-03 0.2.1](../../../wireframes/SC-08-03-correction-request-approve-reject-wireframe.md). To-be thêm [2], [6], [8], [10], [11], [16] so với prototype → ảnh dựng từ wireframe (trạng thái 決裁待ち（1次）).
+**Design:** [Wireframe SC-08-03 0.2.3](../../../wireframes/SC-08-03-correction-request-approve-reject-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-08-03.html`](../../../wireframes/html/SC-08-03.html) · mọi biến thể: [`wireframes/png/SC-08-03.png`](../../../wireframes/png/SC-08-03.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: `wireframes/assets/SC-08-03_prototype.png`
 
 ![SC-08-03 annotated](./assets/SC-08-03_annotated.png)
 
-Ảnh prototype as-is: `wireframes/assets/SC-08-03_prototype.png`.
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: C-31 (C), C-30 (D), C-12 (E), C-28 (I) → xem biến thể tương ứng trong [`wireframes/png/SC-08-03.png`](../../../wireframes/png/SC-08-03.png) / PDF.
+> - [16] ở biến thể A chỉ là chú thích; nút 「次の決裁待ちへ」 thật hiện sau khi 決裁 (biến thể E).
 
 ---
 

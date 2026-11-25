@@ -2,7 +2,7 @@
 id: WF-SC-06-02
 title: Wireframe SC-06-02 引渡し記録（タブレット）
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-06-01, FT-06-03, FT-06-07, FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, PRM-086, PRM-118, E-17, DEC-004, ADR-008]
@@ -23,6 +23,11 @@ related: [FT-06-01, FT-06-03, FT-06-07, FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-
 `/deliveries`, delivery@, khung 1024 × 1366. Có: ô 買受人番号, nút N / B, bàn số, 検索; sau khi tìm: danh sách GD chờ giao, 「残り全部」 (không chụp — cần chọn người mua, vẫn là xem nhưng danh sách phụ thuộc dữ liệu ngày).
 
 ## 2. Wireframe to-be
+
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-06-02.html`](html/SC-06-02.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-06-02.png`](png/SC-06-02.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-06-02 wireframe — mọi biến thể](png/SC-06-02.png)
+
 
 ```
 [C-13]ホーム  業務日 2027/08/02  ●オフライン  配送担当 桜 次郎  [C-5]利用者切替
@@ -112,3 +117,4 @@ DELIVERY, DEL-HEAD: toàn màn. SETTLE / STL-HEAD / OPS-HEAD: xem trạng thái 
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 / khách: [8] để trống không điền sẵn (#8); [16] mốc giờ dữ liệu offline (#2); [17] giao hết một lần (#12); [11] 2 nút 本人 / 代理 (#13); chạm cả dòng để chọn; số lẻ theo đơn vị (m-11); header dùng chữ 「ホーム」 thay 「≡」 (#32). Ảnh prototype giữ nguyên (ảnh có số 「6」 điền sẵn là as-is) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Khách Q-DEL-03: item 11 mặc định 本人 | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.2.2 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-06-02.html`, nhúng `png/SC-06-02.png` | 2026-11-25 | phuongnnm-23344 | |

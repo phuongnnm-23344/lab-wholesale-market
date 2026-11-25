@@ -3,8 +3,9 @@
 One HTML per screen is the single source. Outputs:
   wireframes/pdf/wireframes-all.pdf   one page per screen (page height = content height)
   wireframes/png/{SCREEN_ID}.png      one image per screen
-  --spec: also copies the PNG to specs/{feature}/screen-specification/assets/{SCREEN_ID}_annotated.png
-          for every screen that has a {SCREEN_ID}_SPEC.md (replaces the block-drawn image).
+  --spec: also renders VARIANT A ONLY (the first .variant, via "?variant=A") to
+          specs/{feature}/screen-specification/assets/{SCREEN_ID}_annotated.png for every screen
+          that has a {SCREEN_ID}_SPEC.md (BM-51 spec image; other variants stay in the PDF/PNG).
 
 Usage (from anywhere; paths are resolved from this file's location):
     python scripts/render-wireframes.py                 # all screens -> PDF + PNG
@@ -15,6 +16,7 @@ Usage (from anywhere; paths are resolved from this file's location):
 Requires: Python 3.10+, PyMuPDF (`pymupdf`), and a Chromium-family browser. Browser lookup order:
 env CHROME_PATH, Microsoft Edge, Google Chrome, Chrome under ~/.cache/puppeteer (from mermaid-cli),
 newest first; a browser that hangs is skipped. No network access and no extra packages.
+Use Edge on Windows and render sequentially: puppeteer Chrome 148/154 hang, and parallel Edge runs time out.
 Fonts: "Segoe UI"/Arial first (full Vietnamese glyphs), then "Yu Gothic UI"/Meiryo for Japanese
 (see wireframes/html/_shared/wireframe.css).
 """
@@ -63,21 +65,21 @@ def spec_path(screen_id):
     return hits[0] if hits else None
 
 
-def print_pdf(browser, html, out_pdf, profile):
+def print_pdf(browser, html, out_pdf, profile, query=""):
     cmd = [browser, "--headless", "--disable-gpu", "--no-pdf-header-footer", "--no-first-run",
            f"--user-data-dir={profile}", "--allow-file-access-from-files",
-           f"--print-to-pdf={out_pdf}", html.resolve().as_uri()]
+           f"--print-to-pdf={out_pdf}", html.resolve().as_uri() + query]
     res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
                          timeout=PRINT_TIMEOUT)
     if not out_pdf.is_file() or out_pdf.stat().st_size == 0:
         raise RuntimeError((res.stderr or res.stdout or "no PDF written").strip()[-600:])
 
 
-def print_with_fallback(browsers, html, out_pdf, profile):
+def print_with_fallback(browsers, html, out_pdf, profile, query=""):
     """Print with browsers[0]; on a hang, drop it and retry with the next candidate."""
     while browsers:
         try:
-            return print_pdf(browsers[0], html, out_pdf, profile)
+            return print_pdf(browsers[0], html, out_pdf, profile, query)
         except subprocess.TimeoutExpired:
             print("browser timed out, trying next:", browsers.pop(0), file=sys.stderr)
     raise RuntimeError("no browser could print the page - set CHROME_PATH")
@@ -87,6 +89,17 @@ def check_single_page(doc, screen_id):
     if doc.page_count != 1:
         raise RuntimeError(f"{screen_id}: expected 1 PDF page, got {doc.page_count} "
                            "(is _shared/fit-print-page-to-content.js included last?)")
+
+
+def render_variant_a(browsers, html, tmp, dest):
+    """Spec image (BM-51): variant A only, same HTML source, page sized to that variant."""
+    one = tmp / f"{html.stem}-A.pdf"
+    print_with_fallback(browsers, html, one, tmp / "profile", "?variant=A")
+    with pymupdf.open(one) as doc:
+        check_single_page(doc, html.stem + " (variant A)")
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        doc[0].get_pixmap(dpi=PNG_DPI).save(dest)
+    print("wrote", dest.relative_to(REPO).as_posix())
 
 
 def main(args):
@@ -124,10 +137,7 @@ def main(args):
                 print("wrote", png.relative_to(REPO).as_posix())
                 sp = spec_path(sid) if "--spec" in flags else None
                 if sp:
-                    dest = sp.parent / "assets" / f"{sid}_annotated.png"
-                    dest.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(png, dest)
-                    print("wrote", dest.relative_to(REPO).as_posix())
+                    render_variant_a(browsers, all_screens[sid], tmp, sp.parent / "assets" / f"{sid}_annotated.png")
             except RuntimeError as err:
                 failed += 1
                 print(f"FAILED {sid}: {err}", file=sys.stderr)

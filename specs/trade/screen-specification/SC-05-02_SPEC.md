@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-05-02
 feature: trade
 feature_id: TRD
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-TRD-005, API-TRD-006, API-TRD-007, SPEC-TRADE_DB-001]
@@ -23,16 +23,19 @@ related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFI
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-05-02 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-TRD-05: hai nút 5.1 「差し戻し（番号誤り）」 / 5.2 「取消（資格なし・不成立）」; Q-TRD-02 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-05-02.html` (WF 0.2.3); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
 ## 2. Layout
 
-**Design:** [WF-SC-05-02 to-be wireframe 0.2.1](../../../wireframes/SC-05-02-seri-result-session-confirm-wireframe.md) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is chỉ có danh sách phiên rỗng [SC-05-02_prototype-seri-list-ref.png](../../../wireframes/assets/SC-05-02_prototype-seri-list-ref.png)
-
-Ảnh `_layout.png`: N/A — chưa có Figma; prototype không chụp được màn xác nhận (tạo phiên = ghi dữ liệu). Ảnh đánh số dựng khối từ wireframe to-be bằng `scripts/render-annotated-screens.py`; **số đỏ = cột ID mục 4**.
+**Design:** [Wireframe SC-05-02 0.2.3](../../../wireframes/SC-05-02-seri-result-session-confirm-wireframe.md) · nguồn hình HTML [`wireframes/html/SC-05-02.html`](../../../wireframes/html/SC-05-02.html) · mọi biến thể: [`wireframes/png/SC-05-02.png`](../../../wireframes/png/SC-05-02.png) / [`wireframes/pdf/wireframes-all.pdf`](../../../wireframes/pdf/wireframes-all.pdf) · khung chung [_common-layout](../../../wireframes/_common-layout.md) · ảnh as-is prototype: [SC-05-02_prototype-seri-list-ref.png](../../../wireframes/assets/SC-05-02_prototype-seri-list-ref.png) (chỉ danh sách phiên rỗng)
 
 ![SC-05-02 annotated](./assets/SC-05-02_annotated.png)
+
+> - Ảnh = **biến thể A** (màn chính) của wireframe HTML, sinh bằng `scripts/render-wireframes.py --spec` (chưa có Figma). Số trên ảnh = cột `ID` mục 4 = cột `No` của wireframe; `C-x` = mục chung ở `_common-layout.md`.
+> - Badge không có trên ảnh này: 7 lý do khi 入力者 = 確認者 (B), 12 hộp thoại 差し戻し (C), C-31 (D), C-12 (E), C-23 (F), C-28 (G) → xem biến thể tương ứng trong [`wireframes/png/SC-05-02.png`](../../../wireframes/png/SC-05-02.png) / PDF.
+> - Ở biến thể A nút [9] hiện **mờ** có chủ ý (còn dòng No 4 chưa xử lý) để thấy điều kiện bật nút; trạng thái bật xem biến thể B.
 
 ---
 

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>SC-03-01 ロット本登録（受付台・PC） — wireframe</title>
+<!-- Source: wireframes/SC-03-01-lot-main-registration-wireframe.md (0.2.0) + specs/lot/screen-specification/SC-03-01_SPEC.md (0.1.1).
+     Badge numbers = item No / spec ID. Do not renumber. Sample data is fictional. -->
+<link rel="stylesheet" href="_shared/wireframe.css">
+<script src="_shared/build-app-frame.js"></script>
+<script src="_shared/fit-print-page-to-content.js"></script>
+</head>
+<body>
+<div class="wf-page">
+  <div class="wf-title"><span class="id">SC-03-01</span>ロット本登録（受付台・PC）<span class="code">SC03_01_LOT_MAIN_REGISTRATION</span></div>
+  <div class="wf-section"><span class="sq">1</span>ワイヤーフレーム（主画面）</div>
+  <div class="wf-desc">埠頭で仮受付したロットに、出荷者コード・品目・単位・確定数量・紙伝票番号を足して正式なロットにする（受付台 PC＋テンキー、約 04:00）。登録後もこの画面に残り、仮受付待ちの次の行へ進む。PC の本登録はオフラインでは保存しない。</div>
+
+  <!-- ===== A: main ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 A — 仮受付待ちから選んで本登録（K-012 を選択中、数量を確定値に修正）</div>
+    <div class="browser" data-url="/lots/new" data-crumb="ホーム › ロット › ロット本登録" data-user="受付担当 桜 一郎"
+         data-menu="ホーム|ロット:ロット本登録*,ロット一覧,オフライン同期・照合">
+      <div class="main">
+        <div class="page-title">ロット本登録</div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">仮受付待ち（3件） <b class="n">1</b> <span class="hint" style="font-weight:400">↑↓ で選び Enter</span></div>
+            <table class="tbl">
+              <tr><th>仮番号</th><th>受付時刻</th><th>品目</th><th class="num">数量(初回)</th><th>受付者</th><th></th></tr>
+              <tr><td colspan="5"><b>＋ 新規ロット</b></td><td></td></tr>
+              <tr class="hl cur"><td>K-012</td><td>01:42</td><td>真鯛</td><td class="num">120kg</td><td>桜 一郎</td><td><span class="btn sm">選択</span></td></tr>
+              <tr><td>K-013</td><td>01:55</td><td>鰹</td><td class="num">80kg</td><td>桜 一郎</td><td><span class="btn sm">選択</span></td></tr>
+              <tr><td>K-014</td><td>02:10</td><td>鰤</td><td class="num">45尾</td><td>桜 五郎</td><td><span class="btn sm">選択</span></td></tr>
+            </table>
+            <div class="mt"><span class="btn link">未同期の仮受付があります 2件 →</span><b class="n">12</b><span class="hint">（SC-03-07 同期・照合へ）</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">本日登録済（直近10件） <b class="n">11</b></div>
+            <table class="tbl">
+              <tr><th>ロット番号</th><th>品目</th><th class="num">数量</th><th>出荷者</th></tr>
+              <tr><td>L20270802-14</td><td>鰹</td><td class="num">80.0kg</td><td>0021</td></tr>
+              <tr><td>L20270802-13</td><td>鯖</td><td class="num">40箱</td><td>0034</td></tr>
+              <tr><td>L20270802-12</td><td>真鯛</td><td class="num">62.5kg</td><td>0021</td></tr>
+              <tr><td>L20270802-11</td><td>烏賊</td><td class="num">25箱</td><td>0018</td></tr>
+              <tr><td colspan="4" class="muted">…（行を押すとロット詳細 SC-03-04）</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="card mt" style="max-width:760px">
+          <div class="card-title">本登録 <b class="n">2</b> <span class="hint" style="font-weight:400">仮受付 K-012 の値を表示中</span></div>
+          <div class="field"><label>業務日 <b class="n">3</b></label>
+            <div>2027/08/02(月)<span class="muted">（01:00以降の受付は当日扱い）</span></div></div>
+          <div class="field"><label>出荷者コード <b class="n">4</b></label>
+            <div class="row"><span class="input w-s mono">0021</span> → サンプル第一丸</div></div>
+          <div class="field"><label>品目 <b class="n">5</b></label>
+            <div class="row"><span class="select w-m">真鯛</span><span class="hint">仮受付の値・変更可</span></div></div>
+          <div class="field"><label>単位 <b class="n">6</b></label>
+            <div class="row"><span class="select">kg</span><span class="hint">kg / 箱 / 尾</span></div></div>
+          <div class="field"><label>数量（確定） <b class="n">7</b></label>
+            <div class="row"><span class="input w-s num focus">118.5</span><span>仮受付 120kg との差 <b>−1.5kg</b></span></div>
+            <div class="sub hint">kg は小数第1位まで、箱・尾は整数</div></div>
+          <div class="field"><label>紙伝票番号 <b class="n">8</b></label>
+            <div class="row"><span class="input w-m"><span class="ph">紙伝票の番号</span></span><span class="hint">スキャン添付はPC</span></div></div>
+          <div class="row mt"><span class="btn primary">本登録する（Enter）</span><b class="n">9</b><span class="btn">クリア（Esc）</span><b class="n">10</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== B: after save ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 B — 本登録直後：トーストで内容を表示、カーソルは仮受付待ちの次の行へ（連続入力）</div>
+    <div class="browser" data-url="/lots/new" data-crumb="ホーム › ロット › ロット本登録" data-user="受付担当 桜 一郎"
+         data-menu="ホーム|ロット:ロット本登録*,ロット一覧,オフライン同期・照合">
+      <div class="main">
+        <div class="toast">本登録：L20270802-15 真鯛 118.5kg（サンプル第一丸）<b class="n c">C-12</b></div>
+        <div class="page-title">ロット本登録</div>
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">仮受付待ち（2件） <b class="n">1</b></div>
+            <table class="tbl">
+              <tr><th>仮番号</th><th>受付時刻</th><th>品目</th><th class="num">数量(初回)</th><th>受付者</th><th></th></tr>
+              <tr><td colspan="5"><b>＋ 新規ロット</b></td><td></td></tr>
+              <tr class="hl cur"><td>K-013</td><td>01:55</td><td>鰹</td><td class="num">80kg</td><td>桜 一郎</td><td><span class="btn sm">選択</span></td></tr>
+              <tr><td>K-014</td><td>02:10</td><td>鰤</td><td class="num">45尾</td><td>桜 五郎</td><td><span class="btn sm">選択</span></td></tr>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-title">本日登録済（直近10件） <b class="n">11</b></div>
+            <table class="tbl">
+              <tr><th>ロット番号</th><th>品目</th><th class="num">数量</th><th>出荷者</th></tr>
+              <tr class="hl"><td>L20270802-15</td><td>真鯛</td><td class="num">118.5kg</td><td>0021</td></tr>
+              <tr><td>L20270802-14</td><td>鰹</td><td class="num">80.0kg</td><td>0021</td></tr>
+              <tr><td>L20270802-13</td><td>鯖</td><td class="num">40箱</td><td>0034</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="card mt" style="max-width:760px">
+          <div class="card-title">本登録 <b class="n">2</b></div>
+          <div class="field"><label>出荷者コード <b class="n">4</b></label><div><span class="input w-s"><span class="ph">例：0021</span></span></div></div>
+          <div class="field"><label>品目 <b class="n">5</b></label><div><span class="select w-m"></span></div></div>
+          <div class="field"><label>数量（確定） <b class="n">7</b></label><div><span class="input w-s"></span></div></div>
+          <div class="hint">入力欄はクリア済。K-013 で Enter を押すと品目・単位・数量が入ります。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== C: duplicate dialog + input errors ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 C — 重複の可能性（10分以内に同じ出荷者・品目・数量）：止めずに確認</div>
+      <div class="overlay">
+        <div class="ghost">本登録フォーム（背景）— 0021 サンプル第一丸 ／ 真鯛 ／ 118.5kg</div>
+        <div class="dialog" style="width:470px">
+          <div class="dialog-title">重複の可能性があります <b class="n">13</b></div>
+          <div>同じ出荷者・品目・数量のロットが10分以内に登録されています（L20270802-15）。登録しますか？</div>
+          <div class="dialog-foot"><span class="btn primary">登録する</span><span class="btn">戻る</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 D — 入力エラー（C-22）：エラーは項目のすぐ下、カーソルは最初の誤り</div>
+      <div class="card">
+        <div class="field"><label>出荷者コード <b class="n">4</b></label>
+          <div><span class="input w-s mono err focus">9999</span></div>
+          <div class="sub err-text">出荷者コードがマスタにありません（9999）</div>
+          <div class="sub"><span class="btn link">マスタに無い場合は管理者へ</span></div></div>
+        <div class="field"><label>単位 <b class="n">6</b></label><div><span class="select">箱</span></div></div>
+        <div class="field"><label>数量（確定） <b class="n">7</b></label>
+          <div><span class="input w-s num err">12.5</span></div>
+          <div class="sub err-text">kg は小数第1位まで、箱・尾は整数で入力してください</div></div>
+        <div class="field"><label>紙伝票番号 <b class="n">8</b></label><div><span class="input w-m mono">D-0802-118</span></div></div>
+        <div class="row mt"><span class="btn primary">本登録する（Enter）</span><b class="n">9</b><span class="hint">エラーのある間は送信しません</span><b class="n c">C-22</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== E: 423 ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 E — 登録時に業務日が締め済み（423・まれ）：入力内容は消さずに修正申請（後入力）へ引き継ぐ</div>
+    <div class="browser" data-url="/lots/new" data-crumb="ホーム › ロット › ロット本登録" data-user="受付担当 桜 一郎" data-day-locked
+         data-menu="ホーム|ロット:ロット本登録*,ロット一覧,オフライン同期・照合">
+      <div class="main">
+        <div class="alert solid"><b class="h">2027/08/02 は締め済みのため直接修正できません。訂正は修正申請で行います。</b><b class="n c">C-24</b>
+          <div class="row mt"><span class="btn primary">修正申請を作成 →</span><span class="hint">入力中の内容を SC-08-01（後入力）に引き継ぎます</span></div></div>
+        <div class="page-title">ロット本登録 <span class="chip">読み取り専用</span></div>
+        <div class="card" style="max-width:760px">
+          <div class="field"><label>業務日 <b class="n">3</b></label><div>2027/08/02(月)</div></div>
+          <div class="field"><label>出荷者コード <b class="n">4</b></label><div class="row"><span class="ro mono">0034</span> → サンプル第三丸</div></div>
+          <div class="field"><label>品目 <b class="n">5</b></label><div><span class="ro">鯖</span></div></div>
+          <div class="field"><label>単位 <b class="n">6</b></label><div><span class="ro">箱</span></div></div>
+          <div class="field"><label>数量（確定） <b class="n">7</b></label><div><span class="ro num">12</span></div></div>
+          <div class="field"><label>紙伝票番号 <b class="n">8</b></label><div><span class="ro mono">D-0802-131</span></div></div>
+          <div class="row mt"><span class="btn primary off">本登録する（Enter）</span><b class="n">9</b><span class="hint">入力内容は保持（消去しません）</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== F: offline ===== -->
+  <div class="variant">
+    <div class="variant-label"><span class="dev">PC</span>主画面 F — 通信断（C-28）：受付台 PC は保存しない。入力は保持し、復旧後に登録</div>
+    <div class="browser" data-url="/lots/new" data-crumb="ホーム › ロット › ロット本登録" data-user="受付担当 桜 一郎" data-net="offline"
+         data-menu="ホーム|ロット:ロット本登録*,ロット一覧,オフライン同期・照合">
+      <div class="main">
+        <div class="banner">オフライン — 通信が回復するまで登録できません。入力内容は保持しています<b class="n c">C-28</b></div>
+        <div class="page-title">ロット本登録</div>
+        <div class="card" style="max-width:760px">
+          <div class="card-title">本登録 <b class="n">2</b></div>
+          <div class="field"><label>出荷者コード <b class="n">4</b></label><div class="row"><span class="input w-s mono">0021</span> → サンプル第一丸</div></div>
+          <div class="field"><label>品目 <b class="n">5</b></label><div><span class="select w-m">鰹</span></div></div>
+          <div class="field"><label>数量（確定） <b class="n">7</b></label><div class="row"><span class="input w-s num">79.5</span><span>仮受付 80kg との差 −0.5kg</span></div></div>
+          <div class="row mt"><span class="btn primary off">本登録する（Enter）</span><b class="n">9</b><span class="hint">復旧すると自動で押せるようになります（C-29）</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== G: empty + conflict ===== -->
+  <div class="variant variant-row">
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 G — 仮受付待ちなし（C-21）：新規ロットは入力できる</div>
+      <div class="card">
+        <div class="card-title">仮受付待ち（0件） <b class="n">1</b></div>
+        <table class="tbl"><tr class="hl cur"><td><b>＋ 新規ロット</b></td></tr></table>
+        <div class="empty mt">仮受付待ちはありません<b class="n c">C-21</b><div class="hint">新規ロットを選んで入力できます</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="variant-label"><span class="dev">PC</span>主画面 H — 他の担当者が同じ仮受付を先に本登録（409・C-23）</div>
+      <div class="card">
+        <div class="alert"><b class="h">この仮受付はすでに本登録済みです（L20270802-16）</b><b class="n c">C-23</b>
+          <div class="hint">仮受付待ち一覧を読み込み直しました。次の行を選んでください。</div></div>
+        <div class="card-title">仮受付待ち（1件） <b class="n">1</b></div>
+        <table class="tbl">
+          <tr><td colspan="3"><b>＋ 新規ロット</b></td></tr>
+          <tr class="hl cur"><td>K-014</td><td>02:10</td><td>鰤 45尾</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

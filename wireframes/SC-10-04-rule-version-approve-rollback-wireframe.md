@@ -2,7 +2,7 @@
 id: WF-SC-10-04
 title: Wireframe SC-10-04 規則版確認・ロールバック
 status: draft
-version: "0.2.2"
+version: "0.2.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-10-01, GOV-RULE-01, NFR-OPS-02, TBL-RATE-01, PRM-042, PRM-054, PRM-121, E-14, OPEN-L4-01, R-L4-01, L4-A03, L4-A04, L4-D03, D05, D06, D09, ADR-006, ADR-002]
@@ -24,6 +24,11 @@ related: [FT-10-01, GOV-RULE-01, NFR-OPS-02, TBL-RATE-01, PRM-042, PRM-054, PRM-
 `/rules/[id]/review`, stlhead@, version 第2版 đã duyệt. Có: trạng thái, 発効日, maker / checker, so sánh bảng tỷ lệ version này với version đang áp, ô lý do, nút 取り消す.
 
 ## 2. Wireframe to-be (version chờ duyệt)
+
+> **Hình chuẩn (LAB-4):** nguồn hình là [`html/SC-10-04.html`](html/SC-10-04.html) — một file HTML cho mọi biến thể, render bằng `scripts/render-wireframes.py` ra [`png/SC-10-04.png`](png/SC-10-04.png) và [`pdf/wireframes-all.pdf`](pdf/wireframes-all.pdf); ảnh spec BM-51 lấy biến thể A. Khối ASCII dưới đây giữ làm mô tả bố cục; khi lệch, HTML + SPEC là bản đúng.
+
+![SC-10-04 wireframe — mọi biến thể](png/SC-10-04.png)
+
 
 ```
 [1] 状態 確認待ち   [2] 種別 通常改定 / ロールバック（第2版の内容に戻す）
@@ -105,3 +110,4 @@ STL-HEAD: nút [10]–[12]. OPS-HEAD: chỉ thấy nút 決裁 ở nhánh N2. RU
 | 2 | 0.2.0 | Update | Gate 1: đổi nhãn 承認 → 確認 / 決裁 (M-06); 支払期日 lùi theo ngày ngân hàng (M-03); đếm quota theo 発効待ち / 適用中 / 置換済, hủy version đã duyệt cần checker 決裁 + MFA (m-09); thêm trạng thái 発効待ち (N14); N1 nêu đường sửa tiền bằng 修正申請 INCENTIVE (M-04); ví dụ tính [15]. Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-04: tham chiếu hủy version đã duyệt → ADR-006 §2.3-7a | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | P3 gộp: ví dụ [6] 「段階2 ¥1,000,000〜」 → 「段階3」 khớp bảng tỷ lệ giả INCENTIVE_DB §5 (bậc 3 = 1.000.000–<3.000.000) | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.2.3 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-10-04.html`, nhúng `png/SC-10-04.png` | 2026-11-25 | phuongnnm-23344 | |

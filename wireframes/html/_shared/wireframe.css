@@ -1,18 +1,27 @@
 /* Wireframe kit — one HTML per screen (wireframes/html/{SCREEN_ID}.html), rendered by
-   scripts/render-wireframes.py to wireframes/pdf/wireframes-all.pdf + wireframes/png/.
-   Grayscale only: meaning is carried by TEXT (許可 / 承認 / 失効…), never by color.
+   scripts/render-wireframes.py to wireframes/pdf/wireframes-all.pdf + wireframes/png/
+   (+ variant A only -> spec image with --spec). Grayscale only: meaning is carried by TEXT
+   (許可 / 承認 / 失効…), never by color. Tablet field kit: wireframe-tablet.css (imported below).
 
    Page      .wf-page > .wf-title(.id .code) · .wf-section · .wf-desc · .variant
    Variant   .variant-label > .dev (PC | タブレット | スマートフォン) + text「主画面 A — …」
-             .variant-row (2 frames side by side)
+             .variant-row (2 frames side by side). The FIRST .variant is variant A (spec image).
    Frames    .browser > .browser-bar(.dots .url) + .app-header + .app-body(.side-menu + .main)
-             .tablet > .tablet-screen (.tablet-head + .main) · .phone > .phone-screen
              .overlay (gray backdrop, .ghost text) > .dialog(.dialog-title .dialog-foot)
    Badges    <b class="n">3</b> = item No of the wireframe MD / spec ID (never renumber)
              <b class="n c">C-24</b> = common item from _common-layout.md
-   Content   .page-title · .card(.card-title) · .grid2 · .field(label + .input/.select/.ro)
-             .input.focus/.err · .err-text · .hint · .btn(.primary/.link/.sm) · .chip(.dark/.dash)
-             .tbl(tr.hl) · .kv · .alert(.solid) · .banner · .toast · .muted · .num · .mono  */
+   Content   .page-title · .card(.card-title) · .grid2 · .grid-even · .field(label + .input/.select/.ro)
+             .input.focus/.err · .err-text · .hint · .btn(.primary/.link/.sm/.off/.danger)
+             .chip(.dark/.dash) · .kv · .alert(.solid) · .banner · .toast · .muted · .num · .mono
+             .empty (dashed "no data" box, C-21; on .t-in = empty field) · .proc (small process note)
+   Tables    .tbl(tr.hl · tr.cur ▶ keyboard cursor · tr.sub reason sub-row · tr.ng · td.imp(.warn))
+   Controls  .cb(.on) checkbox ☐/☑ · .rb(.on) radio ○/◉ · .steps > .st(.on) · .tabs > .tab(.on)
+             .grade(.on 「選択中」) big single-choice button · .judge (decision box) · .quota-max
+   Status    .qual(.kyoka 許可: double border, black head | .shonin 承認: hatched head)
+             > .qual-head(.basis) + .body — 許可 and 承認 are always separate blocks
+   Tablet    see wireframe-tablet.css: .tablet(.half) > .tablet-screen > .t-head/.tablet-head …  */
+
+@import "wireframe-tablet.css";
 
 :root { --ink:#111; --line:#444; --soft:#bbb; --mute:#666; --fill:#f1f1f1; --back:#d9d9d9; }
 * { box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
@@ -52,7 +61,7 @@ html, body { margin:0; background:#fff; color:var(--ink); width:1280px;
 .sys-name { font-weight:700; font-size:14px; }
 .crumb { color:var(--mute); font-size:11.5px; }
 .app-header .right { margin-left:auto; display:flex; gap:10px; align-items:center; font-size:12px; }
-.app-body { display:grid; grid-template-columns:170px 1fr; min-height:300px; }
+.app-body { display:grid; grid-template-columns:170px 1fr; }
 .side-menu { border-right:1.5px solid var(--line); padding:12px 8px; font-size:12px; }
 .side-menu .grp { color:var(--mute); font-size:11px; margin:10px 4px 2px; }
 .side-menu .it { padding:3px 8px; }
@@ -61,17 +70,11 @@ html, body { margin:0; background:#fff; color:var(--ink); width:1280px;
 .page-title { font-size:19px; font-weight:700; margin:0 0 10px; display:flex; align-items:center; gap:8px; }
 .page-title .tools { margin-left:auto; font-size:12px; font-weight:400; }
 
-/* ---- tablet / phone frames ---- */
-.tablet { border:10px solid #222; border-radius:22px; padding:6px; background:#222; }
-.tablet-screen, .phone-screen { background:#fff; border-radius:8px; overflow:hidden; }
-.tablet-head { display:flex; gap:12px; align-items:center; padding:10px 14px; border-bottom:2px solid var(--ink); font-size:15px; }
-.tablet .main { font-size:16px; }
-.phone { width:300px; border:8px solid #222; border-radius:26px; background:#222; padding:14px 3px 10px; }
-
 /* ---- content blocks ---- */
 .card { border:1.5px solid var(--line); border-radius:4px; padding:10px 12px; background:#fff; }
 .card-title { font-weight:700; margin-bottom:8px; }
 .grid2 { display:grid; grid-template-columns:1.45fr 1fr; gap:14px; align-items:start; }
+.grid-even { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
 .field { display:grid; grid-template-columns:128px 1fr; gap:4px 10px; align-items:center; margin-bottom:8px; }
 .field > label { font-weight:700; font-size:12.5px; }
 .field .sub { grid-column:2; }
@@ -90,6 +93,7 @@ html, body { margin:0; background:#fff; color:var(--ink); width:1280px;
 .btn.sm { padding:1px 8px; font-size:11.5px; }
 .btn.link { border:none; text-decoration:underline; padding:0; font-weight:400; }
 .btn.off { opacity:.4; }
+.btn.danger { border:3.5px double var(--ink); }  /* destructive action (赤枠 in grayscale) */
 .chip { display:inline-block; border:1.2px solid var(--ink); border-radius:10px; padding:0 8px; font-size:11.5px; font-weight:700; background:#fff; }
 .chip.dark { background:var(--ink); color:#fff; }
 .chip.dash { border-style:dashed; }
@@ -97,6 +101,11 @@ html, body { margin:0; background:#fff; color:var(--ink); width:1280px;
 .tbl th { background:#e2e2e2; text-align:left; padding:4px 6px; border-bottom:1.5px solid var(--line); }
 .tbl td { padding:4px 6px; border-bottom:1px solid #ddd; }
 .tbl tr.hl td { background:#ededed; font-weight:700; }
+.tbl tr.cur td:first-child::before { content:"▶ "; font-weight:700; }
+.tbl tr.sub td { background:#f7f7f7; border-bottom:1.5px solid var(--line); padding-left:28px; font-size:11.5px; }
+.tbl tr.ng td { font-weight:700; }
+.tbl td.imp { white-space:nowrap; font-weight:700; }
+.tbl td.imp.warn { font-weight:400; }
 .kv { display:grid; grid-template-columns:auto 1fr; gap:2px 12px; font-size:12px; }
 .kv > :nth-child(odd) { color:var(--mute); }
 .alert { border:1.8px dashed var(--ink); border-radius:4px; padding:7px 10px; margin-bottom:10px; background:#fff; }
@@ -113,3 +122,36 @@ html, body { margin:0; background:#fff; color:var(--ink); width:1280px;
 .dialog { position:relative; margin:0 auto; width:560px; max-width:100%; background:#fff; border:2px solid var(--ink); border-radius:6px; padding:12px 16px; box-shadow:4px 4px 0 #9a9a9a; }
 .dialog-title { font-weight:700; font-size:14.5px; margin-bottom:8px; }
 .dialog-foot { display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+
+/* ---- extra content / controls ---- */
+.empty:not(.t-in) { border:1.5px dashed var(--line); border-radius:4px; padding:14px; text-align:center; color:#333; }
+.proc { font-size:11px; color:#333; border-left:3px solid var(--soft); padding-left:6px; margin:4px 0 8px; }
+.cb { font-weight:700; white-space:nowrap; }
+.cb::before { content:"☐ "; font-size:15px; }
+.cb.on::before { content:"☑ "; }
+.rb { margin-right:12px; }
+.rb::before { content:"○ "; }
+.rb.on::before { content:"◉ "; }
+.steps { display:flex; border:1.5px solid var(--line); border-radius:3px; width:max-content; }
+.steps .st { padding:3px 14px; font-weight:700; border-right:1.5px solid var(--line); }
+.steps .st:last-child { border-right:none; }
+.steps .st.on { background:var(--ink); color:#fff; }
+.tabs { display:flex; gap:4px; border-bottom:1.5px solid var(--line); margin-bottom:6px; }
+.tabs .tab { padding:3px 14px; border:1.5px solid var(--line); border-bottom:none; border-radius:4px 4px 0 0; font-weight:700; font-size:12px; background:var(--fill); }
+.tabs .tab.on { background:#fff; margin-bottom:-1.5px; padding-bottom:4.5px; }
+.grade { display:inline-block; min-width:74px; text-align:center; border:2px solid var(--ink); border-radius:4px; padding:6px 12px; font-weight:700; font-size:15px; background:#fff; }
+.grade.on { background:var(--ink); color:#fff; }
+.grade.on::after { content:" 選択中"; font-size:11px; font-weight:400; }
+.judge { border:2px solid var(--ink); background:var(--fill); padding:8px 10px; margin:4px 0 6px; }
+.quota-max { border:2px solid var(--ink); background:var(--fill); padding:0 6px; font-weight:700; }
+
+/* ---- qualification blocks: 許可 (仲卸) and 承認 (売買参加者) never merged ---- */
+.qual { border:3px solid var(--ink); border-radius:4px; background:#fff; }
+.qual-head { font-size:16px; font-weight:700; padding:6px 12px; display:flex; align-items:center; gap:6px; }
+.qual-head .basis { font-size:11.5px; font-weight:400; margin-left:auto; }
+.qual .body { padding:8px 12px 10px; }
+.qual.kyoka { border:5px double var(--ink); }
+.qual.kyoka .qual-head { background:var(--ink); color:#fff; }
+.qual.kyoka .qual-head .n { background:#fff; color:var(--ink); }
+.qual.shonin .qual-head { border-bottom:2px solid var(--ink);
+  background:repeating-linear-gradient(135deg,#fff 0 5px,#e2e2e2 5px 7px); }

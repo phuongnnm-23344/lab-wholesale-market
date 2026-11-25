@@ -1,0 +1,58 @@
+/* Wireframe kit — tablet field kit (dock / delivery tablets, 48px+ touch targets).
+   Imported by wireframe.css; uses its :root tokens. Merged in LAB-4 from the temporary <style>
+   blocks of SC-03-02 / 03-05 / 03-07 / 06-02 / 06-04 / 06-05.
+
+   Frame     .tablet(.half 600px) > .tablet-screen > (.t-head(.right) | .tablet-head) + .main
+             .t-off (offline bar, black) · .t-on (online bar)
+   Controls  .t-btn(.on/.xl/.wide/.off) · .t-in(.focus/.empty/.err) · .t-pad (ten-key) · .grade (big)
+   Content   .t-tbl(tr.sel) · .tbl (larger in a tablet) · .t-card(.t-card-title) · .t-lbl · .t-row
+             .t-note · .t-side > .notes (frame + side notes) · .t-preview · .t-toast · .t-err
+   Phone     .phone > .phone-screen (no screen uses it yet; kept for the kit) */
+
+.tablet { position:relative; width:740px; border:12px solid #222; border-radius:30px;
+  padding:18px 8px 14px; background:#222; }
+.tablet::before { content:""; position:absolute; top:5px; left:50%; width:8px; height:8px;
+  margin-left:-4px; border-radius:50%; background:#555; }
+.tablet.half { width:600px; }
+.tablet-screen, .phone-screen { background:#fff; border-radius:8px; overflow:hidden; }
+.tablet-head { display:flex; gap:12px; align-items:center; padding:10px 14px; border-bottom:2px solid var(--ink); font-size:15px; }
+.tablet .main { font-size:16px; padding:12px 14px; }
+.phone { width:300px; border:8px solid #222; border-radius:26px; background:#222; padding:14px 3px 10px; }
+
+.t-head { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; padding:8px 12px; border-bottom:2.5px solid var(--ink); font-size:14.5px; }
+.t-head .right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+.t-off { background:var(--ink); color:#fff; font-weight:700; font-size:15px; padding:7px 12px; }
+.t-off .n.c { background:var(--ink); color:#fff; border-color:#fff; }
+.t-on { border-bottom:2px solid var(--ink); background:#e9e9e9; font-weight:700; font-size:15px; padding:7px 12px; }
+
+.t-btn { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:48px; padding:4px 18px; border:2.5px solid var(--ink); border-radius:6px; background:#fff; font-weight:700; font-size:17px; }
+.t-btn.on { background:var(--ink); color:#fff; }
+.t-btn.xl { min-height:60px; font-size:20px; }
+.t-btn.wide { display:flex; flex:1; }
+.t-btn.off { opacity:.35; }
+.t-in { display:inline-flex; align-items:center; min-height:48px; min-width:140px; padding:2px 12px; border:2.5px solid var(--ink); border-radius:4px; background:#fff; font:700 22px Consolas, monospace; }
+.t-in.focus { box-shadow:0 0 0 4px #c4c4c4; }
+.t-in.focus.empty::after { content:"｜"; font-weight:400; color:var(--ink); }
+.t-in.err { background:repeating-linear-gradient(45deg,#fff 0 6px,#ececec 6px 8px); }
+.t-pad { display:grid; grid-template-columns:repeat(3,56px); gap:7px; }
+.t-pad span { height:52px; display:flex; align-items:center; justify-content:center; border:2.5px solid var(--ink); border-radius:6px; font:700 22px Arial, sans-serif; background:#fff; }
+.tablet .grade { min-width:110px; min-height:64px; font-size:22px; line-height:46px; }
+
+.t-tbl { width:100%; border-collapse:collapse; font-size:15px; }
+.t-tbl th { background:#e2e2e2; text-align:left; padding:6px 8px; border-bottom:2px solid var(--ink); font-size:13px; }
+.t-tbl td { padding:9px 8px; border-bottom:1.5px solid #bbb; }
+.t-tbl tr.sel td { background:var(--ink); color:#fff; font-weight:700; }
+.t-tbl tr.sel .chip { color:var(--ink); }
+.tablet .tbl { font-size:15px; }
+.tablet .tbl td { padding:10px 6px; }
+.t-card { border:2px solid var(--ink); border-radius:6px; padding:10px 12px; margin-top:10px; }
+.t-card-title { font-weight:700; font-size:17px; margin-bottom:8px; }
+.t-lbl { font-weight:700; font-size:15px; min-width:118px; }
+.t-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:9px; }
+.t-note { width:100%; }
+.t-side { display:flex; gap:16px; align-items:flex-start; }
+.t-side > .notes { flex:1; font-size:12.5px; }
+.t-preview { border:2px dashed var(--ink); border-radius:4px; padding:5px 10px; font-size:15px; }
+.t-toast { margin:8px auto; width:max-content; max-width:94%; background:var(--ink); color:#fff; padding:9px 18px; border-radius:6px; font-weight:700; font-size:16px; }
+.t-err { font-size:14px; font-weight:700; }
+.t-err::before { content:"✕ "; }
