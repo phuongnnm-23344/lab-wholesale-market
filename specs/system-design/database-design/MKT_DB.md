@@ -3,7 +3,7 @@ id: SPEC-MKT_DB-001
 title: Thiết kế dữ liệu to-be — file tổng (第1期)
 type: system
 subtype: database-design
-version: "0.2.0"
+version: "0.3.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -47,6 +47,7 @@ related: [DOC-PREMISE-001, ADR-001, ADR-002, ADR-003, ADR-004, ADR-005, ADR-006,
 | 2 | 0.1.0 | Add new | 57 bảng (mục 2) | 22 bảng giữ tên từ prototype (sửa cột), 3 bảng đổi tên (`profiles` → `staff_accounts`, `profile_pins` → `staff_pins`, `user_authorities` → `staff_authorities`), 32 bảng mới; sửa lệch D01–D24 + 14 lệch mới N01–N14 (mục 5) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.1.1 | Update | §7 OPEN-DB-02 | Đóng OPEN-DB-02: PREMISE 0.4.0 §3.1 tách lịch chợ–ngân hàng năm khỏi quy chế, không tính 4 lần/năm (PRM-054) — thiết kế bảng không đổi | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.0 | Update | Toàn bộ | Gate 1 M-09: tách định nghĩa bảng sang 9 file cụm (IAM_AUDIT, PARTY, RULE, CLOSE, LOT, TRADE, ADJUST, BILLING, INCENTIVE); file này thành file tổng. Thêm bảng `staff_roles` (58 bảng, m-10). Enum mới / đổi theo Gate 1 (C-01, C-02, M-05, M-07, M-08, M-10, m-06). Bảng lệch: D07 → Giản lược có chủ đích, N10 → Cao, thêm N15 (C-01), N16 (C-02) — 40 dòng (m-04). Bỏ `status` ở frontmatter, §2 dùng cột `Note` của khuôn (m-02). §7 thêm OPEN-DB-08..10 | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.3.0 | Update | §4.0, §5 N15, §7 | Gate 1 recheck: N15 nhãn INC-EDGE-02 (N-01); OPEN-DB-08 nêu hệ quả FIFO (n-03); quy ước viết Index / FK (n-07) | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -188,6 +189,8 @@ erDiagram
 
 Cột chung được ghi ở cuối mỗi bảng (trong file cụm) dưới dạng một dòng "Cột chung" để danh sách cột không dài vô ích; ER và mục 4 dùng cùng tên.
 
+**Cách viết Index / Khoá ngoại** (recheck n-07, ngoại lệ README §3 #8): khuôn BM-2-901-50 dùng bảng cho Index và Khoá ngoại. Ở 10 file này, bảng **chỉ có index PK / FK đơn giản** viết **một dòng** dạng `**Index** — tên (cột) …` / `**Khoá ngoại** — cột → bảng.cột …`; bảng có index partial / unique nhiều cột hoặc FK có tên riêng, `ON DELETE` thì viết dạng bảng như khuôn. Nội dung (tên, cột, unique, partial) bằng nhau giữa hai cách.
+
 **Enum**
 
 | Enum | Giá trị (nghĩa) | Dùng ở | Khác prototype |
@@ -287,7 +290,7 @@ Cột chung được ghi ở cuối mỗi bảng (trong file cụm) dưới dạ
 | N12 | `trades` | Không lưu version quy chế đã áp trên GD (version chỉ tra lại theo ngày ở `/api/trades/[id]`) (0002) | `trades.rule_version_id`, `period_billings.rule_version_id` (4.30, 4.49) | Thiếu | TB | FR-AUDIT-03, ADR-006 §2.1-3 |
 | N13 | `incentive_runs`, hàm `run_incentive_calc` / `lock_period` | Ba bước tách: preview → run (ghi kết quả, kỳ vẫn `OPEN`) → lock (0023) | Kết quả chính thức ghi **trong cùng transaction với 期ロック**; `incentive_runs.input_hash` (4.51) | Sai | TB | ADR-007 §2.1 |
 | N14 | `rule_versions.status`, `approve_rule_version` | Checker duyệt → `ACTIVE` ngay và chuyển version đang `ACTIVE` có ngày hiệu lực sớm hơn sang `SUPERSEDED`, dù ngày hiệu lực còn ở tương lai (0028); tra cứu theo ngày nên tiền vẫn tính đúng | Thêm `APPROVED` (chờ hiệu lực) → `ACTIVE` vào ngày hiệu lực (4.21) | Giản lược có chủ đích | Thấp | ADR-006 §2.2-4 |
-| N15 | `incentive_results` DELTA — phạm vi tính lại | `compute_incentive_rows` (0023) tính lại mọi kỳ `LOCKED` có `end_date` < kỳ đang khóa — **không** giới hạn năm TC (đúng BR-INC-01) | Giữ hành vi prototype: tính lại **mọi kỳ đã khóa** có đầu vào đổi sau khóa; năm TC chỉ giới hạn CARRY (4.52). Database Design 0.1.x / ADR-007 0.1.0 từng giới hạn "cùng năm TC" → delta GD tháng 3 sửa sau khi sang năm TC mới không bao giờ sinh | Giữ hành vi prototype (to-be 0.1 từng sai) | Cao | BR-INC-01, FR-INC-03, INC-EDGE-01, Gate 1 C-01, TV-03 |
+| N15 | `incentive_results` DELTA — phạm vi tính lại | `compute_incentive_rows` (0023) tính lại mọi kỳ `LOCKED` có `end_date` < kỳ đang khóa — **không** giới hạn năm TC (đúng BR-INC-01) | Giữ hành vi prototype: tính lại **mọi kỳ đã khóa** có đầu vào đổi sau khóa; năm TC chỉ giới hạn CARRY (4.52). Database Design 0.1.x / ADR-007 0.1.0 từng giới hạn "cùng năm TC" → delta GD tháng 3 sửa sau khi sang năm TC mới không bao giờ sinh | Giữ hành vi prototype (to-be 0.1 từng sai) | Cao | BR-INC-01, FR-INC-03, INC-EDGE-02, Gate 1 C-01, TV-03 |
 | N16 | `trade_adjustments` → kỳ | `period_buyer_amounts` (0022) gom điều chỉnh vào kỳ theo `trades.business_date` của **GD gốc** | `trade_adjustments.period_id` = kỳ GD gốc, tách khỏi `business_date` ngày áp; kỳ gốc đã khóa → không vào 期のお支払額 kỳ mở, chỉ DELTA (4.39, 4.49). Database Design 0.1.x từng gán theo ngày áp → lệch 完納 kỳ hiện tại và đếm hai lần | Giữ hành vi prototype (to-be 0.1 từng sai) | Cao | BR-INC-01, L4-A04 (2), Gate 1 C-02, TV-01, TV-02 |
 
 **Đếm:** 40 dòng (24 D + 16 N).
@@ -340,7 +343,7 @@ Phạm vi parity trên là 38 dòng của bản 0.1.1. N15, N16 thêm ở 0.2.0 
 | OPEN-DB-05 | E-12 持ち越し, E-13 bán trước 下見済 có làm đổi tiền không | 4.23 hai `param_key`; 4.26 | Tạm xếp như tham số quy chế | 運用部門 | open (OPEN-L4-03) |
 | OPEN-DB-06 | Bảng tỷ lệ thật, kiểu / độ dài cột theo fixture (E-03) | 4.22 `rate_bp`, độ dài VARCHAR | bp; độ dài theo TBL-* + prototype | Khách (fixture ~2026-12-01 **[Giả lập]**) | open (L4-A02) |
 | OPEN-DB-07 | Thuế kỳ làm tròn xuống (E-06) | 4.23 `TAX_ROUNDING`, 4.50 | `FLOOR` (DEC-011) | 経理部 | open |
-| OPEN-DB-08 | Chênh lệch tiền của **kỳ đã khóa** (điều chỉnh có `period_id` kỳ cũ) người mua trả / được trả thế nào: tạm hiện dòng 「前期以前の調整」 trên thông báo kỳ kế tiếp, **không** cộng vào 期のお支払額 xét 完納 kỳ mới | ADJUST_DB 4.39, BILLING_DB 4.49, 4.48 | Dòng riêng trên thông báo; 入金 FIFO trả nợ kỳ cũ trước | 照合部門 / 経理部 | open (Gate 1 C-02) |
+| OPEN-DB-08 | Chênh lệch tiền của **kỳ đã khóa** (điều chỉnh có `period_id` kỳ cũ) người mua trả / được trả thế nào: tạm hiện dòng 「前期以前の調整」 trên thông báo kỳ kế tiếp, **không** cộng vào 期のお支払額 xét 完納 kỳ mới | ADJUST_DB 4.39, BILLING_DB 4.49, 4.48 | Dòng riêng trên thông báo; 入金 FIFO trả nợ kỳ cũ trước ("nợ kỳ đã khóa" = LOCK + điều chỉnh / LATE_ENTRY sau khóa − phân bổ). **Hệ quả cần khách quyết:** người mua trả đúng 期のお支払額 kỳ mới mà chưa trả khoản chênh của kỳ đã khóa thì FIFO đem tiền trả khoản chênh trước → kỳ mới **mất 完納** vì một sửa sai duyệt sau khi khóa (vd. TV-02: trả 1.080.000 cho kỳ 09 → 216.000 trả kỳ 08 trước, kỳ 09 thiếu). Phương án: (a) giữ FIFO; (b) khoản chênh kỳ đã khóa có hạn riêng, FIFO bỏ qua tới hạn đó | 照合部門 / 経理部 | open (Gate 1 C-02, recheck n-03) |
 | OPEN-DB-09 | Thủ tục 許可 vs 承認: ai 決裁 đình chỉ / thu hồi 許可, có 弁明の機会 không; 承認 đăng ký / gia hạn chỉ cần 照合部門長 確認 (không 審査) có đúng không | PARTY_DB 4.12–4.15 | 許可: 審査 + 運用部門長 決裁; 承認: 照合部門長 確認; đình chỉ cả hai: 運用部門長 決裁 | 運用部門 | open (Gate 1 M-07) |
 | OPEN-DB-10 | Một người có giữ nhiều vai trên một tài khoản không (vd. 受付 + 目利き, 照合 + ルール管理) | IAM_AUDIT_DB 4.58 `staff_roles` | Cho nhiều vai / tài khoản (PRM-089 mỗi người một tài khoản); SoD kiểm theo người trong hàm | IT khách / 運用部門 | open (Gate 1 m-10) |
 

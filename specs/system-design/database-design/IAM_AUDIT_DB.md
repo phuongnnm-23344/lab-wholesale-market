@@ -3,7 +3,7 @@ id: SPEC-IAM_AUDIT_DB-001
 title: Database Design — Tài khoản, vai, quyền duyệt, thiết bị, phiên + xuyên suốt (thông báo, đính kèm, đồng bộ offline, 監査ログ)
 type: system
 subtype: database-design
-version: "0.2.0"
+version: "0.3.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -32,6 +32,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1: thêm bảng `staff_roles` (4.58), bỏ cột `staff_accounts.role` (m-10); `devices.lost_*` — 「端末回収不能」 (M-05, khách #1); `attachments.doc_class`, lưu theo loại chứng từ TBL-ATTACH-01, xóa vật lý có duyệt (M-08); ER `staff_accounts ||--o| staff_pins` (m-08) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.3.0 | Update | 4.54 | Gate 1 recheck n-06: tách `archive_after` / `retention_until`, hạn lưu tính từ cuối năm TC của bản ghi chủ | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -542,7 +543,8 @@ Tài khoản `SYSADM` không giữ thêm vai nghiệp vụ khác (CHECK trong h�
 | 5 | | Dung lượng | `size_bytes` | BIGINT | N/A | Yes | | CHECK ≤ giới hạn ở file cấu hình |
 | 6 | | Khóa S3 | `storage_key` | VARCHAR | 300 | Yes | | |
 | 7 | | Băm | `sha256` | CHAR | 64 | Yes | | |
-| 8 | | Giữ tới | `retention_until` | DATE | N/A | Yes | | Tính theo `doc_class` từ ngày tải lên: 7 năm (`RECEIPT_SLIP`, `TRADE_SLIP`, `RECONCILIATION_SHEET`, `CORRECTION_EVIDENCE`) / 3 năm online (`DISPUTE_EVIDENCE`, `MIGRATION_RECORD`) rồi cold archive tới hạn lưu do khách quyết |
+| 8 | | Chuyển lưu lạnh từ | `archive_after` | DATE | N/A | No | | Chỉ cho `DISPUTE_EVIDENCE`, `MIGRATION_RECORD`: mốc gốc + 3 năm; NULL cho loại 7 năm (recheck n-06) |
+| 8a | | Hạn lưu (đến hạn xét xóa) | `retention_until` | DATE | N/A | Yes | | Tính từ **mốc gốc** = cuối năm TC của `business_date` bản ghi chủ (không phải ngày tải lên — scan 紙伝票 tải muộn không giữ lâu hơn sổ GD): 7 năm cho `RECEIPT_SLIP`, `TRADE_SLIP`, `RECONCILIATION_SHEET`, `CORRECTION_EVIDENCE`; loại 3 năm: hạn lưu do khách quyết (Q-ARCH-07), tạm = 7 năm như sổ GD — **không** đưa vào danh sách xóa ở năm thứ 3. Giả định [PL] |
 | 9 | FK | Duyệt xóa vật lý | `disposal_approved_by` | UUID | N/A | No | | `OPS_HEAD` (決裁, MFA) |
 | 9a | | Duyệt xóa lúc / lý do | `disposal_approved_at`, `disposal_reason` | TIMESTAMPTZ / VARCHAR(200) | | No | | |
 | 9b | | Đã xóa file lúc | `disposed_at` | TIMESTAMPTZ | N/A | No | | Chỉ ghi được sau khi có `disposal_approved_by`; dòng siêu dữ liệu **giữ lại** (B.7 không xóa cứng bản ghi giao dịch) |

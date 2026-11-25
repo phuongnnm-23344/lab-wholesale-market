@@ -3,7 +3,7 @@ id: ADR-006
 title: Quy chế có version theo ngày hiệu lực, maker-checker, quota 4 lần / năm TC, rollback hai nhánh E-14
 type: adr
 status: proposed
-version: "0.2.0"
+version: "0.3.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-004, ADR-005, ADR-007, GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, PRM-042, PRM-126, L4-A03, L4-A04, OPEN-L4-01, OPEN-L4-03, R-L4-01, E-14, FB-CUS-226, FB-CUS-227]
@@ -87,8 +87,8 @@ stateDiagram-v2
 | C. Tham số tiền để ở file cấu hình | Đổi nhanh | Mất maker-checker, mất quota → trái luật 5 (PRM-126 đã loại) | Bỏ |
 | D. E-14 thành công tắc cấu hình | Không phải chờ workshop | Quy tắc quản trị đổi được bằng một dòng cấu hình → trái tinh thần GOV-RULE-01; khách đã đồng ý không làm vậy (PREMISE §6) | Bỏ |
 | E. Rollback = kích hoạt lại version cũ | Ít bản ghi | Phá chuỗi thời gian (một version có hai khoảng hiệu lực), khó audit | Bỏ |
-| F. **Rollback hồi tố về đầu kỳ chưa 期ロック, chỉ cho phần bảng tỷ lệ** | Kỳ chưa khóa chưa có kết quả thưởng nào bị đóng băng → không trái vế "không làm biến dạng dữ liệu đã chốt" của GOV-RULE-01; TBL-RATE-01 chỉ ghi 発効日 "có thể đặt ngày tương lai" và rollback "truy được", **không bắt** rollback ở tương lai; thiệt hại của tỷ lệ sai giảm còn các kỳ **đã khóa** | Gói version hiện trộn bảng tỷ lệ với tham số có tác dụng theo ngày (ngưỡng 2 cấp, giờ nhận lô) → phải tách phần tỷ lệ ra mới lùi ngày được; 期のお支払額 không đổi (tỷ lệ chỉ dùng lúc 期ロック) nên an toàn, nhưng thông báo / 試算 đã gửi phải ghi "theo tỷ lệ cũ" | **Đưa ra workshop E-14** như phương án nên cân nhắc nhất; chưa chọn vì đụng cách đếm 4 lần và cách khách hiểu "ngày hiệu lực" |
-| G. Tách gói: **bảng tỷ lệ theo kỳ** (hiệu lực = kỳ, cho phép áp cho kỳ chưa khóa) / **tham số vận hành theo ngày** (hiệu lực ngày 1 tương lai) — hai loại version | Mỗi loại có quy tắc ngày hiệu lực đúng bản chất; là điều kiện để làm F | Đếm quota phải nói rõ một lượt = một version loại nào; thêm một vòng đời version | **Đưa ra workshop E-14** cùng F |
+| F. **Rollback hồi tố về đầu kỳ chưa 期ロック, chỉ cho phần bảng tỷ lệ** | Kỳ chưa khóa chưa có kết quả thưởng nào bị đóng băng → không trái vế "không làm biến dạng dữ liệu đã chốt" của GOV-RULE-01; TBL-RATE-01 chỉ ghi 発効日 "có thể đặt ngày tương lai" và rollback "truy được", **không bắt** rollback ở tương lai; thiệt hại của tỷ lệ sai giảm còn các kỳ **đã khóa** | Gói version hiện trộn bảng tỷ lệ với tham số có tác dụng theo ngày (ngưỡng 2 cấp, giờ nhận lô) → phải tách phần tỷ lệ ra mới lùi ngày được; 期のお支払額 không đổi (tỷ lệ chỉ dùng lúc 期ロック) nên an toàn, nhưng thông báo / 試算 đã gửi phải ghi "theo tỷ lệ cũ" | **Tư liệu cho workshop E-14** (L4-D06 — người dùng: để mở, LAB-5 tách issue làm rõ); chưa chọn vì đụng cách đếm 4 lần và cách khách hiểu "ngày hiệu lực". Effort nếu chọn F + G (ước PL): ~0,3–0,5 MM (tách loại version, đếm quota theo loại, hàm `rule_at` theo kỳ, màn SC-10-04, test) — **chưa** có trong DEC-048 |
+| G. Tách gói: **bảng tỷ lệ theo kỳ** (hiệu lực = kỳ, cho phép áp cho kỳ chưa khóa) / **tham số vận hành theo ngày** (hiệu lực ngày 1 tương lai) — hai loại version | Mỗi loại có quy tắc ngày hiệu lực đúng bản chất; là điều kiện để làm F | Đếm quota phải nói rõ một lượt = một version loại nào; thêm một vòng đời version | **Tư liệu cho workshop E-14** cùng F (L4-D06); effort tính chung với F |
 
 ## 4. Hệ quả
 
@@ -116,3 +116,4 @@ Luật 5; GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, RACI-01; 
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu; E-14 vẽ hai nhánh, chưa chốt | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1: thêm phương án F (rollback hồi tố về đầu kỳ chưa khóa, chỉ bảng tỷ lệ) và G (tách gói tỷ lệ theo kỳ / tham số theo ngày) cho workshop E-14; đường sửa tiền thưởng kỳ đã khóa bằng 修正申請 INCENTIVE (§2.4-8a); viết lại rủi ro N1 / R-L4-01 cho đúng (M-04); quota đếm APPROVED / ACTIVE / SUPERSEDED, hủy version APPROVED theo maker-checker (m-09) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.3.0 | Update | L4-D06: F / G là tư liệu cho workshop E-14, kèm ước effort ~0,3–0,5 MM chưa có trong DEC-048 | 2026-11-25 | phuongnnm-23344 | |

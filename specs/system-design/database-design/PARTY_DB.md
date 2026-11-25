@@ -3,7 +3,7 @@ id: SPEC-PARTY_DB-001
 title: Database Design — Người tham gia và tư cách — 許可 (仲卸) ≠ 承認 (売買参加者)
 type: system
 subtype: database-design
-version: "0.2.0"
+version: "0.3.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 language: vi
@@ -32,6 +32,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Nội dung ban đầu nằm trong `MKT_DB.md` 0.1.0 (một file cho toàn schema) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | Toàn file | Tách từ `MKT_DB.md` 0.1.1 theo cụm ER (Gate 1 M-09); sửa theo Gate 1 M-07: thể hiện khác biệt thủ tục 許可 (審査 + 運用部門長 決裁) và 承認 (届出 + 照合部門長 確認), sự kiện `REVIEWED` (許可) và `LIMIT_CHANGED` (承認, 参加上限 không sửa đè), bảng so sánh §3, giả định 失効 tự động, OPEN-DB-09; khách #20 (đổi 保証金 kéo theo 参加上限 khi NULL) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.3.0 | Update | §3, 4.12–4.15 | Gate 1 recheck N-03: gia hạn bình thường 許可 theo PRM-121 (照合部門長 確認), 審査 + 運用部門長 決裁 chỉ cho cấp mới (giả định PL); 承認 xét nhẹ thay "không 審査" | 2026-11-25 | phuongnnm-23344 | |
 
 ---
 
@@ -55,12 +56,13 @@ Hai nhánh 許可 và 承認 vẽ tách: không có bảng chung nào nối hai 
 
 | | 許可 (仲卸) — 4.12 / 4.13 | 承認 (売買参加者) — 4.14 / 4.15 |
 |---|---|---|
-| Căn cứ | Giấy phép **có xét duyệt (審査)** | Chấp thuận — **thủ tục nhẹ hơn (届出 + 確認)** |
-| Đăng ký / gia hạn | 照合事務局 nhập hồ sơ → 照合部門長 起案 kèm **kết quả 審査 + điều kiện** (sự kiện `REVIEWED`) → **運用部門長 決裁 (MFA)** | 照合事務局 nhập 届出 → **照合部門長 確認 (MFA)** — một người, không 審査 |
+| Căn cứ | Giấy phép **có xét duyệt (審査)** | Chấp thuận — **thủ tục nhẹ hơn**: 届出 + xét nhẹ (確認 điều kiện 保証金 / 資力) |
+| Cấp mới | 照合事務局 nhập hồ sơ → 照合部門長 起案 kèm **kết quả 審査 + điều kiện** (sự kiện `REVIEWED`) → **運用部門長 決裁 (MFA)** — giả định [PL], cùng mức với 再審査 → 有効 của PRM-121 | 照合事務局 nhập 届出 → **照合部門長 確認 (MFA)** kèm ghi xét điều kiện 保証金 / 資力 — xét nhẹ, một người; chờ OPEN-DB-09 |
+| Gia hạn bình thường (trước 失効日) | **Theo PRM-121 (khách đã chốt ở LAB-1):** 照合事務局 nhập 失効日 mới → **照合部門長 確認 (MFA)**, ghi kết quả xem lại điều kiện 許可; **không** 審査 lại, không 運用部門長 決裁 | Như bên trái (PRM-121) |
 | Trường đặc thù | `permit_conditions`, kết quả 審査 (`review_result`, `reviewed_on`) | `participation_limit_jpy` (参加上限) — **không sửa đè**, đổi bằng sự kiện `LIMIT_CHANGED` (cũ / mới / lý do) |
 | 一時停止 / 失効 / 再審査 → 有効 | 照合部門長 起案 → 運用部門長 決裁 (MFA) | Như bên trái (PRM-121) |
 | Hết 失効日 | Tự động `EXPIRED` (giả định [PL], nối FIG-010) | Như bên trái |
-| Còn mở | Ai 決裁 đình chỉ / thu hồi 許可, có 弁明の機会 không — OPEN-DB-09 | 承認 chỉ cần 照合部門長 確認 có đúng không — OPEN-DB-09 |
+| Còn mở | Ai 決裁 đình chỉ / thu hồi 許可, có 弁明の機会 không — OPEN-DB-09 | Cấp mới 承認 chỉ cần 照合部門長 確認 (xét nhẹ) có đúng không — OPEN-DB-09 |
 
 ```mermaid
 erDiagram
@@ -234,7 +236,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | 許可 (仲卸) | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `nakaoroshi_permits` | Sửa bởi / ngày | — |
-| Overview | Giấy phép **có xét duyệt (審査)** của 仲卸. **Căn cứ pháp lý riêng, bảng riêng, thủ tục riêng** (luật 2, ADR-003): đăng ký và gia hạn đều qua 審査 — 照合事務局 nhập hồ sơ, 照合部門長 起案 kèm kết quả 審査 + điều kiện (`REVIEWED`), 運用部門長 決裁 có MFA (`REGISTERED` / `RENEWED`). Trigger `enforce_qualification_kind` chặn gắn vào người tham gia không phải `NAKAOROSHI` (giữ từ prototype 0005). | Note | `status`, `valid_to`, `permit_conditions` chỉ đổi qua hàm sinh dòng `nakaoroshi_permit_events` trong cùng transaction. Quá `valid_to` → job sinh `EXPIRED` tự động — giả định [PL] (FIG-010 không vẽ 有効 → 失効 trực tiếp) |
+| Overview | Giấy phép **có xét duyệt (審査)** của 仲卸. **Căn cứ pháp lý riêng, bảng riêng, thủ tục riêng** (luật 2, ADR-003): cấp mới qua 審査 — 照合事務局 nhập hồ sơ, 照合部門長 起案 kèm kết quả 審査 + điều kiện (`REVIEWED`), 運用部門長 決裁 có MFA (`REGISTERED`, giả định [PL]); gia hạn bình thường theo PRM-121 — 照合事務局 nhập, 照合部門長 確認 có MFA (`RENEWED`), không 審査 lại. Trigger `enforce_qualification_kind` chặn gắn vào người tham gia không phải `NAKAOROSHI` (giữ từ prototype 0005). | Note | `status`, `valid_to`, `permit_conditions` chỉ đổi qua hàm sinh dòng `nakaoroshi_permit_events` trong cùng transaction. Quá `valid_to` → job sinh `EXPIRED` tự động — giả định [PL] (FIG-010 không vẽ 有効 → 失効 trực tiếp) |
 
 **Định nghĩa cột**
 
@@ -265,7 +267,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Lịch sử 許可 | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `nakaoroshi_permit_events` | Sửa bởi / ngày | — |
-| Overview | Mỗi thay đổi tư cách của một 許可 một dòng. **Chỉ thêm.** Đăng ký / gia hạn: `REVIEWED` (照合部門長 ghi kết quả 審査 + điều kiện) rồi `REGISTERED` / `RENEWED` (運用部門長 決裁, MFA) — gia hạn có 審査 nhưng **không** chuyển trạng thái 再審査 (PRM-121). 一時停止 / 再審査 → 有効: 照合部門長 起案 (`proposed_by`), 運用部門長 決裁 (`decided_by`, MFA). | Note | Từ ngữ duyệt nội bộ là 決裁 / 確認, không dùng 承認 (PRM-121). Thủ tục đình chỉ / thu hồi 許可 (ai 決裁, 弁明の機会) chờ OPEN-DB-09 |
+| Overview | Mỗi thay đổi tư cách của một 許可 một dòng. **Chỉ thêm.** Cấp mới: `REVIEWED` (照合部門長 ghi kết quả 審査 + điều kiện) rồi `REGISTERED` (運用部門長 決裁, MFA — giả định [PL]). Gia hạn bình thường: `RENEWED` do 照合事務局 nhập, 照合部門長 確認 (MFA), không 審査 lại, không chuyển trạng thái 再審査 (PRM-121). 一時停止 / 再審査 → 有効: 照合部門長 起案 (`proposed_by`), 運用部門長 決裁 (`decided_by`, MFA). | Note | Từ ngữ duyệt nội bộ là 決裁 / 確認, không dùng 承認 (PRM-121). Thủ tục đình chỉ / thu hồi 許可 (ai 決裁, 弁明の機会) chờ OPEN-DB-09 |
 
 **Định nghĩa cột**
 
@@ -280,7 +282,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 | 6 | | Hiệu lực từ ngày | `effective_on` | DATE | N/A | Yes | | |
 | 7 | | Lý do | `reason` | VARCHAR | 500 | Yes | | |
 | 8 | FK | Người 起案 | `proposed_by` | UUID | N/A | No | | `STL_HEAD` |
-| 9 | FK | Người 決裁 / 確認 | `decided_by` | UUID | N/A | No | | `OPS_HEAD` cho `REGISTERED` / `RENEWED` / 一時停止 / 再開 / 再審査; NULL cho `REVIEWED` (người ghi = `proposed_by`) và `EXPIRED` tự động. CHECK `decided_by <> proposed_by` |
+| 9 | FK | Người 決裁 / 確認 | `decided_by` | UUID | N/A | No | | `OPS_HEAD` cho `REGISTERED` / 一時停止 / 再開 / 再審査; `STL_HEAD` 確認 cho `RENEWED` (PRM-121); NULL cho `REVIEWED` (người ghi = `proposed_by`) và `EXPIRED` tự động. CHECK `decided_by <> proposed_by` |
 | 10 | | MFA lúc | `mfa_verified_at` | TIMESTAMPTZ | N/A | No | | Bắt buộc khi `decided_by` có giá trị (PREMISE §3.2) |
 | 11 | | Cột chung | `created_at`, `created_by` | | | | | |
 
@@ -301,7 +303,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | 承認 (売買参加者) | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `baibai_approvals` | Sửa bởi / ngày | — |
-| Overview | Chấp thuận của 売買参加者 — căn cứ khác 許可, bảng khác, **thủ tục nhẹ hơn** (luật 2): 届出 → 照合事務局 nhập → 照合部門長 確認 (MFA), không 審査. Có 参加上限 (hạn mức tham gia): cảnh báo + bắt lý do khi tổng 買受代金 **trong kỳ** (相対 + せり) vượt, không chặn cứng (PRM-046, L4-A04 (1)). Trigger kiểm `kind = BAIBAI`. | Note | Hạn mức tính theo kỳ qua view `v_buyer_period_usage` — sửa M19 / D08. Quá `valid_to` → `EXPIRED` tự động (giả định [PL], như 4.12) |
+| Overview | Chấp thuận của 売買参加者 — căn cứ khác 許可, bảng khác, **thủ tục nhẹ hơn** (luật 2): 届出 → 照合事務局 nhập → 照合部門長 確認 (MFA) kèm xét nhẹ điều kiện 保証金 / 資力 — không có bước 審査 riêng như 許可 (chờ OPEN-DB-09). Có 参加上限 (hạn mức tham gia): cảnh báo + bắt lý do khi tổng 買受代金 **trong kỳ** (相対 + せり) vượt, không chặn cứng (PRM-046, L4-A04 (1)). Trigger kiểm `kind = BAIBAI`. | Note | Hạn mức tính theo kỳ qua view `v_buyer_period_usage` — sửa M19 / D08. Quá `valid_to` → `EXPIRED` tự động (giả định [PL], như 4.12) |
 
 **Định nghĩa cột**
 
@@ -332,7 +334,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Lịch sử 承認 | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `baibai_approval_events` | Sửa bởi / ngày | — |
-| Overview | Lịch sử tư cách của 承認 — **tách bảng** khỏi 4.13 (ADR-003: không có bảng lịch sử tư cách chung). Khác 4.13: không có 審査; có sự kiện `LIMIT_CHANGED` mang 参加上限 cũ / mới; đăng ký / gia hạn chỉ cần 照合部門長 確認. **Chỉ thêm.** | Note | Phần cột trùng 4.13 là có chủ đích — đổi một bên không kéo bên kia |
+| Overview | Lịch sử tư cách của 承認 — **tách bảng** khỏi 4.13 (ADR-003: không có bảng lịch sử tư cách chung). Khác 4.13: không có sự kiện `REVIEWED` (không 審査 riêng — xét nhẹ ghi ở `reason`); có sự kiện `LIMIT_CHANGED` mang 参加上限 cũ / mới; đăng ký / gia hạn chỉ cần 照合部門長 確認. **Chỉ thêm.** | Note | Phần cột trùng 4.13 là có chủ đích — đổi một bên không kéo bên kia |
 
 **Định nghĩa cột** — riêng cho 承認 (không chép 4.13: không có cột 審査, có cột hạn mức):
 
@@ -340,7 +342,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|---|---|---|---|---|
 | 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
 | 2 | FK | 承認 | `approval_id` | UUID | N/A | Yes | | |
-| 3 | | Sự kiện | `event` | `qualification_event_kind` | N/A | Yes | | CHECK ≠ `REVIEWED` (承認 không 審査) |
+| 3 | | Sự kiện | `event` | `qualification_event_kind` | N/A | Yes | | CHECK ≠ `REVIEWED` (承認 không có bước 審査 riêng) |
 | 4 | | Trạng thái trước / sau | `from_status`, `to_status` | `qualification_status` | N/A | No / Yes | | `from_status` NULL khi `REGISTERED`; `LIMIT_CHANGED` giữ nguyên trạng thái |
 | 5 | | 失効日 trước / sau | `old_valid_to`, `new_valid_to` | DATE | N/A | No | | Chỉ `RENEWED` |
 | 6 | | 参加上限 trước / sau | `old_limit_jpy`, `new_limit_jpy` | BIGINT | N/A | No | | Bắt buộc khi `LIMIT_CHANGED` (NULL = theo 保証金). Hàm đổi hạn mức ghi dòng này và cập nhật 4.14 cột 6 **trong cùng transaction** |

@@ -3,7 +3,7 @@ id: ADR-003
 title: Phân quyền 3 lớp, kiểm trong DB — 許可 và 承認 tách bảng, tách vòng đời
 type: adr
 status: proposed
-version: "0.2.0"
+version: "0.3.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-002, L4-A06, L4-D02, PRM-046, PRM-121, PRM-129, BR-PERM-01, FR-PARTY-01, FR-PARTY-02, TBL-ROLE-01, TBL-ACTOR-01]
@@ -33,7 +33,8 @@ related: [ARCH-001, ADR-002, L4-A06, L4-D02, PRM-046, PRM-121, PRM-129, BR-PERM-
 
 | | 許可 (仲卸) — xét duyệt có điều kiện | 承認 (売買参加者) — thủ tục nhẹ hơn |
 |---|---|---|
-| Đăng ký / gia hạn | 照合事務局 nhập hồ sơ → **審査** (kết quả + điều kiện 許可, sự kiện `REVIEWED`) → 照合部門長 起案 → **運用部門長 決裁 + MFA** | 届出: 照合事務局 nhập → **照合部門長 確認 + MFA** (một người, không 審査) |
+| Cấp mới | 照合事務局 nhập hồ sơ → **審査** (kết quả + điều kiện 許可, sự kiện `REVIEWED`) → 照合部門長 起案 → **運用部門長 決裁 + MFA** (giả định [PL]) | 届出: 照合事務局 nhập → **照合部門長 確認 + MFA**, xét nhẹ điều kiện 保証金 / 資力 (một người) |
+| Gia hạn bình thường | **PRM-121:** 照合事務局 nhập → **照合部門長 確認 + MFA**, ghi xem lại điều kiện 許可; không 審査 lại | Như bên trái (PRM-121) |
 | Trường riêng | Số 許可, **điều kiện 許可**, kết quả / ngày 審査 | **参加上限** (mặc định = 保証金), đổi chỉ bằng sự kiện `LIMIT_CHANGED` (cũ / mới / lý do) — **không sửa đè** |
 | Kiểm lúc chốt GD | 許可 有効 | 承認 有効 + cảnh báo 参加上限 theo kỳ (相対 + せり) |
 | 一時停止 / 失効 / phục hồi | 照合部門長 起案 → 運用部門長 決裁 + MFA (PRM-121); có 弁明の機会 không → OPEN-DB-09 | Như bên trái (PRM-121) |
@@ -80,3 +81,4 @@ Luật 2; 02-08; BR-PERM-01; FR-PARTY-01/02, FR-AITAI-02, FR-IAM-02; TBL-ROLE-01
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1: bảng khác biệt thủ tục 許可 (審査 + 運用部門長 決裁) vs 承認 (届出 + 照合部門長 確認), 参加上限 không sửa đè (LIMIT_CHANGED), trạng thái trong từng khối, giả định EXPIRED tự động (M-07); nhiều vai / tài khoản (m-10) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.3.0 | Update | Gate 1 recheck N-03: gia hạn bình thường của 許可 về PRM-121 (照合部門長 確認), 審査 + 運用部門長 決裁 chỉ cho cấp mới (giả định PL); 承認 "xét nhẹ" thay "không 審査" | 2026-11-25 | phuongnnm-23344 | |

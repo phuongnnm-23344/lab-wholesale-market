@@ -3,7 +3,7 @@ id: ADR-009
 title: Backup / DR và lưu 7 năm — PITR + Multi-AZ, bản sao sang Osaka, chia bảng audit theo năm TC
 type: adr
 status: proposed
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-001, ADR-004, NFR-AVL-01, NFR-AVL-03, NFR-PERF-01, NFR-SEC-04, DR-RET-01, TBL-ATTACH-01, PRM-081, PRM-082, PRM-084]
@@ -42,7 +42,7 @@ related: [ARCH-001, ADR-001, ADR-004, NFR-AVL-01, NFR-AVL-03, NFR-PERF-01, NFR-S
 9. **Chứng từ / ảnh ở S3 theo loại** (`attachments.doc_class`, gắn tag object cùng giá trị):
    - `RECEIPT_SLIP` 受入票 · `TRADE_SLIP` 取引票 (gồm scan 紙伝票) · `RECONCILIATION_SHEET` 照合表 · `CORRECTION_EVIDENCE` chứng cứ 修正申請 (giả định [PL]: xếp cùng mức vì gắn với GD đã chốt) → S3 Standard / Standard-IA **7 năm online**.
    - `DISPUTE_EVIDENCE` ảnh / chứng cứ tranh chấp, giao hàng · `MIGRATION_RECORD` hồ sơ rehearsal / nghiệm thu migration → Standard 3 năm → lifecycle sang **Glacier Flexible Retrieval** (khôi phục chuẩn vài giờ — đáp ứng cả hai cách đọc DR-RET-01).
-   - **Không có lifecycle tự xóa.** Job tháng lập danh sách 「保存期間満了」 (đến `retention_until`) → **運用部門長 決裁 + MFA + lý do** → hàm xóa object và ghi `disposal_approved_by`, `disposal_approved_at`, `disposed_at` (dòng siêu dữ liệu giữ lại để truy được). Chưa duyệt thì giữ nguyên. Sau 7 năm các loại 7 năm theo chính sách lưu của khách (Q-ARCH-07).
+   - **Không có lifecycle tự xóa.** Hai mốc tách nhau: `archive_after` (ngày sang lưu lạnh, chỉ loại 3 năm) và `retention_until` (hạn lưu, tính từ cuối năm TC của `business_date` bản ghi chủ, không từ ngày tải lên — giả định [PL]). Job tháng lập danh sách 「保存期間満了」 (đến `retention_until`) → **運用部門長 決裁 + MFA + lý do** → hàm xóa object và ghi `disposal_approved_by`, `disposal_approved_at`, `disposed_at` (dòng siêu dữ liệu giữ lại để truy được). Chưa duyệt thì giữ nguyên. Sau 7 năm các loại 7 năm theo chính sách lưu của khách (Q-ARCH-07).
 10. Test tải trên stg với dữ liệu giả lập đủ 7 năm trước go-live (PRM-083).
 
 ## 3. Phương án đã cân nhắc
@@ -83,3 +83,4 @@ NFR-AVL-01, NFR-AVL-03, NFR-PERF-01, NFR-PERF-02, NFR-SEC-04, DR-RET-01, TBL-ATT
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 M-08: lưu chứng từ theo loại TBL-ATTACH-01 (受入票・取引票・照合表 online 7 năm; tranh chấp / migration 3 năm → lạnh), bỏ lifecycle tự xóa, thêm danh sách đến hạn → 決裁 + MFA → xóa (B.7); phương án G | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | Gate 1 recheck n-06: tách `archive_after` / `retention_until`, hạn lưu tính từ cuối năm TC của bản ghi chủ | 2026-11-25 | phuongnnm-23344 | |

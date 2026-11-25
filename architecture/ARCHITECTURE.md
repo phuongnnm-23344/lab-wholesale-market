@@ -3,7 +3,7 @@ id: ARCH-001
 title: Kiến trúc to-be Product A (第1期)
 type: architecture
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [DOC-PREMISE-001, ADR-001, ADR-002, ADR-003, ADR-004, ADR-005, ADR-006, ADR-007, ADR-008, ADR-009, ADR-010, DEC-002, DEC-004, DEC-005, DEC-009, DEC-012, L4-D01]
@@ -206,7 +206,7 @@ Ba lớp tách nhau, kiểm trong DB (ADR-003):
 | Quyền duyệt | Người được giao | 照合部門長, 運用部門長, 配送部門責任者 + 代行者 có ngày bắt đầu / kết thúc (PRM-129) | Hành động duyệt; cấm tự duyệt thứ mình lập / ghi |
 | Tư cách tham gia | Người tham gia (không đăng nhập ở 第1期) | **許可** cho 仲卸 · **承認** cho 売買参加者 (+ 参加上限) · đăng ký chợ cho 卸売業者 · đăng ký tại điểm cho 買出人 | **Lúc chốt GD** (BR-PERM-01), không phải lúc nhập |
 
-許可 và 承認 là **hai bảng, hai vòng đời, hai căn cứ, hai thủ tục** (luật 2); không có bảng "giấy phép chung" có cột loại. Khác nhau ở thủ tục và trường (ADR-003 §2.2): **許可** đăng ký / gia hạn có **審査** + điều kiện 許可, 照合部門長 起案 → **運用部門長 決裁**; **承認** là 届出 + **照合部門長 確認** (một người, không 審査), có **参加上限** đổi bằng sự kiện có lịch sử (không sửa đè). Trạng thái tư cách (有効 / 一時停止 / 失効 / 再審査 — FIG-010) nằm ở từng 許可 / 承認, không ở mức người tham gia. Duyệt nội bộ trên màn và tài liệu dùng chữ 決裁 / 確認, không dùng 承認, để khỏi lẫn với 承認 của 売買参加者 (PRM-121; tên màn SC-08-03 / SC-10-04 đổi theo L4-D03).
+許可 và 承認 là **hai bảng, hai vòng đời, hai căn cứ, hai thủ tục** (luật 2); không có bảng "giấy phép chung" có cột loại. Khác nhau ở thủ tục và trường (ADR-003 §2.2): **許可** cấp mới có **審査** + điều kiện 許可, 照合部門長 起案 → **運用部門長 決裁** (giả định [PL]); **承認** là 届出 + **照合部門長 確認** (xét nhẹ 保証金 / 資力, một người); gia hạn bình thường của cả hai theo PRM-121 (照合事務局 nhập + 照合部門長 確認); có **参加上限** đổi bằng sự kiện có lịch sử (không sửa đè). Trạng thái tư cách (有効 / 一時停止 / 失効 / 再審査 — FIG-010) nằm ở từng 許可 / 承認, không ở mức người tham gia. Duyệt nội bộ trên màn và tài liệu dùng chữ 決裁 / 確認, không dùng 承認, để khỏi lẫn với 承認 của 売買参加者 (PRM-121; tên màn SC-08-03 / SC-10-04 đổi theo L4-D03).
 
 ## 6. Người quyết định cuối (human-in-the-loop)
 
@@ -222,7 +222,7 @@ Hệ thống **chỉ ghi** quyết định của người; không OCR ký hiệu
 | 日次締め / 期ロック | 照合部門長 (hoặc 代行) | Checklist trước khóa (gồm 「端末回収不能」 cho máy hỏng / mất); 期ロック chốt các dòng 要確認 (vd. nghi trừ phí chuyển khoản) với lý do; khóa không mở lại | Có (luôn hỏi lại mã) | BR-CLOSE-01, PRM-119, ADR-005 §2.5–2.6, ADR-007 §2.6 |
 | Duyệt quy chế / rollback | Checker 照合部門長 (+ 運用部門長 ở nhánh N2) | maker ≠ checker | Có | GOV-RULE-01, ADR-006 |
 | 一時停止 / 失効 / phục hồi tư cách | 運用部門長 決裁 | Đổi trạng thái có lịch sử, gửi email | Có | PRM-121, PREMISE §3.2 |
-| Đăng ký / gia hạn 許可 · 承認 | 許可: 運用部門長 決裁 sau 審査 · 承認: 照合部門長 確認 | Ghi sự kiện có lịch sử | Có | PRM-121, ADR-003 §2.2 |
+| Cấp mới / gia hạn 許可 · 承認 | Cấp mới 許可: 運用部門長 決裁 sau 審査 · cấp mới 承認 và gia hạn bình thường của cả hai: 照合部門長 確認 (PRM-121) | Ghi sự kiện có lịch sử | Có | PRM-121, ADR-003 §2.2 |
 | Xóa vật lý chứng từ hết hạn lưu | 運用部門長 決裁 | Chỉ xóa dòng có trong danh sách đến hạn, ghi người duyệt | Có (luôn hỏi lại mã) | B.7, ADR-009 §2.2-9 |
 
 ## 7. Không ghi đè lịch sử, khóa ngày / kỳ, quy chế có version
@@ -352,3 +352,4 @@ Các câu đã có (E-01..E-21, OPEN-L4-01..03) không lặp lại; dưới đâ
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu: module, thành phần AWS Tokyo, luồng ngày / kỳ, đường ghi, phân quyền 3 lớp, human-in-the-loop, append-only, khóa ngày / kỳ, quy chế 2 nhánh E-14, hiện trường, tích hợp, điểm mở rộng, NFR, mapping prototype → to-be, Q-ARCH-01..10 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: một định nghĩa 業務日, job 01:00 dự phòng (M-01); hai trục thời gian, kỳ khóa chỉ đi DELTA, tính lại mọi kỳ đã khóa (C-01, C-02 — §4.2, §7.2); 支払期日 theo ngày ngân hàng + Q-ARCH-11 (M-03); N1 sửa tiền bằng 修正申請 INCENTIVE, phương án F / G (M-04); 「端末回収不能」, LATE_ENTRY (M-05); khác biệt thủ tục 許可 / 承認 (M-07); lưu chứng từ theo loại, không tự xóa, Q-ARCH-07 viết lại (M-08); Q-ARCH-08 hỏi cách thu (m-05); step-up idle (m-06); Q-ARCH-12 税区分 (m-07); mermaid §3 tách link (m-08); bảng §12 thêm N15 / N16 | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | Gate 1 recheck N-03: thủ tục cấp mới / gia hạn 許可 · 承認 theo PRM-121 (§5, §6) | 2026-11-25 | phuongnnm-23344 | |

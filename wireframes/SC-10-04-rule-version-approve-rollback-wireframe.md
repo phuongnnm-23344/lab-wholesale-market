@@ -2,7 +2,7 @@
 id: WF-SC-10-04
 title: Wireframe SC-10-04 規則版確認・ロールバック
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [FT-10-01, GOV-RULE-01, NFR-OPS-02, TBL-RATE-01, PRM-042, PRM-054, PRM-121, E-14, OPEN-L4-01, R-L4-01, L4-A03, L4-A04, L4-D03, D05, D06, D09, ADR-006, ADR-002]
@@ -65,7 +65,7 @@ related: [FT-10-01, GOV-RULE-01, NFR-OPS-02, TBL-RATE-01, PRM-042, PRM-054, PRM-
 | 9 | Lý do checker | Văn bản | Bắt buộc khi trả về / hủy / duyệt rollback | ADR-006 |
 | 10 | 確認して発効待ちにする | Nút | C-31 → C-30 MFA; version → 発効待ち; tới 発効日 → 適用中, bản trước → 置換済 | P32, ADR-006 |
 | 11 | 差し戻す | Nút | Về 下書き cho maker | — |
-| 12 | 取り消す | Nút | Chỉ trước 発効日. Version 下書き / 確認待ち: maker hoặc checker hủy, lý do. Version **発効待ち (đã duyệt)**: maker đề nghị hủy kèm lý do → checker STL-HEAD 決裁 + C-30 MFA (giữ maker-checker); bản hủy không tính lượt | ADR-006 §2.5-10, m-09 |
+| 12 | 取り消す | Nút | Chỉ trước 発効日. Version 下書き / 確認待ち: maker hoặc checker hủy, lý do. Version **発効待ち (đã duyệt)**: maker đề nghị hủy kèm lý do → checker STL-HEAD 決裁 + C-30 MFA (giữ maker-checker); bản hủy không tính lượt | ADR-006 §2.3-7a, m-09 |
 | 13 | Chặn lần thứ 5 | Banner | Version mới thứ 5 bị chặn ở **cả hai nhánh** | GOV-RULE-01, OPEN-L4-01 |
 | 14 | Rollback khi đã đủ 4 | Banner + luồng | **Chưa chốt — chờ workshop E-14**; thiết kế vẽ N1 / N2. Với N1, tỷ lệ sai đã duyệt vẫn là version của kỳ → engine không tự sinh DELTA; sửa tiền bằng 修正申請 loại 「奨励金」(INCENTIVE, 2 cấp) từng người × kỳ (R-L4-01). Workshop còn xem phương án rollback hồi tố về đầu kỳ chưa 期ロック (ADR-006 §3) | OPEN-L4-01, R-L4-01, ADR-006 |
 | 15 | Ví dụ tính | Nhãn | Ví dụ cho vài mức tiền, để checker thấy tiền đổi thế nào trước khi duyệt (phát hiện sai trước 発効日 → hủy, không tốn lượt) | ADR-006 §2.5-10 |
@@ -103,3 +103,4 @@ STL-HEAD: nút [10]–[12]. OPS-HEAD: chỉ thấy nút 決裁 ở nhánh N2. RU
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: đổi nhãn 承認 → 確認 / 決裁 (M-06); 支払期日 lùi theo ngày ngân hàng (M-03); đếm quota theo 発効待ち / 適用中 / 置換済, hủy version đã duyệt cần checker 決裁 + MFA (m-09); thêm trạng thái 発効待ち (N14); N1 nêu đường sửa tiền bằng 修正申請 INCENTIVE (M-04); ví dụ tính [15]. Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | Gate 1 recheck n-04: tham chiếu hủy version đã duyệt → ADR-006 §2.3-7a | 2026-11-25 | phuongnnm-23344 | |

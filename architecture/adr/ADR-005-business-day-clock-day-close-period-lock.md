@@ -3,7 +3,7 @@ id: ADR-005
 title: Đồng hồ 業務日, 日次締め và 期ロック khóa ở mức DB, không mở lại
 type: adr
 status: proposed
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-119, PRM-120, BR-CLOSE-01, BR-INC-01, L4-A04, L4-A09, E-12, E-16]
@@ -35,7 +35,7 @@ related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-11
 |---|---|---|---|
 | 1 | GD 下書き / 確認待ち còn treo | ✖ chặn | PRM-119 |
 | 2 | Phiên せり chưa có người xác nhận | ✖ chặn | PRM-115 |
-| 3 | Thiết bị còn bản ghi chưa đồng bộ — **trừ máy đã đánh dấu 「端末回収不能」** (mục 6) | ✖ chặn | NFR-AVL-02, L4-A05 |
+| 3 | Thiết bị còn bản ghi chưa đồng bộ — **trừ máy đã đánh dấu 「端末回収不能」** (§2-6) | ✖ chặn | NFR-AVL-02, L4-A05 |
 | 4 | Bản ghi SC-03-07 của ngày này còn 要確認 | ✖ chặn | ADR-008 §2.2 |
 | 5 | 当日訂正 / 取消 có tiền thay đổi của một người mua ≥ ngưỡng 2 cấp, hoặc đổi 買受人, chưa được 照合事務局 bấm 「確認済」 | ✖ chặn | PRM-127, E-08; [Customer giả lập, 2026-11-25 — Q-SC0405-01, #25] |
 | 6 | Ngoại lệ giao làm đổi tiền (不足 / 返品 / 一部取消) chưa 「確認済」 | ✖ chặn | FR-SETTLE-01, OBJ-05; [Customer giả lập, 2026-11-25 — #4] |
@@ -91,3 +91,4 @@ BR-CLOSE-01, BR-INC-01, FR-SETTLE-01, FR-SETTLE-02, FR-CORR-01..03, FIG-002, FIG
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: một định nghĩa 業務日 [D 01:00, D+1 01:00), mở ngày kế tiếp khi 日次締め + job 01:00 dự phòng (M-01); checklist chuẩn 11 mục (6 ✖ / 5 ⚠) khớp SC-07-02, 「端末回収不能」, 後入力 cho ngày đã khóa qua 修正申請 LATE_ENTRY với ngày GD thật (M-05, khách #1, #4, #25); phương án F, G | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | Gate 1 recheck n-04: tham chiếu "(mục 6)" → "§2-6" | 2026-11-25 | phuongnnm-23344 | |

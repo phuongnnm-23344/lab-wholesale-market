@@ -2,7 +2,7 @@
 id: WF-SCREEN-LIST-001
 title: 画面一覧・画面遷移 — 第1期 (70 màn)
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [PREMISE.md, L4-D02, L4-D03, PRM-121, DEC-031, PRM-126, PRM-127, PRM-129, PRM-130, TBL-ROLE-01, CAP-HUMAN-01]
@@ -70,7 +70,7 @@ Kiểm đếm: 82 màn của 画面一覧 LAB-1 − 12 màn không tính ở 第
 | # | SC-ID | 画面名 | Tên (VI) | Loại | Vai | Thiết bị | Prototype | Mức | Ghi chú to-be |
 |---|---|---|---|---|---|---|---|---|---|
 | 13 | SC-03-01 | ロット本登録（受付台・PC） | Đăng ký chính thức lô | NH | INTAKE | PC | Có | **Spec** | Mã 出荷者 thay text tự do (D15); 業務日 gắn lô từ 01:00 (E-16) |
-| 14 | SC-03-02 | ロット仮受付（埠頭・タブレット） | Tiếp nhận tạm lô ở bến | NH | INTAKE | TAB | Có | List | Offline lưu cục bộ + 「未同期 n件」 (M04); không chụp ảnh ở 第1期. Khách xin hình phác (khách #22) — **chưa làm**: ngoài 10 + 4 màn của L4-D02, chờ người dùng quyết có thêm ở P3 không |
+| 14 | SC-03-02 | ロット仮受付（埠頭・タブレット） | Tiếp nhận tạm lô ở bến | NH | INTAKE | TAB | Có | List | Offline lưu cục bộ + 「未同期 n件」 (M04); không chụp ảnh ở 第1期. Khách xin hình phác (khách #22) — **người dùng chốt thêm wireframe ở P3** (chỉ wireframe, không spec đầy đủ — PREMISE L4-D05) |
 | 15 | SC-03-03 | ロット一覧・検索 | Danh sách lô | DS | INTAKE, JUDGE, TRADE | PC | Có | List | 販売公開 hàng loạt; 販売終了 / 持ち越し (D12, E-12) |
 | 16 | SC-03-04 | ロット詳細 | Chi tiết lô + sổ SL | CT | INTAKE, JUDGE, TRADE, SETTLE | PC | Có | List | Gồm sửa thuộc tính lô (gộp SC-03-06, PRM-128): lý do, before/after |
 | 17 | SC-03-05 | 目利き・下見結果入力 | Ghi kết quả 目利き・下見 | NH | JUDGE | PC/TAB | Có | **Spec** | **Người đánh giá nhập — không AI / OCR** (CAP-HUMAN-01) |
@@ -393,3 +393,4 @@ Ba câu dưới đây **đã trả lời [Customer giả lập, 2026-11-25]** (`
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu: 70 màn 第1期 theo 9 cụm, trạng thái prototype / mức thiết kế, 16 ID không tính, 10 batch, 10 sơ đồ chuyển màn | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1: đổi nhãn duyệt nội bộ 承認 → 決裁 / 確認 (SC-08-02, SC-08-03, SC-10-04, sơ đồ C1, C2, C6, C8) và ghi quy tắc ở §0 (M-06, L4-D03); mermaid tách `:::human` khỏi mũi tên bằng dòng `class` (m-08); batch mở 業務日 theo D3 (M-01); SC-09-04 chỉ 試算 + 期ロック (M-02); dòng SC-00-03 (Q-WF-02, #32), SC-04-04 (Q-WF-03, #26), SC-06-01 (Q-WF-01, #30), SC-07-01 (#4, #10, #25), SC-08-01 (#5, LATE_ENTRY), SC-03-02 (#22 chưa làm); §6 ghi câu trả lời Q-WF-01..03 | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | SC-03-02: người dùng chốt thêm wireframe ở P3 (L4-D05, khách #22) | 2026-11-25 | phuongnnm-23344 | |

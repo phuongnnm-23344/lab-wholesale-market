@@ -13,7 +13,7 @@ Nhóm tài liệu **mới, không có trong QC-01** (chuẩn đã bỏ `screen-m
 
 | ID | Tên tài liệu | Feature | Version | Updated by | Updated | Link |
 |---|---|---|---|---|---|---|
-| WF-SCREEN-LIST-001 | 画面一覧・画面遷移 — 第1期 (70 màn) | Toàn hệ thống | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [SCREEN-LIST.md](SCREEN-LIST.md) |
+| WF-SCREEN-LIST-001 | 画面一覧・画面遷移 — 第1期 (70 màn) | Toàn hệ thống | 0.2.1 | phuongnnm-23344 | 2026-11-25 | [SCREEN-LIST.md](SCREEN-LIST.md) |
 | WF-COMMON-001 | Khung màn và trạng thái dùng chung | Toàn hệ thống | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [_common-layout.md](_common-layout.md) |
 | WF-SC-03-01 | ロット本登録（受付台・PC） | Lô | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-03-01-lot-main-registration-wireframe.md) |
 | WF-SC-03-05 | 目利き・下見結果入力 | Lô | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-03-05-mekiki-inspection-result-entry-wireframe.md) |
@@ -21,10 +21,10 @@ Nhóm tài liệu **mới, không có trong QC-01** (chuẩn đã bỏ `screen-m
 | WF-SC-05-02 | せり結果確認 | せり | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-05-02-seri-result-session-confirm-wireframe.md) |
 | WF-SC-06-02 | 引渡し記録（タブレット） | 引渡し | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-06-02-delivery-record-tablet-wireframe.md) |
 | WF-SC-07-02 | 日次締め | 照合・締め | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-07-02-daily-close-business-day-lock-wireframe.md) |
-| WF-SC-08-03 | 修正申請決裁・却下 | 修正申請 | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-08-03-correction-request-approve-reject-wireframe.md) |
-| WF-SC-01-02 | 参加者詳細・編集（許可 / 承認） | 参加者 | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-01-02-participant-detail-kyoka-shonin-wireframe.md) |
-| WF-SC-10-04 | 規則版確認・ロールバック | 規則版 | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-10-04-rule-version-approve-rollback-wireframe.md) |
-| WF-SC-09-04 | 奨励金計算・期ロック | 完納奨励金 | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-09-04-incentive-calc-period-lock-wireframe.md) |
+| WF-SC-08-03 | 修正申請決裁・却下 | 修正申請 | 0.2.1 | phuongnnm-23344 | 2026-11-25 | [link](SC-08-03-correction-request-approve-reject-wireframe.md) |
+| WF-SC-01-02 | 参加者詳細・編集（許可 / 承認） | 参加者 | 0.2.1 | phuongnnm-23344 | 2026-11-25 | [link](SC-01-02-participant-detail-kyoka-shonin-wireframe.md) |
+| WF-SC-10-04 | 規則版確認・ロールバック | 規則版 | 0.2.1 | phuongnnm-23344 | 2026-11-25 | [link](SC-10-04-rule-version-approve-rollback-wireframe.md) |
+| WF-SC-09-04 | 奨励金計算・期ロック | 完納奨励金 | 0.2.1 | phuongnnm-23344 | 2026-11-25 | [link](SC-09-04-incentive-calc-period-lock-wireframe.md) |
 | WF-SC-04-05 | 当日訂正（＋取消）— bổ sung | 相対取引 | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-04-05-same-day-correction-cancel-wireframe.md) |
 | WF-SC-06-04 | 引渡し例外登録 — bổ sung | 引渡し | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-06-04-delivery-exception-registration-wireframe.md) |
 | WF-SC-06-05 | 争いのある引渡し完了確認 — bổ sung | 引渡し | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [link](SC-06-05-disputed-delivery-completion-confirm-wireframe.md) |

@@ -3,7 +3,7 @@ id: ADR-007
 title: Engine 完納奨励金 — tính xác định theo kỳ, đóng băng ở 期ロック, sửa sau khóa thành DELTA kỳ sau
 type: adr
 status: proposed
-version: "0.2.0"
+version: "0.3.0"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
 related: [ARCH-001, ADR-004, ADR-005, ADR-006, BR-INC-01, FR-INC-01, FR-INC-03, PRM-040, PRM-043, PRM-053, PRM-055, DEC-011, DEC-012, L4-A04, OPEN-L4-02, E-02, E-06]
@@ -45,14 +45,14 @@ related: [ARCH-001, ADR-004, ADR-005, ADR-006, BR-INC-01, FR-INC-01, FR-INC-03, 
 
 ### 2.4 DELTA — phạm vi tính lại (C-01)
 
-8. Khi khóa kỳ N, engine tính lại **mọi kỳ đã khóa, không giới hạn năm TC**, có đầu vào đổi sau thời điểm khóa của kỳ đó: điều chỉnh có `period_id` = kỳ đó ghi sau `locked_at`, phân bổ / đảo phân bổ 入金 vào kỳ đó sau khi khóa, 修正申請 KANNO / INCENTIVE đã duyệt cho kỳ đó. Tính lại theo **version của kỳ cũ**, so với tổng đã ghi nhận của kỳ cũ (MAIN + các DELTA trước), sinh dòng `DELTA` (gắn `ref_period`) vào kỳ N. 完納 của kỳ cũ giữ nguyên (không hồi tố) — trừ §2.5.
-9. **Giới hạn năm TC chỉ áp cho việc trừ dần delta âm, không áp cho phạm vi tính lại.** Delta âm trừ dần (CARRY) vào thưởng các kỳ sau tới hết năm TC của kỳ ghi nhận; phần âm còn lại cuối năm ghi dòng `CARRY_EXPIRED` và hiện ở RPT-07 để 照合部門 xử lý (cách thu: Q-ARCH-08).
+8. Khi khóa kỳ N, engine tính lại **mọi kỳ đã khóa, không giới hạn năm TC**, có đầu vào đổi sau thời điểm khóa của kỳ đó: điều chỉnh có `period_id` = kỳ đó ghi sau `locked_at`, **GD mới nhập qua 修正申請 `LATE_ENTRY` có `trade_date` thuộc kỳ đó và `created_at` > `locked_at`**, phân bổ / đảo phân bổ 入金 vào kỳ đó sau khi khóa, 修正申請 KANNO / INCENTIVE đã duyệt cho kỳ đó. Số tiền của 修正申請 INCENTIVE là **đầu vào cộng thêm** của hàm thuần, nên lần tính lại sau không đảo nó (TV-14). Tính lại theo **version của kỳ cũ**, so với tổng đã ghi nhận của kỳ cũ (MAIN + các DELTA trước), sinh dòng `DELTA` (gắn `ref_period`) vào kỳ N. 完納 của kỳ cũ giữ nguyên (không hồi tố) — trừ §2.5.
+9. **Giới hạn năm TC chỉ áp cho việc trừ dần delta âm, không áp cho phạm vi tính lại.** Delta âm trừ dần (CARRY) vào thưởng các kỳ sau tới hết năm TC của kỳ ghi nhận; phần âm còn lại cuối năm ghi dòng `CARRY_EXPIRED` và hiện ở RPT-07 để 照合部門 xử lý (cách thu: Q-ARCH-08). `CARRY_EXPIRED` là dòng **dương đóng số dư** ở kỳ cuối năm TC (đưa Σ của người đó về 0), `ref_period_id` = kỳ phát sinh delta; RPT-07 hiện trị tuyệt đối là phần chưa thu.
 10. **Delta qua năm TC:** GD kỳ 2028-03 (năm TC 2027) được sửa sau khi kỳ 2028-03 khóa → DELTA tính bằng version của kỳ 2028-03 nhưng **ghi ở kỳ đang khóa** (vd. 2028-05, năm TC 2028), thuộc năm TC 2028 cho CARRY và báo cáo. Không có kỳ đã khóa nào bị bỏ qua chỉ vì đã sang năm TC mới.
 
 ### 2.5 修正申請 KANNO và INCENTIVE — ngoại lệ có duyệt 2 cấp
 
 11. **KANNO** (PRM-055, FR-CORR-02): tiền về **trước** 支払期日 nhưng 消込 trễ / gán sai (có sao kê làm chứng cứ) làm kỳ bị xét "không 完納". 修正申請 phạm vi KANNO, **luôn 2 cấp** (照合部門長 → 運用部門長, MFA). Kỳ đích đã khóa → ở 期ロック kế tiếp engine tính lại kỳ đích với 完納 theo kết quả duyệt, version của kỳ đích, sinh dòng `DELTA` gắn `correction_id` + lý do. Đây là **ngoại lệ có duyệt** của nguyên tắc "không hồi tố 完納" — chỉ đường này được đổi 完納 của kỳ đã khóa. Kỳ đích chưa khóa → không cần KANNO, xử lý ở bước 要確認 trước khóa (§2.6).
-12. **INCENTIVE** (luôn 2 cấp): sửa tiền thưởng của kỳ đã khóa bị tính theo **tỷ lệ áp sai** (version sai đã được duyệt — R-L4-01, ADR-006 §2.5). Engine không tự phát hiện được (với engine, version đã duyệt là "đúng"), nên phải có yêu cầu từng người × kỳ: số tiền điều chỉnh + lý do + version tham chiếu → dòng `DELTA` gắn `correction_id` ở 期ロック kế tiếp.
+12. **INCENTIVE** (luôn 2 cấp; tối đa một yêu cầu KANNO / INCENTIVE đang chờ cho mỗi người × kỳ): sửa tiền thưởng của kỳ đã khóa bị tính theo **tỷ lệ áp sai** (version sai đã được duyệt — R-L4-01, ADR-006 §2.5). Engine không tự phát hiện được (với engine, version đã duyệt là "đúng"), nên phải có yêu cầu từng người × kỳ: số tiền điều chỉnh + lý do + version tham chiếu → dòng `DELTA` gắn `correction_id` ở 期ロック kế tiếp.
 
 ### 2.6 要確認 trước khóa — 「手数料差引の疑い」
 
@@ -67,16 +67,19 @@ related: [ARCH-001, ADR-004, ADR-005, ADR-006, BR-INC-01, FR-INC-01, FR-INC-03, 
 | # | Tình huống | Kết quả phải ra | ID |
 |---|---|---|---|
 | TV-01 | GD 2027-08-31, 修正申請 duyệt 2027-09-03 khi kỳ 2027-08 còn OPEN (期日 09-10) | `business_date` 2027-09-03, `period_id` 2027-08 → vào 期のお支払額 kỳ 08; không DELTA | C-02, L4-A04 (2) |
-| TV-02 | GD 2027-08-20, duyệt 2027-09-20 sau khi kỳ 2027-08 khóa (09-14) | Không vào 期のお支払額 kỳ 09; khóa kỳ 09 → DELTA ref 2027-08 theo version kỳ 08; 完納 kỳ 08 giữ | C-02, INC-EDGE-01 |
-| TV-03 | GD kỳ 2028-03 (năm TC 2027) sửa tháng 5/2028 | DELTA ghi ở kỳ 2028-05 (năm TC 2028), version kỳ 2028-03; âm thì CARRY tới 2029-03 | C-01, BR-INC-01 |
-| TV-04 | Delta âm lớn hơn thưởng các kỳ còn lại của năm TC | CARRY từng kỳ, cuối năm `CARRY_EXPIRED` + RPT-07 | PRM-043 (c), m-05 |
-| TV-05 | Kỳ 2027-09: ngày 10 = 2027-10-10 (CN) → 支払期日 2027-10-08; 入金 về 10-12 | Gán kỳ 09, `is_on_time = false`, không 完納, thưởng 0 | BR-INC-01, L4-A04 (2) |
+| TV-02 | GD 2027-08-20, duyệt 2027-09-20 sau khi kỳ 2027-08 khóa (09-14) | Không vào 期のお支払額 kỳ 09; khóa kỳ 09 → DELTA ref 2027-08 theo version kỳ 08; 完納 kỳ 08 giữ | C-02, INC-EDGE-02 |
+| TV-03 | GD kỳ 2028-03 (năm TC 2027) sửa tháng 5/2028 | DELTA ghi ở kỳ 2028-05 (năm TC 2028), version kỳ 2028-03; âm thì CARRY tới 2029-03 | C-01, BR-INC-01, INC-EDGE-02 |
+| TV-04 | Delta âm lớn hơn thưởng các kỳ còn lại của năm TC | CARRY từng kỳ; cuối năm dòng `CARRY_EXPIRED` **dương** đóng số dư về 0 (không đếm âm hai lần), RPT-07 hiện trị tuyệt đối là phần chưa thu | PRM-043 (c), m-05 |
+| TV-05 | Kỳ 2027-09: ngày 10 = 2027-10-10 (CN) → 支払期日 2027-10-08; 入金 về 10-12 | Gán kỳ 09, `is_on_time = false`, không 完納, thưởng 0 | BR-INC-01, B.5 「超過時は0」, L4-A04 (2) |
 | TV-06 | Nợ kỳ cũ + FIFO làm kỳ mới mất 完納 | Kỳ mới 非完納; màn 試算 hiện tiền gán vào kỳ cũ | OPEN-L4-02 |
-| TV-07 | 修正申請 KANNO cho kỳ đã khóa, duyệt 2 cấp | DELTA gắn `correction_id`, 完納 mới, version kỳ đích | PRM-055, §2.5 |
+| TV-07 | 修正申請 KANNO cho kỳ đã khóa, duyệt 2 cấp | DELTA gắn `correction_id`, 完納 mới, version kỳ đích | PRM-055, §2.5, INC-EDGE-02 |
 | TV-08 | Kỳ 2028-05: ngày 10 = 2028-06-10 thứ Bảy (chợ mở, ngân hàng nghỉ) | 支払期日 = 2028-06-09 | PRM-054, M-03 |
 | TV-09 | Lô nhận 01:30 ngày 2027-09-01; GD chốt 01:45 / 02:05 | Lô thuộc 業務日 2027-09-01 → kỳ 2027-09; GD 01:45 bị từ chối (trước 02:00); GD 02:05 thuộc 2027-09-01 | ADR-005 §2.2–2.3, L4-A09 |
 | TV-10 | Thiếu tiền nhỏ, nghi trừ phí chuyển khoản | 要確認; 照合部門長 quyết + lý do; `kanno_basis = JUDGED` | §2.6 |
-| TV-11 | 適格金額 1.234.567, 交付率 0,9% | floor(12.222,21) = 12.222 | INC-EDGE-02 |
+| TV-11 | 適格金額 1.234.567, 交付率 0,9% | floor(12.222,21) = 12.222 | INC-EDGE-03 |
+| TV-12 | 適格金額 **đúng ngưỡng** 1.000.000 (cận dưới bậc 3, "以上") và 999.999; kỳ 2027-10 dùng version v3 (hiệu lực 2027-10-01), kỳ 2027-09 dùng v2 | 1.000.000 → bậc 3 (90 bp) → 9.900; 999.999 → bậc 2 (50 bp) → floor(5.499,99) = 5.499; kỳ 09 tra bảng v2, kỳ 10 tra bảng v3 — chọn version theo kỳ, không theo ngày khóa | INC-EDGE-01 |
+| TV-13 | 紙伝票 của 2027-08-31 phát hiện 2027-09-20 (kỳ 08 đã khóa 09-14) → 修正申請 `LATE_ENTRY` → GD mới `trade_date` 08-31, `business_date` 09-20 | Không vào 期のお支払額 kỳ 08 (đã đóng băng) lẫn kỳ 09; 期ロック kỳ 09 thấy GD có `trade_date` thuộc kỳ 08 và `created_at` > `locked_at` → DELTA ref 2027-08 | N-02, ADR-005 §2-8 |
+| TV-14 | 修正申請 `INCENTIVE` +2.000 cho kỳ 2027-10 (tỷ lệ áp sai), sau đó tháng sau kỳ 10 có thêm điều chỉnh `TRADE` khác | 期ロック kế tiếp: DELTA +2.000 gắn `correction_id`; lần tính lại sau chỉ phản ánh thay đổi mới — **không đảo** +2.000 (số tiền INCENTIVE là đầu vào cộng thêm của hàm thuần) | n-02, §2.5-12 |
 | — | Chuyển năm TC 3/31 → 4/1 (quota quy chế), kỳ đầu sau go-live | Như ADR-006 và Technical Design | C.3 |
 
 ## 3. Phương án đã cân nhắc
@@ -119,3 +122,4 @@ BR-INC-01, B.5, 13-06, FR-INC-01, FR-INC-03, FR-CORR-02, FR-AUDIT-03, INC-EDGE-0
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1: tính lại **mọi kỳ đã khóa**, giới hạn năm TC chỉ cho CARRY, delta qua năm TC (C-01); hai trục thời gian `business_date` / `period_id`, kỳ khóa chỉ đi DELTA (C-02); 2 bước 試算 / 期ロック, 試算 ghi audit (M-02, khách #6); 支払期日 theo ngày ngân hàng (M-03); 修正申請 KANNO / INCENTIVE (M-10, M-04); 要確認 「手数料差引の疑い」 (khách #7); câu CARRY_EXPIRED dùng chung (m-05); 110/100 cố định + ví dụ 8% (m-07); bảng test vector §2.7; phương án G, H | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.3.0 | Update | Gate 1 recheck: nhãn INC-EDGE đúng C.3 + TV-12 (INC-EDGE-01) (N-01); GD LATE_ENTRY vào danh sách đầu vào DELTA + TV-13 (N-02); CARRY_EXPIRED dương đóng số dư (n-01); INCENTIVE là đầu vào cộng thêm + TV-14, một yêu cầu đang chờ / người × kỳ (n-02) | 2026-11-25 | phuongnnm-23344 | |
