@@ -1,0 +1,164 @@
+# Sửa backlog theo Expert Gate A (project/07_feedbacks/expert-review-lab5-gateA-261126.md, FB-EXP-327..340)
+# và hai quyết định người dùng xác nhận 2026-11-26: L5-D08 rolling-wave, L5-D05 thiết kế trước sprint.
+# Đọc bởi apply-gate-a-decisions.py (cấu trúc) và plan-priority-and-iteration.py (ưu tiên, Iteration 1).
+
+milestones:
+  W1: "設計第1波 (khách duyệt 2027-01-22)"
+  W2: "設計第2波 (khách duyệt 2027-02-05)"
+  W3: "設計第3波 (khách duyệt 2027-02-19)"
+  W4: "設計第4波 = G2 (khách duyệt 2027-03-05)"
+  S4: "S4 (2027-03-15 → 03-26)"
+
+# Issue thiết kế (kind: design) — viết spec cho phần chưa có spec, giờ thật theo cách tính 基本設計 của LAB-1:
+# Screen Spec 8 giờ / màn (FE 0,5 + デザイン 0,25 + review tiếng Nhật 0,25 人日), thiết kế logic / API ≈ 15% giờ BE của phần nó che, tối thiểu 4 giờ.
+# Lá ≤ 16 giờ (tối đa 2 màn / lá). replaces: issue clarify "viết spec" cũ (ID cũ trỏ sang issue mới). covers: issue thô chờ spec này.
+design:
+  - {id: A-FG01-15, epic: EP-FG01, ms: W1, role: FE, hours: 8, title: "Screen Spec SC-01-06 資格照会", replaces: [], covers: [], spec: ["SCREEN-LIST C2 #10"], rfp: [FR-PARTY-01, BR-PERM-01, NFR-USE-01]}
+  - {id: A-FG01-16, epic: EP-FG01, ms: W1, title: "Screen Spec SC-01-01 / SC-01-05 + Technical Design 失効予告", replaces: [A-CLR-07], covers: [A-FG01-12],
+     leaves: [["Screen Spec SC-01-01 参加者一覧 + SC-01-05 資格状態変更", FE, 16], ["Technical Design 失効予告 — job cảnh báo sắp hết hạn", BE, 4]]}
+  - {id: A-FG01-17, epic: EP-FG01, ms: W1, role: FE, hours: 16, title: "Screen Spec SC-01-03 許可登録 + SC-01-04 承認登録", replaces: [A-CLR-06], covers: [A-FG01-13]}
+  - {id: A-FG03-18, epic: EP-FG03, ms: W2, role: FE, hours: 12, title: "Screen Spec SC-03-02 仮受付 + API Design ghi / hủy 仮受付", replaces: [A-CLR-04], covers: [A-FG03-12]}
+  - {id: A-FG03-19, epic: EP-FG03, ms: W2, role: BE, hours: 12, title: "Technical / API Design 同期 (DEP-04) + Screen Spec SC-03-07", replaces: [A-CLR-01], covers: [A-FG03-13]}
+  - {id: A-FG03-20, epic: EP-FG03, ms: W2, title: "販売公開・販売終了 (DEP-18) + Screen Spec SC-03-03 / SC-03-04", replaces: [A-CLR-08], covers: [A-FG03-14],
+     leaves: [["Function / API Design 販売公開・販売終了 (DEP-18)", BE, 6], ["Screen Spec SC-03-03 ロット一覧 + SC-03-04 ロット詳細", FE, 16]]}
+  - {id: A-FG03-21, epic: EP-FG03, ms: W3, role: BE, hours: 4, title: "Function Spec fn_lot_carry_over (DEP-05)", replaces: [A-CLR-02], covers: [A-FG03-15]}
+  - {id: A-FG04-15, epic: EP-FG04, ms: W2, title: "Screen Spec SC-04-02..05, SC-04-07 + API Design 紙伝票後入力", replaces: [A-CLR-09], covers: [A-FG04-13],
+     leaves: [["Screen Spec SC-04-02 + SC-04-03", FE, 16], ["Screen Spec SC-04-04 + SC-04-05 当日訂正・取消", FE, 16], ["Screen Spec SC-04-07 紙伝票後入力 + API Design PAPER_LATE", FE, 11]]}
+  - {id: A-FG04-16, epic: EP-FG04, ms: W3, role: BE, hours: 6, title: "Function Spec 後入力 fn_*_late_entry (DEP-06)", replaces: [A-CLR-03], covers: [A-FG04-14]}
+  - {id: A-FG05-08, epic: EP-FG05, ms: W3, role: FE, hours: 11, title: "Screen Spec SC-05-01 せり結果入力 + API Design ghi / sửa dòng せり", replaces: [A-CLR-05], covers: [A-FG05-07]}
+  - {id: A-FG06-14, epic: EP-FG06, ms: W3, title: "Screen Spec SC-06-01 / SC-06-06 + API Design in 引渡票", replaces: [A-CLR-10], covers: [A-FG06-13],
+     leaves: [["Screen Spec SC-06-01 引渡し対象一覧 + SC-06-06 引渡票", FE, 16], ["API Design in 引渡票 / 再発行", BE, 4]]}
+  - {id: B-FG07-09, epic: EP-FG07, ms: W3, title: "Screen Spec SC-07-01 / 03 / 04 + Technical Design 日次精算", replaces: [B-CLR-21], covers: [B-FG07-07, B-FG07-08],
+     leaves: [["Screen Spec SC-07-01 日次照合表 + API Design 照合", FE, 15], ["Screen Spec SC-07-03 紛争一覧 + SC-07-04 紛争詳細", FE, 16], ["Technical Design 日次精算バッチ SC-07-B2 + API 紛争・SLA", BE, 9]]}
+  - {id: B-FG08-09, epic: EP-FG08, ms: W4, title: "Screen Spec SC-08-01 / 02 + API Design POST /corrections", replaces: [B-CLR-16], covers: [B-FG08-08],
+     leaves: [["Screen Spec SC-08-01 修正申請作成 + SC-08-02 修正申請一覧", FE, 16], ["API Design POST /corrections + xem trước tiền, số cấp", BE, 6]]}
+  - {id: B-FG09-22, epic: EP-FG09, ms: W4, title: "Screen Spec SC-09-01..03 + API Design 入金取込・コード対応", replaces: [B-CLR-04], covers: [B-FG09-19],
+     leaves: [["Screen Spec SC-09-01 入金CSV取込 + SC-09-02 コード対応", FE, 16], ["Screen Spec SC-09-03 + API Design import / ánh xạ mã", FE, 15]]}
+  - {id: B-FG09-23, epic: EP-FG09, ms: W4, role: FE, hours: 12, title: "Screen Spec SC-09-05 奨励金明細 + Technical Design SC-09-B1 通知", replaces: [], covers: [B-FG09-20], depends: [B-CLR-05]}
+  - {id: B-FG10-15, epic: EP-FG10, ms: W2, title: "Screen Spec SC-10-01..03 + API Design 規則版 (maker)", replaces: [B-CLR-17], covers: [B-FG10-11],
+     leaves: [["Screen Spec SC-10-01 規則版一覧 + SC-10-02 作成・編集", FE, 16], ["Screen Spec SC-10-03 交付率テーブル + API Design maker", FE, 15]]}
+  - {id: B-FG10-16, epic: EP-FG10, ms: W2, title: "Technical Design カレンダー・業務日・期作成 + Screen Spec SC-10-05", replaces: [B-CLR-18], covers: [B-FG10-12],
+     leaves: [["Technical Design カレンダー・業務日開始・期作成 (DEP-12)", BE, 10], ["Screen Spec SC-10-05 市場・銀行カレンダー", FE, 8]]}
+  - {id: B-FG10-17, epic: EP-FG10, ms: W2, role: FE, hours: 14, title: "Screen Spec SC-10-07 マスタ管理 + API Design マスタ", replaces: [B-CLR-19], covers: [B-FG10-13]}
+  - {id: B-FG10-18, epic: EP-FG10, ms: W2, role: BE, hours: 4, title: "Technical Design 設定ファイル（履歴付き）(DEP-16)", replaces: [B-CLR-20], covers: [B-FG10-14]}
+  - {id: C-FG02-18, epic: EP-FG02, ms: W1, title: "API Design iam — 認証・利用者切替・認可 (DEP-01 / 02 / 14)", replaces: [], covers: [], rfp: [FR-IAM-01, FR-IAM-02],
+     leaves: [["API Design 認証 — phiên, đổi người bằng PIN, MFA verify (DEP-01)", BE, 8], ["API Design 認可 — kiểm quyền, 社員番号照会 (DEP-02), 代行 (DEP-14)", BE, 8]],
+     unblocks: [C-FG02-02, C-FG02-03, C-FG02-04, C-FG02-05, C-FG02-06, C-FG02-07, C-FG02-08, C-FG02-09, C-FG02-10, C-FG02-11, C-FG02-12]}
+  - {id: C-FG02-19, epic: EP-FG02, ms: W1, title: "Screen Spec SC-00-01..03 ログイン・利用者切替・ホーム", replaces: [], covers: [C-FG02-13],
+     leaves: [["Screen Spec SC-00-01 社内ログイン + SC-00-02 利用者切替", FE, 16], ["Screen Spec SC-00-03 ホーム", FE, 8]]}
+  - {id: C-FG02-20, epic: EP-FG02, ms: W1, title: "Screen Spec SC-02-02 / 03 + API Design アカウント・ロール管理", replaces: [], covers: [C-FG02-14, C-FG02-15],
+     leaves: [["Screen Spec SC-02-02 MFA登録 + SC-02-03 アカウント管理", FE, 16], ["API Design アカウント・ロール管理", BE, 5]]}
+  - {id: C-FG11-09, epic: EP-FG11, ms: W4, title: "Screen Spec SC-11-01..16 + Technical Design 帳票・IF-ACC-01", replaces: [], covers: [C-FG11-01, C-FG11-02, C-FG11-03, C-FG11-04, C-FG11-05], depends: [B-CLR-03, C-CLR-17],
+     leaves: [["Screen Spec SC-11-01 帳票メニュー + SC-11-02 (RPT-01)", FE, 16], ["Screen Spec SC-11-03 (RPT-02) + SC-11-04 (RPT-03)", FE, 16],
+              ["Screen Spec SC-11-05 (RPT-04) + SC-11-06 (RPT-05)", FE, 16], ["Screen Spec SC-11-08 (RPT-07) + SC-11-09 (RPT-08)", FE, 16],
+              ["Screen Spec SC-11-10 (RPT-09) + SC-11-11 (RPT-10)", FE, 16], ["Screen Spec SC-11-12 (RPT-11) + SC-11-13 (RPT-12)", FE, 16],
+              ["Screen Spec SC-11-14 (RPT-06・会計CSV) + SC-11-15 (仕訳)", FE, 16], ["Screen Spec SC-11-16 データ出力", FE, 8],
+              ["Technical Design 帳票共通基盤 + バッチ trước 11:00", BE, 12], ["Technical Design 会計連携CSV IF-ACC-01 — đóng băng, xuất lại", BE, 16],
+              ["Technical Design 仕訳マッピング + データ出力", BE, 10]]}
+  - {id: C-FG12-07, epic: EP-FG12, ms: W4, role: BE, hours: 14, title: "Technical Design 通知 worker + Screen Spec SC-12-02", replaces: [], covers: [C-FG12-04, C-FG12-05], depends: [C-CLR-13]}
+  - {id: C-FG13-10, epic: EP-FG13, ms: W4, title: "Screen Spec SC-13-01..03 + Technical Design 保管期限・匿名化", replaces: [], covers: [C-FG13-05, C-FG13-06, C-FG13-07, C-FG13-08], depends: [C-CLR-08],
+     leaves: [["Screen Spec SC-13-01 監査ログ検索 + SC-13-02 詳細", FE, 16], ["Screen Spec SC-13-03 + Technical Design 匿名化", FE, 13], ["Technical Design 保管期限・物理削除 + 適用規則版の表示", BE, 10]]}
+  - {id: C-FG14-08, epic: EP-FG14, ms: W4, role: FE, hours: 8, title: "Screen Spec SC-14-01 運用ダッシュボード (rút gọn)", replaces: [], covers: [C-FG14-06]}
+  - {id: C-FG15-06, epic: EP-FG15, ms: W4, title: "Screen Spec SC-15-02 + Technical Design 移行", replaces: [], covers: [C-FG15-01, C-FG15-02, C-FG15-03, C-FG15-04], depends: [C-CLR-14],
+     leaves: [["Screen Spec SC-15-02 要判断データ + Technical Design クレンジング", FE, 14], ["Technical Design 移行取込・照合・リハーサル (script)", BE, 13]]}
+
+# Xóa (thay bằng issue mới bên dưới)
+delete: [A-FG01-12.3]
+
+# Issue mới khác (dev thay cho màn thô cần ở S1, tách 保証金 / 参加上限, checkpoint S4, câu hỏi mới)
+new:
+  - {id: A-FG01-19, epic: EP-FG01, kind: dev, role: FE, title: "[FG-01] SC-01-06 資格照会 — tra tư cách người mua bằng bàn phím", depends_on: [A-FG01-15, A-FG01-04, A-FG01-05],
+     rfp: [FR-PARTY-01, BR-PERM-01, NFR-USE-01], spec: ["SCREEN-LIST C2 #10", "A-FG01-15 (Screen Spec)"], rules: [rule:permit-vs-approval],
+     dod: ["Đúng Screen Spec SC-01-06 (A-FG01-15)", "AC-S1-3: gõ mã người mua chỉ bằng bàn phím → thấy hiệu lực, căn cứ 許可 / 承認, ngày hết hạn"],
+     children: [["SC-01-06 資格照会 — nhập mã người mua, hiện 許可 / 承認 + hạn", FE, 11], ["SC-01-06 資格照会 — chỉ bàn phím, trạng thái 失効 / 一時停止 / không có", FE, 10]]}
+  - {id: C-FG02-21, epic: EP-FG02, kind: dev, role: FE, title: "[FG-02] SC-00-01 社内ログイン — màn đăng nhập PC / タブレット", depends_on: [C-FG02-19, C-FG02-02],
+     rfp: [FR-IAM-01], spec: ["SCREEN-LIST C1 #1", "C-FG02-19 (Screen Spec)"], rules: [],
+     dod: ["Đúng Screen Spec SC-00-01 (C-FG02-19)"],
+     children: [["SC-00-01 社内ログイン — form đăng nhập PC / タブレット", FE, 11], ["SC-00-01 社内ログイン — lỗi, khóa tài khoản, hết phiên", FE, 10]]}
+  - {id: C-FG02-22, epic: EP-FG02, kind: dev, role: FE, title: "[FG-02] SC-00-02 利用者切替 — đổi người bằng PIN trên máy dùng chung", depends_on: [C-FG02-19, C-FG02-04],
+     rfp: [FR-IAM-02, NFR-USE-01], spec: ["SCREEN-LIST C1 #2", "C-FG02-19 (Screen Spec)"], rules: [],
+     dod: ["Đúng Screen Spec SC-00-02 (C-FG02-19)", "AC-S1-4: hai người đổi nhau bằng PIN trong vài giây; nhật ký ghi đúng người"],
+     children: [["SC-00-02 利用者切替 — chọn người + bàn số PIN (社員番号 + PIN)", FE, 16], ["SC-00-02 利用者切替 — khóa sau 5 lần sai, hiện người đang dùng", FE, 15]]}
+  - {id: A-FG01-09.4, epic: EP-FG01, parent: A-FG01-09, kind: dev, role: FE, hours: 5, title: "[FG-01] SC-01-02 承認ブロック — 参加上限 + đổi hạn mức", depends_on: [A-FG01-08.2, A-FG01-09.3],
+     rfp: [FR-PARTY-01, PRM-121], spec: ["SC-01-02_SPEC §4"], rules: [rule:permit-vs-approval], dod: ["Đúng SC-01-02_SPEC phần 参加上限; chỉ 照合部門長 đổi, có MFA"]}
+  - {id: A-FG01-18, epic: EP-FG01, kind: test, role: QA, hours: 4, title: "[FG-01] テスト 保証金・参加上限 — đổi 保証金, hạn mức, cảnh báo vượt", depends_on: [A-FG01-06, A-FG01-08.2, A-FG01-09.4],
+     rfp: [FR-PARTY-03], spec: ["PTY_APPROVAL_LIFECYCLE_TECH", "PARTY_FUNC"], rules: [rule:permit-vs-approval], dod: ["Kịch bản đổi 保証金 thêm dòng lịch sử; đổi 参加上限 có MFA; cảnh báo vượt hạn mức đúng"]}
+  - {id: C-FG02-23, epic: EP-FG02, kind: test, role: QA, hours: 4, title: "[FG-02] テスト 利用者切替 (S1) — đổi người bằng PIN trên PC dùng chung + nhật ký", depends_on: [C-FG02-04, C-FG02-22.1, C-FG13-02],
+     rfp: [FR-IAM-02, FR-AUDIT-01], spec: ["ADR-002 §2.1", "IAM_AUDIT_DB"], dod: ["AC-S1-4: hai người đổi nhau bằng PIN trong vài giây; 監査ログ ghi đúng người thao tác"]}
+  - {id: C-CLR-17, epic: EP-CLAR, kind: clarify, role: BrSE, hours: 1, title: "[要確認] Q-ARCH-12 — 税区分 của 完納奨励金 khi xuất IF-ACC-01 (経理部)", depends_on: [],
+     rfp: [IF-ACC-01, BR-INC-01], spec: ["ADR-007 §6 Q-ARCH-12"], labels: ["fg:FG-11", "feature:report", "constraint:完納奨励金"],
+     dod: ["Câu trả lời ghi vào ADR-007 §6 và bảng ánh xạ 仕訳; mở khóa C-FG11-04.1, C-FG11-04.2, C-FG11-09"]}
+  - {id: A-CLR-22, epic: EP-CLAR, kind: clarify, role: BrSE, hours: 1, title: "[要確認] E-21 — scan 受入証憑 ở máy đa năng + PC hay chụp trên tablet (運用部門)", depends_on: [],
+     rfp_from: A-FG06-09, spec: ["ADR-008 §6 E-21", "ADR-008 §2 (ngoại lệ giao kèm scan)"], labels: ["fg:FG-06", "feature:delivery"],
+     dod: ["Câu trả lời ghi vào ADR-008 §6; mở khóa A-FG06-09 (SC-06-04 đính kèm scan)"]}
+  - {id: B-CLR-24, epic: EP-CLAR, kind: clarify, role: BrSE, hours: 1, title: "[要確認] Phân bổ lại 入金 khi 期のお支払額 kỳ OPEN giảm — tự động hay 照合 dời tay", depends_on: [],
+     rfp: [BR-INC-01], spec: ["INC_ENGINE_TECH §4.2", "PREMISE L5-A04"], labels: ["fg:FG-09", "feature:incentive", "constraint:完納奨励金"],
+     dod: ["Câu trả lời của 経理部 / 照合部門長 ghi vào PREMISE L5-A04 và INC_ENGINE_TECH §4.2; mở khóa B-FG09-04, B-FG09-21"]}
+
+# Sửa issue có sẵn
+update:
+  C-FG02-13: {title: "[FG-02][概算] SC-00-03 ホーム — trang chủ theo vai (chưa spec)", hours_hint: 20, role: FE,
+              description: "Còn lại của nhóm SC-00-01..03 sau khi SC-00-01 / SC-00-02 thành issue dev C-FG02-21 / C-FG02-22 (L5-D05). Giờ = ước LAB-1 (chỗ giữ effort, L5-D08)."}
+  A-FG01-09.3: {title: "[FG-01] SC-01-02 承認ブロック — khối 承認 + lịch sử + nút thủ tục", hours_hint: 9}
+  A-FG01-11: {title: "[FG-01] テスト 承認 — vòng đời 承認 (申請 / 確認 / 一時停止)", hours_hint: 6}
+  A-FG01-10: {title: "[FG-01] テスト 許可 — vòng đời 許可 (申請 / 決裁 / 一時停止)"}
+  C-PLAT-08: {rfp_refs: ["C.1"]}
+  B-FG09-21: {title: "[FG-09] 試算表チェックポイント (S4末) — kiểm quy tắc bằng bảng tính trước khi code engine", role: QA, milestone: S4}
+set_depends:
+  A-FG01-09.3: [A-FG01-08.1, A-FG01-08.3]
+  A-FG01-11: [A-FG01-08.1, A-FG01-08.3, A-FG01-09.3]
+  A-FG01-10: [A-FG01-07.1, A-FG01-07.2, A-FG01-09.2]
+add_depends:
+  B-FG09-21: [B-CLR-07, B-CLR-08, B-CLR-24]
+  B-FG09-04: [B-CLR-24]
+  C-FG11-04.1: [C-CLR-17]
+  C-FG11-04.2: [C-CLR-17]
+  A-FG06-09: [A-CLR-22]
+# B-FG09-21 thành cha + 4 sub-issue (M-05)
+children:
+  B-FG09-21:
+    - ["試算表 — bảng tính K1–K8 cho TV-01..15 + 3 ca C.3 (INC-EDGE-01..03)", test, BE, BE-4, 16]
+    - ["試算表 — ca biên L4-A09, FIFO, 後入力, phân bổ lại (B-CLR-24)", test, BE, BE-5, 8]
+    - ["試算表 — đối chiếu với bảng tính tay của 照合事務局 + biên bản ký", test, QA, QA-2, 12]
+    - ["試算表 — buổi kiểm với 照合事務局 / 経理部 / ルール管理者", test, BrSE, BrSE-1, 6]
+add_dod:
+  B-FG09-14: ["Ca L5-A04 (B-CLR-24): 期のお支払額 kỳ OPEN giảm sau phân bổ → K9 cảnh báo 過入金, 照合 dời tay (MANUAL), 完納 đúng sau khi dời"]
+
+not_issued_fix:
+  - {match: "ADR-008 §6 E-18", covered_by: [C-CLR-04, A-CLR-22], reason: "E-18 (đổi người bằng PIN khi mất mạng) → issue làm rõ C-CLR-04; E-21 (scan 受入証憑) → issue làm rõ A-CLR-22"}
+  - {match: "ADR-007 §6 Q-ARCH-12", covered_by: [C-CLR-17, C-FG11-08, C-FG11-03.1, B-FG09-20, C-FG12-04],
+     reason: "Không thuộc engine 完納奨励金: Q-ARCH-12 → issue làm rõ C-CLR-17; bảng BILLING_DB 4.40–4.42 → C-FG11-08; RPT-07 → C-FG11-03.1; mẫu email FORM-INC-01 → B-FG09-20, C-FG12-04"}
+  - {match: "FT-12-03 通知設定", covered_by: [B-FG10-14, B-FG10-18], reason: "Không có màn ở 第1期 (PRM-126): file cấu hình có nhật ký → B-FG10-14 (thiết kế B-FG10-18)"}
+# Chữ nội bộ không đưa vào file nộp (M-06 c)
+text_replace:
+  - ["luồng A", "nhóm FG-01, 03–06"]
+  - ["luồng B", "nhóm FG-07–10"]
+  - ["luồng C", "nhóm FG-02, 11–15"]
+  - [" — PL nối khi gộp", ""]
+  - [" (nhóm FG-07–10 theo brief §8)", ""]
+  - ["khi chia 3 luồng", "khi chia module"]
+  - ["dễ hai luồng cùng", "dễ hai nơi cùng"]
+
+# ---- Ưu tiên (plan-priority-and-iteration.py) ----
+priority_by_epic: {EP-FG01: P1, EP-FG04: P1, EP-PLAT: P1, EP-FG07: P2, EP-FG03: P2, EP-FG09: P2, EP-FG13: P2, EP-TEST: P2,
+                   EP-FG06: P3, EP-FG08: P3, EP-FG02: P3, EP-FG11: P3, EP-FG14: P3, EP-FG15: P3, EP-FG05: P4, EP-FG10: P4, EP-FG12: P4, EP-CLAR: P3}
+priority_override: {C-FG02-04: P2, C-FG02-22: P2, B-FG10-01: P2, B-FG10-12: P2, B-FG10-02: P2}
+planned_sprint: {EP-PLAT: S0, EP-FG01: S1, EP-FG02: S1, EP-FG03: S2, EP-FG10: S2, EP-FG04: S3, EP-FG05: S4, EP-FG06: "S4–S5", EP-FG07: S5,
+                 EP-FG08: S6, EP-FG09: "S4 (試算表) · S6–S7", EP-FG12: S7, EP-FG11: S8, EP-FG13: "S1 (ghi audit) · S8", EP-FG14: S8, EP-FG15: "S8 + W5", EP-TEST: "sau S8", EP-CLAR: "trước G1 (2027-01-15)"}
+
+# ---- Iteration 1 (M-03) ----
+iteration1:
+  name: "Iteration 1"
+  dates: "2027-02-01 → 2027-02-12 (S1 LAB-1)"
+  # Năng lực: WBS LAB-1 §5 — S1 bắt đầu với ~6 người có sẵn + ~5 FE/BE/QA mới; S1 ≈ 50% khối lượng sprint thường.
+  # Mỗi người: 10 ngày làm × 8 giờ = 80 giờ × 50% = 40 giờ cho việc trên board.
+  per_person_hours: 40
+  roster: {BE: [BE-1, BE-2, BE-3, BE-6], FE: [FE-1, FE-4], QA: [QA-1], INFRA: [INFRA-1], BrSE: [BrSE-1]}
+  epics: [EP-FG01, EP-FG02]
+  exclude: [A-FG01-06, A-FG01-08.2, A-FG01-09.4, A-FG01-18, C-FG02-05, C-FG02-12, A-FG01-07.3, A-FG01-08.4]
+  include_extra: [A-FG01-14, C-FG13-01, C-FG13-02]
+acceptance_s1:
+  - {id: AC-S1-1, text: "Demo bằng danh sách người tham gia đã che của chợ (actors.csv đợt 1), không dùng dữ liệu bịa", issues: [A-FG01-14, C-CLR-14]}
+  - {id: AC-S1-2, text: "照合事務局 tự đăng ký 1 仲卸 có 許可 và 1 売買参加者 có 承認, mỗi cái có 有効日 / 失効日 riêng, rồi đặt 一時停止 cho một người theo 決裁, lưu giờ phút", issues: [A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.3, A-FG01-09.2, A-FG01-09.3, A-FG01-10, A-FG01-11]}
+  - {id: AC-S1-3, text: "取引担当 gõ mã người mua chỉ bằng bàn phím là thấy ngay còn hiệu lực không, căn cứ 許可 hay 承認, hết hạn ngày nào (NFR-USE-01)", issues: [A-FG01-04, A-FG01-19.1, A-FG01-19.2, A-FG01-15]}
+  - {id: AC-S1-4, text: "Trên một PC dùng chung, hai người đổi nhau bằng PIN trong vài giây; nhật ký ghi đúng ai làm gì", issues: [C-FG02-03, C-FG02-04, C-FG13-02, C-FG02-21.1, C-FG02-21.2, C-FG02-22.1, C-FG02-19, C-FG02-23]}

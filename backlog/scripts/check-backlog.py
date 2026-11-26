@@ -10,6 +10,8 @@ import re
 import sys
 import yaml
 
+sys.stdout.reconfigure(encoding="utf-8")  # console Windows (cp1252) không in được tiếng Việt / Nhật
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC = sys.argv[sys.argv.index("--file") + 1] if "--file" in sys.argv else os.path.join(ROOT, "backlog", "backlog.yaml")
 d = yaml.safe_load(open(SRC, encoding="utf-8"))
@@ -25,9 +27,10 @@ for i in iss:
 RULES = {"rule:aitai-main", "rule:permit-vs-approval", "rule:human-decision", "rule:no-overwrite", "rule:versioned-rule"}
 FEAT = {"party", "lot", "trade", "delivery", "settle", "incentive", "rule", "iam", "report", "notify", "audit", "ops",
         "migrate", "platform", "test"}
-HOURS = {"dev": (4, 16), "test": (4, 16), "rough": (2, 16), "clarify": (1, 4)}
+HOURS = {"dev": (4, 16), "test": (4, 16), "design": (4, 16), "rough": (2, 10 ** 4), "clarify": (1, 4)}  # thô: đơn vị tự nhiên, không trần (L5-D08)
+RANK = lambda p: int(p[1])
 INTERNAL_APPROVAL = re.compile(r"[12]次承認|承認待ち|承認者|規則版承認|社内の?承認|承認権限|承認フロー")
-OK_CTX = ("売買参加者", "許可", "参加上限", "approval", "承認ライフサイクル", "承認申請", "承認ブロック", "承認登録", "資格", "không dùng", "không có chữ", "L4-D03", "luật 2", "yêu cầu 承認", "với 承認")
+OK_CTX = ("売買参加者", "許可", "参加上限", "approval", "承認ライフサイクル", "承認申請", "承認ブロック", "承認登録", "資格", "vòng đời 承認", "テスト 承認", "không dùng", "không có chữ", "L4-D03", "luật 2", "yêu cầu 承認", "với 承認")
 
 if len(by) != len(iss):
     E("trùng ID", [k for k, v in collections.Counter(i["id"] for i in iss).items() if v > 1])
@@ -66,8 +69,12 @@ for i in iss:
     pre = "[要確認]" if i["kind"] == "clarify" else None
     if not re.match(r"^\[(FG-\d\d|PLAT|TEST|要確認)\]", t) or (pre and not t.startswith(pre)):
         E("tiền tố tiêu đề", x)
-    if i["kind"] == "rough" and "[概算]" not in t:
-        E("rough thiếu [概算]", x)
+    if i["kind"] == "rough" and ("[概算]" not in t or re.search(r"\(\d+/\d+ ", t)):
+        E("rough thiếu [概算] hoặc còn tách theo khuôn tầng", x)
+    if i["kind"] == "design" and "[設計]" not in t:
+        E("design thiếu [設計]", x)
+    if not i["rfp_refs"]:
+        E("rfp_refs rỗng", x)
     if not re.fullmatch(r"(BE|FE|QA|INFRA|BrSE)-\d", i["assignee"] or ""):
         E("assignee", x, i["assignee"])
     if i["priority"] not in ("P1", "P2", "P3", "P4"):
@@ -101,6 +108,40 @@ for n in by:
     if not state.get(n):
         visit(n, [n])
 
+# ưu tiên không ngược chiều phụ thuộc (issue được phụ thuộc phải ưu tiên ≥ issue phụ thuộc nó)
+for i in iss:
+    for y in i["depends_on"]:
+        if y in by and RANK(by[y]["priority"]) > RANK(i["priority"]):
+            E("ưu tiên ngược phụ thuộc", f"{x if False else i['id']} ({i['priority']}) → {y} ({by[y]['priority']})")
+
+# issue thô phải chờ một issue thiết kế (rolling-wave)
+for i in iss:
+    if i["kind"] == "rough" and i["id"] not in kids:
+        src = i["depends_on"] + (by[i["parent"]]["depends_on"] if i["parent"] else [])
+        if not any(by[y]["kind"] == "design" for y in src if y in by):
+            E("issue thô không chờ issue thiết kế nào", i["id"])
+
+# Iteration 1: phụ thuộc không ra ngoài (trừ S0 nền tảng, thiết kế 第1波, câu hỏi khách); năng lực
+IT = d["iteration1"]["name"]
+outside_ok = lambda j: j["epic"] == "EP-PLAT" or j["kind"] == "clarify" or (j["kind"] == "design" and (j.get("milestone") or "").startswith("設計第1波"))
+for i in iss:
+    if i["iteration"] != IT:
+        continue
+    for y in i["depends_on"]:
+        j = by.get(y)
+        if j and j["iteration"] != IT and not outside_ok(j) and not (y in kids and all(by[k]["iteration"] == IT for k in kids[y])):
+            E("Iteration 1 phụ thuộc issue ngoài Iteration 1", i["id"], "→", y)
+cap = d["iteration1"]["per_person_hours"]
+load = collections.Counter()
+for i in iss:
+    if i["iteration"] == IT and i["id"] not in kids:
+        load[i["assignee"]] += i["hours_hint"]
+for p, h in load.items():
+    if h > cap:
+        E("người phụ trách vượt năng lực Iteration 1", p, h, ">", cap)
+    if not any(p in t for t in d["iteration1"]["roster"].values()):
+        E("người phụ trách ngoài roster S1", p)
+
 # 完納奨励金: K1..K9 và TV-01..15
 fg9 = [i for i in iss if i["epic"] == "EP-FG09"]
 for k in range(1, 10):
@@ -124,7 +165,7 @@ for ac in d["iteration1"]["acceptance"]:
     if not ac["issues"]:
         E("AC không có issue", ac["id"])
     for x in ac["issues"]:
-        if x not in by or by[x]["iteration"] != d["iteration1"]["name"]:
+        if x not in by or (by[x]["kind"] not in ("design", "clarify") and by[x]["iteration"] != d["iteration1"]["name"]):
             E("issue của AC không thuộc Iteration 1", ac["id"], x)
 
 # chỗ hở, phần chưa thành issue
@@ -139,6 +180,12 @@ for n in d["not_issued"]:
     for x in n["covered_by"]:
         if x not in by:
             E("not_issued trỏ issue không có", x)
+    if not n["covered_by"] and (not re.search(r"第2期|Option|không làm|không tính|khách để sau|ngoài phạm vi", n["reason"])
+                                or re.search(r"tạo issue|nối khi gộp|sẽ làm", n["reason"])):
+        E("not_issued không có issue mà lý do là việc chưa làm", n["spec"][:60])
+for txt in [n["reason"] for n in d["not_issued"]] + [g["problem"] for g in d["gaps"]]:
+    if re.search(r"luồng [ABC]\b|PL nối", txt):
+        E("chữ nội bộ (luồng / PL nối) trong bảng nộp", txt[:60])
 
 # độ phủ spec LAB-4: mỗi SPEC / FUNC / TECH / API / DB phải có ở spec_refs hoặc not_issued
 def rng_ids(s):

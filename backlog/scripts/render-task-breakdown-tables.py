@@ -47,7 +47,7 @@ def match(pattern):
 
 def not_issued_for(keys):
     rows = [n for n in d["not_issued"] if any(k in n["spec"] for k in keys)]
-    return "; ".join(f"{n['spec']} — {n['reason']} → {', '.join(n['covered_by'])}" for n in rows) or "—"
+    return "; ".join(f"{n['spec']} — {n['reason']}" + (f" → {', '.join(n['covered_by'])}" if n["covered_by"] and "→" not in n["reason"] else "") for n in rows) or "—"
 
 
 rows = []
@@ -80,16 +80,19 @@ for adr in ["ARCHITECTURE"] + [f"ADR-{n:03d}" for n in range(1, 11)]:
 for n in d["not_issued"]:
     if True:  # mọi dòng not_issued thành một hàng (gồm phần Option / 第2期 không vào backlog)
         ids = n["covered_by"]
-        rows.append((n["spec"], epics_of(ids) or "—", compress(ids) or "—", f"{n['reason']} (luồng {n['stream']})"))
+        rows.append((n["spec"], epics_of(ids) or "—", compress(ids) or "—", n["reason"]))
 
 spec_tbl = ["| Spec (mã / file LAB-4) | Epic | Issue / sub-issue | Phần spec chưa thành issue và vì sao |", "|---|---|---|---|"]
 spec_tbl += ["| " + " | ".join(cell(c) for c in r) + " |" for r in rows]
 
 H = {"fix-design": "sửa thiết kế — PREMISE.md {r} (đề xuất; áp vào spec sau Gate A)",
      "assumption": "giả định — PREMISE.md {r}", "clarify": "tạo issue làm rõ {r}", "open": "để mở — {o}"}
+KIND_NOTE = {"design": " (issue thiết kế: viết spec, khách duyệt theo đợt thiết kế)"}
 gap_tbl = ["| # | Spec | Chỗ hở / mâu thuẫn | Xử lý | Nguồn |", "|---|---|---|---|---|"]
 for g in d["gaps"]:
     x = H[g["handling"]].format(r=g.get("ref"), o=g.get("open_reason"))
+    if g["handling"] == "clarify":
+        x += KIND_NOTE.get(by[g["ref"]]["kind"], "")
     gap_tbl.append(f"| {g['id']} | {cell(g['spec'])} | {cell(g['problem'])} | {cell(x)} | {g['source_id']} |")
 
 cnt = collections.OrderedDict((e["id"], [e["title"], e["priority"], e["planned_sprint"], 0, 0, 0, 0]) for e in d["epics"])
@@ -99,7 +102,7 @@ for i in iss:
     if i["id"] not in kids:
         r[5] += 1
         r[6] += i["hours_hint"]
-ep_tbl = ["| Epic | Tên | Ưu tiên | Sprint (WBS LAB-1) | Issue cấp 1 | Sub-issue | Lá | Giờ sơ bộ (lá) |", "|---|---|---|---|---|---|---|---|"]
+ep_tbl = ["| Epic | Tên | Ưu tiên (gốc) | Sprint (WBS LAB-1) | Issue cấp 1 | Sub-issue | Lá | Giờ sơ bộ (lá) |", "|---|---|---|---|---|---|---|---|"]
 for e, r in cnt.items():
     ep_tbl.append(f"| {e} | {cell(r[0])} | {r[1]} | {r[2]} | {r[3]} | {r[4]} | {r[5]} | {r[6]} |")
 tot = [sum(r[k] for r in cnt.values()) for k in (3, 4, 5, 6)]

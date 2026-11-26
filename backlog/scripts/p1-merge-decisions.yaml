@@ -1,9 +1,8 @@
 # Quyết định PL khi gộp 3 luồng P1 (LAB-5) — dữ liệu cho merge-stream-backlogs.py.
 # Mọi số giờ ở đây là hours_hint sơ bộ (kiểm độ hạt), không phải estimate.
 
-# 1) Tách issue thô (rough) > 16 giờ theo đơn vị tự nhiên: 1 màn / 1 nhóm API / 1 batch / 1 báo cáo / 1 script.
-#    Đơn vị còn > 16 giờ thì tách tiếp theo khuôn tầng (FE: hiển thị · thao tác · trạng thái + quyền; BE: dữ liệu · xử lý + API · quyền + audit).
-#    split_level1: issue cấp 1 → thành cha, con là các đơn vị. split_sub: sub-issue → thay bằng các sub-issue anh em (giữ ID cho phần 1).
+# 1) Tách issue thô cấp 1 (gộp nhiều màn / chức năng) theo ĐƠN VỊ TỰ NHIÊN: 1 màn / 1 nhóm API / 1 batch / 1 báo cáo / 1 script.
+#    Issue thô dừng ở đơn vị tự nhiên (rolling-wave, PREMISE L5-D08) — không tách theo khuôn tầng; tách lá ≤ 16 giờ khi đã có spec, trước buổi lập kế hoạch sprint.
 split_level1:
   B-FG07-07: [["SC-07-01 日次照合表 — màn đối soát ngày", FE, 32], ["日次照合表 API — tách 相対 / せり / 訂正 + 確認済", BE, 48], ["SC-07-B2 日次精算バッチ — 精算 theo người × thuế", BE, 32]]
   B-FG07-08: [["SC-07-03 紛争一覧 — danh sách + SLA còn lại", FE, 16], ["SC-07-04 紛争詳細・処理", FE, 24], ["紛争・SLA API — mở / cập nhật / đóng + SLA", BE, 24]]
@@ -13,8 +12,6 @@ split_level1:
   B-FG10-11: [["規則版 API (maker) — tạo / sửa DRAFT, quota", BE, 24], ["交付率表 API + submit — kiểm 5 bậc liền", BE, 24], ["SC-10-01 規則版一覧 + bộ đếm quota", FE, 16], ["SC-10-02 規則版作成・編集", FE, 24], ["SC-10-03 交付率テーブル編集", FE, 28]]
   B-FG10-12: [["カレンダー API — lịch chợ / ngân hàng 2 cờ", BE, 24], ["業務日開始 — hàm mở ngày + job 01:00 dự phòng", BE, 24], ["期作成・支払期日 — tạo kỳ ở lần mở ngày đầu tháng", BE, 16], ["SC-10-05 市場・銀行カレンダー", FE, 28]]
   B-FG10-13: [["税率マスタ — thuế suất có ngày hiệu lực", BE, 20], ["品目・単位・出荷者マスタ API", BE, 20], ["SC-10-07 マスタ管理", FE, 20]]
-  B-FG10-14: [["設定ファイル — đọc + nhật ký thay đổi (PRM-126)", BE, 24]]
-  C-FG02-13: [["SC-00-01 社内ログイン (PC / タブレット)", FE, 21], ["SC-00-02 利用者切替 — bàn số PIN", FE, 31], ["SC-00-03 ホーム theo vai", FE, 20]]
   C-FG02-14: [["SC-02-02 MFA登録・再設定", FE, 16], ["SC-02-03 アカウント管理 + tab 代行者", FE, 24]]
   C-FG02-15: [["アカウント API — phát hành / dừng / mở lại / thu hồi", BE, 24], ["ロール・決裁権限付与 API", BE, 12]]
   C-FG13-05: [["保管期限ジョブ — danh sách chứng từ hết hạn", BE, 12], ["物理削除決裁 + tách partition audit", BE, 12]]
@@ -23,30 +20,13 @@ split_level1:
   C-FG12-04: [["通知事象 — sự kiện baseline + người nhận", BE, 24], ["メール文面 — mẫu câu tiếng Nhật", BE, 8]]
   C-FG12-05: [["SC-12-02 通知送信ログ", FE, 16], ["再送・印刷リスト — gửi lại tay, danh sách in", BE, 8]]
   C-FG11-01: [["帳票共通基盤 — lọc, CSV, PDF, metadata xuất", BE, 48], ["SC-11-01 帳票メニュー theo vai", FE, 16], ["SC-11-B1 帳票バッチ — xong trước 11:00", BE, 8]]
-  C-FG11-02: [["RPT-01 (SC-11-02) GD ngày 相対 / せり — dữ liệu", BE, 14], ["RPT-01 (SC-11-02) — màn", FE, 6],
-              ["RPT-02 (SC-11-03) lịch sử lô + trạng thái GD — dữ liệu", BE, 14], ["RPT-02 (SC-11-03) — màn", FE, 6],
-              ["RPT-03 (SC-11-04) bản in quầy 受付 — dữ liệu", BE, 14], ["RPT-03 (SC-11-04) — màn", FE, 6],
-              ["RPT-04 (SC-11-05) 滞留引渡し・例外 + 継続協議 — dữ liệu", BE, 16], ["RPT-04 (SC-11-05) — màn", FE, 6],
-              ["RPT-05 (SC-11-06) 精算 ngày — dữ liệu", BE, 14], ["RPT-05 (SC-11-06) — màn", FE, 6]]
-  C-FG11-03: [["RPT-07 (SC-11-08) kết quả 完納奨励金 theo kỳ", BE, 20], ["RPT-07 (SC-11-08) — màn", FE, 6],
-              ["RPT-08 (SC-11-09) điều chỉnh sau khóa — dữ liệu", BE, 16], ["RPT-08 (SC-11-09) — màn", FE, 6],
-              ["RPT-09 (SC-11-10) tranh chấp + SLA — dữ liệu", BE, 16], ["RPT-09 (SC-11-10) — màn", FE, 6],
-              ["RPT-10 (SC-11-11) tháng theo người tham gia — dữ liệu", BE, 16], ["RPT-10 (SC-11-11) — màn", FE, 6],
-              ["RPT-11 (SC-11-12) tháng 相対 / せり — dữ liệu", BE, 16], ["RPT-11 (SC-11-12) — màn", FE, 6],
-              ["RPT-12 (SC-11-13) thay đổi quy chế + version — dữ liệu", BE, 16], ["RPT-12 (SC-11-13) — màn", FE, 6]]
+  C-FG11-02: [["RPT-01 (SC-11-02) GD ngày 相対 / せり", BE, 20], ["RPT-02 (SC-11-03) lịch sử lô + trạng thái GD", BE, 20], ["RPT-03 (SC-11-04) bản in quầy 受付", BE, 20], ["RPT-04 (SC-11-05) 滞留引渡し・例外 + 継続協議", BE, 22], ["RPT-05 (SC-11-06) 精算 ngày", BE, 20]]
+  C-FG11-03: [["RPT-07 (SC-11-08) kết quả 完納奨励金 theo kỳ", BE, 26], ["RPT-08 (SC-11-09) điều chỉnh sau khóa", BE, 22], ["RPT-09 (SC-11-10) tranh chấp + SLA", BE, 22], ["RPT-10 (SC-11-11) tháng theo người tham gia", BE, 22], ["RPT-11 (SC-11-12) tháng 相対 / せり", BE, 22], ["RPT-12 (SC-11-13) thay đổi quy chế + version", BE, 22]]
   C-FG11-04: [["会計連携CSV バッチ — tạo sau 日次締め, đóng băng, xuất lại", BE, 48], ["仕訳マッピング — 勘定科目 / 税区分 có lịch sử", BE, 24], ["会計CSV — nhặt dòng 端数調整 + MFA khi xuất", BE, 16], ["SC-11-14 RPT-06・会計連携CSV", FE, 20], ["SC-11-15 仕訳マッピング", FE, 20]]
   C-FG11-05: [["データ出力 API — 3 loại CSV cố định, MFA", BE, 24], ["SC-11-16 データ出力", FE, 6]]
   C-FG15-01: [["移行取込 — master + khoản còn mở", BE, 24], ["移行取込 — chi tiết GD + 2 kỳ thưởng", BE, 24]]
   C-FG15-02: [["クレンジング — quy tắc 3 loại dữ liệu bẩn", BE, 32], ["SC-15-02 要判断データ — hàng đợi quyết từng dòng", FE, 20]]
-  C-FG15-03: [["移行照合 — so 100% bản ghi + tổng tiền, file ký", BE, 24]]
   C-FG15-04: [["リハーサル — script chạy lại + đo giờ", BE, 16], ["ロールバック — tiêu chí + thủ tục", BE, 8]]
-split_sub: [A-FG01-12.2, A-FG01-12.3, A-FG01-13.1, A-FG01-13.2, A-FG03-12.1, A-FG03-13.2, A-FG04-13.4, A-FG04-13.5, A-FG05-07.1, A-FG06-13.1]
-part_names:
-  FE: ["hiển thị", "thao tác", "trạng thái + quyền"]
-  BE: ["dữ liệu", "xử lý + API", "quyền + audit"]
-  BrSE: ["phần 1", "phần 2", "phần 3"]
-  QA: ["kịch bản", "dữ liệu", "chạy"]
-  INFRA: ["dựng", "cấu hình", "kiểm"]
 pools: {A: {FE: [FE-1, FE-2], BE: [BE-1, BE-2, BE-3]}, B: {FE: [FE-3], BE: [BE-4, BE-5]}, C: {FE: [FE-4], BE: [BE-6]}}
 
 # 2) Gộp câu hỏi trùng giữa luồng: drop → keep (giữ một issue cho một câu hỏi của khách).
@@ -86,13 +66,6 @@ new_issues:
      depends_on: [C-PLAT-05], depends_on_spec: [],
      description: "Ba bảng journal_mappings / accounting_export_batches / accounting_export_lines của IF-ACC-01 thuộc FG-11 (L5-A14). accounting_export_lines.batch_id cho phép NULL để 期ロック ghi dòng 端数調整 chờ batch của ngày (L5-A03).",
      dod: ["Migration chạy lên / xuống sạch", "batch_id NULL được; batch đã đóng băng không sửa được dòng (append-only)"]}
-  - {id: C-CLR-16, epic: EP-CLAR, parent: null, kind: clarify, role: BrSE, assignee: BrSE-1, hours_hint: 3,
-     title: "[要確認] SC-00-01..03 — viết Screen Spec ログイン・利用者切替・ホーム (cần cho S1)",
-     labels: ["fg:FG-02", "feature:iam", "kind:clarify", "role:BrSE"],
-     spec_refs: ["SCREEN-LIST C1 #1–3", "wireframes/_common-layout.md C-4, C-5, C-14"], rfp_refs: [NFR-USE-01, FR-IAM-02],
-     depends_on: [], depends_on_spec: [],
-     description: "Điều kiện dùng thử S1 số 4 (đổi người bằng PIN trên PC dùng chung trong vài giây) cần màn SC-00-02, chưa có Screen Specification (L4-D08). Viết spec đầu sprint rồi tách C-FG02-13.",
-     dod: ["Có Screen Specification SC-00-01..03 theo BM-2-901-51, Expert duyệt; C-FG02-13 được tách lại"]}
 
 # 4) Phụ thuộc chéo luồng đã chốt (thêm vào depends_on).
 add_depends:
@@ -119,28 +92,8 @@ add_depends:
   A-FG01-12.3: [A-CLR-07]
   A-FG03-14: [A-CLR-08]
   A-FG04-05: [A-CLR-08]
-  C-FG02-13#1: [C-CLR-16]
-  C-FG02-13#2: [C-CLR-16]
-  C-FG02-13#3: [C-CLR-16]
 
-# 5) Ưu tiên (ý khách 261126 câu 1; FG ngoài danh sách khách: PL đề xuất).
-priority_by_epic: {EP-FG01: P1, EP-FG04: P1, EP-PLAT: P1, EP-FG07: P2, EP-FG03: P2, EP-FG09: P2, EP-FG13: P2, EP-TEST: P2,
-                   EP-FG06: P3, EP-FG08: P3, EP-FG02: P3, EP-FG11: P3, EP-FG14: P3, EP-FG15: P3, EP-FG05: P4, EP-FG10: P4, EP-FG12: P4, EP-CLAR: P2}
-priority_override: {C-FG02-04: P2, C-FG02-05: P2, C-FG02-13#2: P2, B-FG10-01: P2, B-FG10-12: P2, B-FG10-02: P2}
-planned_sprint: {EP-PLAT: S0, EP-FG01: S1, EP-FG02: S1, EP-FG03: S2, EP-FG10: S2, EP-FG04: S3, EP-FG05: S4, EP-FG06: "S4–S5", EP-FG07: S5,
-                 EP-FG08: S6, EP-FG09: "S4 (試算表) · S6–S7", EP-FG12: S7, EP-FG11: S8, EP-FG13: "S1 (ghi audit) · S8", EP-FG14: S8, EP-FG15: "S8 + W5", EP-TEST: "sau S8", EP-CLAR: "trước G1 (2027-01-15)"}
-
-# 6) Iteration 1 = S1 LAB-1 (2027-02-01 → 02-12): FG-01 + FG-02 dev/test + phần cần cho 4 điều kiện dùng thử; trừ phần khách cho để sau.
-iteration1:
-  name: "Iteration 1"
-  epics: [EP-FG01, EP-FG02]
-  exclude: [A-FG01-06, A-FG01-08.2, A-FG01-12.4]
-  include_extra: [A-FG01-12.3, C-FG02-13#1, C-FG02-13#2, A-CLR-07, C-CLR-16, C-CLR-14, C-FG13-01, C-FG13-02]
-acceptance_s1:
-  - {id: AC-S1-1, text: "Demo bằng danh sách người tham gia đã che của chợ (actors.csv đợt 1), không dùng dữ liệu bịa", issues: [A-FG01-14, C-CLR-14]}
-  - {id: AC-S1-2, text: "照合事務局 tự đăng ký 1 仲卸 có 許可 và 1 売買参加者 có 承認, mỗi cái có 有効日 / 失効日 riêng, rồi đặt 一時停止 cho một người theo 決裁, lưu giờ phút", issues: [A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.3, A-FG01-09.2, A-FG01-09.3, A-FG01-10, A-FG01-11]}
-  - {id: AC-S1-3, text: "取引担当 gõ mã người mua chỉ bằng bàn phím là thấy ngay còn hiệu lực không, căn cứ 許可 hay 承認, hết hạn ngày nào (NFR-USE-01)", issues: [A-FG01-04, A-FG01-12.3, A-CLR-07]}
-  - {id: AC-S1-4, text: "Trên một PC dùng chung, hai người đổi nhau bằng PIN trong vài giây; nhật ký ghi đúng ai làm gì", issues: [C-FG02-03, C-FG02-04, C-FG13-02, C-FG02-13#2, C-CLR-16, C-FG02-16]}
+# 5–6) Ưu tiên, Iteration 1, điều kiện dùng thử S1: chuyển sang gate-a-decisions.yaml (sau Expert Gate A).
 
 # 7) Đánh số lại dòng PREMISE (LAB-5) — nội dung đầy đủ ở PREMISE.md gốc repo.
 premise_map:
@@ -177,14 +130,16 @@ premise_map:
   PL-CLRMERGE: L5-D09
   PL-ITER1: L5-D10
   PL-PRIO: L5-D11
+  PL-S0: L5-A18
 
 # 8) Sửa cách xử lý chỗ hở sau khi PL chốt (handling, ref) + chỗ hở PL phát hiện khi gộp.
 gap_overrides:
   C-GAP-08: {handling: assumption, ref: PL-SYNC}
+  A-GAP-01: {handling: fix-design, ref: PL-DEP18}
 new_gaps:
   - {id: PL-GAP-01, spec: "SCREEN-LIST C1 SC-00-02; C2 SC-01-06 ↔ điều kiện dùng thử S1 (customer-feedback-lab5-priority-261126 câu 2)",
      problem: "Hai điều kiện dùng thử S1 (tra tư cách bằng bàn phím, đổi người bằng PIN) cần màn SC-01-06 và SC-00-02, cả hai chưa có Screen Specification (L4-D08); SC-00-01..03 không có issue làm rõ nào",
-     handling: clarify, ref: C-CLR-16, open_reason: ""}
+     handling: clarify, ref: C-FG02-19, open_reason: ""}
   - {id: PL-GAP-02, spec: "specs/_index.md DEP-01..17; ADR-008",
      problem: "Khung PWA / offline dùng chung (service worker, hàng đợi IndexedDB) không có chủ: luồng C cho là của sync (luồng A), luồng A chỉ có hàng đợi riêng cho 引渡し",
      handling: assumption, ref: PL-PWA, open_reason: ""}
