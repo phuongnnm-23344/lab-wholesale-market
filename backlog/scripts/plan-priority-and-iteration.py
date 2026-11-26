@@ -15,8 +15,9 @@ RANK = lambda p: int(p[1])
 
 
 def allowed_outside(i):
-    """Phụ thuộc được phép nằm ngoài Iteration 1: S0 nền tảng, thiết kế 第1波, câu hỏi khách."""
-    return i["epic"] == "EP-PLAT" or i["kind"] == "clarify" or (i["kind"] == "design" and (i.get("milestone") or "").startswith("設計第1波"))
+    """Phụ thuộc được phép nằm ngoài Iteration 1: S0 nền tảng, thiết kế 第1波, đúng các câu hỏi khách trong outside_ok_clarify."""
+    return (i["epic"] == "EP-PLAT" or i["id"] in G["iteration1"]["outside_ok_clarify"]
+            or (i["kind"] == "design" and (i.get("milestone") or "").startswith("設計第1波")))
 
 
 def plan(doc):
@@ -129,6 +130,7 @@ def plan(doc):
         e["priority"] = G["priority_by_epic"][e["id"]]
         e["planned_sprint"] = G["planned_sprint"][e["id"]]
     doc["iteration1"] = dict(name=it["name"], dates=it["dates"], per_person_hours=it["per_person_hours"], roster=it["roster"],
+                             outside_ok_clarify=it["outside_ok_clarify"],
                              capacity_by_role=cap_role, committed_hours_by_role=load, committed_by_person=per,
                              committed_leaves=len(chosen), committed_hours=sum(load.values()),
                              acceptance=G["acceptance_s1"], unmet_acceptance=unmet)

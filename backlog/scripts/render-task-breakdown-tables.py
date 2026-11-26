@@ -85,7 +85,7 @@ for n in d["not_issued"]:
 spec_tbl = ["| Spec (mã / file LAB-4) | Epic | Issue / sub-issue | Phần spec chưa thành issue và vì sao |", "|---|---|---|---|"]
 spec_tbl += ["| " + " | ".join(cell(c) for c in r) + " |" for r in rows]
 
-H = {"fix-design": "sửa thiết kế — PREMISE.md {r} (đề xuất; áp vào spec sau Gate A)",
+H = {"fix-design": "sửa thiết kế — PREMISE.md {r} (đã áp vào spec LAB-4, 2026-11-26)",
      "assumption": "giả định — PREMISE.md {r}", "clarify": "tạo issue làm rõ {r}", "open": "để mở — {o}"}
 KIND_NOTE = {"design": " (issue thiết kế: viết spec, khách duyệt theo đợt thiết kế)"}
 gap_tbl = ["| # | Spec | Chỗ hở / mâu thuẫn | Xử lý | Nguồn |", "|---|---|---|---|---|"]

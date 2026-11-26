@@ -63,7 +63,7 @@ design:
      leaves: [["Screen Spec SC-15-02 要判断データ + Technical Design クレンジング", FE, 14], ["Technical Design 移行取込・照合・リハーサル (script)", BE, 13]]}
 
 # Xóa (thay bằng issue mới bên dưới)
-delete: [A-FG01-12.3]
+delete: [A-FG01-12.3, A-FG01-12.2]
 
 # Issue mới khác (dev thay cho màn thô cần ở S1, tách 保証金 / 参加上限, checkpoint S4, câu hỏi mới)
 new:
@@ -85,6 +85,14 @@ new:
      rfp: [FR-PARTY-03], spec: ["PTY_APPROVAL_LIFECYCLE_TECH", "PARTY_FUNC"], rules: [rule:permit-vs-approval], dod: ["Kịch bản đổi 保証金 thêm dòng lịch sử; đổi 参加上限 có MFA; cảnh báo vượt hạn mức đúng"]}
   - {id: C-FG02-23, epic: EP-FG02, kind: test, role: QA, hours: 4, title: "[FG-02] テスト 利用者切替 (S1) — đổi người bằng PIN trên PC dùng chung + nhật ký", depends_on: [C-FG02-04, C-FG02-22.1, C-FG13-02],
      rfp: [FR-IAM-02, FR-AUDIT-01], spec: ["ADR-002 §2.1", "IAM_AUDIT_DB"], dod: ["AC-S1-4: hai người đổi nhau bằng PIN trong vài giây; 監査ログ ghi đúng người thao tác"]}
+  - {id: A-FG01-20, epic: EP-FG01, kind: dev, role: FE, title: "[FG-01] SC-01-05 資格状態変更 — 一時停止 / 再審査 / 期限前更新", depends_on: [A-FG01-16, A-FG01-07.2, A-FG01-08.3],
+     rfp: [FR-PARTY-02, FR-PARTY-03, BR-PERM-01], spec: ["SCREEN-LIST C2 #9", "A-FG01-16.1 (Screen Spec)", "API-PTY-004..007"], rules: [rule:permit-vs-approval, rule:human-decision],
+     dod: ["Đúng Screen Spec SC-01-05 (A-FG01-16.1)", "Đổi trạng thái đi qua 起案 → 決裁, có lý do và giờ phút, giữ lịch sử (không ghi đè)"],
+     children: [["SC-01-05 一時停止 (S1 tối thiểu) — chọn 許可 / 承認, lý do, giờ phút, 起案 → 決裁", FE, 10], ["SC-01-05 再審査 / 期限前更新 / phục hồi", FE, 10]]}
+  - {id: A-FG01-13.3, epic: EP-FG01, parent: A-FG01-13, kind: dev, role: FE, hours: 14, title: "[FG-01] SC-01-03 許可 — gia hạn / cập nhật, kiểm lỗi đầy đủ", depends_on: [A-FG01-13.1],
+     rfp: [FR-PARTY-02], spec: ["SCREEN-LIST C2 #7", "A-FG01-17 (Screen Spec)"], rules: [rule:permit-vs-approval], dod: ["Đúng Screen Spec SC-01-03 (A-FG01-17), phần còn lại sau bản S1"]}
+  - {id: A-FG01-13.4, epic: EP-FG01, parent: A-FG01-13, kind: dev, role: FE, hours: 14, title: "[FG-01] SC-01-04 承認 — gia hạn / cập nhật, 参加上限 ban đầu, kiểm lỗi", depends_on: [A-FG01-13.2, A-FG01-08.2],
+     rfp: [FR-PARTY-03, PRM-121], spec: ["SCREEN-LIST C2 #8", "A-FG01-17 (Screen Spec)"], rules: [rule:permit-vs-approval], dod: ["Đúng Screen Spec SC-01-04 (A-FG01-17), phần còn lại sau bản S1"]}
   - {id: C-CLR-17, epic: EP-CLAR, kind: clarify, role: BrSE, hours: 1, title: "[要確認] Q-ARCH-12 — 税区分 của 完納奨励金 khi xuất IF-ACC-01 (経理部)", depends_on: [],
      rfp: [IF-ACC-01, BR-INC-01], spec: ["ADR-007 §6 Q-ARCH-12"], labels: ["fg:FG-11", "feature:report", "constraint:完納奨励金"],
      dod: ["Câu trả lời ghi vào ADR-007 §6 và bảng ánh xạ 仕訳; mở khóa C-FG11-04.1, C-FG11-04.2, C-FG11-09"]}
@@ -97,6 +105,14 @@ new:
 
 # Sửa issue có sẵn
 update:
+  A-FG01-13: {title: "[FG-01] 許可・承認 登録画面 — SC-01-03, SC-01-04 (DEP-15)", kind: dev, dod: ["Đúng Screen Spec SC-01-03 / SC-01-04 (A-FG01-17)"],
+              description: "Thiết kế ở 設計第1波 (A-FG01-17) xong trước S1 → tách thành lá dev ≤ 16 giờ theo rolling-wave (L5-D08); bản tối thiểu vào S1 cho AC-S1-2 (L5-D10)."}
+  A-FG01-13.1: {title: "[FG-01] SC-01-03 許可登録 (S1 tối thiểu) — nhập 許可 仲卸, 有効日 / 失効日", kind: dev, hours_hint: 10,
+                dod: ["AC-S1-2: 照合事務局 nhập 1 許可 cho 仲卸 có 有効日 / 失効日 trên màn, gọi API-PTY-004 / 005", "Chỉ hiện cho 仲卸 (luật 2)"],
+                description: "Bản tối thiểu của SC-01-03 cho S1 (L5-D10)."}
+  A-FG01-13.2: {title: "[FG-01] SC-01-04 承認登録 (S1 tối thiểu) — nhập 承認 売買参加者, 有効日 / 失効日", kind: dev, hours_hint: 10,
+                dod: ["AC-S1-2: 照合事務局 nhập 1 承認 cho 売買参加者 có 有効日 / 失効日 trên màn, gọi API-PTY-006 / 007", "Chỉ hiện cho 売買参加者 (luật 2)"],
+                description: "Bản tối thiểu của SC-01-04 cho S1 (L5-D10)."}
   C-FG02-13: {title: "[FG-02][概算] SC-00-03 ホーム — trang chủ theo vai (chưa spec)", hours_hint: 20, role: FE,
               description: "Còn lại của nhóm SC-00-01..03 sau khi SC-00-01 / SC-00-02 thành issue dev C-FG02-21 / C-FG02-22 (L5-D05). Giờ = ước LAB-1 (chỗ giữ effort, L5-D08)."}
   A-FG01-09.3: {title: "[FG-01] SC-01-02 承認ブロック — khối 承認 + lịch sử + nút thủ tục", hours_hint: 9}
@@ -106,9 +122,13 @@ update:
   B-FG09-21: {title: "[FG-09] 試算表チェックポイント (S4末) — kiểm quy tắc bằng bảng tính trước khi code engine", role: QA, milestone: S4}
 set_depends:
   A-FG01-09.3: [A-FG01-08.1, A-FG01-08.3]
-  A-FG01-11: [A-FG01-08.1, A-FG01-08.3, A-FG01-09.3]
-  A-FG01-10: [A-FG01-07.1, A-FG01-07.2, A-FG01-09.2]
+  A-FG01-11: [A-FG01-08.1, A-FG01-08.3, A-FG01-13.2, A-FG01-20.1]
+  A-FG01-10: [A-FG01-07.1, A-FG01-07.2, A-FG01-13.1, A-FG01-20.1]
+  A-FG01-13.1: [A-FG01-07.1, A-FG01-07.2]
+  A-FG01-13.2: [A-FG01-08.1, A-FG01-08.3]
 add_depends:
+  B-FG09-21.3: [B-FG09-21.1, B-FG09-21.2]
+  B-FG09-21.4: [B-FG09-21.3]
   B-FG09-21: [B-CLR-07, B-CLR-08, B-CLR-24]
   B-FG09-04: [B-CLR-24]
   C-FG11-04.1: [C-CLR-17]
@@ -155,10 +175,13 @@ iteration1:
   per_person_hours: 40
   roster: {BE: [BE-1, BE-2, BE-3, BE-6], FE: [FE-1, FE-4], QA: [QA-1], INFRA: [INFRA-1], BrSE: [BrSE-1]}
   epics: [EP-FG01, EP-FG02]
-  exclude: [A-FG01-06, A-FG01-08.2, A-FG01-09.4, A-FG01-18, C-FG02-05, C-FG02-12, A-FG01-07.3, A-FG01-08.4]
+  exclude: [A-FG01-06, A-FG01-08.2, A-FG01-09.4, A-FG01-18, C-FG02-05, C-FG02-12, A-FG01-07.3, A-FG01-08.4,
+            A-FG01-09.2, A-FG01-09.3, C-FG02-21.2, A-FG01-13.3, A-FG01-13.4, A-FG01-20.2]
+  # Phụ thuộc ra ngoài Iteration 1 chỉ được tới: EP-PLAT (S0), thiết kế 設計第1波, và đúng các câu hỏi khách dưới đây (N-02)
+  outside_ok_clarify: [C-CLR-14]
   include_extra: [A-FG01-14, C-FG13-01, C-FG13-02]
 acceptance_s1:
   - {id: AC-S1-1, text: "Demo bằng danh sách người tham gia đã che của chợ (actors.csv đợt 1), không dùng dữ liệu bịa", issues: [A-FG01-14, C-CLR-14]}
-  - {id: AC-S1-2, text: "照合事務局 tự đăng ký 1 仲卸 có 許可 và 1 売買参加者 có 承認, mỗi cái có 有効日 / 失効日 riêng, rồi đặt 一時停止 cho một người theo 決裁, lưu giờ phút", issues: [A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.3, A-FG01-09.2, A-FG01-09.3, A-FG01-10, A-FG01-11]}
-  - {id: AC-S1-3, text: "取引担当 gõ mã người mua chỉ bằng bàn phím là thấy ngay còn hiệu lực không, căn cứ 許可 hay 承認, hết hạn ngày nào (NFR-USE-01)", issues: [A-FG01-04, A-FG01-19.1, A-FG01-19.2, A-FG01-15]}
-  - {id: AC-S1-4, text: "Trên một PC dùng chung, hai người đổi nhau bằng PIN trong vài giây; nhật ký ghi đúng ai làm gì", issues: [C-FG02-03, C-FG02-04, C-FG13-02, C-FG02-21.1, C-FG02-21.2, C-FG02-22.1, C-FG02-19, C-FG02-23]}
+  - {id: AC-S1-2, text: "照合事務局 tự đăng ký 1 仲卸 có 許可 và 1 売買参加者 có 承認, mỗi cái có 有効日 / 失効日 riêng, rồi đặt 一時停止 cho một người theo 決裁, lưu giờ phút", issues: [A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.3, A-FG01-13.1, A-FG01-13.2, A-FG01-20.1, A-FG01-10, A-FG01-11, A-FG01-17, A-FG01-16], screen: true}
+  - {id: AC-S1-3, text: "取引担当 gõ mã người mua chỉ bằng bàn phím là thấy ngay còn hiệu lực không, căn cứ 許可 hay 承認, hết hạn ngày nào (NFR-USE-01)", issues: [A-FG01-04, A-FG01-19.1, A-FG01-19.2, A-FG01-15], screen: true}
+  - {id: AC-S1-4, text: "Trên một PC dùng chung, hai người đổi nhau bằng PIN trong vài giây; nhật ký ghi đúng ai làm gì", issues: [C-FG02-03, C-FG02-04, C-FG13-02, C-FG02-21.1, C-FG02-22.1, C-FG02-19, C-FG02-23], screen: true}

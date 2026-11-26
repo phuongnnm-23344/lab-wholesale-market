@@ -8,9 +8,9 @@ function: compute_period_incentives / preview_incentives / lock_period
 endpoint: POST /api/v1/periods/{periodId}/incentive-previews · POST /api/v1/periods/{periodId}/lock
 component: IncentiveEngine
 feature: incentive
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ADR-007, ADR-005, ADR-006, ADR-004, ADR-002, SPEC-INCENTIVE_DB-001, SPEC-BILLING_DB-001, SPEC-CLOSE_DB-001, SPEC-ADJUST_DB-001, SPEC-RULE_DB-001, SPEC-SC-09-04-001, SPEC-INC_FUNC-001, SPEC-INC_API-002, SPEC-INC_API-003, BR-INC-01, FR-INC-01, FR-INC-03, FR-CORR-02, FR-AUDIT-03, PRM-040, PRM-041, PRM-042, PRM-043, PRM-053, PRM-055]
 ---
 
@@ -29,6 +29,7 @@ Thuật ngữ dùng trong file: **完納奨励金** (かんのうしょうれい
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3): 9 khối K1–K9 có điều kiện hoàn thành để LAB-5 tách task; biến số, công thức số nguyên, thứ tự tính, quy tắc tách dòng DELTA, ánh xạ TV-01..14 (INCENTIVE_DB §5) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Khách Q-INC-02: GD 後入力 của kỳ đã khóa sang kỳ tính thưởng đang mở (`incentive_period_id`), xét 完納 theo 支払期日 kỳ đó, không DELTA, một quy tắc cho mọi người mua (§3.4, K1/K2/K6/K9, TV-15, +0,5 MD); Q-INC-01: 完納 theo 入金日 CSV, 期ロック cần tick (K8, E-INC-014) | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/INC_ENGINE_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.8 No 4, No 7 | LAB-5 PREMISE L5-S03 (chỗ hở L5-G06): bước bảo đảm kỳ P+1 tồn tại đưa từ No 7 lên No 4, trước khi ghi CARRY ở No 5; No 7 chỉ còn cập nhật LOCKED | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -366,10 +367,10 @@ Mỗi khối có **Điều kiện hoàn thành (DoD)** kiểm được — LAB-5
 | 1 | Route handler kiểm phiên, vai, MFA (tiêu thụ `X-MFA-Token` `purpose = PERIOD_LOCK` do iam cấp — không dùng lại step-up 10 phút vì 期ロック không quay lại được), rồi gọi `app.lock_period` trong một transaction; `set_config('app.user_id' …)` trước khi gọi. |
 | 2 | `SELECT … FROM payment_periods WHERE id = P FOR UPDATE NOWAIT`; `pg_advisory_xact_lock(hashtext('incentive_period_lock'))` để hai kỳ không khóa song song (K6 đọc kết quả của nhau). |
 | 3 | Kiểm điều kiện khóa theo bảng Error (thứ tự như bảng). `assert_caller('SETTLE', 'STL_HEAD')` kiểm cả 代行 (`lock_delegation_id`). |
-| 4 | Chạy K1 (chế độ LOCK) → so H. Chạy K3 với `judgements` (bắt buộc đủ), K4, K5, K6, K7. |
+| 4 | (Chỉ chế độ LOCK) bảo đảm kỳ P+1 tồn tại **trước khi ghi bất kỳ dòng nào** — gọi hàm tạo kỳ dùng chung (tạo nếu chưa có, `rule_version_id = rule_at(P+1.start_date)`, `due_date` theo `PAYMENT_DUE_RULE` + lịch ngân hàng; Q-INC-03) để dòng CARRY ở No 5 có kỳ đích; chế độ 試算 không tạo kỳ. Rồi chạy K1 (chế độ LOCK) → so H. Chạy K3 với `judgements` (bắt buộc đủ), K4, K5, K6, K7. |
 | 5 | Ghi `period_billings` `snapshot_kind = LOCK` + `period_billing_tax_lines` cho mọi (i, P) có B > 0; ghi `incentive_runs` (P, V_P, H, `payment_csv_confirmed_at` = giờ khóa, `payment_csv_latest_paid_on` = 入金日 lớn nhất của 入金 CSV đã nhập tới lúc khóa — chứng cứ kiểm toán); ghi mọi dòng `incentive_results` (MAIN, DELTA, CARRY sang P+1, CARRY_EXPIRED). |
 | 6 | Sinh dòng 端数調整 theo suất: chênh giữa thuế kỳ (Σ T) và Σ thuế đã xuất theo ngày trong IF-ACC-01 của P → `accounting_export_lines` loại 端数調整 gắn batch của 業務日 đang mở (BILLING_DB 4.42; định dạng chờ E-01 / OPEN-DB-01). |
-| 7 | `UPDATE payment_periods SET status = 'LOCKED', locked_by, lock_delegation_id, locked_at = now()`. Bảo đảm P+1 tồn tại (tạo nếu chưa có, `rule_version_id = rule_at(P+1.start_date)`, `due_date` theo `PAYMENT_DUE_RULE` + lịch ngân hàng). |
+| 7 | `UPDATE payment_periods SET status = 'LOCKED', locked_by, lock_delegation_id, locked_at = now()` (P+1 đã có từ No 4). |
 | 8 | Xếp `notifications` (email kết quả kỳ cho từng người có dòng ở P; FORM-INC-01) — gửi sau commit bởi worker outbox. |
 | 9 | Ghi `audit_logs` (`action = PERIOD_LOCK`, P, H, tổng MAIN / DELTA / CARRY, danh sách judgement + lý do, người, 代行, thiết bị, thời điểm MFA). Commit. Lỗi bất kỳ ở No 2–9 → rollback toàn bộ, không có trạng thái "đã tính, chưa khóa" (N13). |
 | 10 | **Chế độ 試算** (`preview_incentives`): cùng No 4 với `judgements` nháp (thiếu thì giữ 要確認), **không** chạy No 2 (không khóa), No 5–8; chỉ ghi một dòng `audit_logs` (`action = INCENTIVE_PREVIEW`, P, H, tổng, map người → Σ thưởng) — dùng cho K9. Quyền: `SETTLE` hoặc `STL_HEAD`; không cần MFA. |

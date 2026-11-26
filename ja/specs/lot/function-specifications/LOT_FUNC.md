@@ -3,9 +3,9 @@ id: SPEC-LOT_FUNC-001
 title: Module lot — Function Specifications
 type: system
 subtype: function-specifications
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 feature: lot
 related: [SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-LOT_REGISTER-001, SPEC-LOT_INSPECTION_RECORD-001, API-LOT-001, API-LOT-002, API-LOT-003, API-LOT-004, API-LOT-005, API-LOT-006, SPEC-LOT_DB-001]
 ---
@@ -20,7 +20,7 @@ related: [SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-LOT_REGISTER-001, SPEC-LOT_
 このファイル内のすべての関数に共通する規約:
 - Route handler: セッションと役割を確認（`requireRole`）→ body を zod で検証（エラー → 422、コードは §3）→ transaction を開き、`set_config('app.user_id'|'app.device_id', …, true)` → DB 関数を **一つ** 呼ぶ → `P0001 'E-LOT-xxx: detail'` のエラーを §3 に従い HTTP に変換 (ARCHITECTURE §4.3)。
 - DB 関数: ロットのテーブルへ書き込む **唯一の** 方法（アプリの DB ロールは EXECUTE 権限のみ）。エラーは `raise exception using errcode = 'P0001', message = 'E-LOT-xxx: {detail}'` の形で投げる。
-- 他モジュール（trade）は 2.9, 2.10 の「public」関数のみ呼ぶ; テーブル `lots` を直接読まず、view `v_lot_available_qty` 経由で読む (ARCHITECTURE §2)。
+- 他モジュールは 2.9, 2.10（trade）と 2.11（delivery）の「public」関数のみ呼ぶ; テーブル `lots` を直接読まず、view `v_lot_available_qty` 経由で読む (ARCHITECTURE §2)。
 
 ---
 
@@ -30,6 +30,7 @@ related: [SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-LOT_REGISTER-001, SPEC-LOT_
 |---|---|---|---|---|---|---|---|
 | 1 | Ver 0.1 | Add New | 全体 (2.1–2.10) | 初期作成（LAB-4 P3） | 2026-11-25 | phuongnnm-23344 | |
 | 2 | Ver 0.1.1 | Update | — | 顧客（模擬）Q-LOT-01: 正式番号はサーバー登録時に採番、仮番号で一日中検索可能、番号は再利用しない、仮受付の取消ロットは CANCELLED で番号を保持、印刷伝票は正式番号を使用; Q-LOT-03 を終了 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | Ver 0.1.2 | Update | 2.11 | LAB-5 PREMISE L5-S01（L5-G02）: 全取引が引渡し完了になったときロットを `CLOSED` → `DELIVERED` にする public 関数 `app.fn_lot_refresh_delivery_status` を追加 | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -249,6 +250,24 @@ related: [SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-LOT_REGISTER-001, SPEC-LOT_
 | Variable type | Variable name | Role of variables |
 |---|---|---|
 | `numeric` | `v_after` | 新しい行の後の利用可能数量 — ロットの状態変更を決める |
+
+### 2.11. `app.fn_lot_refresh_delivery_status`（public — module delivery が呼ぶ）
+
+| Return type | Function name |
+|---|---|
+| `boolean` | `app.fn_lot_refresh_delivery_status` |
+
+| Argument type | Argument name | Role of the argument |
+|---|---|---|
+| `uuid` | `p_lot_id` | 引渡し / 例外を記録したばかりの取引のロット |
+
+**関数の説明**
+
+> - module delivery の引渡し / 例外の記録関数と同じトランザクション内で呼ぶ（DEL_RECORD_TECH §5、DEL_EXCEPTION_DISPUTE_TECH）。2.9 と同じく `SELECT … FOR UPDATE` でロットをロックする。ロットが `CLOSED` で、`v_delivery_status` がそのロットの全取引の引渡し完了を示す → `DELIVERED` に変更し `lot_status_history` に1行追加、`true` を返す; `CLOSED` でない、または引渡しが終わっていない取引がある → 変更せず `false` を返す。`DELIVERED` → `CLOSED` には戻さない（確定後の修正は修正申請を通す、履歴を上書きしない）。
+
+| Variable type | Variable name | Role of variables |
+|---|---|---|
+| `integer` | `v_open` | 引渡し完了でないロットの取引数 |
 
 ---
 

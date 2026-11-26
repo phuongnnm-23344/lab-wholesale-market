@@ -18,7 +18,7 @@ Backlog break từ bộ thiết kế LAB-4 (tag `lab-4`, commit `0c19b61`, nộp
 | Issue làm rõ | Một câu hỏi / một điểm mở (DEP-xx, OPEN-L4-xx, E-xx, Q-…, §6 Điểm mở của ADR). Câu hỏi trùng giữa các luồng gộp thành một issue (L5-D09). Ưu tiên = ưu tiên cao nhất của issue nó chặn |
 | Test | Mỗi epic chức năng có ≥ 1 issue `kind: test`; test vector có sẵn trong spec (TV-…, RV-…, DoD Kx) phải được ghi tên trong issue test |
 
-Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong trong 2 ngày, sprint 2 tuần thấy được tiến độ theo ngày (burndown). Vì sao issue thô không chia nhỏ hơn đơn vị tự nhiên: chia một màn chưa có spec thành "nửa hiển thị / nửa thao tác" chỉ là chính xác giả — giờ chia đều, không ai đốt được theo DoD, và phải đóng hết khi có spec. Hệ quả: backlog có **477 issue (261 cấp 1 + 216 sub-issue) + 18 epic, 398 lá**; 100 lá thô (≈ 2.020 giờ, lá lớn nhất 48 giờ) chờ 54 lá thiết kế (≈ 650 giờ). Việc làm được ngay (dev / test / thiết kế / làm rõ) đều ≤ 16 giờ (PREMISE L5-D08, người dùng xác nhận 2026-11-26).
+Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong trong 2 ngày, sprint 2 tuần thấy được tiến độ theo ngày (burndown). Vì sao issue thô không chia nhỏ hơn đơn vị tự nhiên: chia một màn chưa có spec thành "nửa hiển thị / nửa thao tác" chỉ là chính xác giả — giờ chia đều, không ai đốt được theo DoD, và phải đóng hết khi có spec. Hệ quả: backlog có **481 issue (262 cấp 1 + 219 sub-issue) + 18 epic, 401 lá**; 97 lá thô (≈ 1.950 giờ, lá lớn nhất 48 giờ) chờ 54 lá thiết kế (≈ 650 giờ). Thiết kế xong thì issue thô được tách ngay, vd. SC-01-03 / 04 / 05 (thiết kế 第1波) đã thành 6 lá dev trước S1. Việc làm được ngay (dev / test / thiết kế / làm rõ) đều ≤ 16 giờ (PREMISE L5-D08, người dùng xác nhận 2026-11-26).
 
 ### 1.2 Định nghĩa xong (DoD chung — mỗi issue chỉ ghi thêm DoD riêng)
 
@@ -43,22 +43,22 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 **Iteration 1** = S1 của WBS LAB-1, 2027-02-01 → 02-12 (PREMISE L5-D10). Giả định S0 基盤 (EP-PLAT) xong trước 2027-02-01 và đợt thiết kế 第1波 được khách duyệt 2027-01-22 (PREMISE L5-A18).
 
 - **Năng lực:** đội S1 theo WBS LAB-1 §5 (~6 người có sẵn + ~5 FE / BE / QA mới vào): BE 4 (BE-1, BE-2, BE-3, BE-6), FE 2 (FE-1, FE-4), QA 1, INFRA 1, BrSE 1. S1 ≈ 50% khối lượng sprint thường → mỗi người 10 ngày × 8 giờ × 50% = **40 giờ**. Năng lực: BE 160 · FE 80 · QA 40 · INFRA 40 · BrSE 40 = **360 giờ**.
-- **Cam kết:** **28 issue (26 lá) / 253 giờ** — BE 158 · FE 77 · QA 18; mỗi người ≤ 40 giờ (script chia). Chọn: lá gắn điều kiện dùng thử AC-S1-1..4 + mọi lá chúng cần, rồi lấp theo ưu tiên khi còn chỗ. Mọi phụ thuộc của issue cam kết nằm trong Iteration 1, hoặc thuộc S0 (EP-PLAT), thiết kế 第1波, câu hỏi khách (`check-backlog.py`).
-- **Không vào Iteration 1:** 保証金 / 参加上限 (A-FG01-06, 08.2, 09.4, 18 — khách cho sang S3), job 失効 tự động (A-FG01-07.3, 08.4), đổi người khi mất mạng (C-FG02-05, cần khung PWA của S2), timeout theo file cấu hình (C-FG02-12), MFA (C-FG02-06, 07 — khách chấp nhận S2), màn khóa PIN sau 5 lần sai (C-FG02-22.2). Các issue này để Iteration trống; sprint dự kiến ghi ở epic.
+- **Cam kết:** **27 issue (26 lá) / 254 giờ** — BE 158 · FE 78 · QA 18; mỗi người ≤ 40 giờ (script chia). Bản tối thiểu SC-01-03 / 04 / 05 (thiết kế 第1波, tách lá trước S1) vào S1 để 照合事務局 làm AC-S1-2 trên màn; đổi lại dời khối 許可 / 承認 trên SC-01-02 và phần lỗi / khóa / hết phiên của SC-00-01 sang S2 — người dùng quyết 2026-11-26 (PREMISE L5-D10). Chọn: lá gắn điều kiện dùng thử AC-S1-1..4 + mọi lá chúng cần, rồi lấp theo ưu tiên khi còn chỗ. Mọi phụ thuộc của issue cam kết nằm trong Iteration 1, hoặc thuộc S0 (EP-PLAT), thiết kế 第1波, hoặc đúng câu hỏi khách C-CLR-14 (`check-backlog.py`; AC cần thao tác trên màn phải có màn FE trong Iteration 1).
+- **Không vào Iteration 1:** SC-01-02 khối 許可 / 承認 (A-FG01-09.2, 09.3 — S2), SC-00-01 lỗi / khóa / hết phiên (C-FG02-21.2 — S2), phần còn lại của SC-01-03 / 04 / 05 (A-FG01-13.3, 13.4, 20.2), 保証金 / 参加上限 (A-FG01-06, 08.2, 09.4, 18 — khách cho sang S3), job 失効 tự động (A-FG01-07.3, 08.4), đổi người khi mất mạng (C-FG02-05, cần khung PWA của S2), timeout theo file cấu hình (C-FG02-12), MFA (C-FG02-06, 07 — khách chấp nhận S2), màn khóa PIN sau 5 lần sai (C-FG02-22.2). Các issue này để Iteration trống; sprint dự kiến ghi ở epic.
 
 | Điều kiện dùng thử S1 | Issue |
 |---|---|
-| AC-S1-1 Demo bằng danh sách người tham gia đã che của chợ (actors.csv đợt 1) | A-FG01-14, C-CLR-14 |
-| AC-S1-2 照合事務局 đăng ký 1 仲卸 có 許可, 1 売買参加者 có 承認 (有効日 / 失効日 riêng), đặt 一時停止 theo 決裁 | A-FG01-07.1, 07.2, 08.1, 08.3, 09.2, 09.3, A-FG01-10, 11 |
+| AC-S1-1 Demo bằng danh sách người tham gia đã che của chợ (actors.csv đợt 1) — nếu tới 2027-01-15 chưa có file thì AC-S1-1 dời sang S2, không dùng dữ liệu bịa (PREMISE L5-A18) | A-FG01-14, C-CLR-14 |
+| AC-S1-2 照合事務局 đăng ký 1 仲卸 có 許可, 1 売買参加者 có 承認 (有効日 / 失効日 riêng), đặt 一時停止 theo 決裁 — **trên màn** | API A-FG01-07.1, 07.2, 08.1, 08.3; màn A-FG01-13.1 (SC-01-03), 13.2 (SC-01-04), 20.1 (SC-01-05 一時停止); test A-FG01-10, 11; thiết kế A-FG01-16, 17 (第1波) |
 | AC-S1-3 取引担当 gõ mã người mua bằng bàn phím → thấy hiệu lực, căn cứ 許可 / 承認, ngày hết hạn | A-FG01-04, A-FG01-19.1, 19.2 (dev SC-01-06); thiết kế A-FG01-15 (第1波) |
-| AC-S1-4 Hai người đổi nhau bằng PIN trên PC dùng chung trong vài giây; nhật ký đúng người | C-FG02-03, C-FG02-04, C-FG13-02, C-FG02-21.1, 21.2 (dev SC-00-01), C-FG02-22.1 (dev SC-00-02), C-FG02-23 (test); thiết kế C-FG02-19 (第1波) |
+| AC-S1-4 Hai người đổi nhau bằng PIN trên PC dùng chung trong vài giây; nhật ký đúng người | C-FG02-03, C-FG02-04, C-FG13-02, C-FG02-21.1 (dev SC-00-01), C-FG02-22.1 (dev SC-00-02), C-FG02-23 (test); thiết kế C-FG02-19 (第1波) |
 
 ### 1.4 Số lượng theo epic
 
 <!-- BEGIN GEN epic-counts -->
 | Epic | Tên | Ưu tiên (gốc) | Sprint (WBS LAB-1) | Issue cấp 1 | Sub-issue | Lá | Giờ sơ bộ (lá) |
 |---|---|---|---|---|---|---|---|
-| EP-FG01 | [FG-01] 参加者・資格管理 — người tham gia, 許可 / 承認 | P1 | S1 | 19 | 20 | 32 | 327 |
+| EP-FG01 | [FG-01] 参加者・資格管理 — người tham gia, 許可 / 承認 | P1 | S1 | 20 | 23 | 35 | 327 |
 | EP-FG03 | [FG-03] ロット受付・評価記録 — tiếp nhận lô, 目利き (gồm offline / sync SC-03-07) | P2 | S2 | 21 | 18 | 31 | 365 |
 | EP-FG04 | [FG-04] 相対取引 — giao dịch thỏa thuận (luồng chính) | P1 | S3 | 16 | 21 | 30 | 346 |
 | EP-FG05 | [FG-05] せり結果記録 — ghi kết quả せり (luồng phụ) | P4 | S4 | 8 | 7 | 12 | 127 |
@@ -76,7 +76,7 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 | EP-PLAT | [PLAT] 基盤 — nền tảng AWS, CI/CD, khung app, quy ước chung | P1 | S0 | 11 | 4 | 14 | 142 |
 | EP-TEST | [TEST] 総合テスト・UAT・リリース | P2 | sau S8 | 9 | 4 | 11 | 140 |
 | EP-CLAR | [CLAR] 要確認 — các điểm cần làm rõ với khách / nội bộ | P3 | trước G1 (2027-01-15) | 41 | 0 | 41 | 60 |
-| **Tổng** | 18 epic | | | **261** | **216** | **398** | **4751** |
+| **Tổng** | 18 epic | | | **262** | **219** | **401** | **4751** |
 <!-- END GEN epic-counts -->
 
 ## 2. Spec → issue
@@ -123,7 +123,7 @@ Mỗi tài liệu LAB-4 có ít nhất một issue hoặc một dòng ở cột 
 | API Design `delivery/` (API-DEL-001..006, 6 file) | EP-FG06 | A-FG06-03, A-FG06-04 (2 sub), A-FG06-06 (2 sub), A-FG06-07 (2 sub), A-FG06-13.1 | — |
 | API Design `incentive/` (API-INC-001..004, 4 file) | EP-FG09 | B-FG09-10.1, B-FG09-10.3, B-FG09-11, B-FG09-13.1, B-FG09-13.2 | — |
 | API Design `lot/` (API-LOT-001..006, 6 file) | EP-FG03, EP-FG04 | A-FG03-03, A-FG03-04, A-FG03-05 (3 sub), A-FG03-06 (2 sub), A-FG03-08.1, A-FG03-08.2, A-FG03-14.1, A-FG04-09.1 | — |
-| API Design `party/` (API-PTY-001..007, 7 file) | EP-FG01 | A-FG01-05, A-FG01-06, A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.2, A-FG01-08.3, A-FG01-09.1, A-FG01-09.3, A-FG01-12.2, A-FG01-13 (2 sub) | — |
+| API Design `party/` (API-PTY-001..007, 7 file) | EP-FG01 | A-FG01-05, A-FG01-06, A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.2, A-FG01-08.3, A-FG01-09.1, A-FG01-09.3, A-FG01-13 (4 sub), A-FG01-20 (2 sub) | — |
 | API Design `rule/` (API-RULE-001..006, 6 file) | EP-FG10 | B-FG10-02, B-FG10-05, B-FG10-07, B-FG10-08, B-FG10-09.1 | — |
 | API Design `settle/` (API-STL-001..005, 5 file) | EP-FG07, EP-FG08 | B-FG07-02, B-FG07-03, B-FG07-04, B-FG07-05.1, B-FG08-02, B-FG08-03, B-FG08-06.1 | — |
 | API Design `trade/` (API-TRD-001..008, 8 file) | EP-FG04, EP-FG05 | A-FG04-04, A-FG04-05 (3 sub), A-FG04-06, A-FG04-07, A-FG04-08 (2 sub), A-FG04-09.1, A-FG04-09.3, A-FG04-13.1, A-FG04-13.2, A-FG04-13.4, A-FG05-02, A-FG05-03 (3 sub), A-FG05-04 | — |
@@ -148,8 +148,8 @@ Mỗi tài liệu LAB-4 có ít nhất một issue hoặc một dòng ở cột 
 | `ADR-008` | EP-CLAR, EP-FG02, EP-FG03, EP-FG04, EP-FG06 | A-FG03-13 (2 sub), A-FG04-13.5, A-FG06-05, C-FG02-05, C-CLR-04, C-CLR-11, A-FG03-17, A-FG03-19, A-CLR-22 | — |
 | `ADR-009` | EP-CLAR, EP-FG11, EP-FG13, EP-FG14, EP-PLAT, EP-TEST | C-PLAT-01 (4 sub), C-FG13-01, C-FG13-03, C-FG13-05 (2 sub), C-FG13-09, C-FG11-01 (3 sub), C-FG14-03, C-FG14-04, C-FG14-05, C-TEST-04 (2 sub), C-TEST-06, C-CLR-08, C-CLR-09 | — |
 | `ADR-010` | — | — | Không có việc làm riêng: ADR-010 là ranh giới phạm vi (option tách riêng, người quyết cuối, không OCR / AI) — giữ bằng nhãn rule:human-decision, DoD chung mục 1.2 và việc không đưa option vào backlog 第1期 |
-| SCREEN-LIST C2: SC-01-01, SC-01-05, SC-01-06; batch SC-01-B1 (phần cảnh báo) | EP-FG01 | A-FG01-12 (3 sub), A-FG01-16 (2 sub) | chưa có Screen Specification / API Design (L4-D08) |
-| SCREEN-LIST C2: SC-01-03, SC-01-04 (DEP-15) | EP-FG01 | A-FG01-13 (2 sub), A-FG01-17 | API đã có, chưa có Screen Specification |
+| SCREEN-LIST C2: SC-01-01, SC-01-05, SC-01-06; batch SC-01-B1 (phần cảnh báo) | EP-FG01 | A-FG01-12 (2 sub), A-FG01-16 (2 sub) | chưa có Screen Specification / API Design (L4-D08) |
+| SCREEN-LIST C2: SC-01-03, SC-01-04 (DEP-15) | EP-FG01 | A-FG01-13 (4 sub), A-FG01-17 | API đã có, chưa có Screen Specification |
 | SCREEN-LIST C3: SC-03-02 (DEP-07) | EP-FG03 | A-FG03-12 (2 sub), A-FG03-18 | chỉ có wireframe (L4-D05), chưa có API Design / Screen Spec |
 | SCREEN-LIST C3: SC-03-07 + module sync (DEP-04) | EP-FG03 | A-FG03-13 (2 sub), A-FG03-19 | chưa có Technical Design / API Design sync, màn chỉ có wireframe |
 | SCREEN-LIST C3: SC-03-03, SC-03-04 (gộp SC-03-06); thao tác 販売公開 / 販売終了 | EP-FG03 | A-FG03-14 (3 sub), A-FG03-20 (2 sub) | màn mức List; thao tác đổi trạng thái chưa có spec (A-GAP-01) |
@@ -211,17 +211,17 @@ Báo cáo kết quả thưởng theo kỳ (RPT-07, C-FG11-03.1–.3) thuộc FG-
 
 ## 4. Chỗ hở hoặc mâu thuẫn của spec LAB-4 phát hiện khi break
 
-Cột "Xử lý" ghi một trong bốn: sửa thiết kế (trỏ PREMISE) · giả định (trỏ PREMISE) · tạo issue làm rõ (ID) · để mở và vì sao. Sửa thiết kế chỉ là **đề xuất** tới khi Expert Gate A RELEASE; sau đó mới sửa file spec LAB-4 (ghi History).
+Cột "Xử lý" ghi một trong bốn: sửa thiết kế (trỏ PREMISE) · giả định (trỏ PREMISE) · tạo issue làm rõ (ID) · để mở và vì sao. Bốn dòng sửa thiết kế (L5-S01..S04) **đã áp** vào spec LAB-4 ngày 2026-11-26 sau khi Expert xác nhận chỗ hở có thật (bản tiếng Việt và `ja/` cùng commit, có dòng History).
 
 <!-- BEGIN GEN gaps -->
 | # | Spec | Chỗ hở / mâu thuẫn | Xử lý | Nguồn |
 |---|---|---|---|---|
-| L5-G01 | LOT_FUNC 2.4, 2.9; TRADE_AITAI_CONFIRM_TECH §4.2; specs/_index.md DEP-01..17 | Đổi lô INSPECTED → PUBLISHED (販売公開) và 販売終了 (PRM-110) không có API / Function Spec, cũng không có dòng DEP; API-TRD-002 và fn_lot_lock_for_sale lại bắt lô PUBLISHED → luồng chính 相対 không chạy được với dữ liệu thật | sửa thiết kế — PREMISE.md L5-S04 (đề xuất; áp vào spec sau Gate A) | A-GAP-01 |
-| L5-G02 | DEL_RECORD_TECH §5; LOT_INSPECTION_RECORD_TECH §4.3; MKT_DB §4.0 lot_status | Trạng thái lô DELIVERED có trong enum và được kiểm ở 目利き, nhưng không hàm nào ghi: delivery nói 「module lot đọc v_delivery_status」, LOT_FUNC không có hàm tương ứng | sửa thiết kế — PREMISE.md L5-S01 (đề xuất; áp vào spec sau Gate A) | A-GAP-02 |
+| L5-G01 | LOT_FUNC 2.4, 2.9; TRADE_AITAI_CONFIRM_TECH §4.2; specs/_index.md DEP-01..17 | Đổi lô INSPECTED → PUBLISHED (販売公開) và 販売終了 (PRM-110) không có API / Function Spec, cũng không có dòng DEP; API-TRD-002 và fn_lot_lock_for_sale lại bắt lô PUBLISHED → luồng chính 相対 không chạy được với dữ liệu thật | sửa thiết kế — PREMISE.md L5-S04 (đã áp vào spec LAB-4, 2026-11-26) | A-GAP-01 |
+| L5-G02 | DEL_RECORD_TECH §5; LOT_INSPECTION_RECORD_TECH §4.3; MKT_DB §4.0 lot_status | Trạng thái lô DELIVERED có trong enum và được kiểm ở 目利き, nhưng không hàm nào ghi: delivery nói 「module lot đọc v_delivery_status」, LOT_FUNC không có hàm tương ứng | sửa thiết kế — PREMISE.md L5-S01 (đã áp vào spec LAB-4, 2026-11-26) | A-GAP-02 |
 | L5-G03 | SCREEN-LIST §4 SC-01-B1; PTY_*_LIFECYCLE_TECH §4.5/§4.6; TRADE_QUALIFICATION_CHECK_TECH §5 | Batch SC-01-B1 gồm cảnh báo sắp hết hạn (PRM-045) nhưng TECH party chỉ đặc tả job 失効; TRADE_QUALIFICATION đẩy sang 「module notify」 còn DEP-13 chỉ là worker gửi — không ai sinh cảnh báo | tạo issue làm rõ A-FG01-16 (issue thiết kế: viết spec, khách duyệt theo đợt thiết kế) | A-GAP-03 |
 | L5-G04 | ADJUST_DB 4.32, 4.39; CLOSE_DB 4.57; TRADE_SAME_DAY_FIX_TECH §4.3; DEL_EXCEPTION_DISPUTE_TECH §4.3 | Hàm của nhóm FG-01, 03–06 (当日訂正, ngoại lệ giao, cấp lot_no / trade_no) ghi bảng thuộc cụm settle / close (trade_fixes, trade_adjustments, day_counters); không tài liệu nào nói ai tạo migration | giả định — PREMISE.md L5-A12 | A-GAP-04 |
-| L5-G05 | INCENTIVE_DB §4.52 Overview (0.3.2) vs INC_ENGINE_TECH §3.4, K1-4, K6-1 (0.1.1) | INCENTIVE_DB 4.52 còn ghi GD LATE_ENTRY (trades có trade_date thuộc kỳ khóa, created_at > locked_at) là đầu vào DELTA (recheck N-02); TECH 0.1.1 và ADR-007 0.3.2 đã bỏ theo Q-INC-02 (GD 後入力 chuyển sang kỳ đang mở, không DELTA). Dev đọc DB Design sẽ cài sai K1-4. | sửa thiết kế — PREMISE.md L5-S02 (đề xuất; áp vào spec sau Gate A) | B-GAP-01 |
-| L5-G06 | INC_ENGINE_TECH §4.8 No 5 vs No 7; K7 Error | K8 ghi dòng CARRY sang P+1 ở No 5 nhưng tới No 7 mới bảo đảm P+1 tồn tại; K7 lại nói 'P+1 do K8 bảo đảm tồn tại trước khi ghi' → thứ tự mâu thuẫn, FK period_id có thể vỡ khi P+1 chưa được tạo (Q-INC-03 chưa chốt). | sửa thiết kế — PREMISE.md L5-S03 (đề xuất; áp vào spec sau Gate A) | B-GAP-02 |
+| L5-G05 | INCENTIVE_DB §4.52 Overview (0.3.2) vs INC_ENGINE_TECH §3.4, K1-4, K6-1 (0.1.1) | INCENTIVE_DB 4.52 còn ghi GD LATE_ENTRY (trades có trade_date thuộc kỳ khóa, created_at > locked_at) là đầu vào DELTA (recheck N-02); TECH 0.1.1 và ADR-007 0.3.2 đã bỏ theo Q-INC-02 (GD 後入力 chuyển sang kỳ đang mở, không DELTA). Dev đọc DB Design sẽ cài sai K1-4. | sửa thiết kế — PREMISE.md L5-S02 (đã áp vào spec LAB-4, 2026-11-26) | B-GAP-01 |
+| L5-G06 | INC_ENGINE_TECH §4.8 No 5 vs No 7; K7 Error | K8 ghi dòng CARRY sang P+1 ở No 5 nhưng tới No 7 mới bảo đảm P+1 tồn tại; K7 lại nói 'P+1 do K8 bảo đảm tồn tại trước khi ghi' → thứ tự mâu thuẫn, FK period_id có thể vỡ khi P+1 chưa được tạo (Q-INC-03 chưa chốt). | sửa thiết kế — PREMISE.md L5-S03 (đã áp vào spec LAB-4, 2026-11-26) | B-GAP-02 |
 | L5-G07 | INC_ENGINE_TECH §4.8 No 6 (端数調整), FT-09-10 | 'Σ thuế đã xuất theo ngày trong IF-ACC-01 của P' không nói theo trục nào: nếu theo business_date thì điều chỉnh của kỳ đã khóa (period_id = Q, business_date trong P) và GD 後入力 bị tính lệch → dòng 端数調整 sai cỡ cả khoản thuế, không còn là chênh làm tròn. | giả định — PREMISE.md L5-A02 | B-GAP-03 |
 | L5-G08 | INC_ENGINE_TECH §4.8 No 6; BILLING_DB 4.41 (batch tạo sau 日次締め, đóng băng) | Dòng 端数調整 'gắn batch của 業務日 đang mở' nhưng batch IF-ACC-01 của ngày đó chỉ được tạo lúc 日次締め và đóng băng khi tạo → lúc 期ロック chưa có batch để gắn. | giả định — PREMISE.md L5-A03 | B-GAP-04 |
 | L5-G09 | MKT_DB §4.0 (Ngày mở, enforce_open_business_day); CLOSE_DB 4.24 | Trigger ngày mở phải gắn vào bảng nghiệp vụ của mọi module (lô, GD, giao — nhóm FG-01, 03–06; điều chỉnh, 入金 — nhóm FG-07–10) nhưng spec không nói ai tạo hàm trigger, ai gắn vào bảng nào khi chia module. | giả định — PREMISE.md L5-A13 | B-GAP-05 |

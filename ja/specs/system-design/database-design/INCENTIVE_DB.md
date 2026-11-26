@@ -3,9 +3,9 @@ id: SPEC-INCENTIVE_DB-001
 title: Database Design — 完納奨励金（実行、結果、テストベクター）
 type: system
 subtype: database-design
-version: "0.3.2"
+version: "0.3.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 language: vi
 form_source: "BM-2-901-50 v01 — Sun* Database Design"
 system_name: 水産物卸売市場業務支援システム（Product A）
@@ -35,6 +35,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 3 | 0.3.0 | Update | 4.52, §5 | Gate 1 再確認: ラベル INC-EDGE を C.3 に合わせる（N-01）+ TV-12 INC-EDGE-01; GD `LATE_ENTRY` を DELTA の入力に追加 + TV-13（N-02）; `CARRY_EXPIRED`（正の値）で残高を閉じ、TV-04 で負の値を二重に数えない（n-01）; TV-14 修正申請 INCENTIVE（n-02）; 仲卸の仮の交付率表; TV-06 への参照（n-04） | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.3.1 | Update | §5 TV-14 | diff 5b0ef16 D-05 を確認: 期 10 / 11 / 12 の締め日と、TRADE の決裁日 2027-12-20 を固定; INCENTIVE の金額は固定であることを明記。決裁が締めより前の変異ケースは、合計 +2,990 を 2 行に分ける（+2,000 は correction_id 付き、+990）。（D-04: TV-13 の DB 版は 09-21 で正しい。ADR-007 側を修正） | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.3.2 | Update | — | 顧客 Q-INC-01/02: `incentive_runs` に `payment_csv_confirmed_at`、`payment_csv_latest_paid_on` を追加; TV-13 を書き直し、TV-15 を追加 | 2026-11-25 | phuongnnm-23344 |  |
+| 6 | 0.3.3 | Update | §4.52 | LAB-5 PREMISE L5-S02（L5-G05）: Overview 4.52 の DELTA の入力から取引 `LATE_ENTRY` を外し、INC_ENGINE_TECH §3.4 と ADR-007（Q-INC-02）に合わせる | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -123,7 +124,7 @@ erDiagram
 |---|---|---|---|
 | テーブル名（論理） | 完納奨励金の結果 | 作成者 / 作成日 | phuongnnm-23344 / 2026-11-25 |
 | テーブル名（物理） | `incentive_results` | 更新者 / 更新日 | — |
-| Overview | BR-INC-01 / PRM-041 に従う: **適格金額** = 期内の買受代金の合計（**税抜**）。その人が完納していればその額、そうでなければ 0; ランクは、期のバージョンに含まれる**参加者区分ごとの**交付率表から引く; **奨励金 = floor(適格金額 × 交付率 × 110/100)**（D01, D02 を修正; 110/100 は BR-INC-01 / 13-06 の固定の税係数で、品目ごとの税率には従わない）。**DELTA — 再計算の範囲（Gate 1 C-01）:** 期 N の期ロック時に、締め済みの**すべての期を、TC 年の制限なしに**再計算する。対象は締め後に変わった入力（`trade_adjustments.period_id` = その期 かつ `created_at` > `locked_at`; **`trade_date` がその期に属し、`created_at` > `locked_at` の `trades` — GD `LATE_ENTRY`**（recheck N-02, TV-13）; 締め後にその期に割り当てられた `payment_allocations`; その期について決裁された修正申請 `KANNO` / `INCENTIVE`）。再計算は**古い期の規程バージョン**で行い、記録済みの合計（MAIN + 前の DELTA）と比較する → 期 N に `DELTA` 行を生成し、`ref_period_id` = 古い期とする; 古い期の完納は変えない（遡及しない — PRM-043）、ただし修正申請 `KANNO`（2段階決裁の例外、PRM-055 — Gate 1 M-10）は除く。`INCENTIVE`: 誤った率で計算された締め済みの期の奨励金を修正する（R-L4-01）。**CARRY / CARRY_EXPIRED（TC 年の制限はここにのみ適用）:** 負の delta は、記録した期の TC 年の末までの後続の期の奨励金から少しずつ差し引く（CARRY）; 年末に残った負の部分は `CARRY_EXPIRED` の行として記録し、照合部門 が処理するため RPT-07 に表示する（回収方法: Q-ARCH-08）。`CARRY_EXPIRED` は、TC 年の最後の期における残高を閉じる**正の値の行**（+ 残った負の部分）で、その人の Σ を 0 に戻し、負の値を二重に数えないようにする; `ref_period_id` = delta が発生した期; RPT-07 は未回収分の絶対値を表示する。年をまたぐ delta: 古い期のバージョンで計算し、期 N の TC 年に従って CARRY を記録・計算する。**追記のみ。** | Note | 適格金額、ランク、率のすべての要素を保存し、RPT-07 / FORM-INC-01 で計算を再現できるようにする。期 N にその人へ支払う額 = max(0, 期 N のその人の `incentive_jpy` の合計); 合計が負 → 同じ TC 年の期 N+1 に `CARRY`（負の値）の行 |
+| Overview | BR-INC-01 / PRM-041 に従う: **適格金額** = 期内の買受代金の合計（**税抜**）。その人が完納していればその額、そうでなければ 0; ランクは、期のバージョンに含まれる**参加者区分ごとの**交付率表から引く; **奨励金 = floor(適格金額 × 交付率 × 110/100)**（D01, D02 を修正; 110/100 は BR-INC-01 / 13-06 の固定の税係数で、品目ごとの税率には従わない）。**DELTA — 再計算の範囲（Gate 1 C-01）:** 期 N の期ロック時に、締め済みの**すべての期を、TC 年の制限なしに**再計算する。対象は締め後に変わった入力（`trade_adjustments.period_id` = その期 かつ `created_at` > `locked_at`; 締め済みの期への後入力取引（`LATE_ENTRY`）はこの対象に**含めない** — `incentive_period_id` = 開いている期とし、その期の通常の金額として計算する（Q-INC-02, INC_ENGINE_TECH §3.4, TV-13 / TV-15）; 締め後にその期に割り当てられた `payment_allocations`; その期について決裁された修正申請 `KANNO` / `INCENTIVE`）。再計算は**古い期の規程バージョン**で行い、記録済みの合計（MAIN + 前の DELTA）と比較する → 期 N に `DELTA` 行を生成し、`ref_period_id` = 古い期とする; 古い期の完納は変えない（遡及しない — PRM-043）、ただし修正申請 `KANNO`（2段階決裁の例外、PRM-055 — Gate 1 M-10）は除く。`INCENTIVE`: 誤った率で計算された締め済みの期の奨励金を修正する（R-L4-01）。**CARRY / CARRY_EXPIRED（TC 年の制限はここにのみ適用）:** 負の delta は、記録した期の TC 年の末までの後続の期の奨励金から少しずつ差し引く（CARRY）; 年末に残った負の部分は `CARRY_EXPIRED` の行として記録し、照合部門 が処理するため RPT-07 に表示する（回収方法: Q-ARCH-08）。`CARRY_EXPIRED` は、TC 年の最後の期における残高を閉じる**正の値の行**（+ 残った負の部分）で、その人の Σ を 0 に戻し、負の値を二重に数えないようにする; `ref_period_id` = delta が発生した期; RPT-07 は未回収分の絶対値を表示する。年をまたぐ delta: 古い期のバージョンで計算し、期 N の TC 年に従って CARRY を記録・計算する。**追記のみ。** | Note | 適格金額、ランク、率のすべての要素を保存し、RPT-07 / FORM-INC-01 で計算を再現できるようにする。期 N にその人へ支払う額 = max(0, 期 N のその人の `incentive_jpy` の合計); 合計が負 → 同じ TC 年の期 N+1 に `CARRY`（負の値）の行 |
 
 **列定義**
 

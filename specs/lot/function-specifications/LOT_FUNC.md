@@ -3,9 +3,9 @@ id: SPEC-LOT_FUNC-001
 title: Module lot — Function Specifications
 type: system
 subtype: function-specifications
-version: "0.1.1"
+version: "0.1.2"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 feature: lot
 related: [SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-LOT_REGISTER-001, SPEC-LOT_INSPECTION_RECORD-001, API-LOT-001, API-LOT-002, API-LOT-003, API-LOT-004, API-LOT-005, API-LOT-006, SPEC-LOT_DB-001]
 ---
@@ -20,7 +20,7 @@ related: [SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-LOT_REGISTER-001, SPEC-LOT_
 Quy ước chung của mọi function trong file:
 - Route handler: kiểm phiên + vai (`requireRole`) → validate body bằng zod (lỗi → 422 mã ở §3) → mở transaction, `set_config('app.user_id'|'app.device_id', …, true)` → gọi **một** hàm DB → map lỗi `P0001 'E-LOT-xxx: detail'` sang HTTP theo §3 (ARCHITECTURE §4.3).
 - Hàm DB: **chỉ** cách ghi duy nhất vào bảng lô (DB role của app chỉ có EXECUTE). Ném lỗi dạng `raise exception using errcode = 'P0001', message = 'E-LOT-xxx: {detail}'`.
-- Module khác (trade) chỉ gọi hàm "public" ở 2.9, 2.10; không đọc bảng `lots` trực tiếp mà qua view `v_lot_available_qty` (ARCHITECTURE §2).
+- Module khác chỉ gọi hàm "public" ở 2.9, 2.10 (trade) và 2.11 (delivery); không đọc bảng `lots` trực tiếp mà qua view `v_lot_available_qty` (ARCHITECTURE §2).
 
 ---
 
@@ -30,6 +30,7 @@ Quy ước chung của mọi function trong file:
 |---|---|---|---|---|---|---|---|
 | 1 | Ver 0.1 | Add New | Toàn bộ (2.1–2.10) | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | Ver 0.1.1 | Update | — | Khách Q-LOT-01: mã chính thức khi lên server, tìm theo 仮番号 cả ngày, không dùng lại số, lô 仮受付 hủy → CANCELLED giữ số, phiếu in dùng mã chính thức; đóng Q-LOT-03 | 2026-11-25 | phuongnnm-23344 |  |
+| 3 | Ver 0.1.2 | Update | 2.11 | LAB-5 PREMISE L5-S01 (chỗ hở L5-G02): thêm hàm public `app.fn_lot_refresh_delivery_status` đổi lô `CLOSED` → `DELIVERED` khi mọi GD đã 引渡し完了 | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -249,6 +250,24 @@ Quy ước chung của mọi function trong file:
 | Variable type | Variable name | Role of variables |
 |---|---|---|
 | `numeric` | `v_after` | SL khả dụng sau dòng mới — quyết định đổi trạng thái lô |
+
+### 2.11. `app.fn_lot_refresh_delivery_status` (public — module delivery gọi)
+
+| Return type | Function name |
+|---|---|
+| `boolean` | `app.fn_lot_refresh_delivery_status` |
+
+| Argument type | Argument name | Role of the argument |
+|---|---|---|
+| `uuid` | `p_lot_id` | Lô của GD vừa ghi giao / ngoại lệ |
+
+**Function description**
+
+> - Gọi trong cùng transaction với hàm ghi giao / ngoại lệ của module delivery (DEL_RECORD_TECH §5, DEL_EXCEPTION_DISPUTE_TECH). Khóa lô bằng `SELECT … FOR UPDATE` như 2.9. Lô đang `CLOSED` và `v_delivery_status` báo mọi GD của lô đã 引渡し完了 → đổi sang `DELIVERED` + một dòng `lot_status_history`, trả `true`; lô chưa `CLOSED` hoặc còn GD chưa giao xong → không đổi, trả `false`. Không đổi ngược `DELIVERED` → `CLOSED` (sửa sau chốt đi qua 修正申請, không ghi đè lịch sử).
+
+| Variable type | Variable name | Role of variables |
+|---|---|---|
+| `integer` | `v_open` | Số GD của lô chưa 引渡し完了 |
 
 ---
 

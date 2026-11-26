@@ -15,4 +15,4 @@ Tên file `{DB_ID}_DB.md`, đặt trong `{screen-or-feature}/`; dùng từ hai f
 | SPEC-TRADE_DB-001 | 相対 / せり / in phiếu / giao hàng (7 bảng) | — (dùng chung, gốc thư mục) | 0.2.2 | phuongnnm-23344 | 2026-11-25 | [TRADE_DB.md](TRADE_DB.md) |
 | SPEC-ADJUST_DB-001 | 当日訂正, 修正申請, REVERSE / DELTA (4 bảng) | — (dùng chung, gốc thư mục) | 0.3.2 | phuongnnm-23344 | 2026-11-25 | [ADJUST_DB.md](ADJUST_DB.md) |
 | SPEC-BILLING_DB-001 | 期のお支払額 / 入金 / phân bổ / batch kế toán (10 bảng) | — (dùng chung, gốc thư mục) | 0.3.1 | phuongnnm-23344 | 2026-11-25 | [BILLING_DB.md](BILLING_DB.md) |
-| SPEC-INCENTIVE_DB-001 | 完納奨励金 + test vector (2 bảng) | — (dùng chung, gốc thư mục) | 0.3.2 | phuongnnm-23344 | 2026-11-25 | [INCENTIVE_DB.md](INCENTIVE_DB.md) |
+| SPEC-INCENTIVE_DB-001 | 完納奨励金 + test vector (2 bảng) | — (dùng chung, gốc thư mục) | 0.3.3 | phuongnnm-23344 | 2026-11-26 | [INCENTIVE_DB.md](INCENTIVE_DB.md) |

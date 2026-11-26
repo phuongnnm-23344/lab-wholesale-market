@@ -123,7 +123,8 @@ for i in iss:
 
 # Iteration 1: phụ thuộc không ra ngoài (trừ S0 nền tảng, thiết kế 第1波, câu hỏi khách); năng lực
 IT = d["iteration1"]["name"]
-outside_ok = lambda j: j["epic"] == "EP-PLAT" or j["kind"] == "clarify" or (j["kind"] == "design" and (j.get("milestone") or "").startswith("設計第1波"))
+outside_ok = lambda j: (j["epic"] == "EP-PLAT" or j["id"] in d["iteration1"]["outside_ok_clarify"]
+                        or (j["kind"] == "design" and (j.get("milestone") or "").startswith("設計第1波")))
 for i in iss:
     if i["iteration"] != IT:
         continue
@@ -164,6 +165,9 @@ if miss:
 for ac in d["iteration1"]["acceptance"]:
     if not ac["issues"]:
         E("AC không có issue", ac["id"])
+    if ac.get("screen") and not any(by[x]["role"] == "FE" and by[x]["kind"] == "dev" and by[x]["iteration"] == d["iteration1"]["name"]
+                                    for x in ac["issues"] if x in by):
+        E("AC cần thao tác trên màn nhưng không có màn FE nào trong Iteration 1", ac["id"])
     for x in ac["issues"]:
         if x not in by or (by[x]["kind"] not in ("design", "clarify") and by[x]["iteration"] != d["iteration1"]["name"]):
             E("issue của AC không thuộc Iteration 1", ac["id"], x)

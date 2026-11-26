@@ -15,4 +15,4 @@
 | SPEC-TRADE_DB-001 | 相対 / せり / 伝票印刷 / 配送（7テーブル） | — （共用、フォルダー直下） | 0.2.2 | phuongnnm-23344 | 2026-11-25 | [TRADE_DB.md](TRADE_DB.md) |
 | SPEC-ADJUST_DB-001 | 当日訂正、修正申請、REVERSE / DELTA（4テーブル） | — （共用、フォルダー直下） | 0.3.2 | phuongnnm-23344 | 2026-11-25 | [ADJUST_DB.md](ADJUST_DB.md) |
 | SPEC-BILLING_DB-001 | 期のお支払額 / 入金 / 配分 / 会計連携バッチ（10テーブル） | — （共用、フォルダー直下） | 0.3.1 | phuongnnm-23344 | 2026-11-25 | [BILLING_DB.md](BILLING_DB.md) |
-| SPEC-INCENTIVE_DB-001 | 完納奨励金 + テストベクター（2テーブル） | — （共用、フォルダー直下） | 0.3.2 | phuongnnm-23344 | 2026-11-25 | [INCENTIVE_DB.md](INCENTIVE_DB.md) |
+| SPEC-INCENTIVE_DB-001 | 完納奨励金 + テストベクター（2テーブル） | — （共用、フォルダー直下） | 0.3.3 | phuongnnm-23344 | 2026-11-26 | [INCENTIVE_DB.md](INCENTIVE_DB.md) |

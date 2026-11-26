@@ -8,9 +8,9 @@ function: compute_period_incentives / preview_incentives / lock_period
 endpoint: POST /api/v1/periods/{periodId}/incentive-previews · POST /api/v1/periods/{periodId}/lock
 component: IncentiveEngine
 feature: incentive
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ADR-007, ADR-005, ADR-006, ADR-004, ADR-002, SPEC-INCENTIVE_DB-001, SPEC-BILLING_DB-001, SPEC-CLOSE_DB-001, SPEC-ADJUST_DB-001, SPEC-RULE_DB-001, SPEC-SC-09-04-001, SPEC-INC_FUNC-001, SPEC-INC_API-002, SPEC-INC_API-003, BR-INC-01, FR-INC-01, FR-INC-03, FR-CORR-02, FR-AUDIT-03, PRM-040, PRM-041, PRM-042, PRM-043, PRM-053, PRM-055]
 ---
 
@@ -29,6 +29,7 @@ related: [ADR-007, ADR-005, ADR-006, ADR-004, ADR-002, SPEC-INCENTIVE_DB-001, SP
 | 1 | 0.1.0 | Add new | — | 初版（LAB-4 P3）: LAB-5 でタスク分割するための完了条件付き 9 ブロック K1–K9; 変数、整数の計算式、計算順序、DELTA の行分割ルール、TV-01..14 との対応（INCENTIVE_DB §5） | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | 顧客 Q-INC-02: 締め済みの期の GD 後入力を、開いている奨励金計算期（`incentive_period_id`）へ移す; 完納はその期の支払期日で判定; DELTA なし; 全購入者に一つのルール（§3.4、K1/K2/K6/K9、TV-15、+0.5 MD）。Q-INC-01: 完納は CSV の入金日で判定; 期ロックにはチェックが必要（K8、E-INC-014） | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: Mermaid ブロックから書き出した PNG `./assets/INC_ENGINE_sequence.png` を埋め込み（`scripts/export-mermaid-png.py`）; Mermaid は引き続き出典 | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.8 No 4, No 7 | LAB-5 PREMISE L5-S03（L5-G06）: P+1 の存在保証を No 7 から No 4 へ移し、No 5 の CARRY 書き込みより前にする; No 7 は LOCKED への更新のみ | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -366,10 +367,10 @@ K2（入金の配分）は**エンジン内では実行しない**: CSV 取込 /
 | 1 | Route handler がセッション、権限、MFA を検査（iam が発行した `purpose = PERIOD_LOCK` の `X-MFA-Token` を消費 — 期ロックは戻せないため 10 分の step-up は再利用しない）、その後トランザクション内で `app.lock_period` を呼ぶ; 呼ぶ前に `set_config('app.user_id' …)` を行う。 |
 | 2 | `SELECT … FROM payment_periods WHERE id = P FOR UPDATE NOWAIT`; `pg_advisory_xact_lock(hashtext('incentive_period_lock'))` で二つの期が並行してロックされないようにする（K6 は互いの結果を読む）。 |
 | 3 | Error の表に従い（表の順序どおり）条件を検査する。`assert_caller('SETTLE', 'STL_HEAD')` は代行（`lock_delegation_id`）も検査する。 |
-| 4 | K1（LOCK モード）を実行 → H を比較。K3 を `judgements`（全件必須）で実行、K4、K5、K6、K7。 |
+| 4 | （LOCK モードのみ）**行を書き込む前に** P+1 が存在することを保証する — 共用の期作成関数を呼ぶ（無ければ作成、`rule_version_id = rule_at(P+1.start_date)`、`due_date` は `PAYMENT_DUE_RULE` と銀行カレンダーから算出; Q-INC-03）。No 5 の CARRY 行の行き先の期を確保するため; 試算モードでは期を作らない。その後 K1（LOCK モード）を実行 → H を比較。K3 を `judgements`（全件必須）で実行、K4、K5、K6、K7。 |
 | 5 | B > 0 の全 (i, P) について `period_billings` を `snapshot_kind = LOCK` で、`period_billing_tax_lines` を書き込む; `incentive_runs`（P, V_P, H, `payment_csv_confirmed_at` = ロック時刻, `payment_csv_latest_paid_on` = ロック時点で取り込んだ入金 CSV の最大の入金日 — 監査の証跡）を書き込む; `incentive_results` の全行（MAIN, DELTA, P+1 への CARRY, CARRY_EXPIRED）を書き込む。 |
 | 6 | 税率ごとに端数調整の行を生成: 期の税額（Σ T）と、P の IF-ACC-01 で日ごとに出力済みの税額の合計との差 → 端数調整の種別の `accounting_export_lines`、開いている業務日のバッチに紐づける（BILLING_DB 4.42; 書式は E-01 / OPEN-DB-01 待ち）。 |
-| 7 | `UPDATE payment_periods SET status = 'LOCKED', locked_by, lock_delegation_id, locked_at = now()`。P+1 が存在することを保証（無ければ作成、`rule_version_id = rule_at(P+1.start_date)`、`due_date` は `PAYMENT_DUE_RULE` と銀行カレンダーから算出）。 |
+| 7 | `UPDATE payment_periods SET status = 'LOCKED', locked_by, lock_delegation_id, locked_at = now()`（P+1 は No 4 で確保済み）。 |
 | 8 | `notifications` を予約（期の結果メールを、P に行がある各人へ; FORM-INC-01） — コミット後に outbox のワーカーが送信する。 |
 | 9 | `audit_logs` を書く（`action = PERIOD_LOCK`、P、H、MAIN / DELTA / CARRY の合計、判断の一覧と理由、実行者、代行、端末、MFA の時刻）。コミット。No 2–9 のどこでエラーが起きても全体をロールバックし、「計算済みだが未ロック」の状態を作らない（N13）。 |
 | 10 | **試算モード**（`preview_incentives`）: No 4 と同じ、ただし `judgements` は下書き（不足分は要確認のまま）; No 2 は実行しない（ロックしない）、No 5–8 も実行しない; `audit_logs` に 1 行だけ書く（`action = INCENTIVE_PREVIEW`、P、H、合計、人 → 奨励額の map）— K9 で使う。権限: `SETTLE` または `STL_HEAD`; MFA は不要。 |

@@ -3,9 +3,9 @@ id: SPEC-INCENTIVE_DB-001
 title: Database Design — 完納奨励金 (lần chạy, kết quả, test vector)
 type: system
 subtype: database-design
-version: "0.3.2"
+version: "0.3.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 language: vi
 form_source: "BM-2-901-50 v01 — Sun* Database Design"
 system_name: 水産物卸売市場業務支援システム（Product A）
@@ -35,6 +35,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 3 | 0.3.0 | Update | 4.52, §5 | Gate 1 recheck: nhãn INC-EDGE đúng C.3 (N-01) + TV-12 INC-EDGE-01; GD LATE_ENTRY vào đầu vào DELTA + TV-13 (N-02); CARRY_EXPIRED dương đóng số dư, TV-04 không đếm âm hai lần (n-01); TV-14 修正申請 INCENTIVE (n-02); bảng 仲卸 giả; tham chiếu TV-06 (n-04) | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.3.1 | Update | §5 TV-14 | Kiểm diff 5b0ef16 D-05: ghim ngày khóa kỳ 10 / 11 / 12 và ngày duyệt TRADE 2027-12-20; ghi rõ số tiền INCENTIVE cố định, biến thể duyệt trước khóa → tổng +2.990 tách 2 dòng (+2.000 gắn `correction_id`, +990). (D-04: TV-13 bản DB đã đúng 09-21, sửa phía ADR-007) | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.3.2 | Update | — | Khách Q-INC-01/02: `incentive_runs` thêm `payment_csv_confirmed_at`, `payment_csv_latest_paid_on`; TV-13 viết lại, thêm TV-15 | 2026-11-25 | phuongnnm-23344 |  |
+| 6 | 0.3.3 | Update | §4.52 | LAB-5 PREMISE L5-S02 (chỗ hở L5-G05): bỏ GD `LATE_ENTRY` khỏi đầu vào DELTA ở Overview 4.52 cho khớp INC_ENGINE_TECH §3.4 và ADR-007 (Q-INC-02) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -123,7 +124,7 @@ Quy ước chung (kiểu, cột chung, chỉ thêm, ngày mở, ghi qua hàm, en
 |---|---|---|---|
 | Tên bảng (logic) | Kết quả 完納奨励金 | Tạo bởi / ngày | phuongnnm-23344 / 2026-11-25 |
 | Tên bảng (vật lý) | `incentive_results` | Sửa bởi / ngày | — |
-| Overview | Theo BR-INC-01 / PRM-041: **適格金額** = tổng 買受代金 **税抜** trong kỳ nếu người đó 完納, ngược lại 0; bậc tra trên bảng tỷ lệ **của loại người tham gia** thuộc version của kỳ; **thưởng = floor(適格金額 × 交付率 × 110/100)** (sửa D01, D02; 110/100 là 税係数 cố định của BR-INC-01 / 13-06, không theo thuế suất hàng). **`DELTA` — phạm vi tính lại (Gate 1 C-01):** lúc 期ロック kỳ N, tính lại **mọi kỳ đã khóa, không giới hạn năm TC**, có đầu vào đổi sau khi khóa (`trade_adjustments.period_id` = kỳ đó và `created_at` > `locked_at`; **`trades` có `trade_date` thuộc kỳ đó và `created_at` > `locked_at` — GD `LATE_ENTRY`** (recheck N-02, TV-13); `payment_allocations` gán vào kỳ đó sau khi khóa; 修正申請 `KANNO` / `INCENTIVE` đã duyệt cho kỳ đó) theo **version của kỳ cũ**, so với tổng đã ghi nhận (MAIN + DELTA trước) → dòng `DELTA` ở kỳ N, `ref_period_id` = kỳ cũ; 完納 kỳ cũ giữ nguyên (không hồi tố — PRM-043), **trừ** 修正申請 `KANNO` (ngoại lệ có duyệt 2 cấp, PRM-055 — Gate 1 M-10). `INCENTIVE`: sửa tiền thưởng kỳ đã khóa tính theo tỷ lệ sai (R-L4-01). **`CARRY` / `CARRY_EXPIRED` (giới hạn năm TC chỉ áp ở đây):** delta âm trừ dần (CARRY) vào thưởng các kỳ sau tới hết năm TC của kỳ ghi nhận; phần âm còn lại cuối năm ghi dòng `CARRY_EXPIRED` và hiện ở RPT-07 để 照合部門 xử lý (cách thu: Q-ARCH-08). `CARRY_EXPIRED` là dòng **dương đóng số dư** (+ phần âm còn lại) ở kỳ cuối năm TC, đưa Σ của người đó về 0 để không đếm âm hai lần; `ref_period_id` = kỳ phát sinh delta; RPT-07 hiện trị tuyệt đối là phần chưa thu. Delta qua năm TC: tính bằng version kỳ cũ, ghi và tính CARRY theo năm TC của kỳ N. **Chỉ thêm.** | Note | Lưu đủ thành phần (適格金額, bậc, tỷ lệ) để RPT-07 / FORM-INC-01 tái hiện được phép tính. Tiền chi kỳ N cho một người = max(0, Σ `incentive_jpy` các dòng của người đó ở kỳ N); tổng âm → dòng `CARRY` (số âm) ở kỳ N+1 cùng năm TC |
+| Overview | Theo BR-INC-01 / PRM-041: **適格金額** = tổng 買受代金 **税抜** trong kỳ nếu người đó 完納, ngược lại 0; bậc tra trên bảng tỷ lệ **của loại người tham gia** thuộc version của kỳ; **thưởng = floor(適格金額 × 交付率 × 110/100)** (sửa D01, D02; 110/100 là 税係数 cố định của BR-INC-01 / 13-06, không theo thuế suất hàng). **`DELTA` — phạm vi tính lại (Gate 1 C-01):** lúc 期ロック kỳ N, tính lại **mọi kỳ đã khóa, không giới hạn năm TC**, có đầu vào đổi sau khi khóa (`trade_adjustments.period_id` = kỳ đó và `created_at` > `locked_at`; GD 後入力 (`LATE_ENTRY`) cho kỳ đã khóa **không** vào tập này — mang `incentive_period_id` = kỳ đang mở và tính như tiền thường của kỳ đó (Q-INC-02, INC_ENGINE_TECH §3.4, TV-13 / TV-15); `payment_allocations` gán vào kỳ đó sau khi khóa; 修正申請 `KANNO` / `INCENTIVE` đã duyệt cho kỳ đó) theo **version của kỳ cũ**, so với tổng đã ghi nhận (MAIN + DELTA trước) → dòng `DELTA` ở kỳ N, `ref_period_id` = kỳ cũ; 完納 kỳ cũ giữ nguyên (không hồi tố — PRM-043), **trừ** 修正申請 `KANNO` (ngoại lệ có duyệt 2 cấp, PRM-055 — Gate 1 M-10). `INCENTIVE`: sửa tiền thưởng kỳ đã khóa tính theo tỷ lệ sai (R-L4-01). **`CARRY` / `CARRY_EXPIRED` (giới hạn năm TC chỉ áp ở đây):** delta âm trừ dần (CARRY) vào thưởng các kỳ sau tới hết năm TC của kỳ ghi nhận; phần âm còn lại cuối năm ghi dòng `CARRY_EXPIRED` và hiện ở RPT-07 để 照合部門 xử lý (cách thu: Q-ARCH-08). `CARRY_EXPIRED` là dòng **dương đóng số dư** (+ phần âm còn lại) ở kỳ cuối năm TC, đưa Σ của người đó về 0 để không đếm âm hai lần; `ref_period_id` = kỳ phát sinh delta; RPT-07 hiện trị tuyệt đối là phần chưa thu. Delta qua năm TC: tính bằng version kỳ cũ, ghi và tính CARRY theo năm TC của kỳ N. **Chỉ thêm.** | Note | Lưu đủ thành phần (適格金額, bậc, tỷ lệ) để RPT-07 / FORM-INC-01 tái hiện được phép tính. Tiền chi kỳ N cho một người = max(0, Σ `incentive_jpy` các dòng của người đó ở kỳ N); tổng âm → dòng `CARRY` (số âm) ở kỳ N+1 cùng năm TC |
 
 **Định nghĩa cột**
 

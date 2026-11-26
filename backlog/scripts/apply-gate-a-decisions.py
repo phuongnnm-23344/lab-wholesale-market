@@ -98,6 +98,8 @@ def apply(doc):
         if "milestone" in u:
             u["milestone"] = G["milestones"][u["milestone"]]
         by[x].update(u)
+        if "kind" in u:
+            by[x]["labels"] = uniq([l for l in by[x]["labels"] if not l.startswith("kind:")] + ["kind:" + u["kind"]])
         if "role" in u:
             by[x]["labels"] = uniq([l for l in by[x]["labels"] if not l.startswith("role:")] + ["role:" + u["role"]])
     for pid, rows in G["children"].items():

@@ -24,6 +24,8 @@ iteration1:
     - INFRA-1
     BrSE:
     - BrSE-1
+  outside_ok_clarify:
+  - C-CLR-14
   capacity_by_role:
     BE: 160
     FE: 80
@@ -32,7 +34,7 @@ iteration1:
     BrSE: 40
   committed_hours_by_role:
     BE: 158
-    FE: 77
+    FE: 78
     QA: 18
     INFRA: 0
     BrSE: 0
@@ -42,12 +44,12 @@ iteration1:
     BE-3: 40
     BE-6: 40
     FE-1: 38
-    FE-4: 39
+    FE-4: 40
     QA-1: 18
     INFRA-1: 0
     BrSE-1: 0
   committed_leaves: 26
-  committed_hours: 253
+  committed_hours: 254
   acceptance:
   - id: AC-S1-1
     text: Demo bằng danh sách người tham gia đã che của chợ (actors.csv đợt 1), không dùng dữ liệu bịa
@@ -61,10 +63,14 @@ iteration1:
     - A-FG01-07.2
     - A-FG01-08.1
     - A-FG01-08.3
-    - A-FG01-09.2
-    - A-FG01-09.3
+    - A-FG01-13.1
+    - A-FG01-13.2
+    - A-FG01-20.1
     - A-FG01-10
     - A-FG01-11
+    - A-FG01-17
+    - A-FG01-16
+    screen: true
   - id: AC-S1-3
     text: 取引担当 gõ mã người mua chỉ bằng bàn phím là thấy ngay còn hiệu lực không, căn cứ 許可 hay 承認, hết hạn ngày nào (NFR-USE-01)
     issues:
@@ -72,6 +78,7 @@ iteration1:
     - A-FG01-19.1
     - A-FG01-19.2
     - A-FG01-15
+    screen: true
   - id: AC-S1-4
     text: Trên một PC dùng chung, hai người đổi nhau bằng PIN trong vài giây; nhật ký ghi đúng ai làm gì
     issues:
@@ -79,10 +86,10 @@ iteration1:
     - C-FG02-04
     - C-FG13-02
     - C-FG02-21.1
-    - C-FG02-21.2
     - C-FG02-22.1
     - C-FG02-19
     - C-FG02-23
+    screen: true
   unmet_acceptance: []
 constraint_note: '完納奨励金 (FG-09) tách thành issue riêng theo từng khối K1–K9 của INC_ENGINE_TECH §4, không gộp vào settle (FG-07/08) hay rule (FG-10).
 
@@ -960,13 +967,12 @@ issues:
   parent: A-FG01-09
   kind: dev
   priority: P1
-  iteration: Iteration 1
+  iteration: null
   milestone: null
-  acceptance:
-  - AC-S1-2
+  acceptance: []
   title: '[FG-01] SC-01-02 許可ブロック — khối 許可 (chỉ 仲卸) + lịch sử + nút thủ tục'
   role: FE
-  assignee: FE-4
+  assignee: FE-1
   labels:
   - fg:FG-01
   - feature:party
@@ -990,13 +996,12 @@ issues:
   parent: A-FG01-09
   kind: dev
   priority: P1
-  iteration: Iteration 1
+  iteration: null
   milestone: null
-  acceptance:
-  - AC-S1-2
+  acceptance: []
   title: '[FG-01] SC-01-02 承認ブロック — khối 承認 + lịch sử + nút thủ tục'
   role: FE
-  assignee: FE-4
+  assignee: FE-1
   labels:
   - fg:FG-01
   - feature:party
@@ -1077,7 +1082,8 @@ issues:
   depends_on:
   - A-FG01-07.1
   - A-FG01-07.2
-  - A-FG01-09.2
+  - A-FG01-13.1
+  - A-FG01-20.1
   depends_on_spec: []
   hours_hint: 8
   stream: A
@@ -1112,7 +1118,8 @@ issues:
   depends_on:
   - A-FG01-08.1
   - A-FG01-08.3
-  - A-FG01-09.3
+  - A-FG01-13.2
+  - A-FG01-20.1
   depends_on_spec: []
   hours_hint: 6
   stream: A
@@ -1148,7 +1155,7 @@ issues:
   depends_on:
   - A-FG01-16
   depends_on_spec: []
-  hours_hint: 42
+  hours_hint: 22
   stream: A
   description: Màn mức List, chưa có Screen Specification / API Design (L4-D08). Giờ = FE 人日 LAB-1 (費用表 画面別内訳) × 8; BE chưa tách.
   dod:
@@ -1180,40 +1187,6 @@ issues:
   hours_hint: 16
   stream: A
   description: Lọc loại, trạng thái, sắp hết hạn. LAB-1 FE 2,0 人日.
-  dod:
-  - Tách thành lá dev / test ≤ 16 giờ khi issue thiết kế A-FG01-16 xong, trước buổi lập kế hoạch của sprint dự kiến (rolling-wave, L5-D08)
-  - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết
-- id: A-FG01-12.2
-  epic: EP-FG01
-  parent: A-FG01-12
-  kind: rough
-  priority: P1
-  iteration: null
-  milestone: null
-  acceptance: []
-  title: '[FG-01][概算] SC-01-05 資格状態変更 — 一時停止 / 再審査 / 期限前更新 (chưa spec)'
-  role: FE
-  assignee: FE-1
-  labels:
-  - fg:FG-01
-  - feature:party
-  - kind:rough
-  - role:FE
-  - needs-spec
-  - rule:permit-vs-approval
-  - rule:human-decision
-  spec_refs:
-  - 'SCREEN-LIST C2 #9'
-  - API-PTY-004..007
-  rfp_refs:
-  - FR-PARTY-02
-  - FR-PARTY-03
-  - PRM-121
-  depends_on: []
-  depends_on_spec: []
-  hours_hint: 20
-  stream: A
-  description: Màn 起案 → 決裁 / 確認 (MFA) dùng API đã có; thiếu Screen Spec. LAB-1 FE 2,5 人日.
   dod:
   - Tách thành lá dev / test ≤ 16 giờ khi issue thiết kế A-FG01-16 xong, trước buổi lập kế hoạch của sprint dự kiến (rolling-wave, L5-D08)
   - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết
@@ -1252,21 +1225,20 @@ issues:
 - id: A-FG01-13
   epic: EP-FG01
   parent: null
-  kind: rough
+  kind: dev
   priority: P1
   iteration: null
   milestone: null
   acceptance: []
-  title: '[FG-01][概算] 許可・承認 登録画面 — SC-01-03, SC-01-04 (DEP-15)'
+  title: '[FG-01] 許可・承認 登録画面 — SC-01-03, SC-01-04 (DEP-15)'
   role: FE
   assignee: FE-1
   labels:
   - fg:FG-01
   - feature:party
-  - kind:rough
   - role:FE
-  - needs-spec
   - rule:permit-vs-approval
+  - kind:dev
   spec_refs:
   - specs/_index.md DEP-15
   - 'SCREEN-LIST C2 #7, #8'
@@ -1279,28 +1251,27 @@ issues:
   depends_on_spec: []
   hours_hint: 48
   stream: A
-  description: API đã có, thiếu Screen Specification 2 màn. Giờ = FE 人日 LAB-1 × 8.
+  description: Thiết kế ở 設計第1波 (A-FG01-17) xong trước S1 → tách thành lá dev ≤ 16 giờ theo rolling-wave (L5-D08); bản tối thiểu vào S1 cho AC-S1-2 (L5-D10).
   dod:
-  - Tách thành lá dev / test ≤ 16 giờ khi issue thiết kế A-FG01-17 xong, trước buổi lập kế hoạch của sprint dự kiến (rolling-wave, L5-D08)
-  - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết
+  - Đúng Screen Spec SC-01-03 / SC-01-04 (A-FG01-17)
 - id: A-FG01-13.1
   epic: EP-FG01
   parent: A-FG01-13
-  kind: rough
+  kind: dev
   priority: P1
-  iteration: null
+  iteration: Iteration 1
   milestone: null
-  acceptance: []
-  title: '[FG-01][概算] SC-01-03 許可登録・更新（仲卸）(chưa spec)'
+  acceptance:
+  - AC-S1-2
+  title: '[FG-01] SC-01-03 許可登録 (S1 tối thiểu) — nhập 許可 仲卸, 有効日 / 失効日'
   role: FE
-  assignee: FE-1
+  assignee: FE-4
   labels:
   - fg:FG-01
   - feature:party
-  - kind:rough
   - role:FE
-  - needs-spec
   - rule:permit-vs-approval
+  - kind:dev
   spec_refs:
   - DEP-15
   - 'SCREEN-LIST C2 #7'
@@ -1308,31 +1279,32 @@ issues:
   - FR-PARTY-02
   depends_on:
   - A-FG01-07.1
+  - A-FG01-07.2
   depends_on_spec: []
-  hours_hint: 24
+  hours_hint: 10
   stream: A
-  description: Chỉ cho 仲卸. LAB-1 FE 3,0 人日.
+  description: Bản tối thiểu của SC-01-03 cho S1 (L5-D10).
   dod:
-  - Tách thành lá dev / test ≤ 16 giờ khi issue thiết kế A-FG01-17 xong, trước buổi lập kế hoạch của sprint dự kiến (rolling-wave, L5-D08)
-  - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết
+  - 'AC-S1-2: 照合事務局 nhập 1 許可 cho 仲卸 có 有効日 / 失効日 trên màn, gọi API-PTY-004 / 005'
+  - Chỉ hiện cho 仲卸 (luật 2)
 - id: A-FG01-13.2
   epic: EP-FG01
   parent: A-FG01-13
-  kind: rough
+  kind: dev
   priority: P1
-  iteration: null
+  iteration: Iteration 1
   milestone: null
-  acceptance: []
-  title: '[FG-01][概算] SC-01-04 承認登録・更新（売買参加者）(chưa spec)'
+  acceptance:
+  - AC-S1-2
+  title: '[FG-01] SC-01-04 承認登録 (S1 tối thiểu) — nhập 承認 売買参加者, 有効日 / 失効日'
   role: FE
-  assignee: FE-2
+  assignee: FE-4
   labels:
   - fg:FG-01
   - feature:party
-  - kind:rough
   - role:FE
-  - needs-spec
   - rule:permit-vs-approval
+  - kind:dev
   spec_refs:
   - DEP-15
   - 'SCREEN-LIST C2 #8'
@@ -1340,13 +1312,76 @@ issues:
   - FR-PARTY-03
   depends_on:
   - A-FG01-08.1
+  - A-FG01-08.3
   depends_on_spec: []
-  hours_hint: 24
+  hours_hint: 10
   stream: A
-  description: Chỉ cho 売買参加者, gồm 参加上限. LAB-1 FE 3,0 人日.
+  description: Bản tối thiểu của SC-01-04 cho S1 (L5-D10).
   dod:
-  - Tách thành lá dev / test ≤ 16 giờ khi issue thiết kế A-FG01-17 xong, trước buổi lập kế hoạch của sprint dự kiến (rolling-wave, L5-D08)
-  - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết
+  - 'AC-S1-2: 照合事務局 nhập 1 承認 cho 売買参加者 có 有効日 / 失効日 trên màn, gọi API-PTY-006 / 007'
+  - Chỉ hiện cho 売買参加者 (luật 2)
+- id: A-FG01-13.3
+  epic: EP-FG01
+  parent: A-FG01-13
+  kind: dev
+  priority: P1
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-01] SC-01-03 許可 — gia hạn / cập nhật, kiểm lỗi đầy đủ'
+  role: FE
+  assignee: FE-1
+  labels:
+  - fg:FG-01
+  - feature:party
+  - kind:dev
+  - role:FE
+  - rule:permit-vs-approval
+  spec_refs:
+  - 'SCREEN-LIST C2 #7'
+  - A-FG01-17 (Screen Spec)
+  rfp_refs:
+  - FR-PARTY-02
+  depends_on:
+  - A-FG01-13.1
+  depends_on_spec: []
+  hours_hint: 14
+  stream: PL
+  description: Thêm sau Expert Gate A (FB-EXP-327..340).
+  dod:
+  - Đúng Screen Spec SC-01-03 (A-FG01-17), phần còn lại sau bản S1
+- id: A-FG01-13.4
+  epic: EP-FG01
+  parent: A-FG01-13
+  kind: dev
+  priority: P1
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-01] SC-01-04 承認 — gia hạn / cập nhật, 参加上限 ban đầu, kiểm lỗi'
+  role: FE
+  assignee: FE-2
+  labels:
+  - fg:FG-01
+  - feature:party
+  - kind:dev
+  - role:FE
+  - rule:permit-vs-approval
+  spec_refs:
+  - 'SCREEN-LIST C2 #8'
+  - A-FG01-17 (Screen Spec)
+  rfp_refs:
+  - FR-PARTY-03
+  - PRM-121
+  depends_on:
+  - A-FG01-13.2
+  - A-FG01-08.2
+  depends_on_spec: []
+  hours_hint: 14
+  stream: PL
+  description: Thêm sau Expert Gate A (FB-EXP-327..340).
+  dod:
+  - Đúng Screen Spec SC-01-04 (A-FG01-17), phần còn lại sau bản S1
 - id: A-FG03-01
   epic: EP-FG03
   parent: null
@@ -4372,7 +4407,7 @@ issues:
   spec_refs:
   - specs/delivery/screen-specification/SC-06-04_SPEC.md
   - wireframes/SC-06-04-delivery-exception-registration-wireframe.md
-  rfp_refs: &id020
+  rfp_refs: &id021
   - FR-DEL-03
   depends_on:
   - A-FG06-06
@@ -13724,7 +13759,9 @@ issues:
   - INCENTIVE_DB §5 TV-01..15
   - customer-feedback-lab5-priority-261126 câu 4
   rfp_refs: *id001
-  depends_on: []
+  depends_on:
+  - B-FG09-21.1
+  - B-FG09-21.2
   depends_on_spec: []
   hours_hint: 12
   stream: PL
@@ -13756,7 +13793,8 @@ issues:
   - INCENTIVE_DB §5 TV-01..15
   - customer-feedback-lab5-priority-261126 câu 4
   rfp_refs: *id001
-  depends_on: []
+  depends_on:
+  - B-FG09-21.3
   depends_on_spec: []
   hours_hint: 6
   stream: PL
@@ -13834,7 +13872,8 @@ issues:
   priority: P1
   iteration: null
   milestone: 設計第1波 (khách duyệt 2027-01-22)
-  acceptance: []
+  acceptance:
+  - AC-S1-2
   title: '[FG-01][設計] Screen Spec SC-01-01 / SC-01-05 + Technical Design 失効予告'
   role: FE
   assignee: FE-2
@@ -13921,7 +13960,8 @@ issues:
   priority: P1
   iteration: null
   milestone: 設計第1波 (khách duyệt 2027-01-22)
-  acceptance: []
+  acceptance:
+  - AC-S1-2
   title: '[FG-01][設計] Screen Spec SC-01-03 許可登録 + SC-01-04 承認登録'
   role: FE
   assignee: FE-2
@@ -15885,7 +15925,7 @@ issues:
   parent: null
   kind: dev
   priority: P3
-  iteration: Iteration 1
+  iteration: null
   milestone: null
   acceptance: []
   title: '[FG-02] SC-00-01 社内ログイン — màn đăng nhập PC / タブレット'
@@ -15943,10 +15983,9 @@ issues:
   parent: C-FG02-21
   kind: dev
   priority: P3
-  iteration: Iteration 1
+  iteration: null
   milestone: null
-  acceptance:
-  - AC-S1-4
+  acceptance: []
   title: '[FG-02] SC-00-01 社内ログイン — lỗi, khóa tài khoản, hết phiên'
   role: FE
   assignee: FE-4
@@ -16120,6 +16159,106 @@ issues:
   description: Thêm sau Expert Gate A (FB-EXP-327..340).
   dod:
   - 'AC-S1-4: hai người đổi nhau bằng PIN trong vài giây; 監査ログ ghi đúng người thao tác'
+- id: A-FG01-20
+  epic: EP-FG01
+  parent: null
+  kind: dev
+  priority: P1
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-01] SC-01-05 資格状態変更 — 一時停止 / 再審査 / 期限前更新'
+  role: FE
+  assignee: FE-2
+  labels:
+  - fg:FG-01
+  - feature:party
+  - kind:dev
+  - role:FE
+  - rule:permit-vs-approval
+  - rule:human-decision
+  spec_refs:
+  - 'SCREEN-LIST C2 #9'
+  - A-FG01-16.1 (Screen Spec)
+  - API-PTY-004..007
+  rfp_refs: &id020
+  - FR-PARTY-02
+  - FR-PARTY-03
+  - BR-PERM-01
+  depends_on:
+  - A-FG01-16
+  - A-FG01-07.2
+  - A-FG01-08.3
+  depends_on_spec: []
+  hours_hint: 20
+  stream: PL
+  description: Thêm sau Expert Gate A (FB-EXP-327..340).
+  dod:
+  - Đúng Screen Spec SC-01-05 (A-FG01-16.1)
+  - Đổi trạng thái đi qua 起案 → 決裁, có lý do và giờ phút, giữ lịch sử (không ghi đè)
+- id: A-FG01-20.1
+  epic: EP-FG01
+  parent: A-FG01-20
+  kind: dev
+  priority: P1
+  iteration: Iteration 1
+  milestone: null
+  acceptance:
+  - AC-S1-2
+  title: '[FG-01] SC-01-05 一時停止 (S1 tối thiểu) — chọn 許可 / 承認, lý do, giờ phút, 起案 → 決裁'
+  role: FE
+  assignee: FE-4
+  labels:
+  - fg:FG-01
+  - feature:party
+  - kind:dev
+  - role:FE
+  - rule:permit-vs-approval
+  - rule:human-decision
+  spec_refs:
+  - 'SCREEN-LIST C2 #9'
+  - A-FG01-16.1 (Screen Spec)
+  - API-PTY-004..007
+  rfp_refs: *id020
+  depends_on: []
+  depends_on_spec: []
+  hours_hint: 10
+  stream: PL
+  description: Phần việc của A-FG01-20.
+  dod:
+  - Đúng Screen Spec SC-01-05 (A-FG01-16.1)
+  - Đổi trạng thái đi qua 起案 → 決裁, có lý do và giờ phút, giữ lịch sử (không ghi đè)
+- id: A-FG01-20.2
+  epic: EP-FG01
+  parent: A-FG01-20
+  kind: dev
+  priority: P1
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-01] SC-01-05 再審査 / 期限前更新 / phục hồi'
+  role: FE
+  assignee: FE-2
+  labels:
+  - fg:FG-01
+  - feature:party
+  - kind:dev
+  - role:FE
+  - rule:permit-vs-approval
+  - rule:human-decision
+  spec_refs:
+  - 'SCREEN-LIST C2 #9'
+  - A-FG01-16.1 (Screen Spec)
+  - API-PTY-004..007
+  rfp_refs: *id020
+  depends_on: []
+  depends_on_spec: []
+  hours_hint: 10
+  stream: PL
+  description: Phần việc của A-FG01-20.
+  dod:
+  - Đúng Screen Spec SC-01-05 (A-FG01-16.1)
+  - Đổi trạng thái đi qua 起案 → 決裁, có lý do và giờ phút, giữ lịch sử (không ghi đè)
 - id: C-CLR-17
   epic: EP-CLAR
   parent: null
@@ -16168,7 +16307,7 @@ issues:
   spec_refs:
   - ADR-008 §6 E-21
   - ADR-008 §2 (ngoại lệ giao kèm scan)
-  rfp_refs: *id020
+  rfp_refs: *id021
   depends_on: []
   depends_on_spec: []
   hours_hint: 1
