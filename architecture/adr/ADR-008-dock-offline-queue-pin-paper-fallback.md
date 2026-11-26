@@ -2,10 +2,10 @@
 id: ADR-008
 title: Offline có giới hạn tại bến — PWA + hàng đợi cho 3 thao tác, PIN offline gắn thiết bị, đường giấy
 type: adr
-status: proposed
-version: "0.2.0"
+status: accepted
+version: "1.0.0"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ARCH-001, ADR-002, ADR-004, ADR-005, DEC-004, NFR-AVL-02, PRM-085, PRM-111, PRM-112, PRM-119, L4-A05, L4-A07, E-18, E-21, FB-CUS-232]
 ---
 
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-002, ADR-004, ADR-005, DEC-004, NFR-AVL-02, PRM-085, PRM
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 recheck | 2026-11-25 | PL đề xuất | — |
+| **Accepted** (trừ các điểm chờ khách ở §6) | 2026-11-26 | Người dùng (L4-D09), PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -100,6 +100,16 @@ flowchart TD
 
 NFR-AVL-02, NFR-SEC-01, NFR-SEC-03, BR-PERM-01, BR-LOT-02, BR-DEL-03, CAP-HUMAN-01, OBJ-01; DEC-004; PRM-027, PRM-085, PRM-111, PRM-112, PRM-119; E-05, E-18, E-21; L4-A05, L4-A07; as-built D16, D17; M03, M04, M16, M22; FB-CUS-232; Gate 1 M-05; khách #1, #2, #16.
 
+## 6. Điểm mở (chờ khách)
+
+Quyết định ở §2 đã **Accepted** (L4-D09). Các điểm dưới đây còn chờ khách thật trả lời; câu trả lời chỉ đổi giá trị / nhánh ghi trong bảng, không đổi hướng của ADR — nếu đổi hướng thì viết ADR mới thay thế. Câu gắn `[Customer giả lập]` trong ADR là giả định có căn cứ, khách thật xác nhận cùng `project/02_requirements/qa.md`.
+
+| ID | Điểm chờ khách | Thiết kế đang theo (giả định) | Nếu khách trả lời khác | Ai trả lời |
+|---|---|---|---|---|
+| E-18 / Q-ARCH-04 | IT khách có chấp nhận đổi người offline bằng PIN gắn thiết bị; N giờ | N = 12 giờ (file cấu hình); bản băm PIN trên thiết bị, thu hồi từ xa | Không chấp nhận → offline chỉ người đang đăng nhập; N ngắn hơn → chỉ đổi cấu hình | IT khách |
+| E-21 | Chứng từ giấy 受入証憑 scan ở đâu | Scan bằng máy đa năng sẵn có, đính kèm từ PC | Scan bằng tablet → thêm chụp ảnh trên PWA | 運用部門 |
+| E-05 / Q-ARCH-05 | Model tablet, máy in và cách nối | Chưa chọn; PWA trên trình duyệt; in từ PC bàn GD | Chỉ nối tablet / in nhiệt → agent in cục bộ (CR-10) | 運用部門, IT khách |
+
 ---
 
 ## History of change
@@ -108,3 +118,4 @@ NFR-AVL-02, NFR-SEC-01, NFR-SEC-03, BR-PERM-01, BR-LOT-02, BR-DEL-03, CAP-HUMAN-
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu; đường giấy cho giao có tranh chấp khi mất mạng (FB-CUS-232) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 + khách wireframe: bản ghi bị từ chối vì ngày đã khóa đi chung đường 修正申請 LATE_ENTRY với ADR-005 §2.8 (M-05); 「端末回収不能」 (khách #1); giờ dữ liệu offline ở SC-06-02 (khách #2); 配送部門責任者 khác người ký xác nhận phiếu giấy có lý do (khách #16) | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 1.0.0 | Update | Người dùng chốt **Accepted** sau Gate 1–3 (L4-D09 / DEC-059); thêm §6 Điểm mở (chờ khách) — không đổi nội dung quyết định | 2026-11-26 | phuongnnm-23344 | Người dùng (L4-D09) |

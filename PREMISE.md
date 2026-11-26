@@ -2,10 +2,10 @@
 id: DOC-PREMISE-001
 title: Tiền đề thiết kế LAB-4 (PREMISE)
 type: premise
-version: "0.6.3"
+version: "0.6.4"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
-related: [DEC-002, DEC-004, DEC-005, DEC-008, DEC-028, DEC-029, DEC-031, DEC-032, DEC-033, DEC-046, DEC-047, DEC-048, DEC-049, DEC-050, DEC-051, DEC-056, DEC-058, PRM-042, PRM-046, PRM-110, PRM-126, PRM-127]
+updated: 2026-11-26
+related: [DEC-002, DEC-004, DEC-005, DEC-008, DEC-028, DEC-029, DEC-031, DEC-032, DEC-033, DEC-046, DEC-047, DEC-048, DEC-049, DEC-050, DEC-051, DEC-056, DEC-058, DEC-059, PRM-042, PRM-046, PRM-110, PRM-126, PRM-127]
 ---
 
 # Tiền đề thiết kế LAB-4 (PREMISE)
@@ -179,6 +179,7 @@ Bảy luật của dự án được giữ ở mọi nơi thiết kế: 相対�
 | L4-D06 | 2026-11-25 | **E-14 để mở tới workshop**: Technical Design vẽ hai nhánh N1 / N2; phương án F (rollback hồi tố về đầu kỳ chưa khóa) và G (tách gói) **chỉ là tư liệu** trong ADR-006 §3 kèm ghi chú ảnh hưởng effort — không thiết kế chi tiết; LAB-5 tách issue làm rõ riêng | Chọn trước F hoặc G | Người dùng | OPEN-L4-01, ADR-006, DEC-048 |
 | L4-D07 | 2026-11-25 | **Mở rộng L4-D02: Screen Specification đầy đủ cho 12 màn** = 10 màn đại diện + **SC-06-04 引渡し例外登録, SC-06-05 争いのある引渡し完了確認** (ngoài 10 màn). Lý do: luật 3 — xác nhận giao **có tranh chấp** là một điểm người quyết cuối (CAP-HUMAN-01, PRM-111), và hai màn dùng chung Function / Technical Design của delivery (DELIVERY_FUNC, DEL_EXCEPTION_DISPUTE_TECH) nên tách ra không bớt được việc. Các câu "10 màn cốt lõi" giữ nghĩa *màn đại diện*; số Screen Specification thực tế là 12. Không đổi giá (nằm trong buffer DEC-048) | Giữ đúng 10 màn, SC-06-04 / 05 chỉ ở mức wireframe | PL (giao việc sửa Gate 2 G2-m05) | Expert Gate 2 G2-m05; luật 3; CAP-HUMAN-01, PRM-111, FR-DEL-01..05 |
 | L4-D08 | 2026-11-25 | **Không mở rộng Screen Specification tới 70 màn / 99 chức năng.** Screen Specification dừng ở 12 màn (L4-D02 + L4-D07); 58 màn còn lại chỉ ở mức dòng trong 画面一覧 (`wireframes/SCREEN-LIST.md`); phần 12 màn gọi tới mà chưa đặc tả ghi thành DEP-01..17 ở `specs/_index.md`. LAB-5 xử lý phần này qua cột "Phần spec chưa thành issue" khi tách issue | Mở rộng Screen Specification tới cả cụm hoặc đủ 70 màn | Người dùng | Đề LAB-4 chỉ yêu cầu "các màn hình cốt lõi"; giới hạn thời gian; DEC-058 |
+| L4-D09 | 2026-11-26 | **Trạng thái ADR sau Gate 3:** ADR-002..005 và ADR-007..010 (đã qua Expert Gate 1–3) chuyển **Accepted**; điểm còn chờ khách ghi thành mục **§6 Điểm mở** ngay trong từng ADR (câu trả lời chỉ đổi giá trị / nhánh ghi ở đó; đổi hướng → viết ADR mới thay thế). **ADR-006 giữ Proposed** vì §2.5 và phương án F / G phụ thuộc workshop E-14 (L4-D06, OPEN-L4-01); phần còn lại của ADR-006 là thiết kế hiện hành cho LAB-5 | Giữ cả 9 ADR Proposed tới khi khách trả lời hết; chuyển Accepted cả ADR-006 | Người dùng | Expert Gate 3 G3-m07 (FB-EXP-305); DEC-059; `architecture/adr/_index.md` |
 
 Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 2026-11-25 (đồng ý 5, đồng ý có điều chỉnh 4, trong đó một điểm con không đồng ý ở L4-A04 (3)); góp ý đã áp ở bản 0.3.0 — xem §3, §3.1, §3.2, §6 **[Giả lập]**.
 
@@ -205,3 +206,4 @@ Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 20
 | 7 | 0.6.1 | Update | Gộp P3: §3.2 thêm 確認 đổi 参加上限 (`LIMIT_CHANGE`) vào danh sách hỏi MFA — khớp PARTY_DB 4.15 (`mfa_verified_at` bắt buộc khi có `decided_by`) và spec PTY_APPROVAL_LIFECYCLE; chọn theo DB vì chặt hơn và 参加上限 là thông số tiền. Q-PTY-07 giữ để khách xác nhận | 2026-11-25 | phuongnnm-23344 | |
 | 8 | 0.6.2 | Update | Gate 2 + khách P3: §3.2 dòng 参加上限 theo Q-PTY-06 / Q-PTY-07 (chỉ 照合部門長, một bước, MFA); §3.1 thêm tham số `PARTICIPATION_LIMIT_TAX_CODE` (Q-TRD-02); thêm L4-D07 (Screen Specification 12 màn = 10 đại diện + SC-06-04, SC-06-05 — G2-m05); §3.2 giữ nguyên ★ cho checker quy chế / hủy version đã duyệt (G2-M01 sửa spec theo PREMISE, không đổi PREMISE) | 2026-11-25 | phuongnnm-23344 | |
 | 9 | 0.6.3 | Update | Expert Gate 3 G3-M01, G3-m10: thêm L4-D08 (không mở rộng Screen Specification tới 70 màn — người dùng quyết, DEC-058); §0 ghi L4-D gồm cả quyết định của PL (L4-D07); frontmatter `related` thêm DEC-046..051, DEC-056, DEC-058 | 2026-11-25 | phuongnnm-23344 | |
+| 10 | 0.6.4 | Update | Thêm L4-D09 (người dùng quyết 2026-11-26 theo G3-m07): ADR qua Gate 1–3 → Accepted, điểm chờ khách thành §6 Điểm mở trong ADR; ADR-006 giữ Proposed (E-14); `related` thêm DEC-059 | 2026-11-26 | phuongnnm-23344 |  |

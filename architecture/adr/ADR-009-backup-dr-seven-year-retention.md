@@ -2,10 +2,10 @@
 id: ADR-009
 title: Backup / DR và lưu 7 năm — PITR + Multi-AZ, bản sao sang Osaka, chia bảng audit theo năm TC
 type: adr
-status: proposed
-version: "0.2.1"
+status: accepted
+version: "1.0.0"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ARCH-001, ADR-001, ADR-004, NFR-AVL-01, NFR-AVL-03, NFR-PERF-01, NFR-SEC-04, DR-RET-01, TBL-ATTACH-01, PRM-081, PRM-082, PRM-084]
 ---
 
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-001, ADR-004, NFR-AVL-01, NFR-AVL-03, NFR-PERF-01, NFR-S
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 recheck | 2026-11-25 | PL đề xuất | — |
+| **Accepted** (trừ các điểm chờ khách ở §6) | 2026-11-26 | Người dùng (L4-D09), PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -75,6 +75,15 @@ related: [ARCH-001, ADR-001, ADR-004, NFR-AVL-01, NFR-AVL-03, NFR-PERF-01, NFR-S
 
 NFR-AVL-01, NFR-AVL-03, NFR-PERF-01, NFR-PERF-02, NFR-SEC-04, DR-RET-01, TBL-ATTACH-01 (08-04), B.7, FR-AUDIT-01; PRM-081..084; as-built D24; M11, M14, M23; Gate 1 M-08.
 
+## 6. Điểm mở (chờ khách)
+
+Quyết định ở §2 đã **Accepted** (L4-D09). Các điểm dưới đây còn chờ khách thật trả lời; câu trả lời chỉ đổi giá trị / nhánh ghi trong bảng, không đổi hướng của ADR — nếu đổi hướng thì viết ADR mới thay thế. Câu gắn `[Customer giả lập]` trong ADR là giả định có căn cứ, khách thật xác nhận cùng `project/02_requirements/qa.md`.
+
+| ID | Điểm chờ khách | Thiết kế đang theo (giả định) | Nếu khách trả lời khác | Ai trả lời |
+|---|---|---|---|---|
+| Q-ARCH-01 | RTO 4h / RPO 15 phút có áp cho sự cố cả region Tokyo không | Có — bản sao backup + log PITR sang Osaka, dựng lại bằng IaC | Không → bỏ bản sao Osaka; cần chờ nóng → phí cloud vượt TCO | IT khách |
+| Q-ARCH-07 | Hạn lưu chứng từ (TBL-ATTACH-01 vs B.7), xử lý sau hạn, thời gian khôi phục lưu lạnh | Theo TBL-ATTACH-01; không tự xóa — 運用部門長 決裁 + MFA; khôi phục ≤ 1 ngày làm việc | Chỉ đổi lifecycle theo tag / phí lưu | 照合部門, kiểm toán |
+
 ---
 
 ## History of change
@@ -84,3 +93,4 @@ NFR-AVL-01, NFR-AVL-03, NFR-PERF-01, NFR-PERF-02, NFR-SEC-04, DR-RET-01, TBL-ATT
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 M-08: lưu chứng từ theo loại TBL-ATTACH-01 (受入票・取引票・照合表 online 7 năm; tranh chấp / migration 3 năm → lạnh), bỏ lifecycle tự xóa, thêm danh sách đến hạn → 決裁 + MFA → xóa (B.7); phương án G | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck n-06: tách `archive_after` / `retention_until`, hạn lưu tính từ cuối năm TC của bản ghi chủ | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 1.0.0 | Update | Người dùng chốt **Accepted** sau Gate 1–3 (L4-D09 / DEC-059); thêm §6 Điểm mở (chờ khách) — không đổi nội dung quyết định | 2026-11-26 | phuongnnm-23344 | Người dùng (L4-D09) |

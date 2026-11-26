@@ -2,10 +2,10 @@
 id: ADR-007
 title: Engine 完納奨励金 — tính xác định theo kỳ, đóng băng ở 期ロック, sửa sau khóa thành DELTA kỳ sau
 type: adr
-status: proposed
-version: "0.3.2"
+status: accepted
+version: "1.0.0"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ARCH-001, ADR-004, ADR-005, ADR-006, BR-INC-01, FR-INC-01, FR-INC-03, PRM-040, PRM-043, PRM-053, PRM-055, DEC-011, DEC-012, L4-A04, OPEN-L4-02, E-02, E-06]
 ---
 
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-004, ADR-005, ADR-006, BR-INC-01, FR-INC-01, FR-INC-03, 
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 recheck | 2026-11-25 | PL đề xuất | — |
+| **Accepted** (trừ các điểm chờ khách ở §6) | 2026-11-26 | Người dùng (L4-D09), PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -116,6 +116,20 @@ related: [ARCH-001, ADR-004, ADR-005, ADR-006, BR-INC-01, FR-INC-01, FR-INC-03, 
 
 BR-INC-01, B.5, 13-06, FR-INC-01, FR-INC-03, FR-CORR-02, FR-AUDIT-03, INC-EDGE-01..03, FIG-013; PRM-040..043, PRM-053..055; DEC-005, DEC-011, DEC-012; E-02, E-06; L4-A02, L4-A04 (2), L4-A09; OPEN-L4-02, OPEN-DB-08; Q-ARCH-08, Q-ARCH-11, Q-ARCH-12; as-built D01–D05, D23, N13, N15, N16; M07, M08, M21; FB-CUS-224, FB-CUS-225; Gate 1 C-01, C-02, M-02, M-03, M-10, m-05, m-07.
 
+## 6. Điểm mở (chờ khách)
+
+Quyết định ở §2 đã **Accepted** (L4-D09). Các điểm dưới đây còn chờ khách thật trả lời; câu trả lời chỉ đổi giá trị / nhánh ghi trong bảng, không đổi hướng của ADR — nếu đổi hướng thì viết ADR mới thay thế. Câu gắn `[Customer giả lập]` trong ADR là giả định có căn cứ, khách thật xác nhận cùng `project/02_requirements/qa.md`.
+
+| ID | Điểm chờ khách | Thiết kế đang theo (giả định) | Nếu khách trả lời khác | Ai trả lời |
+|---|---|---|---|---|
+| E-02 (OPEN-L4-02) | 入金 có 請求番号 không; FIFO có thể làm người trả đủ mất 完納 | FIFO theo kỳ cũ nhất còn nợ (§2.7-14); màn 期ロック hiện tiền gán vào kỳ nào | Có 請求番号 → phân bổ theo số, đổi hàm phân bổ | 経理部 |
+| OPEN-DB-08 | Chênh lệch tiền của kỳ đã khóa người mua trả thế nào | Dòng riêng 「前期以前の調整」 trên thông báo kỳ kế, không vào 期のお支払額 kỳ mới | (b) hạn riêng, FIFO bỏ qua tới hạn đó → đổi hàm phân bổ | 照合部門, 経理部 |
+| E-06 | 請求書 của kế toán có tính thuế khác hệ thống không | Cách A — hệ thống tự tính | Cách B (nhập 請求額), +0,5–0,8 MM (DEC-011) | 経理部 |
+| Q-ARCH-08 | Phần delta âm còn lại cuối năm TC thu bằng cách nào | Dòng `CARRY_EXPIRED` hiện ở RPT-07, 照合部門 xử lý ngoài và ghi lại | Trừ vào khoản khác → thêm bút toán IF-ACC-01 | 照合部門, 財務 |
+| Q-ARCH-11 | 支払期日 rơi ngày ngân hàng nghỉ lùi theo ngày nào | Ngày ngân hàng mở trước (`PREV_BANK_DAY`) | Đổi giá trị `PAYMENT_DUE_RULE`, không đổi bảng | 経理部 |
+| Q-ARCH-12 | 税区分 của 完納奨励金 ở IF-ACC-01; hệ số 110/100 cố định | 110/100 cố định theo BR-INC-01; 税区分 theo ánh xạ 仕訳 | Chỉ đổi `journal_mappings` | 経理部 |
+| E-14 | Nhánh N1 của ADR-006 | Tỷ lệ sai đã duyệt chỉ sửa bằng 修正申請 INCENTIVE | Theo ADR-006 §6 | Ban lãnh đạo (workshop) |
+
 ---
 
 ## History of change
@@ -127,3 +141,4 @@ BR-INC-01, B.5, 13-06, FR-INC-01, FR-INC-03, FR-CORR-02, FR-AUDIT-03, INC-EDGE-0
 | 3 | 0.3.0 | Update | Gate 1 recheck: nhãn INC-EDGE đúng C.3 + TV-12 (INC-EDGE-01) (N-01); GD LATE_ENTRY vào danh sách đầu vào DELTA + TV-13 (N-02); CARRY_EXPIRED dương đóng số dư (n-01); INCENTIVE là đầu vào cộng thêm + TV-14, một yêu cầu đang chờ / người × kỳ (n-02) | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.3.1 | Update | Kiểm diff 5b0ef16: TV-13 duyệt / `business_date` 2027-09-21 khớp INCENTIVE_DB (D-04); TV-14 ghim ngày khóa kỳ 11 (2027-12-14) và ngày duyệt TRADE (2027-12-20), nêu ca duyệt trước khóa → +2.990; §2.5-12 nói rõ số tiền INCENTIVE cố định, không tính lại theo 適格金額 mới (D-05). Technical Design: `specs/incentive/technical-design/INC_ENGINE_TECH.md`; TV-14 biến thể duyệt trước khóa ghi thành 2 dòng DELTA (+2.000 gắn `correction_id`, +990 không gắn) theo quy tắc tách dòng của Technical Design | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.3.2 | Update | Khách Q-INC-02: §2.3-7a GD 後入力 của kỳ đã khóa chuyển sang kỳ đang mở, xét 完納 theo 支払期日 kỳ đó, §2.4-8 bỏ LATE_ENTRY khỏi đầu vào DELTA; Q-INC-01: §2.7-14 完納 theo 入金日 CSV + tick trước 期ロック; TV-13 sửa, thêm TV-15 | 2026-11-25 | phuongnnm-23344 |  |
+| 6 | 1.0.0 | Update | Người dùng chốt **Accepted** sau Gate 1–3 (L4-D09 / DEC-059); thêm §6 Điểm mở (chờ khách) — không đổi nội dung quyết định | 2026-11-26 | phuongnnm-23344 | Người dùng (L4-D09) |

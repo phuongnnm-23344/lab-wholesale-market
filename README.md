@@ -61,7 +61,7 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 
 ```
 README.md                         bảng điều hướng (QC-01 §1) — file này
-PREMISE.md                        tiền đề LAB-4: thêm / bỏ so với LAB-1, giả định, hướng đi đã chốt (L4-D01..D08)
+PREMISE.md                        tiền đề LAB-4: thêm / bỏ so với LAB-1, giả định, hướng đi đã chốt (L4-D01..D09)
 AI-report.md                      cách dùng AI trong LAB-4
 AI-report-evidence/               bằng chứng của AI-report: báo cáo Expert / Customer LAB-4, trích sổ feedback, trích nhật ký quyết định, brief, ghi chú gộp (README riêng)
 requirements/
@@ -70,7 +70,7 @@ requirements/
 architecture/
   _index.md                       bảng tra (1 tài liệu)
   ARCHITECTURE.md                 kiến trúc to-be: module, luồng dữ liệu, điểm tích hợp, NFR
-  adr/_index.md + ADR-001..010    10 quyết định kiến trúc (ADR-001 Accepted; 002..010 Proposed — PL đề xuất, đã qua gate Expert, người dùng chưa chốt riêng; lý do ở `adr/_index.md`)
+  adr/_index.md + ADR-001..010    10 quyết định kiến trúc (9 Accepted: ADR-001..005, 007..010 — điểm chờ khách ghi ở §6 Điểm mở từng ADR; ADR-006 Proposed — chờ workshop E-14; PREMISE L4-D09, lý do ở `adr/_index.md`)
 wireframes/
   _index.md                       bảng tra (17 tài liệu)
   SCREEN-LIST.md                  画面一覧 / 画面遷移 — 70 màn 第1期
@@ -121,7 +121,7 @@ Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specificatio
 | `wireframes/` (画面一覧, `_common-layout.md`, 15 wireframe MD, `html/` + `_shared/`, `png/`, `pdf/wireframes-all.pdf`, `assets/`) | `wireframes/` | **Tạo mới theo đề** | Chuẩn đã bỏ `screen-map`; phong cách HTML theo mẫu PDF người dùng đưa (đề khác, chỉ lấy phong cách) |
 | `render-wireframes.py`, `export-mermaid-png.py`, `check-api-spec-consistency.py` | `scripts/` | **Tạo mới** | Mục 5. Script `*.sh` cùng thư mục là của template quản lý dự án |
 | `AI-report.md` | gốc | **Tạo mới theo đề** | |
-| `AI-report-evidence/` | gốc | **Tạo mới** | Bản sao bằng chứng cho số liệu của AI-report (Expert G3-M02); nguồn gốc từng file ở `AI-report-evidence/README.md`. Có giữ thư mục này khi public repo ở LAB-5 hay không: quyết ở LAB-5 |
+| `AI-report-evidence/` | gốc | **Tạo mới** | Bản sao bằng chứng cho số liệu của AI-report (Expert G3-M02); nguồn gốc từng file ở `AI-report-evidence/README.md`. Người dùng quyết giữ thư mục này trong gói nộp LAB-4; có giữ khi public repo ở LAB-5 hay không: quyết ở LAB-5 |
 
 ### 4.3 Phạm vi Screen Specification: 12 màn, không phải 70
 

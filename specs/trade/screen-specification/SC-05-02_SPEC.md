@@ -5,9 +5,9 @@ type: ui
 screen_id: SC-05-02
 feature: trade
 feature_id: TRD
-version: "0.1.3"
+version: "0.1.4"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-TRD-005, API-TRD-006, API-TRD-007, SPEC-TRADE_DB-001]
 ---
 
@@ -129,6 +129,7 @@ related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFI
 | 4 | - | 422 `E-TRD-007` / `E-TRD-008` | Viền đỏ các dòng trong `detail.tradeNos` | |
 | 7 | - | 422 `E-TRD-014` | C-22 dưới [7] | |
 | 9 | Người khác vừa xác nhận phiên | 409 `E-TRD-013` | C-23 + nạp lại (chỉ đọc) | |
+| 10 | 0.1.4 | Update | Expert Gate 3 kiểm diff D3-n03: §6.1 tách dòng 「Xung đột」 thành 409 (`E-TRD-013` / `018`: C-23 + nạp lại) và 422 (`E-TRD-015`: tô dòng chưa xử lý, không nạp lại; `E-TRD-016` theo §5) | 2026-11-26 | phuongnnm-23344 |  |
 | 3, 5 | - | 422 `E-TRD-015` / `E-TRD-016` | C-23; `E-TRD-015` → tô các dòng chưa xử lý (bỏ chọn chưa 差し戻し, [5] chưa chọn 5.1 / 5.2) | |
 | 5.2 | Dòng 取消予定 vừa có tư cách hợp lệ (vd gia hạn xong) | 409 `E-TRD-018` (`NOW_CONFIRMABLE`) | C-23 + nạp lại; dòng thành dòng thường, 確認者 chọn lại | |
 | - | Ngày đã khóa | 423 `E-CMN-003` | C-24 → SC-08-01 (`LATE_ENTRY`) | ADR-005 |
@@ -152,7 +153,8 @@ Tổng hợp từ §5 Event; mã `C-xx` định nghĩa ở `wireframes/_common-l
 | Chờ xác nhận | C-31 tổng số dòng + tiền |
 | Lưu xong | C-12 toast; `CONFIRMED` → chỉ đọc; còn dòng 差し戻し → ở lại |
 | Lỗi nhập (422 `E-TRD-007`, `008`, `014`) | Viền đỏ dòng trong `detail.tradeNos` / C-22 dưới [7] |
-| Xung đột (409 `E-TRD-013`, `018`; 422 `E-TRD-015`, `016`) | C-23 + nạp lại; không dòng nào được ghi |
+| Xung đột (409 `E-TRD-013`, `E-TRD-018`) | C-23 + nạp lại (API-TRD-005); không dòng nào được ghi. `E-TRD-013` (người khác vừa xác nhận phiên) → chỉ đọc; `E-TRD-018` → dòng đổi tư cách / SL chuyển [5], dòng 取消予定 vừa hợp lệ (`NOW_CONFIRMABLE`) thành dòng thường |
+| Chưa xử lý hết dòng (422 `E-TRD-015`, `E-TRD-016`) | C-23, không dòng nào được ghi. `E-TRD-015` → tô các dòng chưa xử lý (bỏ chọn chưa 差し戻し, [5] chưa chọn 5.1 / 5.2), **không nạp lại** để giữ chỗ tô và lựa chọn; `E-TRD-016` → C-23 (§5) |
 | Ngày đã khóa (423 `E-CMN-003`) | C-24 → SC-08-01 (`LATE_ENTRY`) |
 | Không có quyền / lỗi server | C-25 / C-26 |
 | Offline | C-28; [9][10] khóa, lựa chọn + lý do giữ nguyên |

@@ -2,10 +2,10 @@
 id: ADR-002
 title: Xác thực thay Supabase Auth — phiên server-side, MFA step-up, PIN trên máy dùng chung
 type: adr
-status: proposed
-version: "0.2.0"
+status: accepted
+version: "1.0.0"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112, PRM-113, NFR-SEC-01, NFR-SEC-03, SEC-IAM-02, FB-CUS-228, FB-CUS-229, FB-CUS-230, FB-CUS-231]
 ---
 
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 recheck | 2026-11-25 | PL đề xuất | — |
+| **Accepted** (trừ các điểm chờ khách ở §6) | 2026-11-26 | Người dùng (L4-D09), PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -93,6 +93,17 @@ related: [ARCH-001, ADR-001, ADR-003, ADR-008, L4-A07, PRM-088, PRM-089, PRM-112
 
 NFR-SEC-01, NFR-SEC-03, SEC-IAM-02, FR-IAM-01/02, PRM-088, PRM-089, PRM-111..113, PRM-126, PRM-129, E-15, L4-A07, L4-A08, PREMISE §3.2; as-built D17, D21; M02, M03, M22; FB-CUS-228..231; Gate 1 m-06.
 
+## 6. Điểm mở (chờ khách)
+
+Quyết định ở §2 đã **Accepted** (L4-D09). Các điểm dưới đây còn chờ khách thật trả lời; câu trả lời chỉ đổi giá trị / nhánh ghi trong bảng, không đổi hướng của ADR — nếu đổi hướng thì viết ADR mới thay thế. Câu gắn `[Customer giả lập]` trong ADR là giả định có căn cứ, khách thật xác nhận cùng `project/02_requirements/qa.md`.
+
+| ID | Điểm chờ khách | Thiết kế đang theo (giả định) | Nếu khách trả lời khác | Ai trả lời |
+|---|---|---|---|---|
+| E-15 | Phạm vi MFA: IT + kiểm toán có chấp nhận step-up (ngay trước hành động duyệt / xuất nhạy cảm) không; ルール管理者 có tính là 「管理者アカウント」 của NFR-SEC-01 không | Step-up theo §2.2; ルール管理者 không MFA khi đăng nhập (§2.3-12b) | "MFA mọi lần đăng nhập" → đổi luồng đăng nhập, ±0,1–0,2 MM (§4, phương án F) | IT khách, kiểm toán |
+| Q-ARCH-03 | Số người cần token phần cứng, khách có mua không | ~nửa trong 12–13 người có quyền duyệt; khách mua | Chỉ đổi chi phí token phía khách | IT khách |
+| Q-ARCH-10 | Khách có IdP doanh nghiệp cho PC văn phòng không | Không — tài khoản do hệ thống quản lý | SSO thành cải tiến tách giá (phương án C); máy dùng chung vẫn PIN | IT khách |
+| E-05 | Thiết bị tablet hiện trường | Chưa chọn → không dùng FIDO2 / passkey ở 第1期 | Xem lại phương án E khi chốt thiết bị | 運用部門, IT khách |
+
 ---
 
 ## History of change
@@ -101,3 +112,4 @@ NFR-SEC-01, NFR-SEC-03, SEC-IAM-02, FR-IAM-01/02, PRM-088, PRM-089, PRM-111..113
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu; chốt hiệu lực MFA 10 phút; phương thức token phần cứng cho người không dùng điện thoại riêng (FB-CUS-231) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1 m-06: step-up hết khi idle > 3 phút, hành động không quay lại được luôn hỏi lại mã; bỏ email OTP, thay bằng mã dự phòng một lần do SYS-ADMIN cấp; runbook vòng đời token; ルール管理者 có MFA khi đăng nhập không → E-15 | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 1.0.0 | Update | Người dùng chốt **Accepted** sau Gate 1–3 (L4-D09 / DEC-059); thêm §6 Điểm mở (chờ khách) — không đổi nội dung quyết định | 2026-11-26 | phuongnnm-23344 | Người dùng (L4-D09) |

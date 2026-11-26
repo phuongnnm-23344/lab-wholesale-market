@@ -5,9 +5,9 @@ type: ui
 screen_id: SC-03-05
 feature: lot
 feature_id: LOT
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [WF-SC-03-05, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_INSPECTION_RECORD-001, API-LOT-003, API-LOT-004, API-LOT-005, API-LOT-006, SPEC-LOT_DB-001, ADR-010]
 ---
 
@@ -119,6 +119,7 @@ related: [WF-SC-03-05, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_INSPECTION_REC
 | **Error Handling（エラー制御）** | | | | |
 | 6–9 | - | Bấm [10] khi có ô sai | C-22 dưới ô sai (mã ở 4.2) | |
 | 4 | Lô vừa đổi trạng thái / có GD sau khi tải | API trả 409 `E-LOT-013` hoặc 422 `E-LOT-011` | C-23 nêu mã lô; nạp lại [4], giữ hạng + 所見; không lô nào được ghi (cả lượt rollback) | Tất cả hoặc không |
+| 5 | 0.1.3 | Update | Expert Gate 3 kiểm diff D3-n01: §6.1 dòng 「Ngày đã khóa」 ghi rõ không hiện nút 修正申請 của C-24 chung (khớp §5) | 2026-11-26 | phuongnnm-23344 |  |
 | - | Ngày đã khóa | 423 `E-CMN-003` | C-24; nội dung giữ, chỉ đọc. Ghi 目利き cho ngày đã khóa không có đường 修正申請 (目利き không đổi tiền) → ghi lại ở ngày mở nếu lô 持ち越し | ADR-005 |
 | - | - | 403 / 5xx | C-25 / C-26 | |
 | - | Đang chọn lô, đã bấm hạng | Mất mạng | C-28: **giữ** lô đã chọn và hạng; [10] mờ 「通信が回復するまで記録できません」; ghi giấy như hiện nay. Có mạng lại → C-29, [10] mở lại, bấm là lưu ngay | Q-SC0305-01 [Customer giả lập, 2026-11-25] |
@@ -140,7 +141,7 @@ Tổng hợp từ §5 Event; mã `C-xx` định nghĩa ở `wireframes/_common-l
 | Chờ xác nhận | Dialog [11] liệt kê mã lô + hạng |
 | Lưu xong | C-12 toast; bỏ chọn tất cả, xóa [6]–[9] |
 | Xung đột (409 `E-LOT-013` / 422 `E-LOT-011`) | C-23 nêu mã lô; nạp lại [4], giữ hạng + 所見; cả lượt không ghi |
-| Ngày đã khóa (423 `E-CMN-003`) | C-24, chỉ đọc, giữ nội dung |
+| Ngày đã khóa (423 `E-CMN-003`) | C-24, chỉ đọc, giữ nội dung; **không hiện nút 「修正申請を作成 →」** của C-24 chung (目利き không đổi tiền nên không có đường 修正申請 — §5); lô 持ち越し thì ghi lại ở ngày mở |
 | Không có quyền / lỗi server | C-25 / C-26 |
 | Offline | C-28: giữ lô đã chọn + hạng; [10] mờ 「通信が回復するまで記録できません」; có mạng lại → C-29 |
 

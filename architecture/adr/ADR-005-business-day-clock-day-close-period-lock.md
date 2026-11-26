@@ -2,10 +2,10 @@
 id: ADR-005
 title: Đồng hồ 業務日, 日次締め và 期ロック khóa ở mức DB, không mở lại
 type: adr
-status: proposed
-version: "0.2.3"
+status: accepted
+version: "1.0.0"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-119, PRM-120, BR-CLOSE-01, BR-INC-01, L4-A04, L4-A09, E-12, E-16]
 ---
 
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-11
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 recheck | 2026-11-25 | PL đề xuất | — |
+| **Accepted** (trừ các điểm chờ khách ở §6) | 2026-11-26 | Người dùng (L4-D09), PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -84,6 +84,17 @@ related: [ARCH-001, ADR-004, ADR-006, ADR-007, ADR-008, PRM-110, PRM-116, PRM-11
 
 BR-CLOSE-01, BR-INC-01, FR-SETTLE-01, FR-SETTLE-02, FR-CORR-01..03, FIG-002, FIG-013, NFR-AVL-02, OBJ-05; PRM-036, PRM-110, PRM-111, PRM-115, PRM-116, PRM-119, PRM-120, PRM-123, PRM-127; E-08, E-12, E-16; L4-A04 (2), L4-A05, L4-A09; as-built D05, D12, D22; M10; FB-CUS-224, FB-CUS-239; Gate 1 M-01, M-05; khách #1, #4, #25.
 
+## 6. Điểm mở (chờ khách)
+
+Quyết định ở §2 đã **Accepted** (L4-D09). Các điểm dưới đây còn chờ khách thật trả lời; câu trả lời chỉ đổi giá trị / nhánh ghi trong bảng, không đổi hướng của ADR — nếu đổi hướng thì viết ADR mới thay thế. Câu gắn `[Customer giả lập]` trong ADR là giả định có căn cứ, khách thật xác nhận cùng `project/02_requirements/qa.md`.
+
+| ID | Điểm chờ khách | Thiết kế đang theo (giả định) | Nếu khách trả lời khác | Ai trả lời |
+|---|---|---|---|---|
+| Q-ARCH-02 | Có cần mở lại ngày đã khóa khi khóa nhầm không | Không có mở khóa; sửa bằng 修正申請 / 後入力 (§2.7, §2.8) | Cần → luồng mở khóa có 運用部門長 決裁 + MFA + audit, ~0,2–0,3 MM | 運用部門, 照合部門 |
+| E-08 | Ngưỡng 2 cấp dùng ở checklist mục 5 | Tạm 100.000 JPY (tham số quy chế) | Chỉ đổi giá trị tham số | 照合部門 |
+| E-12 | Lô còn SL khi khóa ngày | 持ち越し cùng mã lô (PRM-110) | Trả 出荷者 / hủy → dòng sổ SL có lý do, đổi checklist mục 7 | 運用部門 |
+| E-16 | Giờ bắt đầu nhận lô, ngày 休市 | Từ 01:00 (tham số quy chế) thuộc 業務日 sáng đó; 休市 → cảnh báo, không nhận | Chỉ đổi giá trị tham số | 運用部門 |
+
 ---
 
 ## History of change
@@ -95,3 +106,4 @@ BR-CLOSE-01, BR-INC-01, FR-SETTLE-01, FR-SETTLE-02, FR-CORR-01..03, FIG-002, FIG
 | 3 | 0.2.1 | Update | Gate 1 recheck n-04: tham chiếu "(mục 6)" → "§2-6" | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | Gộp P3 (spec settle): mục 10 checklist chỉ đếm tranh chấp đã nhập; phiếu giấy đã phát chưa nhập do người khóa tự soát (Q-STL-02). Mục 6 đếm ngoại lệ đổi tiền cả khi đã sinh `trade_fixes` (nối `fix_id`) — mục 5 / 9 không đếm lại `trade_fixes` đó (Q-DEL-09) | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.2.3 | Update | Khách Q-STL-02: §2.5 checklist thêm mục 12 「未入力の引渡し確認票なし（紙台帳で確認）」 (⚠, bắt buộc tick), mục 10 trỏ sang 12; Q-INC-02: §2.8 GD mới cho kỳ đã LOCKED tính thưởng ở kỳ đang mở | 2026-11-25 | phuongnnm-23344 |  |
+| 6 | 1.0.0 | Update | Người dùng chốt **Accepted** sau Gate 1–3 (L4-D09 / DEC-059); thêm §6 Điểm mở (chờ khách) — không đổi nội dung quyết định | 2026-11-26 | phuongnnm-23344 | Người dùng (L4-D09) |

@@ -5,9 +5,9 @@ type: ui
 screen_id: SC-04-01
 feature: trade
 feature_id: TRD
-version: "0.1.3"
+version: "0.1.4"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-LOT-003, API-TRD-001, API-TRD-002, API-TRD-003, API-TRD-004, SPEC-TRADE_DB-001]
 ---
 
@@ -139,6 +139,7 @@ Client kiểm ngay ở ô; server (API-TRD-002) kiểm lại **tất cả** lúc
 | 8 | Trước giờ chốt | 409 `E-TRD-012` | C-23 | |
 | 8 | 業務日 bị khóa | 423 `E-CMN-003` | C-24, giữ nội dung (hiếm: màn chỉ ghi ngày mở) | |
 | 8 | - | 403 / 5xx / timeout 10 s | C-25 / C-26 (giữ nội dung). Timeout: **không** tự gửi lại — gọi API-TRD-003 kiểm GD đã có chưa rồi mới cho bấm lại | Tránh chốt đôi |
+| 9 | 0.1.4 | Update | Expert Gate 3 kiểm diff D3-n02: §6.1 dòng 「Vượt 参加上限」 thêm 422 `E-TRD-007` của server; dòng 「Lỗi nhập」 thêm lỗi client `E-TRD-009`..`011` (§4.2) | 2026-11-26 | phuongnnm-23344 |  |
 | - | - | Mất mạng | C-28: form khóa, banner 「通信が回復するまで確定できません。紙伝票で継続してください」; có mạng lại → C-29 kèm kết quả lần bấm cuối 「確定済」/「未確定」 (kiểm qua API-TRD-003) | L4-A05, ADR-008 |
 
 ---
@@ -155,11 +156,11 @@ Tổng hợp từ §5 Event; mã `C-xx` định nghĩa ở `wireframes/_common-l
 | Không có lô 販売公開中 | C-21 「販売公開中のロットがありません」 + liên kết SC-03-03 |
 | Tư cách người mua | [4] hiện đúng chữ 許可 / 承認; đỏ khi không hợp lệ (server vẫn quyết) |
 | Nghi trùng trong 3 phút | Dialog [15] |
-| Vượt 参加上限 | Dialog [13] (+ [14]) chọn lý do; không chặn cứng |
+| Vượt 参加上限 | Dialog [13] (+ [14]) chọn lý do; không chặn cứng. Server: 422 `E-TRD-007` (client chưa biết vượt, vd. hạn mức đổi giữa chừng) → mở [13] với số server trả (§5) |
 | Đang gửi | [8] mờ, không bấm đúp được |
 | Lưu xong | C-12 toast; in thẳng; giữ [1], xóa [3]–[7] |
 | In thất bại | [12]; GD vẫn 確定 |
-| Lỗi nhập (422 `E-TRD-003`..`006`, `E-TRD-008`) | C-22 dưới ô liên quan |
+| Lỗi nhập (client: `E-TRD-009`..`011` — mã ở §4.2; server: 422 `E-TRD-003`..`006`, `E-TRD-008`) | C-22 dưới ô liên quan |
 | Xung đột / trước giờ chốt (409 `E-TRD-001`, `002`, `012`) | C-23; [2] cập nhật 残 |
 | Ngày đã khóa (423 `E-CMN-003`) | C-24, giữ nội dung |
 | Không có quyền / lỗi server / timeout | C-25 / C-26, giữ nội dung; timeout không tự gửi lại |

@@ -130,3 +130,74 @@ Không còn finding cũ nào mở ngoài W-m07 (để LAB-5, đã ghi ở `wiref
 - PREMISE tách độ chắc `RFP` / `KH-GL [Giả lập]` / `PL` cho từng giả định và có cột "nếu sai thì sao" — đúng tinh thần luật 7.
 
 **Tổng:** Critical 0 · Major 3 · Minor 10.
+
+---
+
+## Kiểm diff 6594832 (2026-11-26)
+
+Phạm vi (theo chỉ định của người dùng): `git diff f8042f2..6594832` ở `lab-wholesale-market`, nhánh `ver/lab-4` (27 file, +1.576 / −40). Kiểm điều kiện release ở trên: G3-M01, G3-M02, G3-m01..m06, m08..m10. G3-M03 và G3-m07 người dùng quyết — không tính vào verdict.
+
+Soi kỹ theo yêu cầu: (1) §6.1 "Trạng thái màn" mới ở SC-03-01, 03-05, 04-01, 05-02 so từng dòng với §5 Event + bảng mã lỗi §3 của LOT_FUNC / TRADE_FUNC; (2) AI-report §3.2 so với cột "Người quyết" của PREMISE §5 và `decision.md`; (3) `AI-report-evidence/` — bí mật, dữ liệu thật, trích đúng phần LAB-4; (4) link gãy mới.
+
+**Verdict: RELEASE Gate 3 — cho phép dịch JA.** Critical 0 · Major 0 · Minor mới 0 · ghi chú nhỏ 5 (D3-n01..n05, không chặn).
+
+### Cách kiểm (bằng máy)
+
+- **Bằng chứng = nguyên văn:** `cmp` 5 báo cáo Expert + 3 file Customer với bản gốc ở `project/07_feedbacks/`: **8/8 giống byte**. 4 brief / ghi chú gộp: 2 giống byte, 2 khác **đúng 4 dòng** — chỉ thay tên user Windows (cả dạng 8.3) bằng `<user>`, không đổi chữ nào khác.
+- **Trích log đúng phần LAB-4:** 19/19 dòng DEC trong `decision-lab4-excerpt.md` và 145/145 dòng FB trong `feedback-list-lab4-excerpt.md` có **nguyên văn** trong file gốc. Dải ID khớp README nguồn gốc: FB-EXP 217..239, 253..268, 275..308; FB-CUS 218..239, 260..309. Đã mở các dòng bị bỏ: FB-EXP-240..252, 269..274 (deck / báo cáo upsale), FB-CUS-240..259 (QA-L3, scoring) — đúng là LAB-3. `progress-lab4-ai-report-notes.md`: 12/22 dòng nội dung có nguyên văn trong `progress-lab4.md`; 10 dòng còn lại là tiêu đề / dòng dẫn PL thêm ("Từ mục: …") — đúng như file tự ghi. Ghi chú (1)–(18) đủ.
+- **Bí mật / dữ liệu thật:** quét mật khẩu, khóa API, chuỗi dạng JWT / `sk-`, `supabase.co`, `service_role`, email, `vercel.app`, `drive.google`, `github.com`, tệp biến môi trường và đường dẫn `C:\Users\…` trên cả 16 file: **0** đường dẫn cá nhân, **0** URL, **0** email, **0** khóa. Chỗ nhắc mật khẩu duy nhất: DEC-030 dùng `<DEMO_ACCOUNT_PASSWORD>` (có sẵn trong bản gốc, không phải PL che) và báo cáo Gate 3 chỉ nói "mật khẩu nằm ở `prototype/README.md:17`", không chép giá trị.
+- **Link:** quét link tương đối trong 11 file sửa + 16 file bằng chứng: **0 link gãy**. Link `docs/status-transition-spec/…` của template (G3-m04) đã thành chữ thường, không còn là link.
+- **§6.1 có ở cả 12 SPEC** (grep `### 6.1`): đúng câu README ngoại lệ #10 mới viết.
+- Version: 4 SPEC + `_common-layout` tăng PATCH, History có dòng, `specs/_index.md` / `wireframes/_index.md` khớp.
+
+### Kết quả từng điều kiện
+
+| # | Điều kiện | Kết quả | Bằng chứng |
+|---|---|---|---|
+| G3-M01 | L4-D08 + DEC-058; README :64, §4.3; AI-report §3.2 đúng vai | **Closed** | PREMISE 0.6.3 :181 (người quyết: Người dùng; phương án bỏ; lý do), §0 sửa định nghĩa `L4-Dxx`; DEC-058 người quyết "Người dùng"; README :64 `L4-D01..D08`, §4.3 trỏ L4-D08 / DEC-058 và ghi L4-D07 là PL. AI-report §3.2 tách "Người dùng quyết" / "PL quyết" — đối chiếu 13 DEC-046..058: mọi DEC được nêu đều đúng cột người quyết (046, 047, 049, 050, 058 = người dùng; 051, 052, 053, 054, 056 = PL) |
+| G3-M02 | Bằng chứng vào gói, AI-report trỏ vào | **Closed** | `AI-report-evidence/` 16 file + README nguồn gốc từng file + lưu ý `[Giả lập]`; AI-report :15-20 trỏ link tương đối, §4.1 dòng cuối trỏ đúng thư mục; README §4.1, §4.2 có dòng |
+| G3-m01 | 58 → 60 bảng | Closed | `grep "58 bảng" README.md` = 0 |
+| G3-m02 | Thứ tự ngoại lệ 1→11 | Closed | README §3 |
+| G3-m03 | Câu ngoại lệ #11 | Closed | Viết lại đúng đề xuất |
+| G3-m04 | `docs/` không kèm | Closed | README :27 + link template thành chữ thường |
+| G3-m05 | Vị trí phân quyền / trạng thái | Closed (cách nhẹ + thêm §6.1) | README #10 liệt kê 6 + 6 file; §6.1 ở 4 SPEC luồng 1 — xem soát chi tiết dưới |
+| G3-m06 | C-22 400 → 422 | Closed | `_common-layout` 0.2.1, index 0.2.1 |
+| G3-m08 | Ngoại lệ #3 commit thẳng | Closed | README §3 #3 |
+| G3-m09 | Dòng 7 `specs/{feature}/README.md` | Closed | README §4.2 |
+| G3-m10 | `related` PREMISE | Closed | Thêm DEC-046..051, 056, 058 |
+| G3-M03, G3-m07 | — | Người dùng quyết (FB-EXP-298, 305 "Hỏi lại") | Không tính vào verdict. G3-M03 vẫn **chặn public repo ở LAB-5** |
+
+### Soát §6.1 "Trạng thái màn" với §5 Event + mã lỗi
+
+| SPEC | Kết quả | Ghi chú |
+|---|---|---|
+| SC-03-01 | Khớp 12/12 dòng | `E-LOT-006` 409, `E-LOT-007` 409, `E-CMN-003` 423 đúng bảng LOT_FUNC §3; offline đúng L4-A05 (PC không lưu offline) |
+| SC-03-05 | Khớp 10/10 dòng | `E-LOT-013` 409 / `E-LOT-011` 422 xếp chung "Xung đột" đúng như §5. Xem D3-n01 |
+| SC-04-01 | Khớp 13/13 dòng | `E-TRD-001/002/012` 409, `003..006`, `008` 422 đúng TRADE_FUNC §3. Xem D3-n02 |
+| SC-05-02 | Khớp, 1 dòng gộp hơi rộng | Xem D3-n03 |
+
+### Ghi chú nhỏ (không chặn release; nên sửa trước khi dịch nếu tiện — sửa sau thì phải sửa cả `ja/`)
+
+| # | File:vị trí | Vấn đề | Cách sửa |
+|---|---|---|---|
+| D3-n01 | `SC-03-05_SPEC.md` §6.1 dòng "Ngày đã khóa" | Chỉ ghi "C-24, chỉ đọc, giữ nội dung". C-24 chung (`_common-layout`) có nút 「修正申請を作成 →」, nhưng §5 nói 目利き ở ngày khóa **không có đường 修正申請**. Dev đọc §6.1 + C-24 dễ hiện nút | Thêm "không hiện nút 修正申請 (目利き không đổi tiền — §5)" |
+| D3-n02 | `SC-04-01_SPEC.md` §6.1 dòng "Vượt 参加上限", "Lỗi nhập" | Dòng vượt hạn mức không ghi mã server `422 E-TRD-007` (§5 có); dòng lỗi nhập không nhắc lỗi client `E-TRD-009..011` ở §4.2 (SC-03-01 §6.1 có ghi "mã lỗi ở §4.2") | Thêm "(server: 422 `E-TRD-007` → mở [13] với số server trả)"; thêm "lỗi client ở §4.2" |
+| D3-n03 | `SC-05-02_SPEC.md` §6.1 dòng "Xung đột" | Gộp 409 `E-TRD-013/018` và 422 `E-TRD-015/016` thành "C-23 + nạp lại". Theo §5: `E-TRD-015` **tô các dòng chưa xử lý** (không nói nạp lại — nạp lại thì mất chỗ tô); `E-TRD-013` → chỉ đọc; `E-TRD-018` → dòng chuyển [5] | Tách 2 dòng: 409 (`013` → nạp lại, chỉ đọc; `018` → nạp lại, dòng sang [5]) và 422 (`015` → tô dòng chưa xử lý; `016` → C-23) |
+| D3-n04 | `AI-report.md` §3.2 "PL quyết" | Không nêu DEC-048 (phần thêm do sửa Gate 1 nằm trong buffer, **không đổi giá** — PL quyết), DEC-055, DEC-057. Không sai (câu dẫn nói "phần còn lại PL tự quyết"), nhưng DEC-048 là quyết định về giá — người chấm sẽ hỏi ai chốt | Thêm "giữ giá R1, phần thêm nằm trong buffer (DEC-048)" vào danh sách PL quyết |
+| D3-n05 | `AI-report-evidence/expert-review/expert-review-lab4-gate3-261125.md` | Bản sao chụp trước mục "Kiểm diff 6594832" này, nên gói nộp không có bằng chứng Gate 3 đã đóng — trong khi AI-report §3.1 dòng Gate 3 ghi "Sửa 2 Major + 9 Minor" | Chép lại file này vào `AI-report-evidence/` sau khi có mục này; thêm vào AI-report §3.1 dòng "Gate 3 kiểm diff → RELEASE" khi cập nhật sau dịch (cùng lượt với điểm 5 mục 6) |
+
+Ngoài phạm vi diff (có từ trước, không tính): SC-05-02 §5 không có dòng `409 E-TRD-012` (trước giờ chốt) dù TRADE_FUNC §3 gán mã này cho SC-05-02 [9] — để LAB-5 khi tách task.
+
+### Điều kiện còn lại
+
+1. Dịch JA theo mục 6 điểm 6–10 (bắt buộc điểm 6: bảng thuật ngữ 決裁 / 確認 / 承認 / 許可; dịch xong grep 承認 trong `ja/`). Expert kiểm `ja/` ở lượt sau: grep 承認 + link.
+2. Đóng gói theo mục 6 điểm 1–5; điểm 5 gồm cả D3-n05.
+3. G3-M03 xong trước khi public repo ở LAB-5; G3-m07 người dùng quyết.
+
+### Điểm làm tốt trong lượt sửa
+
+- Bằng chứng đúng là bản sao: 8/8 giống byte, 164/164 dòng trích log có nguyên văn, chỉ che tên user Windows — không "làm đẹp" câu chữ của Expert / Customer.
+- AI-report §3.2 giờ nói rõ cả chỗ PL tự quyết (L4-D07 theo Expert), không đẩy hết công sang người dùng — trung thực hơn bản trước.
+- §6.1 ở 4 SPEC là bảng tổng hợp đúng nghĩa: mỗi dòng truy về một hàng §5, mã lỗi và HTTP status khớp bảng §3 của FUNC.
+
+**Tổng kiểm diff:** Critical 0 · Major 0 · Minor 0 · ghi chú 5. Verdict: **RELEASE Gate 3 (cho phép dịch JA)**.

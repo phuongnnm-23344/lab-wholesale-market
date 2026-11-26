@@ -2,10 +2,10 @@
 id: ADR-003
 title: Phân quyền 3 lớp, kiểm trong DB — 許可 và 承認 tách bảng, tách vòng đời
 type: adr
-status: proposed
-version: "0.3.0"
+status: accepted
+version: "1.0.0"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ARCH-001, ADR-002, L4-A06, L4-D02, PRM-046, PRM-121, PRM-129, BR-PERM-01, FR-PARTY-01, FR-PARTY-02, TBL-ROLE-01, TBL-ACTOR-01]
 ---
 
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-002, L4-A06, L4-D02, PRM-046, PRM-121, PRM-129, BR-PERM-
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 recheck | 2026-11-25 | PL đề xuất | — |
+| **Accepted** (trừ các điểm chờ khách ở §6) | 2026-11-26 | Người dùng (L4-D09), PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -73,6 +73,15 @@ related: [ARCH-001, ADR-002, L4-A06, L4-D02, PRM-046, PRM-121, PRM-129, BR-PERM-
 
 Luật 2; 02-08; BR-PERM-01; FR-PARTY-01/02, FR-AITAI-02, FR-IAM-02; TBL-ROLE-01, TBL-ACTOR-01; FIG-010; PRM-046, PRM-089, PRM-120, PRM-121, PRM-129; L4-A04 (1), L4-A06, L4-D02; OPEN-DB-09, OPEN-DB-10; as-built D08, D13, D14, D18; M18, M19; Gate 1 M-07, m-10.
 
+## 6. Điểm mở (chờ khách)
+
+Quyết định ở §2 đã **Accepted** (L4-D09). Các điểm dưới đây còn chờ khách thật trả lời; câu trả lời chỉ đổi giá trị / nhánh ghi trong bảng, không đổi hướng của ADR — nếu đổi hướng thì viết ADR mới thay thế. Câu gắn `[Customer giả lập]` trong ADR là giả định có căn cứ, khách thật xác nhận cùng `project/02_requirements/qa.md`.
+
+| ID | Điểm chờ khách | Thiết kế đang theo (giả định) | Nếu khách trả lời khác | Ai trả lời |
+|---|---|---|---|---|
+| OPEN-DB-09 | Thủ tục cấp mới / đình chỉ 許可 và 承認; có 弁明の機会 không (gia hạn đã chốt theo PRM-121) | [PL] 許可: 審査 + 運用部門長 決裁; 承認: 届出 + xét nhẹ + 照合部門長 確認; đình chỉ cả hai: 運用部門長 決裁 | Đổi người quyết từng bước trong hàm vòng đời; không đổi việc tách bảng / tách vòng đời | 運用部門 |
+| OPEN-DB-10 | Một người có giữ nhiều vai trên một tài khoản không | Cho nhiều vai / tài khoản; SoD kiểm theo người | Ràng buộc một vai / tài khoản ở `staff_roles`; SoD không đổi | IT khách, 運用部門 |
+
 ---
 
 ## History of change
@@ -82,3 +91,4 @@ Luật 2; 02-08; BR-PERM-01; FR-PARTY-01/02, FR-AITAI-02, FR-IAM-02; TBL-ROLE-01
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1: bảng khác biệt thủ tục 許可 (審査 + 運用部門長 決裁) vs 承認 (届出 + 照合部門長 確認), 参加上限 không sửa đè (LIMIT_CHANGED), trạng thái trong từng khối, giả định EXPIRED tự động (M-07); nhiều vai / tài khoản (m-10) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | Gate 1 recheck N-03: gia hạn bình thường của 許可 về PRM-121 (照合部門長 確認), 審査 + 運用部門長 決裁 chỉ cho cấp mới (giả định PL); 承認 "xét nhẹ" thay "không 審査" | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 1.0.0 | Update | Người dùng chốt **Accepted** sau Gate 1–3 (L4-D09 / DEC-059); thêm §6 Điểm mở (chờ khách) — không đổi nội dung quyết định | 2026-11-26 | phuongnnm-23344 | Người dùng (L4-D09) |

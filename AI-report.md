@@ -2,9 +2,9 @@
 id: DOC-AI-REPORT-001
 title: Báo cáo cách dùng AI trong LAB-4
 type: report
-version: "0.2.0"
+version: "0.2.1"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [PREMISE.md, README.md, AI-report-evidence/README.md]
 ---
 
@@ -74,6 +74,7 @@ Mỗi lượt PL bắt đầu bằng việc đọc `CLAUDE.md` (7 luật bất d
 | Gate 2 | 12 Screen Spec, 7 FUNC, 15 TECH, 42 API, `_common/` | RELEASE CÓ ĐIỀU KIỆN | 0 Critical · 4 Major · 9 Minor | Sửa hết + áp 31 câu trả lời của khách (FB-EXP-275..287, FB-CUS-297..309) |
 | Gate 2 đóng + wireframe HTML | Diff sửa Gate 2; 15 wireframe HTML, PDF, ảnh spec | Phần 1 **RELEASE**; Phần 2 RELEASE CÓ ĐIỀU KIỆN | 1 + 7 Minor | Sửa 7, để 1 cho LAB-5 (FB-EXP-288..295) |
 | Gate 3 | Toàn bộ bộ nộp: README §4, PREMISE, AI-report, toàn bộ thiết kế (kiểm bằng máy: khuôn so byte với chuẩn, version index ↔ file, link, chuỗi chép nguyên văn RFP) | RELEASE CÓ ĐIỀU KIỆN | 0 Critical · 3 Major · 10 Minor | Sửa 2 Major (dòng quyết định phạm vi, bằng chứng vào gói) + 9 Minor; G3-m07 (trạng thái ADR) chờ người dùng; G3-M03 (mật khẩu demo của prototype) phải xong trước khi public repo ở LAB-5 (FB-EXP-296..308) |
+| Gate 3 kiểm diff | Diff sửa Gate 3 (`f8042f2..6594832`): §6.1 Trạng thái màn ở 4 SPEC so với §5 Event + mã lỗi, §3.2 báo cáo này so với PREMISE §5 / nhật ký quyết định, `AI-report-evidence/` (so byte, quét bí mật), link | **RELEASE** (2026-11-26, cho dịch JA) | 0 Critical · 0 Major · 0 Minor · 5 ghi chú | Sửa cả 5 ghi chú D3-n01..n05 trước khi dịch (FB-EXP-309..313); G3-m07 người dùng quyết (L4-D09) |
 
 Expert không chỉ đọc: Gate 2 đóng có kiểm bằng máy (quét badge của cả 15 HTML so với cột ID của 12 SPEC, chạy lại bộ kiểm API, tính lại số thuế 8% và số ngày 失効まで). Gate 1 recheck tính lại cả 11 test vector 完納奨励金.
 
@@ -87,10 +88,11 @@ Người làm bài không review từng dòng. Tôi giữ quyền quyết ở nh
 - **Tiền đề:** L4-D01 kiến trúc to-be trên AWS Tokyo, prototype chỉ là bản thử; L4-D02 danh sách 10 màn, SC-01-02 tách khối 許可 / 承認.
 - **Sau Gate 1:** tách Database Design thành 9 file theo cụm + file tổng (M-09, L4-D04 / DEC-046); nhãn duyệt nội bộ không dùng chữ 承認 (L4-D03 / DEC-047 — người dùng giao việc sửa M-06); thêm wireframe SC-03-02 theo góp ý khách #22 (L4-D05 / DEC-049); để mở E-14 tới workshop, thiết kế vẽ hai nhánh (L4-D06 / DEC-050).
 - **Sau Gate 2:** **không mở rộng** Screen Specification tới 70 màn / 99 chức năng — phần còn lại để LAB-5 xử lý qua DEP-01..17 (L4-D08 / DEC-058).
+- **Sau Gate 3:** ADR đã qua Gate 1–3 chuyển **Accepted**, điểm còn chờ khách ghi ở mục "Điểm mở" trong từng ADR; ADR-006 giữ Proposed vì phụ thuộc workshop E-14 (L4-D09 / DEC-059). Giữ `AI-report-evidence/` trong gói nộp LAB-4; có giữ khi public repo hay không quyết ở LAB-5.
 - **Wireframe:** đưa mẫu PDF phong cách, duyệt pilot SC-04-01 trước khi cho làm 14 màn còn lại, quyết ảnh spec chỉ lấy biến thể A.
 - **Commit / push / bản dịch:** cho commit local trên `ver/lab-4`, push và merge `main` phải hỏi riêng; bản tiếng Nhật làm đầy đủ, đặt trong `ja/`.
 
-**PL quyết** (theo finding của Expert, không đổi phạm vi đã chốt): Screen Specification 12 màn = 10 màn đại diện + SC-06-04, SC-06-05 vì xác nhận giao có tranh chấp là điểm người quyết cuối (L4-D07 / DEC-056, theo Expert G2-m05); gia hạn 許可 giữ thủ tục LAB-1 (DEC-051); hợp đồng API chung, mã lỗi chung, kiểu ID tài liệu khi gộp P3 (DEC-052..054).
+**PL quyết** (theo finding của Expert, không đổi phạm vi đã chốt): Screen Specification 12 màn = 10 màn đại diện + SC-06-04, SC-06-05 vì xác nhận giao có tranh chấp là điểm người quyết cuối (L4-D07 / DEC-056, theo Expert G2-m05); giữ giá R1 — phần việc thêm do sửa Gate 1 (~0,5 MM) nằm trong buffer 15%, không đổi giá (DEC-048); gia hạn 許可 giữ thủ tục LAB-1 (DEC-051); hợp đồng API chung, mã lỗi chung, kiểu ID tài liệu khi gộp P3 (DEC-052..054); áp câu trả lời khách P3 (giả lập) vào thiết kế (DEC-055, DEC-057).
 
 **Customer là giả lập.** 3 lượt góp ý / trả lời (22 điểm về PREMISE, 32 góp ý + 5 câu trả lời về wireframe, 31 câu hỏi P3: đồng ý 20 · điều chỉnh 5 · không đồng ý 3 · không phải câu của khách 3) đều do một agent AI đóng vai khách. Câu trả lời của nó được ghi nhãn `[Customer giả lập, ngày]` và chỉ dùng làm giả định có căn cứ; những câu cần 経理部 / 経営陣 thật vẫn để mở trong `qa.md`.
 
@@ -112,6 +114,7 @@ Người làm bài không review từng dòng. Tôi giữ quyền quyết ở nh
 | 12 | **Trùng ID feedback** với phiên LAB-3 chạy song song trên cùng sổ (`FB-EXP-217..239` bị LAB-4 dùng trước) | PL phiên LAB-3 | Luôn đọc ID lớn nhất ngay trước khi ghi; LAB-3 đánh tiếp từ 240 |
 | 13 | Commit nhóm lỡ **kèm file xóa đã stage từ trước** | PL tự kiểm | Reset mềm, commit lại theo nhóm; trước mỗi commit xem `git diff --cached --stat` |
 | 14 | Lượt P4: script đổi ví dụ SC-09-04 **mở file để ghi trước khi đọc** → file HTML (chưa commit) bị rỗng | PL thấy ngay khi kiểm | Dựng lại từ lịch sử thao tác của phiên (lần ghi file + các lệnh sửa sau đó), render lại và so ảnh từng pixel với PNG cũ: trùng khít, rồi mới áp sửa. Bài học: file chưa commit không có lưới an toàn — sửa bằng script thì đọc vào biến trước, hoặc commit trước khi sửa hàng loạt |
+| 15 | 0.2.1 | Update | ('3.1, 3.2', 'Expert Gate 3 kiểm diff: §3.1 thêm dòng "Gate 3 kiểm diff → RELEASE (2026-11-26)" (D3-n05); §3.2 PL quyết thêm DEC-048 (giữ giá R1, phần thêm trong buffer — D3-n04), DEC-055, DEC-057; người dùng quyết thêm L4-D09 (trạng thái ADR) và giữ `AI-report-evidence/` trong gói') | 2026-11-26 | phuongnnm-23344 |  |
 
 ## 4. Điểm đặc biệt và tự đánh giá
 

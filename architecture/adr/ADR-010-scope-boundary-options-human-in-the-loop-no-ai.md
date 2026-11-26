@@ -2,10 +2,10 @@
 id: ADR-010
 title: Ranh giới phạm vi — Option tách riêng, người quyết cuối, không AI / OCR cho ký hiệu tay và chất lượng
 type: adr
-status: proposed
-version: "0.1.0"
+status: accepted
+version: "1.0.0"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ARCH-001, ADR-003, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, SCOPE-OUT-03, SCOPE-OUT-04, SCOPE-OUT-06, PRM-024, DEC-008, L4-A08]
 ---
 
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-003, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, SCOPE-OUT
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 | 2026-11-25 | PL đề xuất | — |
+| **Accepted** (trừ các điểm chờ khách ở §6) | 2026-11-26 | Người dùng (L4-D09), PL đề xuất | — |
 
 ## 1. Bối cảnh
 
@@ -60,6 +60,10 @@ related: [ARCH-001, ADR-003, CAP-HUMAN-01, SCOPE-OUT-01, SCOPE-OUT-02, SCOPE-OUT
 
 Luật 3, luật 6; CAP-HUMAN-01; SCOPE-OUT-01..04, SCOPE-OUT-06; 04-07, 08-06, 02-05, BR-NOTIFY-01, SEC-IAM-02, FR-RPT-03, FR-SERI-01; PRM-024, PRM-115; DEC-008, DEC-023; L4-A08; PREMISE §1.2.
 
+## 6. Điểm mở (chờ khách)
+
+Quyết định ở §2 đã **Accepted** (L4-D09). Không có điểm chờ khách làm đổi ranh giới này: luật 3 (người quyết cuối, không AI / OCR) là điều kiện của RFP; khách chọn mua Option hay không (giao dịch từ xa, portal người mua, phân tích / dự báo, AI chỉ gợi ý) chỉ quyết phạm vi giá, không đổi việc tách riêng.
+
 ---
 
 ## History of change
@@ -67,3 +71,4 @@ Luật 3, luật 6; CAP-HUMAN-01; SCOPE-OUT-01..04, SCOPE-OUT-06; 04-07, 08-06, 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
+| 2 | 1.0.0 | Update | Người dùng chốt **Accepted** sau Gate 1–3 (L4-D09 / DEC-059); thêm §6 Điểm mở (chờ khách) — không đổi nội dung quyết định | 2026-11-26 | phuongnnm-23344 | Người dùng (L4-D09) |

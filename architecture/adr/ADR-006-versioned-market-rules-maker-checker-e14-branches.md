@@ -3,9 +3,9 @@ id: ADR-006
 title: Quy chế có version theo ngày hiệu lực, maker-checker, quota 4 lần / năm TC, rollback hai nhánh E-14
 type: adr
 status: proposed
-version: "0.3.0"
+version: "0.3.1"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [ARCH-001, ADR-004, ADR-005, ADR-007, GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, PRM-042, PRM-126, L4-A03, L4-A04, OPEN-L4-01, OPEN-L4-03, R-L4-01, E-14, FB-CUS-226, FB-CUS-227]
 ---
 
@@ -13,7 +13,7 @@ related: [ARCH-001, ADR-004, ADR-005, ADR-007, GOV-RULE-01, NFR-OPS-02, FR-INC-0
 
 | Trạng thái | Ngày | Người quyết | Thay thế |
 |---|---|---|---|
-| **Proposed** — chờ Gate 1 recheck; mục 2.5 và phương án F, G chờ workshop E-14 | 2026-11-25 | PL đề xuất | — |
+| **Proposed** — giữ theo L4-D09: §2.5 và phương án F, G phụ thuộc workshop E-14; phần còn lại đã qua Gate 1–3, là thiết kế hiện hành | 2026-11-26 | PL đề xuất; người dùng quyết giữ Proposed (L4-D09) | — |
 
 ## 1. Bối cảnh
 
@@ -108,6 +108,17 @@ stateDiagram-v2
 
 Luật 5; GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, RACI-01; PRM-042, PRM-126; E-08, E-12, E-13, E-14, E-16, E-17; L4-A03, L4-A04 (3); PREMISE §3.1, §6 (OPEN-L4-01, OPEN-L4-03, R-L4-01); as-built D01, D06, D07, D09; M13, M15; FB-CUS-218..220, FB-CUS-226, FB-CUS-227; TBL-RATE-01; Gate 1 M-04, m-09.
 
+## 6. Điểm mở (chờ khách)
+
+ADR này **giữ Proposed** (L4-D09): §2.5 và phương án F / G phụ thuộc workshop E-14 với ban lãnh đạo khách. Phần còn lại (§2.1–2.4, §2.6) đã qua Gate 1–3 và là thiết kế hiện hành cho LAB-5. Sau workshop: chốt nhánh → chuyển Accepted (đổi hướng → ADR mới).
+
+| ID | Điểm chờ khách | Thiết kế đang theo (giả định) | Nếu khách trả lời khác | Ai trả lời |
+|---|---|---|---|---|
+| E-14 (OPEN-L4-01, Q-RULE-01) | Rollback quy chế khi đã đủ 4 lần trong năm TC: chặn hay không | Hai nhánh N1 / N2 trong một hàm chính sách; mặc định build N1 (không nới GOV-RULE-01); F / G chỉ là tư liệu (L4-D06) | N2 → thay một hàm + bật màn 決裁, ~0,5 MD; chọn F / G → ước lại ~0,3–0,5 MM (ngoài DEC-048) | Ban lãnh đạo (workshop) |
+| Q-ARCH-09 | Mọi nội dung quy chế (kể cả tham số) hiệu lực từ ngày 1 tháng | Có — một version, một ngày hiệu lực | Ngày hiệu lực theo từng tham số (gần phương án G) | 運用部門 |
+| E-12, E-13 (OPEN-L4-03) | Hai điểm này có làm đổi tiền không | Tạm xếp là tham số quy chế (PREMISE §3.1) | Chuyển sang file cấu hình hoặc ngược lại | 運用部門 |
+| Q-RULE-03 | Danh sách 「経営層」 nhận thông báo ở nhánh N2 | 代表取締役 + 運用部門長 + 照合部門長 [Customer giả lập] | Chỉ đổi file cấu hình | 経営陣 |
+
 ---
 
 ## History of change
@@ -117,3 +128,4 @@ Luật 5; GOV-RULE-01, NFR-OPS-02, FR-INC-02, FR-RULE-01, FR-AUDIT-03, RACI-01; 
 | 1 | 0.1.0 | Add new | Bản đầu; E-14 vẽ hai nhánh, chưa chốt | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Sửa theo Expert Gate 1: thêm phương án F (rollback hồi tố về đầu kỳ chưa khóa, chỉ bảng tỷ lệ) và G (tách gói tỷ lệ theo kỳ / tham số theo ngày) cho workshop E-14; đường sửa tiền thưởng kỳ đã khóa bằng 修正申請 INCENTIVE (§2.4-8a); viết lại rủi ro N1 / R-L4-01 cho đúng (M-04); quota đếm APPROVED / ACTIVE / SUPERSEDED, hủy version APPROVED theo maker-checker (m-09) | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | L4-D06: F / G là tư liệu cho workshop E-14, kèm ước effort ~0,3–0,5 MM chưa có trong DEC-048 | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.3.1 | Update | L4-D09 / DEC-059: giữ **Proposed** vì §2.5 và F / G phụ thuộc workshop E-14 (ghi lý do ở bảng trạng thái); thêm §6 Điểm mở (chờ khách) — không đổi nội dung quyết định | 2026-11-26 | phuongnnm-23344 |  |
