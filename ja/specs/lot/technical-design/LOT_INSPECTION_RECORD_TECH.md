@@ -129,7 +129,7 @@ sequenceDiagram
 |---|---|
 | 1 | `v_caller := assert_caller(['JUDGE'], [])` |
 | 2 | `v_day :=` 業務日 `OPEN`（目利きは開いている日に記録する — 持ち越しロットも記録可能） |
-| 3 | `staff_accounts.employee_no` を照会 → `v_second_checker`（2人目が JUDGE の役割を持つことは要求しない — PL の仮定） |
+| 3 | `staff_accounts.employee_no` を照会 → `v_second_checker`（2人目が JUDGE の役割を持つことは要求しない — PL の前提） |
 
 ### 4.3. ロットごとの記録
 

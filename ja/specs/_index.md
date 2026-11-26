@@ -47,7 +47,7 @@ Feature = [`architecture/ARCHITECTURE.md`](../architecture/ARCHITECTURE.md) の 
 | SPEC-SC-03-05-001 | SC-03-05 目利き・下見結果入力 | SPEC | lot | 0.1.3 | phuongnnm-23344 | 2026-11-26 | [lot/screen-specification/SC-03-05_SPEC.md](lot/screen-specification/SC-03-05_SPEC.md) |
 | SPEC-LOT_FUNC-001 | モジュール lot — Function Specifications | FUNC | lot | 0.1.1 | phuongnnm-23344 | 2026-11-25 | [lot/function-specifications/LOT_FUNC.md](lot/function-specifications/LOT_FUNC.md) |
 | SPEC-LOT_INSPECTION_RECORD-001 | LOT_INSPECTION_RECORD — 目利き・下見結果の記録（最終決定者による） | TECH | lot | 0.1.1 | phuongnnm-23344 | 2026-11-25 | [lot/technical-design/LOT_INSPECTION_RECORD_TECH.md](lot/technical-design/LOT_INSPECTION_RECORD_TECH.md) |
-| SPEC-LOT_REGISTER-001 | LOT_REGISTER — ロットの本登録 + 受入の数量台帳の行 | TECH | lot | 0.1.2 | phuongnnm-23344 | 2026-11-25 | [lot/technical-design/LOT_REGISTER_TECH.md](lot/technical-design/LOT_REGISTER_TECH.md) |
+| SPEC-LOT_REGISTER-001 | LOT_REGISTER — ロットの本登録 + 受入の数量台帳の行 | TECH | lot | 0.1.3 | phuongnnm-23344 | 2026-11-26 | [lot/technical-design/LOT_REGISTER_TECH.md](lot/technical-design/LOT_REGISTER_TECH.md) |
 | SPEC-SC-04-01-001 | SC-04-01 相対取引入力・確定 | SPEC | trade | 0.1.5 | phuongnnm-23344 | 2026-11-26 | [trade/screen-specification/SC-04-01_SPEC.md](trade/screen-specification/SC-04-01_SPEC.md) |
 | SPEC-SC-05-02-001 | SC-05-02 せり結果確認 | SPEC | trade | 0.1.4 | phuongnnm-23344 | 2026-11-26 | [trade/screen-specification/SC-05-02_SPEC.md](trade/screen-specification/SC-05-02_SPEC.md) |
 | SPEC-TRADE_FUNC-001 | モジュール trade — Function Specifications | FUNC | trade | 0.1.1 | phuongnnm-23344 | 2026-11-25 | [trade/function-specifications/TRADE_FUNC.md](trade/function-specifications/TRADE_FUNC.md) |

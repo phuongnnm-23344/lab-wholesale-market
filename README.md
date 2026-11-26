@@ -97,7 +97,7 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 
 Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specification + 7 Function Specifications + 15 Technical Design) · 10 Database Design · 42 API Design · 1 kiến trúc + 10 ADR · 17 wireframe / 画面一覧 · PREMISE · AI-report.
 
-**Bản tiếng Nhật `ja/`:** sinh từ bản tiếng Việt tại commit `9367490` (cùng đường dẫn, cùng số dòng mỗi file; README và AI-report sửa cùng lúc thêm `ja/` cũng đã khớp). **Bản tiếng Việt là bản chuẩn** — sửa ở bản tiếng Việt rồi sinh lại, không sửa tay `ja/`. Mermaid, wireframe ASCII và ảnh PNG (sequence, annotated) giữ nhãn tiếng Việt; link tới ảnh, HTML, PDF, `_templates/`, `AI-report-evidence/`, `prototype/` trỏ về file gốc ngoài `ja/`. Kiểm link: `python scripts/check-markdown-links.py ja`.
+**Bản tiếng Nhật `ja/`:** sinh lần đầu từ bản tiếng Việt tại commit `9367490` (cùng đường dẫn, cùng số dòng mỗi file); mỗi lần sửa bản tiếng Việt sau đó thì sửa đúng các dòng tương ứng ở `ja/` trong cùng commit. **Bản tiếng Việt là bản chuẩn** — sửa ở bản tiếng Việt rồi sinh lại, không sửa tay `ja/`. Mọi khối code (Mermaid, wireframe ASCII, cây thư mục, SQL, JSON mẫu) và ảnh PNG (sequence, annotated) giữ nguyên tiếng Việt; link tới ảnh, HTML, PDF, `_templates/`, `AI-report-evidence/`, `prototype/` trỏ về file gốc ngoài `ja/`. Kiểm link: `python scripts/check-markdown-links.py ja`.
 
 ### 4.2 Kế thừa từ spec-standards và tạo mới
 
@@ -168,6 +168,10 @@ Khuôn BM-2-901-53 §2 yêu cầu ảnh `./assets/{DESIGN_ID}_sequence.png`. Kh�
 ### Script kiểm API Design
 
 `python scripts/check-api-spec-consistency.py` (chạy ở gốc repo; chỉ dùng thư viện chuẩn) — quét 42 file `specs/system-design/api-design/**`: JSON ví dụ trong `<pre>` parse được; token trong backtick ở cột `Note` không còn tên snake_case trừ khi là tên bảng / cột / hàm có trong Database Design hoặc FUNC / TECH; không còn khóa cũ `error_extra`; lỗi dạng `"detail": { "field": … }` (khóa trường phải ở `field` gốc). Thoát mã 1 khi có lỗi.
+
+### Script kiểm link Markdown
+
+`python scripts/check-markdown-links.py [thư mục / file …]` (chạy ở gốc repo; chỉ dùng thư viện chuẩn) — kiểm link tương đối và anchor `#…` (slug kiểu GitHub, kể cả tiêu đề tiếng Nhật) trong file `.md`; không đối số thì quét cả repo trừ `prototype/`, `wiki-template/`, `webhook/`, `_templates/`; bỏ qua link trong khối code và inline code. Ví dụ: `python scripts/check-markdown-links.py ja`. Thoát mã 1 khi có link hỏng.
 
 ---
 

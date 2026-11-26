@@ -118,7 +118,7 @@ related: [SPEC-RULE_VERSION-001, SPEC-SC-10-04-001, SPEC-RULE_API-001, SPEC-RULE
 
 **Function description**
 
-> - API-RULE-001 用の読み取り: version の情報、現在の `ACTIVE` version との比較（率表 2 種 + すべての `param_key`）、計算例（[15]）を `app.incentive_amount`（INC_FUNC 2.7）で 500,000 / 1,000,000 / 3,000,000 / 10,000,000 の各段階について算出、発効日に基づく TC 年度の used(y)、呼び出し者ごとの権限フラグ、ポリシー状態（現在の used による R4、ロックはしない）。読み取りのみ。
+> - API-RULE-001 用の読み取り: version の情報、現在の `ACTIVE` version との比較（交付率表 2 種 + すべての `param_key`）、計算例（[15]）を `app.incentive_amount`（INC_FUNC 2.7）で 500,000 / 1,000,000 / 3,000,000 / 10,000,000 の各段階について算出、発効日に基づく TC 年度の used(y)、呼び出し者ごとの権限フラグ、ポリシー状態（現在の used による R4、ロックはしない）。読み取りのみ。
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|

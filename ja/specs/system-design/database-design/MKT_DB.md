@@ -33,7 +33,7 @@ related: [DOC-PREMISE-001, ADR-001, ADR-002, ADR-003, ADR-004, ADR-005, ADR-006,
 | P2 | 許可 ≠ 承認 | テーブル2つ、履歴2つ、参加者種別を検査するトリガー2つ。「共通の許可」テーブルや enum は **存在しない** | ルール2; 02-08; ADR-003 |
 | P3 | 最終判断は人 | `lot_inspections`、`seri_sessions`、`correction_approvals`、`dispute_confirmations` に記録者・確認者の列を置く。機械採点の列はない | ルール3; CAP-HUMAN-01 |
 | P4 | 履歴を上書きしない | 帳簿・履歴テーブルは追記のみ（トリガーで UPDATE、DELETE を阻止）。`trades` は確定時に凍結。修正 = `trade_adjustments` の REVERSE + DELTA。締め済みの日・期には書き込めない | ルール4; BR-CLOSE-01; B.4; B.7 |
-| P5 | 規程には版を持たせる | `rule_versions` + `incentive_rate_rows`（料率表2つ）+ `rule_parameters`。金額の各行は適用した `rule_version_id` を保存 | ルール5; GOV-RULE-01; TBL-RATE-01; FR-AUDIT-03 |
+| P5 | 規程には版を持たせる | `rule_versions` + `incentive_rate_rows`（交付率表2つ）+ `rule_parameters`。金額の各行は適用した `rule_version_id` を保存 | ルール5; GOV-RULE-01; TBL-RATE-01; FR-AUDIT-03 |
 | P6 | 書き込みはすべてDB内の関数経由 | アプリのDBロールは関数への EXECUTE と RLS 経由の SELECT のみ。テーブルへの INSERT / UPDATE / DELETE は付与しない | ADR-001, ADR-003 |
 | P7 | 業務日を時間軸とする | 取引系の全テーブルに `business_date` を持たせる（FK は `business_days`、**記帳日**）。UTC の時刻から推定しない。**期** = 元の取引（`trades.trade_date`）の業務日に基づく暦月。調整行は元取引の `period_id` を持ち、適用日とは分けて扱う（Gate 1 C-02） | BR-INC-01; L4-A04 (2) |
 
@@ -81,7 +81,7 @@ Category: `master` = 基礎データ、変更は少なく、管理者がいる �
 | 19 | app | master | 税率 | [`tax_rates`](RULE_DB.md#419-tax_rates) | 10% / 8%、適用開始日あり | ファイル: [RULE_DB.md](RULE_DB.md)。新規 | Decision (provisional) |
 | 20 | app | master | 市場・銀行カレンダー | [`market_calendar`](CLOSE_DB.md#420-market_calendar) | 1テーブル、フラグ2つ；臨時休市 / 臨時開市 は決裁が必要 | ファイル: [CLOSE_DB.md](CLOSE_DB.md)。新規 | Decision (provisional) |
 | 21 | app | master | 規程の版 | [`rule_versions`](RULE_DB.md#421-rule_versions) | 適用開始日は毎月1日、メーカー・チェッカー、ロールバック、TC年ごとに年4回の上限 | ファイル: [RULE_DB.md](RULE_DB.md)。プロトタイプ: `rule_versions` | Decision (provisional) |
-| 22 | app | master | 交付率の段階 | [`incentive_rate_rows`](RULE_DB.md#422-incentive_rate_rows) | **2テーブル（仲卸 / 売買参加者）× 5段階**、適格金額（税抜）による | ファイル: [RULE_DB.md](RULE_DB.md)。プロトタイプ: `incentive_rate_rows` | Decision (provisional) |
+| 22 | app | master | 交付率の等級 | [`incentive_rate_rows`](RULE_DB.md#422-incentive_rate_rows) | **2テーブル（仲卸 / 売買参加者）× 5等級**、適格金額（税抜）による | ファイル: [RULE_DB.md](RULE_DB.md)。プロトタイプ: `incentive_rate_rows` | Decision (provisional) |
 | 23 | app | master | 規程パラメータ | [`rule_parameters`](RULE_DB.md#423-rule_parameters) | 同一版内の金額・業務日に関わるパラメータ（PREMISE §3.1） | ファイル: [RULE_DB.md](RULE_DB.md)。新規 | Decision (provisional) |
 | 24 | app | transaction | 業務日 | [`business_days`](CLOSE_DB.md#424-business_days) | カレンダーに従って開く（日の始まり = ロット受付時刻 01:00）、照合部門長が締める | ファイル: [CLOSE_DB.md](CLOSE_DB.md)。プロトタイプ: `business_days` | Decision (provisional) |
 | 25 | app | transaction | ロット | [`lots`](LOT_DB.md#425-lots) | 仮受付 → 本登録 → 下見済 → 公開 → 確定 → 引渡し完了 | ファイル: [LOT_DB.md](LOT_DB.md)。プロトタイプ: `lots` | Decision (provisional) |
@@ -267,8 +267,8 @@ erDiagram
 
 | # | テーブル / カラム | Prototype (migration) | To-be（4節） | 差異の種類 | レベル | トレース |
 |---|---|---|---|---|---|---|
-| D01 | `incentive_rate_rows` | 参加者全員で1つの料率表、列 `min_paid_jpy`、`max_paid_jpy`、`rate_permille`；参加者種別がなく、段階数もない（0003） | `participant_class`（仲卸 / 売買参加者）ごとに2テーブル、5段階 `tier_no`、段階1 = 0%、提出時に段階の連続性を検査（4.22） | 誤り | 高 | PRM-041, BR-INC-01, TBL-RATE-01, ADR-006 |
-| D02 | `incentive_results`, 関数 `compute_incentive_rows` / `incentive_for` | 段階の判定と料率の乗算を **税込の支払額** `floor(tiền × 110/100)` に対して行う：奨励金 = floor(payable × rate / 1000)（0023） | 段階は **適格金額（税抜）** で判定；奨励金 = floor(適格金額 × 交付率 × 110/100)；`eligible_excl_jpy`、`tier_no`、`rate_bp` を保存（4.52） | 誤り | 高 | PRM-041, BR-INC-01, ADR-007, M08 |
+| D01 | `incentive_rate_rows` | 参加者全員で1つの交付率表、列 `min_paid_jpy`、`max_paid_jpy`、`rate_permille`；参加者種別がなく、等級数もない（0003） | `participant_class`（仲卸 / 売買参加者）ごとに2テーブル、5等級 `tier_no`、等級1 = 0%、提出時に等級の連続性を検査（4.22） | 誤り | 高 | PRM-041, BR-INC-01, TBL-RATE-01, ADR-006 |
+| D02 | `incentive_results`, 関数 `compute_incentive_rows` / `incentive_for` | 等級の判定と料率の乗算を **税込の支払額** `floor(tiền × 110/100)` に対して行う：奨励金 = floor(payable × rate / 1000)（0023） | 等級は **適格金額（税抜）** で判定；奨励金 = floor(適格金額 × 交付率 × 110/100)；`eligible_excl_jpy`、`tier_no`、`rate_bp` を保存（4.52） | 誤り | 高 | PRM-041, BR-INC-01, ADR-007, M08 |
 | D03 | `payments` → 期 | 配分テーブルなし；`period_payables` は 入金 を、`paid_on` ∈ (`end_date`, `end_date` + 1か月] の範囲で期に割り当てる（0024）。LAB-2 のモック一覧は「FIFO」と記すが、コードは FIFO ではない | append-only の `payment_allocations` テーブル、未払いの最も古い期から FIFO で配分、E-02 のとき `INVOICE_NO`、バッチ取消時に取り消す（4.48） | 誤り | 高 | ADR-007 §2.7, L4-A04 (2), OPEN-L4-02, E-02, M07, M21 |
 | D04 | `trades`, `period_payables` | 税率なし；合計に対して固定の `floor(amount × 110/100)`（0023, 0024）；端数調整の行なし | `tax_rates` + `trades.tax_rate_id`；`period_billings` / `period_billing_tax_lines` が税率ごとに1回税額を計算；`accounting_export_lines` の `ROUNDING` 行（4.19, 4.49, 4.50, 4.42） | 意図的な簡略化 | 高 | PRM-053, FT-09-10, M08 |
 | D05 | `payment_periods.due_date` | `lock_period` は次の期を作成し、`due_date` は翌月10日に固定（0023） | 版の `PAYMENT_DUE_RULE` と `market_calendar` から計算し、直前の銀行営業日へ前倒し；期は `rule_version_id` を保存（4.43, 4.23）；期は月初の最初の業務日を開く時に作成し、前の期のロックを待たない（CLOSE_DB 0.2.1、前提 Q-INC-03） | 意図的な簡略化 | 高 | PRM-054, ADR-005, M10 |
@@ -352,11 +352,11 @@ erDiagram
 | # | 質問 | 影響先 | 暫定前提 | 回答者 | 状態 |
 |---|---|---|---|---|---|
 | OPEN-DB-01 | IF-ACC-01 のファイル形式と 勘定科目 / 税区分 のコード (E-01) | 4.40–4.42 (Undecided) | 最小限の項目は DR-SETTLE-01 による | 経理部 / 顧客IT | open |
-| OPEN-DB-02 | 翌年の**通常の**市場・銀行カレンダーは年4回の回数に含めるか：PRM-054 は **含めない** と記す（カレンダーはマスター）、PREMISE §3.1 の「料率表、支払期日、締め時刻、通常の市場・銀行カレンダー」の行は **含める** と記す | 4.20、回数の集計は 4.21 | PRM-054 に従う：カレンダーはメーカー・チェッカーを持つマスターで、回数には **含めない**；支払期日の計算式が規程（`PAYMENT_DUE_RULE`）になる | PL が PREMISE を修正（本ファイルの範囲外） | closed — PREMISE 0.4.0 §3.1 を PRM-054 に合わせて修正済み |
+| OPEN-DB-02 | 翌年の**通常の**市場・銀行カレンダーは年4回の回数に含めるか：PRM-054 は **含めない** と記す（カレンダーはマスター）、PREMISE §3.1 の「交付率表、支払期日、締め時刻、通常の市場・銀行カレンダー」の行は **含める** と記す | 4.20、回数の集計は 4.21 | PRM-054 に従う：カレンダーはメーカー・チェッカーを持つマスターで、回数には **含めない**；支払期日の計算式が規程（`PAYMENT_DUE_RULE`）になる | PL が PREMISE を修正（本ファイルの範囲外） | closed — PREMISE 0.4.0 §3.1 を PRM-054 に合わせて修正済み |
 | OPEN-DB-03 | 入金ファイルに 請求番号 があるか (E-02) | 4.47 `invoice_no`、4.48 `method` | 既定は FIFO；`invoice_no` は NULL | 経理部 | open (OPEN-L4-02) |
 | OPEN-DB-04 | 4回に達した後のロールバック (E-14) | 4.21 `second_approver_id` | 列は既存で、N2 分岐でのみ使用；設定スイッチはない | 経営陣（ワークショップ） | open (OPEN-L4-01) |
 | OPEN-DB-05 | E-12 持ち越し、E-13 下見済の前の販売は金額を変えるか | 4.23 の2つの `param_key`；4.26 | 暫定で規程パラメータとして扱う | 運用部門 | open (OPEN-L4-03) |
-| OPEN-DB-06 | 実際の料率表、列の型 / 長さ（fixture による）(E-03) | 4.22 `rate_bp`、VARCHAR の長さ | bp；長さは TBL-* とプロトタイプに従う | 顧客（fixture 約2026-12-01 **【模擬】**） | open (L4-A02) |
+| OPEN-DB-06 | 実際の交付率表、列の型 / 長さ（fixture による）(E-03) | 4.22 `rate_bp`、VARCHAR の長さ | bp；長さは TBL-* とプロトタイプに従う | 顧客（fixture 約2026-12-01 **【模擬】**） | open (L4-A02) |
 | OPEN-DB-07 | 期の税額の切り捨て (E-06) | 4.23 `TAX_ROUNDING`、4.50 | `FLOOR`（DEC-011） | 経理部 | open |
 | OPEN-DB-08 | 締め済みの**期の差額**（古い期の `period_id` を持つ調整）について、買い手が支払う / 受け取る方法：暫定として、次の期の通知に「前期以前の調整」の行を表示し、完納を判定する新しい期の 期のお支払額 には **加算しない** | ADJUST_DB 4.39、BILLING_DB 4.49、4.48 | 通知に別行で表示；入金は FIFO で古い期の未払いから充当（「締め済みの期の未払い」= LOCK + 締め後の調整 − 配分；取引の後入力 `LATE_ENTRY` はこの範囲に含まれない — Q-INC-02 により開いている期へ入る、ADR-007 §2.3-7a）。**顧客が決めるべき影響**：買い手が新しい期の 期のお支払額 をちょうど支払ったが締め済みの期の差額をまだ支払っていない場合、FIFO は先に差額の支払に充当するため、締め後に決裁された誤修正のせいで新しい期は **完納を失う**（例：TV-02：期09に1,080,000円を支払う → 216,000円が先に期08へ充当され、期09は不足）。案：(a) FIFO を維持；(b) 締め済みの期の差額に独自の期限を設け、その期限までは FIFO の対象外とする | 照合部門 / 経理部 | open (Gate 1 C-02, recheck n-03) |
 | OPEN-DB-09 | 許可 と 承認 の新規付与 / 一時停止の手続き（両者の通常の更新は PRM-121 で確定済み：照合事務局 が入力 + 照合部門長 が確認、MFA）：(1) 新規の許可に 運用部門長 の決裁が必要か；(2) 新規の承認は 保証金 / 資力 を軽く審査してから 照合部門長 が確認する、で正しいか；(3) 一時停止 / 取消を誰が決裁するか、弁明の機会は必要か | PARTY_DB 4.12–4.15 | (1) 許可：審査 + 運用部門長 決裁 [PL]；(2) 承認：届出 + 軽い審査 + 照合部門長 確認 [PL]；(3) 両者の一時停止：運用部門長 決裁 [PL] | 運用部門 | open (Gate 1 M-07, recheck D-02) |

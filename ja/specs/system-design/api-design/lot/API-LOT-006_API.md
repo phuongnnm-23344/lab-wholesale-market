@@ -49,7 +49,7 @@ related: [SPEC-LOT_FUNC-001, SPEC-SC-03-01-001, SPEC-SC-03-05-001]
 
 | No. | Status Code | Description | Example response | Note |
 |---|---|---|---|---|
-| 1 | 200 | OK | <pre>{<br>  "businessDate": "2027-08-02",<br>  "intakeStartTime": "01:00",<br>  "ruleVersionNo": "2027-04",<br>  "items": [ { "code": "MADAI", "name": "真鯛", "defaultUnit": "KG" } ],<br>  "units": [ { "code": "KG", "label": "kg" }, { "code": "CASE", "label": "箱" }, { "code": "PIECE", "label": "尾" } ],<br>  "grades": [ { "code": "A", "label": "A" }, { "code": "B", "label": "B" }, { "code": "C", "label": "C" }, { "code": "OFF", "label": "規格外" } ]<br>}</pre> | `intakeStartTime` = `rule_parameters.LOT_INTAKE_START_TIME`。`grades` は `code_values` の `INSPECTION_GRADE` の `sort_order` 順（仮定 — L4-A02 のフィクスチャ待ち） |
+| 1 | 200 | OK | <pre>{<br>  "businessDate": "2027-08-02",<br>  "intakeStartTime": "01:00",<br>  "ruleVersionNo": "2027-04",<br>  "items": [ { "code": "MADAI", "name": "真鯛", "defaultUnit": "KG" } ],<br>  "units": [ { "code": "KG", "label": "kg" }, { "code": "CASE", "label": "箱" }, { "code": "PIECE", "label": "尾" } ],<br>  "grades": [ { "code": "A", "label": "A" }, { "code": "B", "label": "B" }, { "code": "C", "label": "C" }, { "code": "OFF", "label": "規格外" } ]<br>}</pre> | `intakeStartTime` = `rule_parameters.LOT_INTAKE_START_TIME`。`grades` は `code_values` の `INSPECTION_GRADE` の `sort_order` 順（前提 — L4-A02 のフィクスチャ待ち） |
 | 2 | 401 | ログインしていません | <pre>{ "error": { "code": "E-CMN-001", "message": "ログインが必要です" } }</pre> | |
 | 3 | 403 | INTAKE / JUDGE 以外のロール | <pre>{ "error": { "code": "E-CMN-002", "message": "この操作の権限がありません" } }</pre> | |
 | 4 | 423 | 受付中の業務日がない | <pre>{ "error": { "code": "E-CMN-003", "message": "受付中の業務日がありません。管理者に連絡してください" } }</pre> | まれ（01:00 のジョブは安全網 — ADR-005） |

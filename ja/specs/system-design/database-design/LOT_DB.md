@@ -208,7 +208,7 @@ erDiagram
 |---|---|---|---|
 | テーブル名（論理） | ロット数量台帳 | 作成者 / 作成日 | phuongnnm-23344 / 2026-11-25 |
 | テーブル名（物理） | `lot_quantity_ledger` | 更新者 / 更新日 | — |
-| Overview | 利用可能数量 = `qty_delta` の合計（ビュー `v_lot_available_qty`）、負にはならない（BR-LOT-02）— 取引を確定する関数はロットの行をロック（`FOR UPDATE`）してから検査する。**追記のみ。開いている日。** | Note | 変更：`reason`（text）→ `entry_kind`；`qty_delta = 0` は **`CARRY_OVER` のときのみ** 許可（N01） |
+| Overview | 利用可能数量 = `qty_delta` の合計（ビュー `v_lot_available_qty`）、負にはならない（BR-LOT-02）— 取引を確定する関数はロットの行をロック（`FOR UPDATE`）してから検査する。**追記のみ。開いている日。** | Note | 変更：`reason`（text）→ `entry_kind`；`qty_delta = 0` は **`CARRY_OVER` のときのみ** 可（N01） |
 
 **列定義**
 

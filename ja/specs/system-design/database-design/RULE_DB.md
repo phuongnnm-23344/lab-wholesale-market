@@ -1,6 +1,6 @@
 ---
 id: SPEC-RULE_DB-001
-title: データベース設計 — 版管理された規程（料率表、パラメータ）+ コード・税率のマスター
+title: データベース設計 — 版管理された規程（交付率表、パラメータ）+ コード・税率のマスター
 type: system
 subtype: database-design
 version: "0.2.2"
@@ -14,7 +14,7 @@ character_set: UTF8 (PostgreSQL)
 related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 ---
 
-# RULE_DB — 版管理された規程（料率表、パラメータ）+ コード・税率のマスター
+# RULE_DB — 版管理された規程（交付率表、パラメータ）+ コード・税率のマスター
 
 | | |
 |---|---|
@@ -46,7 +46,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 18 | app | master | 共通コード表 | [`code_values`](#418-code_values) | 荷目、選択用の理由、配送例外の種類、目利きの等級 | 新規 | Decision (provisional) |
 | 19 | app | master | 税率 | [`tax_rates`](#419-tax_rates) | 10% / 8%、適用開始日あり | 新規 | Decision (provisional) |
 | 21 | app | master | 規程の版 | [`rule_versions`](#421-rule_versions) | 適用開始日は毎月1日、maker-checker、ロールバック、TC年ごとに年4回の上限 | プロトタイプ: `rule_versions` | Decision (provisional) |
-| 22 | app | master | 交付率の段階 | [`incentive_rate_rows`](#422-incentive_rate_rows) | **2テーブル（仲卸 / 売買参加者）× 5段階**、適格金額（税抜）による | プロトタイプ: `incentive_rate_rows` | Decision (provisional) |
+| 22 | app | master | 交付率の等級 | [`incentive_rate_rows`](#422-incentive_rate_rows) | **2テーブル（仲卸 / 売買参加者）× 5等級**、適格金額（税抜）による | プロトタイプ: `incentive_rate_rows` | Decision (provisional) |
 | 23 | app | master | 規程パラメータ | [`rule_parameters`](#423-rule_parameters) | 同一版内の金額・業務日に関わるパラメータ（PREMISE §3.1） | 新規 | Decision (provisional) |
 
 ---
@@ -209,7 +209,7 @@ erDiagram
 |---|---|---|---|
 | テーブル名（論理） | 規程の版 | 作成者 / 作成日 | phuongnnm-23344 / 2026-11-25 |
 | テーブル名（物理） | `rule_versions` | 更新者 / 更新日 | — |
-| Overview | 1版 = 料率表（4.22）+ パラメータ（4.23）、適用開始は月の **1日**（PRM-042）。作成者（maker）は ルール管理者、確認者（checker）は 照合部門長（MFA）。ライフサイクル：DRAFT → PENDING → APPROVED（発効待ち）→ ACTIVE → SUPERSEDED；差し戻し → DRAFT；適用前の取消 → CANCELLED（ADR-006 §2.2）。回数は TC年（4月→3月）ごとに年4回まで。適用日がその年にある `APPROVED` / `ACTIVE` / `SUPERSEDED` の版の `CHANGE` + `ROLLBACK` を数える；**`BASELINE`（稼働開始時）は数えない**；`CANCELLED` は数えない（L4-A04 (3)、D06 を修正）。決裁の関数は TC年単位でロック（advisory lock）し、2人の確認者が同時に上限を超えないようにする。5回目の新しい版は拒否。4回に達した後のロールバック：**E-14 の回答待ち** — 列 `second_approver_id` は N2 分岐で使う（OPEN-L4-01）。**「決裁待ち（運用部門長）」は enum の値ではない：** = `status = 'PENDING'` + `checker_id IS NOT NULL` + `second_approver_id IS NULL`（確認者が確認済み、運用部門長 の決裁待ち — RULE_VERSION_TECH R5）；差し戻し → `DRAFT` にして `checker_id` を削除。**適用前の `APPROVED` 版の取消：** maker（RULE）が取消を提案し、checker の 照合部門長 が決裁 + MFA + 理由を付して確定（maker-checker を維持；Gate 1 m-09）→ `CANCELLED`、回数に含めない。決裁済みの料率が誤っていても、それがその期の「正しい」版であり続ける → エンジンは DELTA を自動生成しない；締め済みの期の奨励金の誤りは 修正申請 `INCENTIVE` で修正（ADJUST_DB 4.37、R-L4-01）。 | Note | N1 / N2 の切替スイッチはない（PREMISE §6）：分岐はワークショップの後に関数で確定 |
+| Overview | 1版 = 交付率表（4.22）+ パラメータ（4.23）、適用開始は月の **1日**（PRM-042）。作成者（maker）は ルール管理者、確認者（checker）は 照合部門長（MFA）。ライフサイクル：DRAFT → PENDING → APPROVED（発効待ち）→ ACTIVE → SUPERSEDED；差し戻し → DRAFT；適用前の取消 → CANCELLED（ADR-006 §2.2）。回数は TC年（4月→3月）ごとに年4回まで。適用日がその年にある `APPROVED` / `ACTIVE` / `SUPERSEDED` の版の `CHANGE` + `ROLLBACK` を数える；**`BASELINE`（稼働開始時）は数えない**；`CANCELLED` は数えない（L4-A04 (3)、D06 を修正）。決裁の関数は TC年単位でロック（advisory lock）し、2人の確認者が同時に上限を超えないようにする。5回目の新しい版は拒否。4回に達した後のロールバック：**E-14 の回答待ち** — 列 `second_approver_id` は N2 分岐で使う（OPEN-L4-01）。**「決裁待ち（運用部門長）」は enum の値ではない：** = `status = 'PENDING'` + `checker_id IS NOT NULL` + `second_approver_id IS NULL`（確認者が確認済み、運用部門長 の決裁待ち — RULE_VERSION_TECH R5）；差し戻し → `DRAFT` にして `checker_id` を削除。**適用前の `APPROVED` 版の取消：** maker（RULE）が取消を提案し、checker の 照合部門長 が決裁 + MFA + 理由を付して確定（maker-checker を維持；Gate 1 m-09）→ `CANCELLED`、回数に含めない。決裁済みの料率が誤っていても、それがその期の「正しい」版であり続ける → エンジンは DELTA を自動生成しない；締め済みの期の奨励金の誤りは 修正申請 `INCENTIVE` で修正（ADJUST_DB 4.37、R-L4-01）。 | Note | N1 / N2 の切替スイッチはない（PREMISE §6）：分岐はワークショップの後に関数で確定 |
 
 **列定義**
 
@@ -248,9 +248,9 @@ erDiagram
 
 | | | | |
 |---|---|---|---|
-| テーブル名（論理） | 交付率の段階 | 作成者 / 作成日 | phuongnnm-23344 / 2026-11-25 |
+| テーブル名（論理） | 交付率の等級 | 作成者 / 作成日 | phuongnnm-23344 / 2026-11-25 |
 | テーブル名（物理） | `incentive_rate_rows` | 更新者 / 更新日 | — |
-| Overview | **料率表2つ** — 仲卸 と 売買参加者 — それぞれ **5段階、最も低い段階は 0%** を含む（PRM-041）。段階は **適格金額（税抜）**（完納者の期内の買受代金の合計・税抜）で判定、下限は「以上」（D01、D02 を修正）。`DRAFT` の版でのみ変更可（トリガー 0005 を維持）。 | Note | 段階の実際の値は `incentive-rate-table.csv` の回答待ち（E-03, L4-A02） |
+| Overview | **交付率表2つ** — 仲卸 と 売買参加者 — それぞれ **5等級、最も低い等級は 0%** を含む（PRM-041）。等級は **適格金額（税抜）**（完納者の期内の買受代金の合計・税抜）で判定、下限は「以上」（D01、D02 を修正）。`DRAFT` の版でのみ変更可（トリガー 0005 を維持）。 | Note | 等級の実際の値は `incentive-rate-table.csv` の回答待ち（E-03, L4-A02） |
 
 **列定義**
 
@@ -259,12 +259,12 @@ erDiagram
 | 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
 | 2 | FK | 版 | `rule_version_id` | UUID | N/A | Yes | | |
 | 3 | | 種別ごとの表 | `participant_class` | `participant_kind` | N/A | Yes | | CHECK ∈ (`NAKAOROSHI`, `BAIBAI`) |
-| 4 | | 段階 | `tier_no` | SMALLINT | N/A | Yes | | CHECK 1..5 |
-| 5 | | 下限（以上） | `min_eligible_jpy` | BIGINT | N/A | Yes | | 税抜。段階 1：`0` |
-| 6 | | 上限（未満） | `max_eligible_jpy` | BIGINT | N/A | No | | 段階 5 では NULL。CHECK > `min_eligible_jpy` |
-| 7 | | 交付率 | `rate_bp` | INT | N/A | Yes | | CHECK 0..10000；段階 1 = 0 |
+| 4 | | 等級 | `tier_no` | SMALLINT | N/A | Yes | | CHECK 1..5 |
+| 5 | | 下限（以上） | `min_eligible_jpy` | BIGINT | N/A | Yes | | 税抜。等級 1：`0` |
+| 6 | | 上限（未満） | `max_eligible_jpy` | BIGINT | N/A | No | | 等級 5 では NULL。CHECK > `min_eligible_jpy` |
+| 7 | | 交付率 | `rate_bp` | INT | N/A | Yes | | CHECK 0..10000；等級 1 = 0 |
 
-関数 `submit_rule_version` は次を検査：各 `participant_class` が5段階そろっていること、連続していること（段階 n の上限 = 段階 n+1 の下限）、段階 1 は 0 から始まり `rate_bp = 0` であること。
+関数 `submit_rule_version` は次を検査：各 `participant_class` が5等級そろっていること、連続していること（等級 n の上限 = 等級 n+1 の下限）、等級 1 は 0 から始まり `rate_bp = 0` であること。
 
 **Index** — `incentive_rate_rows_pkey`; `uq_rate_rows_version_class_tier` (`rule_version_id`, `participant_class`, `tier_no`) unique.
 

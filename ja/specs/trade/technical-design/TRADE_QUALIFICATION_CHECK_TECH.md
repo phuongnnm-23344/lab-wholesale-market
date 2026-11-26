@@ -170,7 +170,7 @@ sequenceDiagram
 |---|---|
 | 1 | `v_limit :=` 現行の `baibai_approvals.participation_limit_jpy`; NULL → `p_trade_date` 時点の `v_participant_current_deposit` |
 | 2 | `v_used :=`（税抜）`trade_date` が `p_trade_date` と同じ月の `CONFIRMED` の取引の、有効値（原値 + REVERSE / DELTA）の合計（チャネル `AITAI` + `SERI`）— view `v_buyer_period_usage`; `p_exclude_trade_id` があれば除く |
-| 3 | 参加上限は **税込** で比較（Q-TRD-02 【顧客（模擬）、2026-11-25】）: `税込 = floor(Σ税抜 × (100 + rate_percent) / 100)`。`rate_percent` = 設定ファイルのパラメータ `PARTICIPATION_LIMIT_TAX_CODE`（既定 `REDUCED8`）のコードの税率、`p_trade_date` 時点で `tax_rates` を照会 — 110/100 は BR-INC-01 のものなので使わない、ハードコードしない。`v_used_incl := floor(v_used × (100 + r) / 100)`; `v_total_incl := floor((v_used + p_extra_used_jpy + p_amount_jpy) × (100 + r) / 100)`; `v_total_incl` を `v_limit` と比較。期全体に 1 つの税率を適用（仮定: 軽減税率 8% のみ — 経理部に確認; 期内に税率が2つある → 各取引の税率でグループ化、+0.2日）。請求書のように行ごとに税を計算し直すことはしない |
+| 3 | 参加上限は **税込** で比較（Q-TRD-02 【顧客（模擬）、2026-11-25】）: `税込 = floor(Σ税抜 × (100 + rate_percent) / 100)`。`rate_percent` = 設定ファイルのパラメータ `PARTICIPATION_LIMIT_TAX_CODE`（既定 `REDUCED8`）のコードの税率、`p_trade_date` 時点で `tax_rates` を照会 — 110/100 は BR-INC-01 のものなので使わない、ハードコードしない。`v_used_incl := floor(v_used × (100 + r) / 100)`; `v_total_incl := floor((v_used + p_extra_used_jpy + p_amount_jpy) × (100 + r) / 100)`; `v_total_incl` を `v_limit` と比較。期全体に 1 つの税率を適用（前提: 軽減税率 8% のみ — 経理部に確認; 期内に税率が2つある → 各取引の税率でグループ化、+0.2日）。請求書のように行ごとに税を計算し直すことはしない |
 | 3b | `p_trade_date` 時点でコードに有効な `tax_rates` の行がない → `E-CMN-004` を投げる（設定エラー、`ERROR` をログ）— 税抜で黙って比較しない |
 | 4 | 超過しない → `over_limit = false`（送られた理由は破棄） |
 

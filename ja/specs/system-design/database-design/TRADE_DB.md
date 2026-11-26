@@ -309,7 +309,7 @@ erDiagram
 |---|---|---|---|
 | テーブル名（論理） | 引渡し例外・紛争 | 作成者 / 作成日 | phuongnnm-23344 / 2026-11-25 |
 | テーブル名（物理） | `delivery_exceptions` | 更新者 / 更新日 | — |
-| Overview | SC-06-04 引渡し例外登録（FT-06-04）と、紛争管理・SLA（FT-07-05, RPT-04, RPT-09）の元データ。紛争（`is_dispute`）は 4.36 で配送部門責任者の確認が必要。紛争中の取引も、同じ買い手の別の取引の引渡しを妨げない（PRM-111）。通信が切れた場合の紙の経路：争いのある引渡し確認票の伝票番号 + スキャン（ADR-008 §2.4-12）。 | Note | UPDATE は次のものだけ許可：`status` を `RESOLVED` にする（1回、`resolved_at` 付き）、`settle_reviewed_*`（1回）、`fix_id` + `affects_amount`（NULL / `false` → 値、1回 — 例外の記録時、または紛争の結論が `PARTIAL_RETURN` のとき） |
+| Overview | SC-06-04 引渡し例外登録（FT-06-04）と、紛争管理・SLA（FT-07-05, RPT-04, RPT-09）の元データ。紛争（`is_dispute`）は 4.36 で配送部門責任者の確認が必要。紛争中の取引も、同じ買い手の別の取引の引渡しを妨げない（PRM-111）。通信が切れた場合の紙の経路：争いのある引渡し確認票の伝票番号 + スキャン（ADR-008 §2.4-12）。 | Note | UPDATE は次のものだけ可：`status` を `RESOLVED` にする（1回、`resolved_at` 付き）、`settle_reviewed_*`（1回）、`fix_id` + `affects_amount`（NULL / `false` → 値、1回 — 例外の記録時、または紛争の結論が `PARTIAL_RETURN` のとき） |
 
 **列定義**
 

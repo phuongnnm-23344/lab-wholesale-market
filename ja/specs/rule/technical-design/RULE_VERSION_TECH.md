@@ -83,15 +83,15 @@ sequenceDiagram
 
 ## 3. 説明
 
-規程の版のライフサイクルを **checker** 側（SC-10-04）から管理し、日付による **発効** を扱うサービス。maker の作成 / 修正 / 提出は SC-10-02、SC-10-03 で行う（本ファイルの対象外; 関数 `submit_rule_version` は 5 段階の連続した率表を検査 — RULE_DB 4.22）。
+規程の版のライフサイクルを **checker** 側（SC-10-04）から管理し、日付による **発効** を扱うサービス。maker の作成 / 修正 / 提出は SC-10-02、SC-10-03 で行う（本ファイルの対象外; 関数 `submit_rule_version` は 5 等級の連続した交付率表を検査 — RULE_DB 4.22）。
 
 ルール 5 / GOV-RULE-01 は次のように適用する:
-- 版 1 件 = 交付率表 2 件（仲卸 / 売買参加者、5 段階）+ 規程パラメータ（`rule_parameters`）の**まとめ**。発効は**将来の月の 1 日**から（PRM-042, ADR-006 §2.1）。
+- 版 1 件 = 交付率表 2 件（仲卸 / 売買参加者、5 等級）+ 規程パラメータ（`rule_parameters`）の**まとめ**。発効は**将来の月の 1 日**から（PRM-042, ADR-006 §2.1）。
 - **Maker ≠ checker**; checker 照合部門長は MFA を持つ。版が `PENDING` になったら内容はロックする。
 - **回数上限 TC 年度あたり 4 回**。審査中の版の **発効日の TC 年度** で数える; `APPROVED` / `ACTIVE` / `SUPERSEDED` の `CHANGE` + `ROLLBACK` を数え、`BASELINE`（go-live の値一式）と `CANCELLED` は**数えない**。市場カレンダー・銀行休業日（`market_calendar`, SC-10-05）はマスタであり**版ではない**ため、回数上限には決して入らない（PRM-054）。
 - **ロールバック** = 旧版の内容を複写した新しい版（`rollback_of_id`）、同じライフサイクルと回数上限に従う; 旧版を「再有効化」はしない。
 - **締め済みの期を歪めない:** 版は発効日からのみ適用; 期ロック済みの期は自分の `rule_version_id` を保持する（CLOSE_DB 4.43）。決裁済みの率の誤りは、人ごと × 期ごとの修正申請 `INCENTIVE` によってのみ修正できる（ADR-006 §2.4-8a, R-L4-01）。
-- **4 回到達後のロールバック — E-14 は未回答:** N1（阻止）/ N2（許可、運用部門長の決裁あり）の両分岐を**一つのポリシー関数**で設計する; ワークショップ後は一方の分岐のみ導入し、設定スイッチにはし**ない**（ADR-006 §2.5-9, PREMISE §6）。ADR-006 §3 の方式 F / G は**ワークショップの資料**であり、ここでは設計しない（L4-D06）。
+- **4 回到達後のロールバック — E-14 は未回答:** N1（阻止）/ N2（認める、運用部門長の決裁あり）の両分岐を**一つのポリシー関数**で設計する; ワークショップ後は一方の分岐のみ導入し、設定スイッチにはし**ない**（ADR-006 §2.5-9, PREMISE §6）。ADR-006 §3 の方式 F / G は**ワークショップの資料**であり、ここでは設計しない（L4-D06）。
 
 ### 3.1 変数
 
@@ -164,7 +164,7 @@ N2: stage = CHECKER → ALLOW (needs_second = true, reason bắt buộc)
 | second-approval: 決裁待ちの状態でない（PENDING + `checker_id` + `second_approver_id` が NULL） | 停止, `E-RULE-010` | 409 |
 | `effective_from ≤ d_bd`（発効日に到達 / 経過） | 停止, `E-RULE-004`（取消して作り直す案内） | 409 |
 | 同じ `effective_from` で別の version が `APPROVED` / `ACTIVE` | 停止, `E-RULE-005` | 409 |
-| 率表 / パラメータが無効（`submit_rule_version` と同様に再検査） | 停止, `E-RULE-013` | 409 |
+| 交付率表 / パラメータが無効（`submit_rule_version` と同様に再検査） | 停止, `E-RULE-013` | 409 |
 | ROLLBACK / return / cancel で理由が無い、または 500 文字超 | 停止, `E-RULE-007` | 422 |
 
 **Detail**
@@ -172,10 +172,10 @@ N2: stage = CHECKER → ALLOW (needs_second = true, reason bắt buộc)
 | No | 処理内容 |
 |---|---|
 | 1 | `effective_from` は 1 日（テーブルの CHECK）、かつ **> d_bd** でなければならない — 発効日当日の確認もブロックする。今日始まる期の version が途中で変わらないようにするため（PRM-042, FR-INC-02）。 |
-| 2 | 内容を再検査（想定外に変更されたデータへの対策）: 各 `participant_class` は 0 から始まる連続した 5 段階を持つ、段階 1 = 0 bp、段階 5 は上限なし; 必須の `param_key` をすべて正しい型で備える（RULE_DB 4.23）。 |
+| 2 | 内容を再検査（想定外に変更されたデータへの対策）: 各 `participant_class` は 0 から始まる連続した 5 等級を持つ、等級 1 = 0 bp、等級 5 は上限なし; 必須の `param_key` をすべて正しい型で備える（RULE_DB 4.23）。 |
 | 3 | ROLLBACK: `rollback_of_id` は過去に発効した version（`ACTIVE` / `SUPERSEDED`）を指し、内容が正しく複写されていること（二つの version の内容ハッシュを比較）。 |
 
-**DoD R2:** RV-03（d_bd 2027-10-01 のとき `effective_from` 2027-10-01 → `E-RULE-004`）; RV-15（発効日の重複 → `E-RULE-005`）; 段階を手で不連続に変更 → `E-RULE-013`。
+**DoD R2:** RV-03（d_bd 2027-10-01 のとき `effective_from` 2027-10-01 → `E-RULE-004`）; RV-15（発効日の重複 → `E-RULE-005`）; 等級を手で不連続に変更 → `E-RULE-013`。
 
 ### 4.3. R3 — TC 年度のロックと回数の計数
 
@@ -301,7 +301,7 @@ N2: stage = CHECKER → ALLOW (needs_second = true, reason bắt buộc)
 
 ### 5.1 規程のテストベクター（RV）— Database Design にはまだ無く、ここを出典として記載
 
-共通の前提: go-live 2027-08-01、v1 `BASELINE`（FY2027）; 率表は INCENTIVE_DB §5 の仮の値; d_bd のデフォルトは 2027-09-14。
+共通の前提: go-live 2027-08-01、v1 `BASELINE`（FY2027）; 交付率表は INCENTIVE_DB §5 の仮の値; d_bd のデフォルトは 2027-09-14。
 
 | RV | 状況 | 期待される結果 | ID |
 |---|---|---|---|

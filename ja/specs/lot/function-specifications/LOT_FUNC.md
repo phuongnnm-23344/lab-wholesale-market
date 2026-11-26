@@ -244,7 +244,7 @@ related: [SPEC-SC-03-01-001, SPEC-SC-03-05-001, SPEC-LOT_REGISTER-001, SPEC-LOT_
 
 **関数の説明**
 
-> - `lot_quantity_ledger` に1行追加; 新しい数量 = 0 → ロット `CLOSED`（確定, PRM-110）+ `lot_status_history`; `SALE_REVERSE` で `CLOSED` のロットの数量が 0 を超えて戻る → `PUBLISHED` に戻し + 履歴（PL の仮定, Q-LOT-05）。書き込み後に数量が負でないことを再検査（BR-LOT-02）。
+> - `lot_quantity_ledger` に1行追加; 新しい数量 = 0 → ロット `CLOSED`（確定, PRM-110）+ `lot_status_history`; `SALE_REVERSE` で `CLOSED` のロットの数量が 0 を超えて戻る → `PUBLISHED` に戻し + 履歴（PL の前提, Q-LOT-05）。書き込み後に数量が負でないことを再検査（BR-LOT-02）。
 
 | Variable type | Variable name | Role of variables |
 |---|---|---|

@@ -97,7 +97,7 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 
 文書数: `specs/_index.md` の38件（4 `_common` + 12 Screen Specification + 7 Function Specifications + 15 Technical Design）· 10 Database Design · 42 API Design · アーキテクチャ1件 + ADR 10件 · ワイヤーフレーム / 画面一覧 17件 · PREMISE · AI-report.
 
-**日本語版 `ja/`：** commit `9367490` 時点のベトナム語版から生成（パス・各ファイルの行数は同一。`ja/` 追加と同時に修正した README・AI-report も反映済み）。**正本はベトナム語版** — 修正はベトナム語版で行い、生成し直す。`ja/` を手で直さない。Mermaid、ワイヤーフレームの ASCII、PNG 画像（sequence、annotated）はベトナム語のラベルのまま。画像・HTML・PDF・`_templates/`・`AI-report-evidence/`・`prototype/` へのリンクは `ja/` 外の元ファイルを指す。リンク検査: `python scripts/check-markdown-links.py ja`。
+**日本語版 `ja/`：** 初回は commit `9367490` 時点のベトナム語版から生成（パス・各ファイルの行数は同一）。その後ベトナム語版を修正した場合は、同じ commit で `ja/` の対応する行も修正する。**正本はベトナム語版** — 修正はベトナム語版で行い、生成し直す。`ja/` を手で直さない。すべてのコードブロック（Mermaid、ワイヤーフレームの ASCII、フォルダツリー、SQL、JSON の例）と PNG 画像（sequence、annotated）はベトナム語のまま。画像・HTML・PDF・`_templates/`・`AI-report-evidence/`・`prototype/` へのリンクは `ja/` 外の元ファイルを指す。リンク検査: `python scripts/check-markdown-links.py ja`。
 
 ### 4.2 spec-standardsからの継承と新規作成
 
@@ -168,6 +168,10 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 ### API Designの検査スクリプト
 
 `python scripts/check-api-spec-consistency.py`（ルートで実行。標準ライブラリのみ使用） — `specs/system-design/api-design/**` の42ファイルを走査: `<pre>` 内のJSON例が解析できること; `Note` 列のバッククォート内のトークンに、Database Design または FUNC / TECH にあるテーブル / 列 / 関数名以外の snake_case 名が残っていないこと; 旧キー `error_extra` が残っていないこと; `"detail": { "field": … }` 形式のエラー（フィールドのキーは元の `field` にあること）。エラーがあれば終了コード1。
+
+### Markdown リンクの検査スクリプト
+
+`python scripts/check-markdown-links.py [フォルダ / ファイル …]`（ルートで実行。標準ライブラリのみ使用）— `.md` ファイル内の相対リンクとアンカー `#…`（GitHub 方式のスラッグ。日本語の見出しにも対応）を検査する。引数なしの場合は `prototype/`・`wiki-template/`・`webhook/`・`_templates/` を除くリポジトリ全体を走査。コードブロックとインラインコード内のリンクは対象外。例: `python scripts/check-markdown-links.py ja`。リンク切れがあれば終了コード 1。
 
 ---
 

@@ -8,9 +8,9 @@ function: app.fn_register_lot
 endpoint: POST /api/v1/lots
 component: LotRegisterService
 feature: lot
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, ADR-004, ADR-005, ADR-008]
 ---
 
@@ -27,6 +27,7 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, AD
 | 1 | 0.1.0 | Add new | — | 初期作成（LAB-4 P3） | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | 顧客（模擬）Q-LOT-01: DoD (g), (h) を追加 — 正式番号は再利用しない、仮受付の取消ロットは番号を保持 | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: 画像 PNG `./assets/LOT_REGISTER_sequence.png` を Mermaid ブロックから出力して埋め込み（`scripts/export-mermaid-png.py`）; Mermaid が引き続きソース | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.4 | ステップ3: 表のセルが余分に分かれないよう `PROVISIONAL \| NULL` の `|` をエスケープ（有識者 JA レビュー m-06） | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -178,7 +179,7 @@ sequenceDiagram
 |---|---|
 | 1 | 仮受付のロット: `UPDATE lots SET shipper_id, item_code, unit, qty_received = p_qty, voucher_no, status = 'RECEIVED', registered_by = v_caller, registered_at = now(), updated_*`（ロットの `qty_provisional`, `provisional_no`, `business_date` は保持） |
 | 2 | 新規ロット: `INSERT lots` で `lot_no = 'L' || YYYYMMDD(v_day) || '-' || next_day_counter(v_day,'LOT')`, `business_date = v_day`, `status = 'RECEIVED'`, `provisional_by = registered_by = v_caller`, `registered_at = now()` |
-| 3 | `INSERT lot_status_history`（PROVISIONAL|NULL → RECEIVED） |
+| 3 | `INSERT lot_status_history`（`PROVISIONAL \| NULL` → RECEIVED） |
 | 4 | `INSERT lot_quantity_ledger (entry_kind = 'RECEIVE', qty_delta = p_qty, business_date = v_day)` — **1行** のみ; 仮受付の数量は台帳に書かない（A-LOT-01） |
 | 5 | トリガー監査が `audit_logs` に書く（`lots` の変更前 / 後）— FR-AUDIT-01 |
 
@@ -208,7 +209,7 @@ sequenceDiagram
 ## 5. その他の注記
 
 - **この関数がしないこと:** `RECEIVED` のロットの修正（→ SC-03-04, PRM-128, `ATTR_FIX`）; 目利きの記録; 公開; オフラインの仮受付の処理（`sync` モジュールが仮受付用の別関数を呼んで同期 — ADR-008 §2.2; `HELD` のレコード → SC-03-07）。
-- **Database Design との照合（統合済み）:** (1) enum `ATTR_FIX` の注釈を「本登録後の数量修正（SC-03-04）」に修正 — MKT_DB 0.3.2 §4.0 (A-LOT-01); (2) `lots.voucher_no` は ワイヤーフレーム [8] に合わせて `VARCHAR(20)` で統一 — LOT_DB 0.2.1 §4.25; (3) `lots.registered_at`（本登録の時刻、API-LOT-003 の sort `-registeredAt` で使用）— LOT_DB 0.2.1 §4.25; (4) `lot_no` の採番時点は依然として仮定（Q-LOT-01）。
+- **Database Design との照合（統合済み）:** (1) enum `ATTR_FIX` の注釈を「本登録後の数量修正（SC-03-04）」に修正 — MKT_DB 0.3.2 §4.0 (A-LOT-01); (2) `lots.voucher_no` は ワイヤーフレーム [8] に合わせて `VARCHAR(20)` で統一 — LOT_DB 0.2.1 §4.25; (3) `lots.registered_at`（本登録の時刻、API-LOT-003 の sort `-registeredAt` で使用）— LOT_DB 0.2.1 §4.25; (4) `lot_no` の採番時点は依然として前提（Q-LOT-01）。
 - **前提:** 業務日 `OPEN` は前日の 日次締め で開かれている（ADR-005）; マスタ `shippers` / `item_codes` にデータがある（SC-10-07）。
 - **ロット番号（Q-LOT-01 【顧客（模擬）、2026-11-25】）:** `lot_no` はロットのレコードが **サーバーに上がる時**（仮受付の同期 / 新規）に `next_day_counter` で採番 — カウンターは増えるだけ、番号は **再利用しない**、飛び番は許容。仮受付の取消（入力ミス・重複）は `CANCELLED` 取消 + 理由付きの `lot_status_history` の行に変わり、**DELETE しない**（LOT_DB 4.25）— 取消の関数は未仕様化の依存。仮番号 (`provisional_no`) は API-LOT-003 `q` で業務日の終わりまで検索可能。サーバーに未登録のオフラインロットは `lot_no` がないため `PUBLISHED` にできない（販売不可）。取引確認票 / 出荷者向けの伝票には `lot_no` を印字し、仮番号は印字しない。
 - **完了条件（LAB-5）:** (a) 仮受付 → `RECEIVED` + `RECEIVE` の行1つ、数量が正しいこと; (b) 新規 → 新しいロットに日付付きの `lot_no`; (c) 2台の端末が同じ仮受付を押す → 1件は 201、1件は 409 `E-LOT-006`; (d) 重複の疑い → 409 `E-LOT-007`、`confirmDuplicate=true` で再送 → 201; (e) 日がロック → 423、行は1つも書かれない; (f) `qty = 1.25` kg / `2.5` 箱 → 422 `E-LOT-004`; (g) API-LOT-003 `q` に仮番号 `K1-012` → 正しいロットが出る（本登録の後も、業務日の終わりまで）; (h) 仮受付ロットを取消して新しいロットを作成 → 新しいロットは次の番号を受け取り、古い番号は `CANCELLED` で検索可能。

@@ -8,9 +8,9 @@ function: app.fn_register_lot
 endpoint: POST /api/v1/lots
 component: LotRegisterService
 feature: lot
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, ADR-004, ADR-005, ADR-008]
 ---
 
@@ -27,6 +27,7 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, AD
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Khách Q-LOT-01: thêm DoD (g), (h) — mã chính thức không dùng lại, lô 仮受付 hủy giữ số | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/LOT_REGISTER_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.4 | Bước 3: escape dấu `|` trong `PROVISIONAL \| NULL` để bảng không tách thêm ô (Expert review JA m-06) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -178,7 +179,7 @@ sequenceDiagram
 |---|---|
 | 1 | Lô 仮受付: `UPDATE lots SET shipper_id, item_code, unit, qty_received = p_qty, voucher_no, status = 'RECEIVED', registered_by = v_caller, registered_at = now(), updated_*` (giữ `qty_provisional`, `provisional_no`, `business_date` của lô) |
 | 2 | Lô 新規: `INSERT lots` với `lot_no = 'L' || YYYYMMDD(v_day) || '-' || next_day_counter(v_day,'LOT')`, `business_date = v_day`, `status = 'RECEIVED'`, `provisional_by = registered_by = v_caller`, `registered_at = now()` |
-| 3 | `INSERT lot_status_history (from PROVISIONAL|NULL → RECEIVED)` |
+| 3 | `INSERT lot_status_history (from PROVISIONAL \| NULL → RECEIVED)` |
 | 4 | `INSERT lot_quantity_ledger (entry_kind = 'RECEIVE', qty_delta = p_qty, business_date = v_day)` — **một** dòng; không ghi dòng cho SL 仮受付 (A-LOT-01) |
 | 5 | Trigger audit ghi `audit_logs` (trước / sau của `lots`) — FR-AUDIT-01 |
 

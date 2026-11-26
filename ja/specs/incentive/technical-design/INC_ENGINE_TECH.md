@@ -18,7 +18,7 @@ related: [ADR-007, ADR-005, ADR-006, ADR-004, ADR-002, SPEC-INCENTIVE_DB-001, SP
 
 > 様式: **BM-2-901-53 v01** — 詳細設計（チャート + 説明） · SUN ASTERISK VIETNAM CO., LTD · ISO/IEC 27001:2013 & ISO 9001:2015
 
-本ファイルで使う用語: **完納奨励金**（かんのうしょうれいきん — 一つの期の支払いを期限どおりに全額済ませた購入者への奨励金）、**期のお支払額**（期の支払うべき額）、**適格金額**（奨励金の算定基礎となる金額、税抜 = 税を含まない）、**交付率**（段階ごとの奨励率）、**期ロック**（期の確定 = 正式計上 + 凍結）、**試算**（仮計算、結果は書き込まない）、**要確認**（人が判断すべきもの）、**消込**（入金と債権の照合）、**年度 / TC 年度**（会計年度 4月→3月）。
+本ファイルで使う用語: **完納奨励金**（かんのうしょうれいきん — 一つの期の支払いを期限どおりに全額済ませた購入者への奨励金）、**期のお支払額**（期の支払うべき額）、**適格金額**（奨励金の算定基礎となる金額、税抜 = 税を含まない）、**交付率**（等級ごとの奨励率）、**期ロック**（期の確定 = 正式計上 + 凍結）、**試算**（仮計算、結果は書き込まない）、**要確認**（人が判断すべきもの）、**消込**（入金と債権の照合）、**年度 / TC 年度**（会計年度 4月→3月）。
 
 ---
 
@@ -94,7 +94,7 @@ sequenceDiagram
 | P | 処理中の期（試算中または締め中） | `payment_periods` (CLOSE_DB 4.43) | uuid |
 | Q | 再計算される `LOCKED` 済みの期（Q ≠ P） | `payment_periods.status = 'LOCKED'` | uuid |
 | V_X | 期 X の規程の版 = X の `payment_periods.rule_version_id`（X の 1 日に発効していた版） | CLOSE_DB 4.43, RULE_DB 4.21 | uuid |
-| i, c_i | 購入者と率表の区分（`NAKAOROSHI` / `BAIBAI`） | `participants.kind` | uuid, enum |
+| i, c_i | 購入者と交付率表の区分（`NAKAOROSHI` / `BAIBAI`） | `participants.kind` | uuid, enum |
 | IP(g) | 取引 g の**奨励金計算期** = `trades.incentive_period_id` が値を持てばそれ（GD 後入力として、`trade_date` の期がすでに `LOCKED` のときに記録 — §3.4）、それ以外は `trade_date` を含む期 | TRADE_DB 4.30（新しい列 — Q-INC-02） | uuid |
 | S_excl(i,X,r) | 期 X における i の税率 r ごとの税抜合計 | `v_trade_effective` を **IP(g) = X** で絞り込み + `trade_adjustments.period_id` | bigint |
 | T(i,X,r) | 税率ごとの期の税額 = ROUND_{TAX_ROUNDING}(S_excl × rate_r / 100) | `tax_rates`, V_X の `rule_parameters.TAX_ROUNDING` | bigint |
@@ -105,7 +105,7 @@ sequenceDiagram
 | FEE_MAX | `KANNO_FEE_SUSPECT_MAX_JPY` — 「手数料差引の疑い」の閾値（設定ファイル、印を付けるためだけに使い、金額は変えない） | 設定ファイル（ADR-006 §2.6） | bigint |
 | K(i,X) | 完納（boolean） | K3 / 判断 / 修正申請 KANNO | boolean |
 | E(i,X) | 適格金額 = K ? max(0, E0) : 0 | — | bigint |
-| t, ρ | 段階と交付率（basis point, 1 bp = 0.01%） | V_X の `incentive_rate_rows`、c_i | smallint, int |
+| t, ρ | 等級と交付率（basis point, 1 bp = 0.01%） | V_X の `incentive_rate_rows`、c_i | smallint, int |
 | I(i,X) | 計算式による奨励額 = ⌊E × ρ × 110 / 1,000,000⌋ | K5 | bigint |
 | C_INC(i,X) | (i, X) について決裁済みの修正申請 `INCENTIVE` の額の合計 — 固定額で、加算する | ADJUST_DB 4.37 `change.amount_jpy` | bigint |
 | R(i,Q) | Q について記録済みの合計 = (i, Q) の `MAIN` 行の `incentive_jpy` の合計 + i の `ref_period_id = Q` の `DELTA` 行の合計 | INCENTIVE_DB 4.52 | bigint |
@@ -127,7 +127,7 @@ Payout(i,P) = max(0, Σ incentive_jpy mọi dòng của i có period_id = P)
 
 1. K1 で P の入力と DELTA 候補の期の集合を収集 → H。
 2. K3 で P の期のお支払額 + 完納 / 要確認を計算（判断があれば適用）。
-3. K4 で V_P を選び、段階を照会 → K5 で MAIN。
+3. K4 で V_P を選び、等級を照会 → K5 で MAIN。
 4. K6 で各 Q を順に（`period_code` の昇順）: 再計算、R と比較、DELTA の行を生成（出所ごとに分ける）。
 5. K7 で P の各 i の全行（MAIN + DELTA + 繰り越し分）を合算 → payout、次の期への CARRY / 年度末の CARRY_EXPIRED。
 6. K8（LOCK のみ）は同一トランザクションで全てを書き込む; K9 は報告 / 試算との比較に読み出す。
@@ -147,7 +147,7 @@ K2（入金の配分）は**エンジン内では実行しない**: CSV 取込 /
 
 1. 修正申請 `LATE_ENTRY`（settle → trade）の取引記録関数は、`SELECT … FROM payment_periods WHERE id = Q FOR SHARE` で取引日の期 Q を読む（期ロックの `FOR UPDATE` と直列化 — 「ロックの最中に書き込む」隙間を作らない）。Q が `LOCKED` → `trades.incentive_period_id` = **P\*** を記録。P\* = 取引の `business_date`（業務日の記帳日 = 決裁時に開いている最も早い日 — ADR-005 §2.8）を含む期。Q が `OPEN` → NULL のまま（取引は通常どおり Q に属する、TV-01）。
 2. P\* は必ず `OPEN`: 記帳の業務日が `OPEN` ならその期はまだロックできない（K8: 未ロックの業務日がある → `E-INC-005`）。
-3. P\* において、その取引は**通常の P\* の金額**: S_excl / B（期のお支払額 — 購入者は同じ期 P\* で請求を受ける）、E0 に入り、段階は V_P\* で照会; 完納は **P\* の支払期日**で判定（OT ≥ B）。K3–K5 に専用の分岐は無い。
+3. P\* において、その取引は**通常の P\* の金額**: S_excl / B（期のお支払額 — 購入者は同じ期 P\* で請求を受ける）、E0 に入り、等級は V_P\* で照会; 完納は **P\* の支払期日**で判定（OT ≥ B）。K3–K5 に専用の分岐は無い。
 4. Q は、この取引のために DELTA の候補に入らない（K1-4）; Q の `period_billings` LOCK と結果は変わらない（ルール 4）。
 5. `trade_date`、`business_date`、日ごとの集計（日次精算、IF-ACC-01、日別報告）は**変わらない** — `incentive_period_id` は期のお支払額と完納奨励金にのみ使う。
 
@@ -243,7 +243,7 @@ K2（入金の配分）は**エンジン内では実行しない**: CSV 取込 /
 
 **DoD K3:** TV-05 → `NG`、E = 0; TV-10 → 440 ≤ FEE_MAX で不足のとき `SUSPECT`; 判断 `KANNO` + 理由 → K = true、`JUDGED`、奨励金 9,900; 判断 `NOT_KANNO` → 0; 1,050,000 の 8% 税 = 84,000（TV-01）。
 
-### 4.4. K4 — 版の選択と段階の照会（`rate_tier_for`）
+### 4.4. K4 — 版の選択と等級の照会（`rate_tier_for`）
 
 | 項目 | 値 |
 |---|---|
@@ -254,7 +254,7 @@ K2（入金の配分）は**エンジン内では実行しない**: CSV 取込 /
 
 | エラー条件 | 処理 | Status code |
 |---|---|---|
-| (V_X, c_i) の率表が連続する 5 段階を満たさない、または E を含む段階が無い | 計算全体を停止、ERROR をログ（規程データの破損 — 関数 `submit_rule_version` で本来は阻止されているはず）、`E-INC-010` を返す | 500 |
+| (V_X, c_i) の交付率表が連続する 5 等級を満たさない、または E を含む等級が無い | 計算全体を停止、ERROR をログ（規程データの破損 — 関数 `submit_rule_version` で本来は阻止されているはず）、`E-INC-010` を返す | 500 |
 
 **Detail**
 
@@ -262,9 +262,9 @@ K2（入金の配分）は**エンジン内では実行しない**: CSV 取込 /
 |---|---|
 | 1 | 版 = **期 X の V_X**（期の 1 日）。ロック日や再計算日の発効版では**ない**（TV-12: 期 09 は v2 を照会、期 10 は v3 を照会; Q の DELTA は常に V_Q を照会 — TV-02, TV-03）。 |
 | 2 | `incentive_rate_rows` から `participant_class = c_i`、`min_eligible_jpy ≤ E`、かつ（`max_eligible_jpy` IS NULL または `E < max_eligible_jpy`）の行を選ぶ — 下限は「以上」、上限は「未満」。 |
-| 3 | E = 0 → 段階 1、ρ = 0（段階 1 は常に 0 bp — RULE_DB 4.22）。 |
+| 3 | E = 0 → 等級 1、ρ = 0（等級 1 は常に 0 bp — RULE_DB 4.22）。 |
 
-**DoD K4:** TV-12: 1,000,000 → 段階 3（下限ちょうど）; 999,999 → 段階 2; 同じ人の期 09 / 期 10 は異なる版を照会する。
+**DoD K4:** TV-12: 1,000,000 → 等級 3（下限ちょうど）; 999,999 → 等級 2; 同じ人の期 09 / 期 10 は異なる版を照会する。
 
 ### 4.5. K5 — MAIN の奨励額の計算（`incentive_amount`）
 
@@ -398,7 +398,7 @@ K2（入金の配分）は**エンジン内では実行しない**: CSV 取込 /
 | 3 | 「前期以前の調整」: ロック済みの期へ紐づき、締め後に記録された `trade_adjustments` の合計を、人 × 元の期ごとに表示 — P の B には加算しない（OPEN-DB-08）。GD 後入力は**ここには出ない**（P\* の B に既に入っている）。 |
 | 3a | 「前期分の後入力」: `incentive_period_id = P` の取引（`trade_date` が P の外）— 人 × `trade_date` × 額で表示; 既に P の B と E0 に入っている（§3.4）、照合担当者が購入者へ説明できるよう表示する。 |
 | 3b | チェック項目 Q-INC-01 の情報: 最新の入金 CSV バッチの最大の入金日と取込日時; 画面は自動でチェックしない。 |
-| 4 | 試算との比較: 最新と直前の試算の map の、人ごとの差分; 合計の差。現在の H を含めた最後の試算のハッシュも返し、画面が再試算の必要性を判断できるようにする（現在の H ≠ 最後の試算のハッシュ → 期ロックのボタンを非活性にする）。 |
+| 4 | 試算との比較: 最新と直前の試算の map の、人ごとの差分; 合計の差。`last_preview.input_hash` も返し、画面が再試算の必要性を判断できるようにする（現在の H ≠ 最後の試算のハッシュ → 期ロックのボタンを非活性にする）。 |
 | 5 | 確定結果: P に記録された `incentive_results` を読む + K7-1 の payout + RPT-07 向けの `CARRY_EXPIRED` の絶対値。 |
 
 **DoD K9:** TV-06 は期 10 の B05 に `OLD_PERIOD_ALLOCATION` を生成; TV-02 は期 09 の「前期以前の調整」に 216,000 を表示; TV-13 は期 09 の「前期分の後入力」に 08/31 の B12 200,000（税抜）を表示（「前期以前の調整」には出ない）; 二回の試算の間に新しい配分があった → 差分がちょうど奨励額の変化分になる。
@@ -407,7 +407,7 @@ K2（入金の配分）は**エンジン内では実行しない**: CSV 取込 /
 
 ## 5. その他の注記
 
-**テストベクターの唯一の出典:** `specs/system-design/database-design/INCENTIVE_DB.md` §5（TV-01..TV-15）。数値はここにコピーしない; CI のフィクスチャはその表から構築する（率表はダミー — `incentive-rate-table.csv` が来るまで — E-03, L4-A02）。ブロックとの対応:
+**テストベクターの唯一の出典:** `specs/system-design/database-design/INCENTIVE_DB.md` §5（TV-01..TV-15）。数値はここにコピーしない; CI のフィクスチャはその表から構築する（交付率表はダミー — `incentive-rate-table.csv` が来るまで — E-03, L4-A02）。ブロックとの対応:
 
 | TV | 主な検査ブロック | 備考 |
 |---|---|---|

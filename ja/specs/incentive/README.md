@@ -21,4 +21,4 @@ Feature `incentive`（モジュール。`architecture/ARCHITECTURE.md` §2 参�
 
 ## LAB-5 向けタスク分割の提案
 
-INC_ENGINE_TECH §4 の各ブロックが、それぞれ独立した DoD（完了条件）を持つタスクになる: K1 収集 + ハッシュ · K2 FIFO（並行実施可） · K3 期のお支払額 + 完納 / 要確認 · K4 期の版に基づく段階の照会 · K5 計算式 · K6 DELTA（K1–K5 に依存） · K7 CARRY / CARRY_EXPIRED · K8 期ロックのトランザクション + 試算 · K9 読み取りモデル + 試算との照合。追加: API-INC-001..004（ルート + zod + エラーマッピング）、画面 SC-09-04、INCENTIVE_DB §5 由来の CI 用フィクスチャ。
+INC_ENGINE_TECH §4 の各ブロックが、それぞれ独立した DoD（完了条件）を持つタスクになる: K1 収集 + ハッシュ · K2 FIFO（並行実施可） · K3 期のお支払額 + 完納 / 要確認 · K4 期の版に基づく等級の照会 · K5 計算式 · K6 DELTA（K1–K5 に依存） · K7 CARRY / CARRY_EXPIRED · K8 期ロックのトランザクション + 試算 · K9 読み取りモデル + 試算との照合。追加: API-INC-001..004（ルート + zod + エラーマッピング）、画面 SC-09-04、INCENTIVE_DB §5 由来の CI 用フィクスチャ。
