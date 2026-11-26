@@ -49,7 +49,7 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 | Điều kiện dùng thử S1 | Issue |
 |---|---|
 | AC-S1-1 Demo bằng danh sách người tham gia đã che của chợ (actors.csv đợt 1) — nếu tới 2027-01-15 chưa có file thì AC-S1-1 dời sang S2, không dùng dữ liệu bịa (PREMISE L5-A18) | A-FG01-14, C-CLR-14 |
-| AC-S1-2 照合事務局 đăng ký 1 仲卸 có 許可, 1 売買参加者 có 承認 (有効日 / 失効日 riêng), đặt 一時停止 theo 決裁 — **trên màn** | API A-FG01-07.1, 07.2, 08.1, 08.3; màn A-FG01-13.1 (SC-01-03), 13.2 (SC-01-04), 20.1 (SC-01-05 一時停止); test A-FG01-10, 11; thiết kế A-FG01-16, 17 (第1波) |
+| AC-S1-2 照合事務局 đăng ký 1 仲卸 có 許可, 1 売買参加者 có 承認 (有効日 / 失効日 riêng), đặt 一時停止 theo 決裁 — **trên màn** (vào từ menu + mã người tham gia; 決裁 / 確認 dùng token MFA khóa test, MFA thật ở S2) | API A-FG01-07.1, 07.2, 08.1, 08.3; màn A-FG01-13.1 (SC-01-03), 13.2 (SC-01-04), 20.1 (SC-01-05 一時停止); test A-FG01-10, 11; thiết kế A-FG01-16, 17 (第1波) |
 | AC-S1-3 取引担当 gõ mã người mua bằng bàn phím → thấy hiệu lực, căn cứ 許可 / 承認, ngày hết hạn | A-FG01-04, A-FG01-19.1, 19.2 (dev SC-01-06); thiết kế A-FG01-15 (第1波) |
 | AC-S1-4 Hai người đổi nhau bằng PIN trên PC dùng chung trong vài giây; nhật ký đúng người | C-FG02-03, C-FG02-04, C-FG13-02, C-FG02-21.1 (dev SC-00-01), C-FG02-22.1 (dev SC-00-02), C-FG02-23 (test); thiết kế C-FG02-19 (第1波) |
 

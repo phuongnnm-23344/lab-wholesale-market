@@ -8,9 +8,9 @@ function: recordDeliveries (online) · fn_delivery_record（オフライン同�
 endpoint: POST /api/v1/deliveries
 component: DeliveryService
 feature: delivery
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [SPEC-SC-06-02-001, SPEC-DELIVERY_FUNC-001, API-DEL-001, API-DEL-002, API-DEL-003, SPEC-TRADE_DB-001, SPEC-IAM_AUDIT_DB-001, ADR-004, ADR-005, ADR-008, FR-DEL-01, FR-DEL-02, BR-DEL-03, PRM-118, E-17]
 ---
 
@@ -27,6 +27,7 @@ related: [SPEC-SC-06-02-001, SPEC-DELIVERY_FUNC-001, API-DEL-001, API-DEL-002, A
 | 1 | 0.1.0 | Add new | — | 初版作成 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: 完了条件（LAB-5）; 顧客（模擬）Q-DEL-03; G2-m07: 性能目標のラベル [PL] | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: Mermaid ブロックから書き出した PNG `./assets/DEL_RECORD_sequence.png` を埋め込み（`scripts/export-mermaid-png.py`）; Mermaid が引き続き原本 | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.5 No 2, §5 | LAB-5 PREMISE L5-S01（Expert Gate A Q-01）: COMMIT 前に同じトランザクションで `app.fn_lot_refresh_delivery_status` を呼ぶ; §5 から「module lot が v_delivery_status を読む」を削除 | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -191,7 +192,7 @@ sequenceDiagram
 | No | 処理内容 |
 |---|---|
 | 1 | 取引ごとに `v_delivery_status` を読む: `status` = 待機中（引渡し 0）· 引渡し中 · 完了（取引日の規程バージョンの `DELIVERY_MATCH_RULE` による残 = 0 — E-17）· 例外（`delivery_exceptions` が OPEN にある） |
-| 2 | COMMIT; 201 を返す（全件再送 → 同じボディで 200） |
+| 2 | 引渡しを記録した取引のロットごとに `app.fn_lot_refresh_delivery_status(lot_id)` を呼ぶ（LOT_FUNC 2.11、同じトランザクション — ロットが `CLOSED` で全取引が完了 → `DELIVERED`）; COMMIT; 201 を返す（全件再送 → 同じボディで 200） |
 
 ---
 
@@ -199,7 +200,7 @@ sequenceDiagram
 
 - **オフライン snapshot**（`API-DEL-002`）: 直近最大 7 業務日の残 > 0 の `CONFIRMED` 取引（Q-DEL-02 — 顧客（模擬）が同意 【顧客（模擬）、2026-11-25】）+ 買受人一覧（番号、名称）+ `snapshotAt`。価格／金額は含まない（端末上のデータを減らす）。PWA はローカルの残 = snapshot − その端末の未同期キューで計算する。
 - **オフラインで二台のタブレットが同じ取引を引き渡した場合**: 両方ともローカルに記録できる; 同期時、後から届いた記録が残を超えると `HELD` → SC-03-07（決裁者が保持／破棄／修正申請 `LATE_ENTRY` を作成）— 自動でまとめない、上書きしない（ADR-008 §2.2-6）。
-- **対象外:** 引渡しを修正／削除しない; 例外は扱わない（DEL_DISPUTE）; ロットの状態を `DELIVERED` に変えない（モジュール `lot` が `v_delivery_status` を読む）。
+- **対象外:** 引渡しを修正／削除しない; 例外は扱わない（DEL_DISPUTE）; ロットの状態を自分では書かない — ロットを `DELIVERED` にするのはモジュール `lot` の public 関数（`app.fn_lot_refresh_delivery_status`、LOT_FUNC 2.11）で、delivery は 4.5 No 2 でこの関数を呼ぶだけ。
 - **性能:** 20 item で p95 ≤ 2 秒（書き込み API の [PL]、検索の NFR-PERF-01 の水準に合わせる）; インデックス `idx_deliveries_trade`, `uq_deliveries_client_record`。
 - **同期 API** はモジュール `sync` に属する（P3 ではまだ仕様なし）— `fn_delivery_record` を `offline` フラグと、キュー記録から取った `captured_by`, `captured_at`, `device_id` を付けて呼び出すこと。
 - トレーサビリティ: ルール4; FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, PRM-111, PRM-118, E-17, NFR-AVL-02, NFR-PERF-01, DEC-004; ADR-004, ADR-005 §2.3, ADR-008 §2.2; TRADE_DB 4.34, IAM_AUDIT_DB 4.6, 4.55。

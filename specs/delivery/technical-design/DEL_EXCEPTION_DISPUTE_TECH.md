@@ -8,9 +8,9 @@ function: registerException · confirmDispute
 endpoint: POST /api/v1/delivery-exceptions · POST /api/v1/delivery-exceptions/{exceptionId}/confirmation
 component: DeliveryExceptionService
 feature: delivery
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, API-DEL-004, API-DEL-005, API-DEL-006, SPEC-TRADE_DB-001, SPEC-ADJUST_DB-001, ADR-002, ADR-004, ADR-005, ADR-008, CAP-HUMAN-01, PRM-111, FR-DEL-03, FR-DEL-04]
 ---
 
@@ -27,6 +27,7 @@ related: [SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, API-DEL-
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); khách Q-DEL-04: chỉ SL thực giao, tiền theo đơn giá đã chốt, chỉ hướng giảm | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/DEL_EXCEPTION_DISPUTE_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | xác nhận tranh chấp No 2 | LAB-5 PREMISE L5-S01 (Expert Gate A Q-01): kết luận `COMPLETED` / `PARTIAL_RETURN` gọi `app.fn_lot_refresh_delivery_status` trong cùng transaction | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -209,7 +210,7 @@ Chạy xong (1): có `delivery_exceptions` (OPEN; tranh chấp có `sla_due_at`)
 | No | Nội dung xử lý |
 |---|---|
 | 1 | INSERT `dispute_confirmations` (`exception_id`, `confirmed_by`, `delegation_id`, `mfa_verified_at`, `decision_note` = comment hoặc nhãn kết luận, `signer_absent_reason`, **`conclusion`** — TRADE_DB 0.2.1 §4.36, Q-DEL-07) |
-| 2 | `COMPLETED` / `PARTIAL_RETURN`: UPDATE `delivery_exceptions.status = RESOLVED`, `resolved_at` |
+| 2 | `COMPLETED` / `PARTIAL_RETURN`: UPDATE `delivery_exceptions.status = RESOLVED`, `resolved_at`; gọi `app.fn_lot_refresh_delivery_status(lot_id)` cho lô của GD (LOT_FUNC 2.11, cùng transaction) |
 | 3 | `PARTIAL_RETURN`: tính tiền theo `returnQty`, đi đúng bảng ở §3 (ngày GD `OPEN` → `trade_fixes` + REVERSE / DELTA + `affects_amount = true`; `LOCKED` → `correctionRequired`) |
 | 4 | `CONTINUE_DISPUTE`: ngoại lệ giữ `OPEN` (vẫn là ⚠ 「未確認の争い」 ở 日次締め, sang ngày sau); `notifications` → SETTLE (紛争管理 SC-07-03) |
 | 5 | `audit_logs` — ghi rõ "xác nhận thay người ký giấy {tên}" khi `signer_absent_reason` có giá trị, và 代行 |

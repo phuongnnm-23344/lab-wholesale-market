@@ -108,10 +108,10 @@ update:
   A-FG01-13: {title: "[FG-01] 許可・承認 登録画面 — SC-01-03, SC-01-04 (DEP-15)", kind: dev, dod: ["Đúng Screen Spec SC-01-03 / SC-01-04 (A-FG01-17)"],
               description: "Thiết kế ở 設計第1波 (A-FG01-17) xong trước S1 → tách thành lá dev ≤ 16 giờ theo rolling-wave (L5-D08); bản tối thiểu vào S1 cho AC-S1-2 (L5-D10)."}
   A-FG01-13.1: {title: "[FG-01] SC-01-03 許可登録 (S1 tối thiểu) — nhập 許可 仲卸, 有効日 / 失効日", kind: dev, hours_hint: 10,
-                dod: ["AC-S1-2: 照合事務局 nhập 1 許可 cho 仲卸 có 有効日 / 失効日 trên màn, gọi API-PTY-004 / 005", "Chỉ hiện cho 仲卸 (luật 2)"],
+                dod: ["Đúng Screen Spec SC-01-03 (A-FG01-17), phần tối thiểu", "AC-S1-2: 照合事務局 nhập 1 許可 cho 仲卸 có 有効日 / 失効日 trên màn, gọi API-PTY-004 / 005", "Chỉ hiện cho 仲卸 (luật 2)", "Cửa vào ở S1: menu của khung màn PC (C-PLAT-09) + ô nhập mã người tham gia bằng bàn phím; người tham gia có sẵn từ actors.csv đợt 1 (A-FG01-14) — SC-01-01 / nút trên SC-01-02 sang S2"],
                 description: "Bản tối thiểu của SC-01-03 cho S1 (L5-D10)."}
   A-FG01-13.2: {title: "[FG-01] SC-01-04 承認登録 (S1 tối thiểu) — nhập 承認 売買参加者, 有効日 / 失効日", kind: dev, hours_hint: 10,
-                dod: ["AC-S1-2: 照合事務局 nhập 1 承認 cho 売買参加者 có 有効日 / 失効日 trên màn, gọi API-PTY-006 / 007", "Chỉ hiện cho 売買参加者 (luật 2)"],
+                dod: ["Đúng Screen Spec SC-01-04 (A-FG01-17), phần tối thiểu", "AC-S1-2: 照合事務局 nhập 1 承認 cho 売買参加者 có 有効日 / 失効日 trên màn, gọi API-PTY-006 / 007", "Chỉ hiện cho 売買参加者 (luật 2)", "Cửa vào ở S1: menu của khung màn PC (C-PLAT-09) + ô nhập mã người tham gia bằng bàn phím; người tham gia có sẵn từ actors.csv đợt 1 (A-FG01-14) — SC-01-01 / nút trên SC-01-02 sang S2"],
                 description: "Bản tối thiểu của SC-01-04 cho S1 (L5-D10)."}
   C-FG02-13: {title: "[FG-02][概算] SC-00-03 ホーム — trang chủ theo vai (chưa spec)", hours_hint: 20, role: FE,
               description: "Còn lại của nhóm SC-00-01..03 sau khi SC-00-01 / SC-00-02 thành issue dev C-FG02-21 / C-FG02-22 (L5-D05). Giờ = ước LAB-1 (chỗ giữ effort, L5-D08)."}
@@ -127,6 +127,9 @@ set_depends:
   A-FG01-13.1: [A-FG01-07.1, A-FG01-07.2]
   A-FG01-13.2: [A-FG01-08.1, A-FG01-08.3]
 add_depends:
+  A-FG01-13.1: [C-PLAT-09]
+  A-FG01-13.2: [C-PLAT-09]
+  A-FG01-20.1: [C-PLAT-09]
   B-FG09-21.3: [B-FG09-21.1, B-FG09-21.2]
   B-FG09-21.4: [B-FG09-21.3]
   B-FG09-21: [B-CLR-07, B-CLR-08, B-CLR-24]
@@ -142,6 +145,12 @@ children:
     - ["試算表 — đối chiếu với bảng tính tay của 照合事務局 + biên bản ký", test, QA, QA-2, 12]
     - ["試算表 — buổi kiểm với 照合事務局 / 経理部 / ルール管理者", test, BrSE, BrSE-1, 6]
 add_dod:
+  A-FG01-20.1: ["Cửa vào ở S1: menu của khung màn PC (C-PLAT-09) + ô nhập mã người tham gia bằng bàn phím; người tham gia có sẵn từ actors.csv đợt 1 (A-FG01-14) — SC-01-01 / nút trên SC-01-02 sang S2"]
+  A-FG01-07.2: ["S1: bước 決裁 nhận token MFA ký bằng khóa test theo cột seed của DEP-01 (L5-D10); middleware kiểm token thật ở S2 (C-FG02-06), danh sách hành động cần MFA không đổi"]
+  A-FG01-08.3: ["S1: bước 確認 nhận token MFA ký bằng khóa test theo cột seed của DEP-01 (L5-D10); middleware kiểm token thật ở S2 (C-FG02-06), danh sách hành động cần MFA không đổi"]
+  A-FG06-04: ["Gọi app.fn_lot_refresh_delivery_status cho lô của GD trong cùng transaction trước COMMIT (DEL_RECORD_TECH 0.1.3 §4.5 No 2, LOT_FUNC 2.11)"]
+  A-FG06-07: ["Kết luận COMPLETED / PARTIAL_RETURN gọi app.fn_lot_refresh_delivery_status trong cùng transaction (DEL_EXCEPTION_DISPUTE_TECH 0.1.3)"]
+  A-FG03-16: ["Cài hàm public app.fn_lot_refresh_delivery_status theo LOT_FUNC 2.11 (0.1.2): CLOSED + mọi GD 完了 → DELIVERED + lot_status_history, khóa FOR UPDATE, không đổi ngược"]
   B-FG09-14: ["Ca L5-A04 (B-CLR-24): 期のお支払額 kỳ OPEN giảm sau phân bổ → K9 cảnh báo 過入金, 照合 dời tay (MANUAL), 完納 đúng sau khi dời"]
 
 not_issued_fix:
@@ -182,6 +191,6 @@ iteration1:
   include_extra: [A-FG01-14, C-FG13-01, C-FG13-02]
 acceptance_s1:
   - {id: AC-S1-1, text: "Demo bằng danh sách người tham gia đã che của chợ (actors.csv đợt 1), không dùng dữ liệu bịa", issues: [A-FG01-14, C-CLR-14]}
-  - {id: AC-S1-2, text: "照合事務局 tự đăng ký 1 仲卸 có 許可 và 1 売買参加者 có 承認, mỗi cái có 有効日 / 失効日 riêng, rồi đặt 一時停止 cho một người theo 決裁, lưu giờ phút", issues: [A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.3, A-FG01-13.1, A-FG01-13.2, A-FG01-20.1, A-FG01-10, A-FG01-11, A-FG01-17, A-FG01-16], screen: true}
+  - {id: AC-S1-2, text: "照合事務局 tự đăng ký 1 仲卸 có 許可 và 1 売買参加者 có 承認, mỗi cái có 有効日 / 失効日 riêng, rồi đặt 一時停止 cho một người theo 決裁, lưu giờ phút — trên màn SC-01-03 / 04 / 05 bản tối thiểu (vào từ menu + mã người tham gia); bước 決裁 / 確認 dùng token MFA khóa test (MFA thật ở S2); khối xem trên SC-01-02 và lỗi / khóa của SC-00-01 dời S2", issues: [A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.3, A-FG01-13.1, A-FG01-13.2, A-FG01-20.1, A-FG01-10, A-FG01-11, A-FG01-17, A-FG01-16], screen: true}
   - {id: AC-S1-3, text: "取引担当 gõ mã người mua chỉ bằng bàn phím là thấy ngay còn hiệu lực không, căn cứ 許可 hay 承認, hết hạn ngày nào (NFR-USE-01)", issues: [A-FG01-04, A-FG01-19.1, A-FG01-19.2, A-FG01-15], screen: true}
   - {id: AC-S1-4, text: "Trên một PC dùng chung, hai người đổi nhau bằng PIN trong vài giây; nhật ký ghi đúng ai làm gì", issues: [C-FG02-03, C-FG02-04, C-FG13-02, C-FG02-21.1, C-FG02-22.1, C-FG02-19, C-FG02-23], screen: true}

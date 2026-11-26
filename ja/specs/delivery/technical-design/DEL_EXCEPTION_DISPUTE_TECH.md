@@ -8,9 +8,9 @@ function: registerException · confirmDispute
 endpoint: POST /api/v1/delivery-exceptions · POST /api/v1/delivery-exceptions/{exceptionId}/confirmation
 component: DeliveryExceptionService
 feature: delivery
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, API-DEL-004, API-DEL-005, API-DEL-006, SPEC-TRADE_DB-001, SPEC-ADJUST_DB-001, ADR-002, ADR-004, ADR-005, ADR-008, CAP-HUMAN-01, PRM-111, FR-DEL-03, FR-DEL-04]
 ---
 
@@ -27,6 +27,7 @@ related: [SPEC-SC-06-04-001, SPEC-SC-06-05-001, SPEC-DELIVERY_FUNC-001, API-DEL-
 | 1 | 0.1.0 | Add new | — | 初版作成 | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: 完了条件（LAB-5）; 顧客（模擬）Q-DEL-04: 実際に引き渡した数量のみ、金額は確定単価に基づき、減額方向のみ | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: Mermaid ブロックから書き出した PNG `./assets/DEL_EXCEPTION_DISPUTE_sequence.png` を埋め込み（`scripts/export-mermaid-png.py`）; Mermaid が引き続き原本 | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | 争いの確認 No 2 | LAB-5 PREMISE L5-S01（Expert Gate A Q-01）: 結論 `COMPLETED` / `PARTIAL_RETURN` で同じトランザクション内に `app.fn_lot_refresh_delivery_status` を呼ぶ | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -209,7 +210,7 @@ sequenceDiagram
 | No | 処理内容 |
 |---|---|
 | 1 | `dispute_confirmations` に INSERT（`exception_id`, `confirmed_by`, `delegation_id`, `mfa_verified_at`, `decision_note` = コメントまたは結論ラベル, `signer_absent_reason`, **`conclusion`** — TRADE_DB 0.2.1 §4.36、Q-DEL-07） |
-| 2 | `COMPLETED` / `PARTIAL_RETURN`: UPDATE `delivery_exceptions.status = RESOLVED`, `resolved_at` |
+| 2 | `COMPLETED` / `PARTIAL_RETURN`: UPDATE `delivery_exceptions.status = RESOLVED`, `resolved_at`; 取引のロットについて `app.fn_lot_refresh_delivery_status(lot_id)` を呼ぶ（LOT_FUNC 2.11、同じトランザクション） |
 | 3 | `PARTIAL_RETURN`: `returnQty` で金額を計算、§3 の表どおりの経路（取引の日付が `OPEN` → `trade_fixes` + REVERSE / DELTA + `affects_amount = true`; `LOCKED` → `correctionRequired`） |
 | 4 | `CONTINUE_DISPUTE`: 例外は `OPEN` のまま（日次締め では ⚠ 「未確認の争い」 のまま、翌日に持ち越し）; `notifications` → SETTLE（紛争管理 SC-07-03） |
 | 5 | `audit_logs` — `signer_absent_reason` に値があるとき「紙の署名者 {氏名} の代わりに確認」と明記、および代行 |

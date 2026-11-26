@@ -8,9 +8,9 @@ function: recordDeliveries (online) · fn_delivery_record (dùng chung cho đồ
 endpoint: POST /api/v1/deliveries
 component: DeliveryService
 feature: delivery
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [SPEC-SC-06-02-001, SPEC-DELIVERY_FUNC-001, API-DEL-001, API-DEL-002, API-DEL-003, SPEC-TRADE_DB-001, SPEC-IAM_AUDIT_DB-001, ADR-004, ADR-005, ADR-008, FR-DEL-01, FR-DEL-02, BR-DEL-03, PRM-118, E-17]
 ---
 
@@ -27,6 +27,7 @@ related: [SPEC-SC-06-02-001, SPEC-DELIVERY_FUNC-001, API-DEL-001, API-DEL-002, A
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); khách Q-DEL-03; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/DEL_RECORD_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.5 No 2, §5 | LAB-5 PREMISE L5-S01 (Expert Gate A Q-01): gọi `app.fn_lot_refresh_delivery_status` trong cùng transaction trước COMMIT; §5 bỏ câu "module lot đọc v_delivery_status" | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -191,7 +192,7 @@ Chạy xong: có dòng `deliveries` với `business_date` = 業務日 hiện t�
 | No | Nội dung xử lý |
 |---|---|
 | 1 | Đọc `v_delivery_status` cho các GD: `status` = 待機中 (đã giao 0) · 引渡し中 · 完了 (残 = 0 theo `DELIVERY_MATCH_RULE` của version quy chế ngày GD — E-17) · 例外 (có `delivery_exceptions` OPEN) |
-| 2 | COMMIT; trả 201 (replay toàn bộ → 200 với cùng body) |
+| 2 | Gọi `app.fn_lot_refresh_delivery_status(lot_id)` cho mỗi lô có GD vừa ghi giao (LOT_FUNC 2.11, cùng transaction — lô `CLOSED` và mọi GD đã 完了 → `DELIVERED`); COMMIT; trả 201 (replay toàn bộ → 200 với cùng body) |
 
 ---
 
@@ -199,7 +200,7 @@ Chạy xong: có dòng `deliveries` với `business_date` = 業務日 hiện t�
 
 - **Snapshot offline** (`API-DEL-002`): GD `CONFIRMED` còn 残 > 0 trong tối đa 7 業務日 gần nhất (Q-DEL-02 — khách đồng ý [Customer giả lập, 2026-11-25]) + danh sách người mua (số, tên) + `snapshotAt`. Không chứa giá / tiền (giảm dữ liệu trên máy). PWA tính 残 cục bộ = snapshot − hàng đợi chưa đồng bộ của chính máy.
 - **Hai tablet cùng giao một GD khi offline**: cả hai ghi cục bộ được; khi đồng bộ, bản ghi tới sau vượt 残 → `HELD` → SC-03-07 (người quyết giữ / bỏ / lập 修正申請 `LATE_ENTRY`) — không tự gộp, không ghi đè (ADR-008 §2.2-6).
-- **Không làm:** không sửa / xóa lần giao; không xử lý ngoại lệ (DEL_DISPUTE); không đổi trạng thái lô sang `DELIVERED` (module `lot` đọc `v_delivery_status`).
+- **Không làm:** không sửa / xóa lần giao; không xử lý ngoại lệ (DEL_DISPUTE); không tự ghi trạng thái lô — việc đổi lô sang `DELIVERED` do hàm public của module `lot` làm (`app.fn_lot_refresh_delivery_status`, LOT_FUNC 2.11), delivery chỉ gọi hàm này ở 4.5 No 2.
 - **Hiệu năng:** p95 ≤ 2 giây với 20 item ([PL] cho API ghi, lấy theo mức NFR-PERF-01 của tìm kiếm); index `idx_deliveries_trade`, `uq_deliveries_client_record`.
 - **API đồng bộ** thuộc module `sync` (chưa có spec ở P3) — phải gọi `fn_delivery_record` với cờ `offline` và `captured_by`, `captured_at`, `device_id` lấy từ bản ghi hàng đợi.
 - Truy vết: luật 4; FR-DEL-01, FR-DEL-02, FR-DEL-05, BR-DEL-03, PRM-111, PRM-118, E-17, NFR-AVL-02, NFR-PERF-01, DEC-004; ADR-004, ADR-005 §2.3, ADR-008 §2.2; TRADE_DB 4.34, IAM_AUDIT_DB 4.6, 4.55.
