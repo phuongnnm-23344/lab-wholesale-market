@@ -8,9 +8,9 @@ function: getCorrectionDetail · decideCorrection
 endpoint: GET /api/v1/corrections/{correctionId} · POST /api/v1/corrections/{correctionId}/decisions
 component: CorrectionService
 feature: settle
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [SPEC-SC-08-03-001, SPEC-SETTLE_FUNC-001, API-STL-004, API-STL-005, SPEC-ADJUST_DB-001, ADR-004, ADR-005, ADR-006, ADR-007, ADR-002, FR-CORR-01, FR-CORR-02, FR-CORR-03, PRM-120, E-08, L4-D03]
 ---
 
@@ -27,6 +27,7 @@ related: [SPEC-SC-08-03-001, SPEC-SETTLE_FUNC-001, API-STL-004, API-STL-005, SPE
 | 1 | 0.1.0 | Add new | — | Khởi tạo | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-M02: Điều kiện hoàn thành (LAB-5); G2-M03: LATE_ENTRY bị từ chối → 409 E-STL-029 + `detail.sourceCode`; khách Q-STL-04: quyền cấp 1; Q-INC-02: GD LATE_ENTRY kỳ đã khóa ghi `incentive_period_id` | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/STL_CORRECTION_DECIDE_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.4 | Bảng Error: ghi rõ dòng `correction_approvals` cũng rollback (thay chữ "approval" dễ hiểu nhầm, rà khi làm bản `ja/`) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -180,7 +181,7 @@ MFA step-up mỗi lần (10 phút, idle 3 phút — không phải ★), nên nú
 | Điều kiện lỗi | Xử lý | Status code |
 |---|---|---|
 | Không có 業務日 `OPEN` | Rollback; `E-STL-028` (không xảy ra nếu ADR-005 §2.4 chạy đúng — alarm) | 409 |
-| `TRADE` tăng SL mà lô không đủ SL khả dụng | Rollback (approval cũng rollback); `E-STL-027` kèm SL còn | 409 |
+| `TRADE` tăng SL mà lô không đủ SL khả dụng | Rollback (dòng `correction_approvals` cũng rollback); `E-STL-027` kèm SL còn | 409 |
 | `LATE_ENTRY`: hàm module đích từ chối (vd. tư cách 許可 / 承認 không hiệu lực tại giờ trên phiếu — ADR-008 §2.4-11) | Rollback; `E-STL-029`, `detail` = `{ sourceCode, sourceMessage }` (mã + thông điệp của module đích, vd `E-TRD-005`) | 409 |
 
 **Detail**

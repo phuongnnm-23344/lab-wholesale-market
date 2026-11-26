@@ -2,7 +2,7 @@
 id: DOC-PREMISE-001
 title: Tiền đề thiết kế LAB-4 (PREMISE)
 type: premise
-version: "0.6.4"
+version: "0.6.5"
 updated_by: phuongnnm-23344
 updated: 2026-11-26
 related: [DEC-002, DEC-004, DEC-005, DEC-008, DEC-028, DEC-029, DEC-031, DEC-032, DEC-033, DEC-046, DEC-047, DEC-048, DEC-049, DEC-050, DEC-051, DEC-056, DEC-058, DEC-059, PRM-042, PRM-046, PRM-110, PRM-126, PRM-127]
@@ -172,7 +172,7 @@ Bảy luật của dự án được giữ ở mọi nơi thiết kế: 相対�
 | ID | Ngày | Quyết định | Phương án đã bỏ | Người quyết | Nguồn |
 |---|---|---|---|---|---|
 | L4-D01 | 2026-11-25 | Kiến trúc to-be chạy trên **AWS Tokyo managed** theo DEC-002 (Next.js + TypeScript, PostgreSQL managed Multi-AZ, object storage). Prototype LAB-2 (Vercel + Supabase) chỉ là bản thử, dùng làm bằng chứng logic nghiệp vụ và mô hình dữ liệu | Vercel + Supabase gói trả phí (ghi vào ADR là phương án đã bỏ); kiến trúc logic trung lập chưa chọn hạ tầng | Người dùng | DEC-002; NFR-AVL-01, NFR-AVL-03, DR-RET-01 |
-| L4-D02 | 2026-11-25 | **Đúng 10 màn** có Screen Specification đầy đủ, mỗi cụm một màn đại diện: SC-03-01 ロット本登録 · SC-04-01 相対取引入力・確定 · SC-05-02 せり結果確認 · SC-03-05 目利き・下見結果入力 · SC-08-03 修正申請承認・却下 · SC-07-02 日次締め · SC-01-02 参加者詳細 · SC-10-04 規則版承認・ロールバック · SC-09-04 奨励金計算・期ロック · SC-06-02 引渡し記録 (nối sang SC-06-04 / SC-06-05). **SC-01-02 thể hiện 許可 (仲卸) và 承認 (売買参加者) bằng hai khối tách riêng** (trường, trạng thái, thao tác, căn cứ khác nhau). Màn khác cùng cụm chỉ ở mức 画面一覧; logic của chúng nằm trong Function / Technical Design của màn đại diện | Đủ cả cụm (~17 màn); 11 màn tách SC-01-03 / SC-01-04 | Người dùng | Plan LAB-4 §0; luật 2 (許可 ≠ 承認) |
+| L4-D02 | 2026-11-25 | **Đúng 10 màn** có Screen Specification đầy đủ, mỗi cụm một màn đại diện: SC-03-01 ロット本登録 · SC-04-01 相対取引入力・確定 · SC-05-02 せり結果確認 · SC-03-05 目利き・下見結果入力 · SC-08-03 修正申請決裁・却下 · SC-07-02 日次締め · SC-01-02 参加者詳細 · SC-10-04 規則版確認・ロールバック · SC-09-04 奨励金計算・期ロック · SC-06-02 引渡し記録 (nối sang SC-06-04 / SC-06-05). Tên SC-08-03 / SC-10-04 theo L4-D03 (tên LAB-1 còn chữ 承認). **SC-01-02 thể hiện 許可 (仲卸) và 承認 (売買参加者) bằng hai khối tách riêng** (trường, trạng thái, thao tác, căn cứ khác nhau). Màn khác cùng cụm chỉ ở mức 画面一覧; logic của chúng nằm trong Function / Technical Design của màn đại diện | Đủ cả cụm (~17 màn); 11 màn tách SC-01-03 / SC-01-04 | Người dùng | Plan LAB-4 §0; luật 2 (許可 ≠ 承認) |
 | L4-D03 | 2026-11-25 | **Nhãn duyệt nội bộ không dùng chữ 承認** ở mọi màn / wireframe: SC-08-03 đổi tên 「修正申請決裁・却下」 (LAB-1: 修正申請承認・却下), SC-10-04 「規則版確認・ロールバック」 (LAB-1: 規則版承認・ロールバック), 「1次決裁」, 「決裁待ち」; **ID màn giữ nguyên**. Chữ 承認 chỉ còn cho 承認（売買参加者） | Giữ tên LAB-1 rồi ghi ngoại lệ | Người dùng (giao việc sửa Gate 1 M-06) | Luật 2; PRM-121; ADR-003 §2.6 |
 | L4-D04 | 2026-11-25 | **Tách Database Design theo cụm**: 9 file `{CỤM}_DB.md` (IAM_AUDIT, PARTY, RULE, CLOSE, LOT, TRADE, ADJUST, BILLING, INCENTIVE) + `MKT_DB.md` làm file tổng (nguyên tắc, enum, ERD tổng quan, bảng lệch, parity, điểm mở) — ngoại lệ #7 README §3 | Giữ một file và ghi ngoại lệ | Người dùng (Gate 1 M-09) | QC-01 §4, §5 ràng buộc 1 |
 | L4-D05 | 2026-11-25 | **Bổ sung L4-D02: wireframe 10 + 5 màn** — thêm wireframe **SC-03-02 仮受付** (tablet bến; chỉ wireframe, không Screen Specification đầy đủ), làm ở P3 [Customer giả lập, 2026-11-25 — #22] | Không thêm (giữ 10 + 4) | Người dùng | FB-CUS-281; PERSONA-DOCK-01, NFR-USE-01 |
@@ -207,3 +207,4 @@ Giả định L4-A01..A09 đã được khách giả lập phản hồi ngày 20
 | 8 | 0.6.2 | Update | Gate 2 + khách P3: §3.2 dòng 参加上限 theo Q-PTY-06 / Q-PTY-07 (chỉ 照合部門長, một bước, MFA); §3.1 thêm tham số `PARTICIPATION_LIMIT_TAX_CODE` (Q-TRD-02); thêm L4-D07 (Screen Specification 12 màn = 10 đại diện + SC-06-04, SC-06-05 — G2-m05); §3.2 giữ nguyên ★ cho checker quy chế / hủy version đã duyệt (G2-M01 sửa spec theo PREMISE, không đổi PREMISE) | 2026-11-25 | phuongnnm-23344 | |
 | 9 | 0.6.3 | Update | Expert Gate 3 G3-M01, G3-m10: thêm L4-D08 (không mở rộng Screen Specification tới 70 màn — người dùng quyết, DEC-058); §0 ghi L4-D gồm cả quyết định của PL (L4-D07); frontmatter `related` thêm DEC-046..051, DEC-056, DEC-058 | 2026-11-25 | phuongnnm-23344 | |
 | 10 | 0.6.4 | Update | Thêm L4-D09 (người dùng quyết 2026-11-26 theo G3-m07): ADR qua Gate 1–3 → Accepted, điểm chờ khách thành §6 Điểm mở trong ADR; ADR-006 giữ Proposed (E-14); `related` thêm DEC-059 | 2026-11-26 | phuongnnm-23344 |  |
+| 11 | 0.6.5 | Update | L4-D02: tên SC-08-03 / SC-10-04 theo L4-D03 (bỏ chữ 承認 cho duyệt nội bộ, ghi rõ tên LAB-1 ở L4-D03), rà khi làm bản `ja/` | 2026-11-26 | phuongnnm-23344 |  |

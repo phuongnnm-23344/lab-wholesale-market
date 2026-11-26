@@ -8,9 +8,9 @@ function: app.fn_confirm_aitai_trade
 endpoint: POST /api/v1/trades/aitai
 component: AitaiTradeService
 feature: trade
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-TRD-002, API-TRD-004, SPEC-TRADE_DB-001, SPEC-LOT_FUNC-001, ADR-003, ADR-004, ADR-008]
 ---
 
@@ -27,6 +27,7 @@ related: [SPEC-SC-04-01-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_QUALIFICATION_CHECK
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Gate 2 G2-m03: sửa câu as-is (mã GD prototype đã dùng `next_day_counter` 0025/0026) | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/TRADE_AITAI_CONFIRM_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §3 | FIG-012: bước duyệt nội bộ ghi 確認 thay cho 承認 (L4-D03, rà khi làm bản `ja/`) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -89,7 +90,7 @@ sequenceDiagram
 ## 3. Description
 
 - Chốt **một** GD 相対 — luồng chính (~90% giá trị) — trong **một** transaction: khóa lô, kiểm SL, kiểm 許可 / 承認 + 参加上限 **tại thời điểm chốt**, ghi GD `CONFIRMED`, ghi đủ sự kiện FIG-012, trừ SL lô. Hoặc tất cả, hoặc không gì (BR-PERM-01, BR-LOT-02, ADR-003).
-- FIG-012 (提出 → 承認 → 確定): bàn GD bấm một lần; hệ thống vẫn ghi 3 dòng `trade_status_history` cùng người + thời điểm + thiết bị (PRM-114 (a), sửa D10). Sự kiện `APPROVE` hiển thị là 「確認」 trên UI (L4-D03, A-TRD-02).
+- FIG-012 (提出 → 確認 → 確定): bàn GD bấm một lần; hệ thống vẫn ghi 3 dòng `trade_status_history` cùng người + thời điểm + thiết bị (PRM-114 (a), sửa D10). Sự kiện `APPROVE` hiển thị là 「確認」 trên UI (L4-D03, A-TRD-02).
 - Sau 確定 GD đóng băng (trigger `TRADE_FROZEN`): số liệu chỉ đổi qua `trade_adjustments` (当日訂正 / 修正申請 — luật 4).
 - Người gọi: SC-04-01. In 取引確認票 là lời gọi riêng sau khi chốt (API-TRD-004) — in hỏng không làm mất GD.
 

@@ -5,7 +5,7 @@ type: ui
 screen_id: SC-04-01
 feature: trade
 feature_id: TRD
-version: "0.1.4"
+version: "0.1.5"
 updated_by: phuongnnm-23344
 updated: 2026-11-26
 related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONFIRM-001, SPEC-TRADE_QUALIFICATION_CHECK-001, API-LOT-003, API-TRD-001, API-TRD-002, API-TRD-003, API-TRD-004, SPEC-TRADE_DB-001]
@@ -26,6 +26,7 @@ related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONF
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-04-01.html` (WF 0.2.2); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.1.3 | Update | Expert Gate 3 G3-m05: thêm §6.1 Trạng thái màn (tổng hợp từ §5 Event), ghi chú cũ thành §6.2 | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.1.4 | Update | Expert Gate 3 kiểm diff D3-n02: §6.1 dòng 「Vượt 参加上限」 thêm 422 `E-TRD-007` của server; dòng 「Lỗi nhập」 thêm lỗi client `E-TRD-009`..`011` (§4.2) | 2026-11-26 | phuongnnm-23344 |  |
+| 6 | 0.1.5 | Update | §3 Trạng thái FIG-012: bước duyệt nội bộ ghi 確認 thay cho 承認 (L4-D03, rà khi làm bản `ja/`) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -44,7 +45,7 @@ related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONF
 
 - **Mục đích:** nhập và **chốt** một GD 相対 (thỏa thuận trực tiếp) — **luồng chính, màn dùng nhiều nhất** (~90% giá trị, C.5; FR-AITAI-01/02). Người chốt (取引担当) đọc lại với người mua (読み合わせ) rồi bấm một lần: ロット → 買受人 → 数量 → 単価 → Enter. Mục tiêu ~10 giây / GD khi đã thạo **[Giả lập]**.
 - **Kiểm tại thời điểm chốt, ở server, trong cùng transaction với trừ SL lô** (BR-PERM-01, BR-LOT-02, ADR-003): 仲卸 → **許可** 有効; 売買参加者 → **承認** 有効 + **参加上限** theo kỳ (相対 + せり, cảnh báo + lý do, không chặn cứng — PRM-046, L4-A04 (1)). Hai căn cứ khác nhau, **thông điệp khác nhau** (luật 2).
-- **Trạng thái FIG-012:** một lần bấm ghi đủ 提出 / 承認 / 確定 cùng người + thời điểm vào `trade_status_history` (PRM-114 (a)); GD 確定 đóng băng, sửa chỉ qua SC-04-05 / SC-08-01 (luật 4). Trên màn không hiện chữ 「承認」 cho bước nội bộ (L4-D03).
+- **Trạng thái FIG-012:** một lần bấm ghi đủ 提出 / 確認 / 確定 cùng người + thời điểm vào `trade_status_history` (PRM-114 (a)); GD 確定 đóng băng, sửa chỉ qua SC-04-05 / SC-08-01 (luật 4). Trên màn không hiện chữ 「承認」 cho bước nội bộ (L4-D03).
 - **Bắt buộc online** (L4-A05, ADR-008): mất mạng → ghi 紙伝票, nhập bù ở SC-04-07.
 - **Ai dùng:** TRADE. SETTLE / STL-HEAD / OPS-HEAD xem GD ở SC-04-03 / SC-04-04, không mở màn này (role-list P16).
 - **Đi tới:** SC-04-03 ([11]); SC-04-02 ([12] in lại); SC-04-07 (khi mất mạng — qua menu); SC-08-01 (C-24).

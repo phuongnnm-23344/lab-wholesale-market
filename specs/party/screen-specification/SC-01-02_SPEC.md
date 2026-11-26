@@ -5,9 +5,9 @@ type: ui
 screen_id: SC-01-02
 feature: party
 feature_id: PTY
-version: "0.1.2"
+version: "0.1.3"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-26
 related: [WF-SC-01-02, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-PTY_APPROVAL_LIFECYCLE-001, API-PTY-001, API-PTY-002, API-PTY-003, SPEC-PARTY_DB-001, ADR-003, FR-PARTY-01, BR-PERM-01, PRM-044, PRM-045, PRM-046, PRM-121, FIG-010, L4-D02]
 ---
 
@@ -24,6 +24,7 @@ related: [WF-SC-01-02, SPEC-PARTY_FUNC-001, SPEC-PTY_PERMIT_LIFECYCLE-001, SPEC-
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-01-02 0.2.2 (đã sửa D-01 Gate 1 recheck) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | Khách Q-PTY-06: bảng quyền, [9], [21], [22] — chỉ 照合部門長 đổi 保証金 / 参加上限, một bước, MFA; Q-TRD-02: [16] hiện 税込 / 税抜 | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-01-02.html` (WF 0.2.5); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.1.3 | Update | [10]: sửa lỗi gõ 「發效日」 → 「発効日」 (rà khi làm bản `ja/`) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -73,7 +74,7 @@ Màn này ghi trực tiếp **chỉ** thông tin cơ bản và 保証金 (tiền
 | 7 | 通知メール2 | Text box | Không | Tối đa 2 địa chỉ |
 | 8 | 保証金額 | Label | - | Giá trị hiện hành (`v_participant_current_deposit`), định dạng `¥#,###` |
 | 9 | 保証金の変更 | Button | - | Mở hộp thoại D (dưới) |
-| 10 | 履歴を見る ▼ | Button | - | Mở / gập bảng lịch sử 保証金 (發效日 / 金額 / 理由 / 入力者 / 入力日時) |
+| 10 | 履歴を見る ▼ | Button | - | Mở / gập bảng lịch sử 保証金 (発効日 / 金額 / 理由 / 入力者 / 入力日時) |
 | 11 | 保存する | Button | - | Mờ khi chưa đổi gì |
 | **K** | **【許可】仲卸 — chỉ khi 種別 = 仲卸** | | | |
 | 12 | Khối 許可 | Label | - | Khung xanh đậm, tiêu đề chữ to 「【許可】仲卸 ─ 根拠: 市場業務規程（許可・審査あり）」. **Không có cột 参加上限** |
