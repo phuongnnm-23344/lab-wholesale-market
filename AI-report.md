@@ -2,7 +2,7 @@
 id: DOC-AI-REPORT-001
 title: Báo cáo cách dùng AI trong LAB-4
 type: report
-version: "0.2.2"
+version: "0.2.3"
 updated_by: phuongnnm-23344
 updated: 2026-11-26
 related: [PREMISE.md, README.md, AI-report-evidence/README.md]
@@ -27,6 +27,7 @@ Mọi con số dưới đây lấy từ ghi chép làm việc; bản sao nằm t
 | 2 | 0.2.0 | Update | Đầu bài, 3.1, 3.2 | Expert Gate 3: nguồn số liệu trỏ vào `AI-report-evidence/` trong gói nộp (G3-M02); §3.2 tách điểm người dùng quyết / PL quyết cho khớp PREMISE §5 và nhật ký quyết định, thêm L4-D08 (G3-M01); §3.1 thêm dòng Gate 3 | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | 3.1, 3.2 | Expert Gate 3 kiểm diff: §3.1 thêm dòng "Gate 3 kiểm diff → RELEASE (2026-11-26)" (D3-n05); §3.2 PL quyết thêm DEC-048 (giữ giá R1, phần thêm trong buffer — D3-n04), DEC-055, DEC-057; người dùng quyết thêm L4-D09 (trạng thái ADR) và giữ `AI-report-evidence/` trong gói | 2026-11-26 | phuongnnm-23344 | |
 | 4 | 0.2.2 | Update | 4.2 | Thêm bản tiếng Nhật `ja/` (sinh từ bản tiếng Việt, commit `9367490`); sửa dòng "Bản tiếng Nhật chưa làm" | 2026-11-26 | phuongnnm-23344 |  |
+| 5 | 0.2.3 | Update | 3.4, 4.1 | Thêm §3.4 thời gian AI chạy (≈ 15,8 giờ wall-clock, ≈ 41,1 agent-giờ / 50 subagent) và thời gian người review (3 giờ, người làm lab báo); §4.1 thêm một ý | 2026-11-26 | phuongnnm-23344 |  |
 
 ## 2. Cách tổ chức AI và viết prompt
 
@@ -117,6 +118,17 @@ Người làm bài không review từng dòng. Tôi giữ quyền quyết ở nh
 | 13 | Commit nhóm lỡ **kèm file xóa đã stage từ trước** | PL tự kiểm | Reset mềm, commit lại theo nhóm; trước mỗi commit xem `git diff --cached --stat` |
 | 14 | Lượt P4: script đổi ví dụ SC-09-04 **mở file để ghi trước khi đọc** → file HTML (chưa commit) bị rỗng | PL thấy ngay khi kiểm | Dựng lại từ lịch sử thao tác của phiên (lần ghi file + các lệnh sửa sau đó), render lại và so ảnh từng pixel với PNG cũ: trùng khít, rồi mới áp sửa. Bài học: file chưa commit không có lưới an toàn — sửa bằng script thì đọc vào biến trước, hoặc commit trước khi sửa hàng loạt |
 
+### 3.4 Thời gian AI chạy và thời gian người review
+
+Đo từ dấu thời gian trong transcript phiên chính và transcript của các subagent (điều phối đo); thời gian người review do người làm lab tự báo.
+
+| Hạng mục | Số đo | Cách tính / ghi chú |
+|---|---|---|
+| Khoảng thời gian LAB-4 | 2026-11-25 12:05 → 2026-11-26 16:05 JST | 2 ngày làm việc |
+| Thời gian AI chạy thực (wall-clock) | khoảng 15,8 giờ | Các khoảng có ít nhất một agent đang chạy; bỏ mọi khoảng trống > 15 phút không có hoạt động |
+| Tổng thời gian chạy của agent | khoảng 41,1 agent-giờ, 50 subagent | Lớn hơn wall-clock vì chạy song song: P3 3 luồng, wireframe HTML 3 luồng, dịch JA 10 luồng |
+| Thời gian người review | 3 giờ | Người làm lab tự báo: đọc output, quyết định ở các gate, duyệt |
+
 ## 4. Điểm đặc biệt và tự đánh giá
 
 ### 4.1 Chỗ tôi tin là làm hiệu quả
@@ -127,6 +139,7 @@ Người làm bài không review từng dòng. Tôi giữ quyền quyết ở nh
 - **Một nguồn → nhiều đầu ra bằng một lệnh**: wireframe HTML sinh PDF + PNG + ảnh spec; Mermaid sinh PNG. Đổi wireframe không phải vẽ lại ảnh tay, số trên ảnh luôn khớp cột ID.
 - **Mọi điểm chưa chốt thành câu hỏi có ảnh hưởng estimate** (luật 7), mọi câu trả lời giả lập có nhãn nguồn — người đọc biết chỗ nào là quyết định, chỗ nào là giả định.
 - **Sổ feedback + nhật ký tiến độ** giữ mạch qua nhiều phiên; con số trong báo cáo này truy được về file trong `AI-report-evidence/`.
+- **Người chỉ bỏ khoảng 3 giờ cho khoảng 15,8 giờ AI chạy (41,1 agent-giờ)** — phần lớn công đọc / chấm do vai Expert và Customer làm; người tập trung vào quyết định ở gate (§3.4).
 
 ### 4.2 Chỗ chưa tốt, khi làm thật phải cải thiện
 
