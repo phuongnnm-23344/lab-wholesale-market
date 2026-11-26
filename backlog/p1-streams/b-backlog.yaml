@@ -1,0 +1,1755 @@
+# LAB-5 P1 — backlog luồng B (settle / 完納奨励金 / rule)
+# Nguồn: specs/settle/**, specs/incentive/**, specs/rule/**, api-design/{settle,incentive,rule}/,
+#        CLOSE_DB, ADJUST_DB, BILLING_DB, INCENTIVE_DB (§5 TV-01..15), RULE_DB, ADR-005/006/007, SCREEN-LIST C6–C8
+# Brief: plans/lab/Lab 5/p1-shared-brief.md · Người viết: PL luồng B · 2026-11-26
+# hours_hint chỉ để kiểm độ hạt, không phải estimate (SWP / giờ chốt ở P3).
+stream: B
+
+constraint_note: |
+  完納奨励金 (FG-09) tách thành issue riêng theo từng khối K1–K9 của INC_ENGINE_TECH §4, không gộp vào settle (FG-07/08) hay rule (FG-10).
+  Lý do: một con số thưởng phụ thuộc ~10 biến độc lập — kỳ tính thưởng IP(g), 入金日 trên CSV ngân hàng, 支払期日 theo lịch ngân hàng, thuế theo suất × kỳ, bậc + version quy chế của kỳ (không phải của ngày khóa), judgement 要確認, DELTA cho mọi kỳ đã khóa, CARRY / CARRY_EXPIRED theo năm TC, GD 後入力 chuyển kỳ, 修正申請 KANNO / INCENTIVE.
+  Mỗi khối có DoD và test vector riêng (TV-01..15); gộp lại thì một lỗi ở K2 (FIFO) hay K6 (DELTA) bị che bởi số tổng đúng tình cờ — tách để review / test từng biến.
+  Thứ tự: K1 ∥ K2 → K3 → K4 → K5 → K6 → K7 → K8 (cần tất cả); K9 đọc ra. Điểm chờ khách đi kèm từng issue: E-02 (請求番号, K2), E-03 (bảng 交付率 thật, K4), E-06 (cách tính thuế, K3), Q-INC-03 (tạo kỳ, K8), Q-ARCH-08 (CARRY_EXPIRED, K7), E-14 (rollback quy chế — ảnh hưởng đường sửa tiền kỳ đã khóa), DEP-11 (màn 入金 chưa spec).
+  Luật giữ: không ghi đè (DELTA / CARRY / 期ロック chỉ thêm), quy chế có version (tra V_X của kỳ), người quyết (要確認, 期ロック có MFA, không chạy tự động).
+
+epics:
+  - id: EP-FG07
+    title: "[FG-07] 照合・日次締め — đối soát, khóa ngày, tranh chấp / SLA"
+    labels: [epic, "fg:FG-07", "feature:settle"]
+    rfp_refs: [FR-SETTLE-01, FR-SETTLE-02, FR-SETTLE-03, BR-CLOSE-01, SCOPE-04]
+    summary: "Khóa 業務日 bằng checklist 12 mục + MFA, không mở lại; đánh dấu 端末回収不能. Spec: SC-07-02, STL_DAY_CLOSE_TECH, STL_DEVICE_LOST_TECH, API-STL-001..003, CLOSE_DB. Bảng đối soát, 精算 ngày, tranh chấp chưa spec → rough."
+  - id: EP-FG08
+    title: "[FG-08] 修正申請・決裁 — điều chỉnh sau chốt (REVERSE / DELTA)"
+    labels: [epic, "fg:FG-08", "feature:settle"]
+    rfp_refs: [FR-CORR-01, FR-CORR-02, FR-CORR-03, CAP-HUMAN-01, SCOPE-04]
+    summary: "決裁 / 却下 1–2 cấp, sinh REVERSE + DELTA ở 業務日 mở sớm nhất với hai trục business_date / period_id; LATE_ENTRY, KANNO, INCENTIVE. Spec: SC-08-03, STL_CORRECTION_DECIDE_TECH, API-STL-004/005, ADJUST_DB. Màn lập / danh sách 修正申請 chưa spec (DEP-09)."
+  - id: EP-FG09
+    title: "[FG-09] 完納奨励金 — tiền thưởng thanh toán đúng hạn"
+    labels: [epic, "fg:FG-09", "feature:incentive", "constraint:完納奨励金"]
+    rfp_refs: [FR-INC-01, FR-INC-03, BR-INC-01, SCOPE-05]
+    summary: "Engine K1–K9 (INC_ENGINE_TECH §4), màn SC-09-04 + API-INC-001..004, bảng INCENTIVE_DB + phần 入金 / 期のお支払額 của BILLING_DB, bộ test TV-01..15. Màn 入金 CSV / ánh xạ / tình trạng kỳ / chi tiết thưởng chưa spec (DEP-11) → rough."
+  - id: EP-FG10
+    title: "[FG-10] 規則版・交付率・マスタ・カレンダー — quy chế có version, master, lịch"
+    labels: [epic, "fg:FG-10", "feature:rule", "rule:versioned-rule"]
+    rfp_refs: [FR-INC-02, FR-RULE-01, GOV-RULE-01, NFR-OPS-02, SCOPE-05]
+    summary: "Phía checker của version quy chế R1–R7 (RULE_VERSION_TECH), quota 4 lần / năm TC, rollback, nhánh E-14 (mặc định N1); SC-10-04, API-RULE-001..006, RULE_DB. Maker (SC-10-01..03), lịch SC-10-05, master SC-10-07, file cấu hình chưa spec → rough."
+
+issues:
+  # ===================== EP-FG07 照合・日次締め =====================
+  - id: B-FG07-01
+    epic: EP-FG07
+    parent: null
+    kind: dev
+    title: "[FG-07] 業務日・期 テーブル — migration CLOSE_DB + trigger ngày mở"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-07", "feature:settle", "kind:dev", "role:BE", "rule:no-overwrite"]
+    spec_refs: ["CLOSE_DB §4.20, §4.24, §4.43, §4.57", "MKT_DB §4.0 (Ngày mở, enforce_open_business_day)"]
+    rfp_refs: [BR-CLOSE-01, FR-SETTLE-02]
+    depends_on: []
+    depends_on_spec: ["RULE_DB 4.21 (FK rule_version_id — B-FG10-01)", "IAM_AUDIT_DB delegations, staff_accounts (luồng C)"]
+    hours_hint: 10
+    description: |
+      Tạo bảng market_calendar, business_days, payment_periods, day_counters + enum period_status / day_status.
+      Viết hàm trigger enforce_open_business_day (ghi vào 業務日 LOCKED → DAY_LOCKED 423) để các module gắn vào bảng của mình (B-PA-03).
+      Không gồm: logic mở ngày / tạo kỳ (B-FG10-12), checklist (B-FG07-02).
+    dod:
+      - "Migration chạy lên / xuống sạch trên DB trống; index uq_payment_periods_code, idx_payment_periods_fy có"
+      - "Ghi thử vào bảng có trigger khi business_days.status = LOCKED → lỗi DAY_LOCKED (map 423 E-CMN-003)"
+
+  - id: B-FG07-02
+    epic: EP-FG07
+    parent: null
+    kind: dev
+    title: "[FG-07] 締めチェックリスト — fn_day_close_checklist + API-STL-001"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-07", "feature:settle", "kind:dev", "role:BE"]
+    spec_refs: ["STL_DAY_CLOSE_TECH §3, §4.2", "SETTLE_FUNC §2.1", "API-STL-001", "ADR-005 §2.5"]
+    rfp_refs: [FR-SETTLE-02, BR-CLOSE-01]
+    depends_on: [B-FG07-01, B-FG08-01]
+    depends_on_spec: ["TRADE_DB 4.29/4.30 (trades, seri_sessions — luồng A)", "TRADE_DB delivery_exceptions (luồng A)", "IAM_AUDIT_DB devices, offline_sync_records (luồng C)", "LOT_DB 4.25 (luồng A)"]
+    hours_hint: 12
+    description: |
+      Một hàm đếm 12 mục (6 ✖ / 5 ⚠ / #12 tick không đếm) dùng chung cho màn và cho kiểm lúc khóa; checklistVersion = SHA-256 của 11 số đếm + id máy mục #3.
+      Ngày LOCKED trả ảnh chụp close_checklist, không tính lại. Quyền: SETTLE / STL_HEAD đọc, vai khác 403.
+    dod:
+      - "STL_DAY_CLOSE DoD #1: 12 phần tử adrNo 1..12, #12 count = null, requiresAck = true; checklistVersion đổi khi số #1–#11 đổi"
+      - "SETTLE_FUNC §4 getCloseChecklist: ngày LOCKED trả ảnh chụp; vai khác 403"
+
+  - id: B-FG07-03
+    epic: EP-FG07
+    parent: null
+    kind: dev
+    title: "[FG-07] 日次締め — fn_day_close + API-STL-002 (MFA một lần, mở ngày kế)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-07", "feature:settle", "kind:dev", "role:BE", "rule:no-overwrite", "rule:human-decision"]
+    spec_refs: ["STL_DAY_CLOSE_TECH §4.1, §4.3, §4.4", "SETTLE_FUNC §2.2", "API-STL-002", "api-conventions §4 (MFA purpose DAY_CLOSE)"]
+    rfp_refs: [FR-SETTLE-02, BR-CLOSE-01, NFR-SEC-01, CAP-HUMAN-01]
+    depends_on: [B-FG07-02]
+    depends_on_spec: ["DEP-01 API MFA verify (iam — luồng C)", "DEP-05 fn_lot_carry_over (luồng A)", "DEP-14 delegations (luồng C)", "IF-ACC-01 batch (FG-11 — luồng C)"]
+    hours_hint: 14
+    description: |
+      Kiểm phiên / vai / 代行 / token MFA purpose = DAY_CLOSE (luôn hỏi lại mã), so checklistVersion, kiểm thứ tự khóa (d−1 phải LOCKED), tick #8 / #12, gõ lại ngày.
+      Trong một transaction: LOCKED + ảnh chụp checklist, gọi 持ち越し lô, mở 業務日 chợ kế tiếp, xếp IF-ACC-01, audit DAY_CLOSE. Không có API mở lại.
+    dod:
+      - "STL_DAY_CLOSE DoD #2–#5, #7–#13 đạt (409 E-STL-002 detail.blocking mảng; 422 E-STL-003 / E-STL-013 / E-STL-001; 403 E-CMN-005; 409 E-STL-005 / E-STL-010 / E-STL-004 / E-STL-008)"
+      - "DoD #6: sau khóa mọi ghi vào ngày d → 423 E-CMN-003; không tồn tại endpoint reopen"
+
+  - id: B-FG07-04
+    epic: EP-FG07
+    parent: null
+    kind: dev
+    title: "[FG-07] 端末回収不能 — API-STL-003 loại máy khỏi checklist"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-07", "feature:settle", "kind:dev", "role:BE", "rule:human-decision"]
+    spec_refs: ["STL_DEVICE_LOST_TECH §4.1, §4.2", "SETTLE_FUNC §2.3", "API-STL-003"]
+    rfp_refs: [NFR-AVL-02, BR-CLOSE-01, NFR-SEC-03]
+    depends_on: [B-FG07-02]
+    depends_on_spec: ["DEP-01 MFA purpose DEVICE_LOST (luồng C)", "IAM_AUDIT_DB 4.6, 4.7 devices / sessions (luồng C)"]
+    hours_hint: 8
+    description: |
+      STL_HEAD đánh dấu máy hỏng / mất có lý do + MFA: máy ra khỏi mục #3, thu hồi phiên, thông báo SYSADM / SETTLE; bản ghi đến sau qua đồng bộ → HELD.
+    dod:
+      - "STL_DEVICE_LOST DoD #1–#8 đạt (422 E-STL-006, 409 E-STL-007, 404 E-STL-009, 403 E-CMN-005 / E-CMN-002)"
+
+  - id: B-FG07-05
+    epic: EP-FG07
+    parent: null
+    kind: dev
+    title: "[FG-07] SC-07-02 日次締め — màn checklist + khóa ngày (FE)"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-07", "feature:settle", "kind:dev", "role:FE", "rule:human-decision"]
+    spec_refs: ["SC-07-02_SPEC §4–§6"]
+    rfp_refs: [FR-SETTLE-02, BR-CLOSE-01]
+    depends_on: [B-FG07-02, B-FG07-03, B-FG07-04]
+    depends_on_spec: ["_common-layout C-30 MFA dialog (luồng C khung app)"]
+    hours_hint: 20
+    description: |
+      Cha của 2 sub-issue (theo nhóm trạng thái màn). Chỉ lá chấm SWP.
+    dod:
+      - "Hai sub-issue xong; QA chạy kịch bản B-FG07-06 phần màn"
+
+  - id: B-FG07-05.1
+    epic: EP-FG07
+    parent: B-FG07-05
+    kind: dev
+    title: "[FG-07] SC-07-02 — hiển thị checklist 12 mục, tick #8 / #12, liên kết"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-07", "feature:settle", "kind:dev", "role:FE"]
+    spec_refs: ["SC-07-02_SPEC §4.1 items checklist, §4.3 mapping API-STL-001"]
+    rfp_refs: [FR-SETTLE-02]
+    depends_on: [B-FG07-02]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Bảng 12 mục với mức ✖ / ⚠, số đếm, liên kết sang màn nguồn; tick bắt buộc #8 / #12; ngày LOCKED hiển thị ảnh chụp chỉ đọc.
+    dod:
+      - "Hiển thị đúng 12 mục theo SC-07-02 §4.1; ngày LOCKED chỉ đọc; phân quyền hiển thị theo §4.4"
+
+  - id: B-FG07-05.2
+    epic: EP-FG07
+    parent: B-FG07-05
+    kind: dev
+    title: "[FG-07] SC-07-02 — 締め実行: gõ lại ngày, MFA, 端末回収不能, lỗi"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-07", "feature:settle", "kind:dev", "role:FE", "rule:human-decision"]
+    spec_refs: ["SC-07-02_SPEC §4.2 validation, §5 Event, §6 trạng thái"]
+    rfp_refs: [FR-SETTLE-02, NFR-SEC-01]
+    depends_on: [B-FG07-05.1, B-FG07-03, B-FG07-04]
+    depends_on_spec: ["DEP-01 API MFA verify (luồng C)"]
+    hours_hint: 8
+    description: |
+      Nút khóa bật theo §6; hộp xác nhận gõ lại ngày, C-30 MFA luôn hỏi mã, hộp 端末回収不能 có lý do; xử lý 409 / 422 / 403 / 423 theo §5.
+    dod:
+      - "Mọi dòng Error Handling ở SC-07-02 §5 có xử lý đúng mã; checklist đổi (E-STL-010) → tải lại và bắt xem lại"
+
+  - id: B-FG07-06
+    epic: EP-FG07
+    parent: null
+    kind: test
+    title: "[FG-07] 日次締め テスト — kịch bản DoD STL_DAY_CLOSE #1–13, DEVICE_LOST #1–8"
+    role: QA
+    assignee: QA-2
+    labels: ["fg:FG-07", "feature:settle", "kind:test", "role:QA", "rule:no-overwrite"]
+    spec_refs: ["STL_DAY_CLOSE_TECH §5 Điều kiện hoàn thành", "STL_DEVICE_LOST_TECH §5 Điều kiện hoàn thành", "SC-07-02_SPEC §5"]
+    rfp_refs: [FR-SETTLE-02, BR-CLOSE-01]
+    depends_on: [B-FG07-03, B-FG07-04]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Viết kịch bản + seed (ngày có đủ dữ liệu 12 mục, máy TAB-03 còn 5 bản ghi, 代行 hết hạn), chạy test tích hợp API và E2E màn SC-07-02.
+    dod:
+      - "21 ca (13 + 8) có kịch bản, dữ liệu, kết quả chạy; case khóa xong ghi vào ngày d → 423 được kiểm ở ≥ 3 bảng (GD, lô, điều chỉnh)"
+
+  - id: B-FG07-07
+    epic: EP-FG07
+    parent: null
+    kind: rough
+    title: "[FG-07][概算] 日次照合表・日次精算 — SC-07-01 + SC-07-B2 (chưa spec)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-07", "feature:settle", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #32 SC-07-01, §4 SC-07-B2", "function-list FT-07-02, FT-07-03"]
+    rfp_refs: [FR-SETTLE-01, RPT-05]
+    depends_on: [B-CLR-21]
+    depends_on_spec: ["MKT_DB v_daily_settlement, v_settlement_lines"]
+    hours_hint: 112
+    description: |
+      Bảng đối soát ngày tách 相対 / せり / 訂正 + bộ lọc 要確認 + cột 確認済; batch tính 精算 ngày theo người tham gia × suất thuế.
+      Giờ = LAB-1: BE FT-07-02 6 MD + FT-07-03 4 MD, FE SC-07-01 4 MD = 14 MD.
+    dod:
+      - "Có Screen Specification SC-07-01 + API Design + Technical Design 精算 rồi tách lại thành issue lá 4–16 giờ"
+
+  - id: B-FG07-08
+    epic: EP-FG07
+    parent: null
+    kind: rough
+    title: "[FG-07][概算] 紛争一覧・詳細 + SLA — SC-07-03, SC-07-04 (chưa spec)"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-07", "feature:settle", "kind:rough", "role:FE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #34, #35", "function-list FT-07-05"]
+    rfp_refs: [FR-SETTLE-03, RPT-09]
+    depends_on: [B-CLR-21]
+    depends_on_spec: ["DEL_EXCEPTION_DISPUTE_TECH (luồng A — nguồn tranh chấp)", "DEP-17 RPT-04 (luồng C)"]
+    hours_hint: 64
+    description: |
+      Danh sách tranh chấp có cột SLA còn lại / quá hạn, chi tiết + xử lý, liên kết SC-06-05. Giờ = LAB-1: BE 3 MD + FE DS 2 + NH 3 MD = 8 MD (chưa trừ giản lược K6).
+    dod:
+      - "Có Screen Specification SC-07-03/04 + API Design rồi tách lại"
+
+  # ===================== EP-FG08 修正申請・決裁 =====================
+  - id: B-FG08-01
+    epic: EP-FG08
+    parent: null
+    kind: dev
+    title: "[FG-08] 修正申請テーブル — migration ADJUST_DB (4.32, 4.37–4.39)"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-08", "feature:settle", "kind:dev", "role:BE", "rule:no-overwrite"]
+    spec_refs: ["ADJUST_DB §4.32, §4.37, §4.38, §4.39"]
+    rfp_refs: [FR-CORR-01, FR-CORR-02]
+    depends_on: [B-FG07-01]
+    depends_on_spec: ["TRADE_DB 4.30 trades (luồng A)", "RULE_DB 4.21 (B-FG10-01)"]
+    hours_hint: 8
+    description: |
+      Tạo trade_fixes (logic ghi thuộc luồng A — B-PA-05), correction_requests (4 scope, required_levels, uq một yêu cầu chờ / GD và / người × kỳ cho KANNO-INCENTIVE), correction_approvals (uq người), trade_adjustments append-only (REVERSE / DELTA, business_date + period_id).
+    dod:
+      - "Trigger chặn UPDATE / DELETE trên trade_adjustments; uq_correction_approvals_person, uq_correction_requests_one_pending_period có"
+
+  - id: B-FG08-02
+    epic: EP-FG08
+    parent: null
+    kind: dev
+    title: "[FG-08] 修正申請詳細 — fn_correction_preview + API-STL-004"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-08", "feature:settle", "kind:dev", "role:BE"]
+    spec_refs: ["STL_CORRECTION_DECIDE_TECH §4.1", "SETTLE_FUNC §2.4", "API-STL-004"]
+    rfp_refs: [FR-CORR-02]
+    depends_on: [B-FG08-01]
+    depends_on_spec: ["DEP-14 delegations (luồng C)"]
+    hours_hint: 10
+    description: |
+      Chi tiết yêu cầu + xem trước bản ghi sẽ sinh (REVERSE / DELTA, 計上業務日, 対象期) + allowedActions theo vai / cấp / 代行.
+    dod:
+      - "SETTLE_FUNC §4 getCorrectionDetail: allowedActions không có DECIDE_L1 cho 運用部門長; có cho 代行 STL_HEAD hiệu lực; 404 E-STL-021"
+
+  - id: B-FG08-03
+    epic: EP-FG08
+    parent: null
+    kind: dev
+    title: "[FG-08] 決裁・却下 — xác thực, khóa yêu cầu, chuyển cấp (API-STL-005)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-08", "feature:settle", "kind:dev", "role:BE", "rule:human-decision", "rule:permit-vs-approval"]
+    spec_refs: ["STL_CORRECTION_DECIDE_TECH §4.2, §4.3", "SETTLE_FUNC §2.5", "API-STL-005"]
+    rfp_refs: [FR-CORR-02, CAP-HUMAN-01, NFR-SEC-01]
+    depends_on: [B-FG08-02]
+    depends_on_spec: ["DEP-01 MFA step-up (luồng C)", "DEP-14 delegations (luồng C)"]
+    hours_hint: 12
+    description: |
+      Khóa yêu cầu FOR UPDATE, kiểm cấp gửi = cấp hiện tại, cấm người lập / một người 2 cấp / 運用部門長 cấp 1, 代行 chỉ định trước; 却下 cần lý do. Dùng chữ 決裁 (không dùng 承認).
+    dod:
+      - "STL_CORRECTION_DECIDE DoD #2, #4–#9, #13, #14 đạt"
+
+  - id: B-FG08-04
+    epic: EP-FG08
+    parent: null
+    kind: dev
+    title: "[FG-08] 反映 TRADE — sinh REVERSE / DELTA hai trục, sổ SL lô"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-08", "feature:settle", "kind:dev", "role:BE", "rule:no-overwrite"]
+    spec_refs: ["STL_CORRECTION_DECIDE_TECH §4.4 No 1, 2, 5", "ADR-004 §2.2"]
+    rfp_refs: [FR-CORR-02, FR-CORR-03, BR-INC-01]
+    depends_on: [B-FG08-03]
+    depends_on_spec: ["LOT_DB 4.26 sổ SL lô SALE / SALE_REVERSE (luồng A)"]
+    hours_hint: 12
+    description: |
+      applied = 業務日 OPEN sớm nhất; period_id = kỳ chứa trade_date của GD gốc; REVERSE (giá / người cũ, âm) + DELTA (mới); kiểm SL khả dụng; trades gốc không đổi.
+      Kỳ gốc đã 期ロック → không vào 期のお支払額 kỳ đang mở (engine đọc qua K1-4 → DELTA).
+    dod:
+      - "STL_CORRECTION_DECIDE DoD #1, #3, #10 đạt; so before / after dòng trades gốc giống hệt"
+
+  - id: B-FG08-05
+    epic: EP-FG08
+    parent: null
+    kind: dev
+    title: "[FG-08] 反映 LATE_ENTRY / KANNO / INCENTIVE + audit, thông báo"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-08", "feature:settle", "kind:dev", "role:BE", "rule:no-overwrite"]
+    spec_refs: ["STL_CORRECTION_DECIDE_TECH §4.4 No 3, 4; §4.5", "ADR-005 §2.8", "ADR-007 §2.3-7a"]
+    rfp_refs: [FR-CORR-02, FR-INC-03, BR-INC-01]
+    depends_on: [B-FG08-03]
+    depends_on_spec: ["DEP-06 fn_trade_late_entry / fn_lot_late_entry / fn_delivery_record cờ late (luồng A)", "DEP-13 outbox notify (luồng C)", "TRADE_DB 4.30 cột 3b incentive_period_id (luồng A)"]
+    hours_hint: 10
+    description: |
+      LATE_ENTRY gọi hàm module đích (từ chối → 409 E-STL-029 + rollback); GD mà kỳ của trade_date đã LOCKED → incentive_period_id = kỳ đang mở (Q-INC-02).
+      KANNO / INCENTIVE: chỉ đổi trạng thái APPROVED + applied_business_date; engine 期ロック kế tiếp sinh DELTA (B-FG09-08). Audit + outbox người lập / 運用部門長.
+    dod:
+      - "STL_CORRECTION_DECIDE DoD #11, #12 đạt; KANNO / INCENTIVE APPROVED không ghi trade_adjustments"
+
+  - id: B-FG08-06
+    epic: EP-FG08
+    parent: null
+    kind: dev
+    title: "[FG-08] SC-08-03 修正申請決裁・却下 — màn (FE)"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-08", "feature:settle", "kind:dev", "role:FE", "rule:human-decision"]
+    spec_refs: ["SC-08-03_SPEC §4–§6"]
+    rfp_refs: [FR-CORR-02, CAP-HUMAN-01]
+    depends_on: [B-FG08-02, B-FG08-03]
+    depends_on_spec: []
+    hours_hint: 20
+    description: |
+      Cha của 2 sub-issue. Chỉ lá chấm SWP.
+    dod:
+      - "Hai sub-issue xong; màn không có chữ 承認 (L4-D03)"
+
+  - id: B-FG08-06.1
+    epic: EP-FG08
+    parent: B-FG08-06
+    kind: dev
+    title: "[FG-08] SC-08-03 — chi tiết yêu cầu, xem trước REVERSE / DELTA, chứng từ"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-08", "feature:settle", "kind:dev", "role:FE"]
+    spec_refs: ["SC-08-03_SPEC §4.1, §4.3 (API-STL-004)"]
+    rfp_refs: [FR-CORR-02]
+    depends_on: [B-FG08-02]
+    depends_on_spec: ["DEP-03 đính kèm chung (luồng C)"]
+    hours_hint: 10
+    description: |
+      Hiện nội dung trước / sau, tiền thay đổi lớn nhất, số cấp, lịch sử duyệt, 計上業務日 + 対象期 (nhãn 期ロック済 khi kỳ gốc đã khóa), tải chứng từ.
+    dod:
+      - "Hiển thị đúng §4.1; phân quyền theo §4.4"
+
+  - id: B-FG08-06.2
+    epic: EP-FG08
+    parent: B-FG08-06
+    kind: dev
+    title: "[FG-08] SC-08-03 — 決裁 / 却下, MFA, 次の決裁待ちへ, lỗi"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-08", "feature:settle", "kind:dev", "role:FE", "rule:human-decision"]
+    spec_refs: ["SC-08-03_SPEC §4.2, §5, §6"]
+    rfp_refs: [FR-CORR-02, NFR-SEC-01]
+    depends_on: [B-FG08-06.1, B-FG08-03]
+    depends_on_spec: ["DEP-01 MFA (luồng C)"]
+    hours_hint: 10
+    description: |
+      Nút theo allowedActions, lý do 却下 ≤ 200, MFA step-up (không ★), duyệt tiếp không hỏi lại trong cửa sổ; xử lý 403 / 409 / 422 theo §5.
+    dod:
+      - "Mọi dòng Error Handling SC-08-03 §5 có xử lý; E-STL-026 tải lại cấp hiện tại"
+
+  - id: B-FG08-07
+    epic: EP-FG08
+    parent: null
+    kind: test
+    title: "[FG-08] 修正申請決裁 テスト — kịch bản DoD STL_CORRECTION_DECIDE #1–14"
+    role: QA
+    assignee: QA-2
+    labels: ["fg:FG-08", "feature:settle", "kind:test", "role:QA", "rule:no-overwrite", "rule:human-decision"]
+    spec_refs: ["STL_CORRECTION_DECIDE_TECH §5 Điều kiện hoàn thành", "SC-08-03_SPEC §5"]
+    rfp_refs: [FR-CORR-01, FR-CORR-02, FR-CORR-03]
+    depends_on: [B-FG08-04, B-FG08-05, B-FG08-06]
+    depends_on_spec: ["DEP-09 seed yêu cầu PENDING đủ 4 scope (specs/_index.md)"]
+    hours_hint: 10
+    description: |
+      Seed yêu cầu 4 scope (dưới / trên ngưỡng, đổi 買受人, kỳ gốc đã 期ロック), 代行 hiệu lực / hết hạn; chạy API + E2E SC-08-03.
+    dod:
+      - "14 ca có kịch bản + kết quả; ví dụ 相対-0005 (STL_CORRECTION_DECIDE §5) tái hiện đúng period_id 2027-08, business_date 2027-09-15"
+
+  - id: B-FG08-08
+    epic: EP-FG08
+    parent: null
+    kind: rough
+    title: "[FG-08][概算] 修正申請作成・一覧 — SC-08-01, SC-08-02, POST /corrections"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-08", "feature:settle", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-09", "api-list §4 POST /api/v1/corrections", "SCREEN-LIST #36, #37", "ADJUST_DB 4.37"]
+    rfp_refs: [FR-CORR-01, FR-CORR-03, FORM-CORR-01]
+    depends_on: [B-CLR-16]
+    depends_on_spec: []
+    hours_hint: 80
+    description: |
+      Lập 修正申請 4 scope (TRADE / KANNO / INCENTIVE / LATE_ENTRY), xem trước tiền + số cấp (chốt lúc nộp), điền sẵn từ C-24; danh sách 「自分の決裁待ち」.
+      Giờ = LAB-1: BE FT-08-01 3 MD + phần nộp của FT-08-02 2 MD, FE NH 3 + DS 2 MD = 10 MD.
+    dod:
+      - "Có Screen Specification SC-08-01/02 + API Design POST /corrections rồi tách lại"
+
+  # ===================== EP-FG09 完納奨励金 =====================
+  - id: B-FG09-01
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] 奨励金テーブル — migration INCENTIVE_DB + quyền EXECUTE"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["INCENTIVE_DB §4.51, §4.52", "INC_ENGINE_TECH K8 DoD (e)"]
+    rfp_refs: [FR-INC-01, FR-INC-03, BR-INC-01]
+    depends_on: [B-FG07-01]
+    depends_on_spec: ["RULE_DB 4.21 (B-FG10-01)", "ADJUST_DB 4.37 correction_requests (B-FG08-01)", "PARTY_DB participants (luồng A)"]
+    hours_hint: 8
+    description: |
+      incentive_runs (+ payment_csv_confirmed_at, payment_csv_latest_paid_on), incentive_results (MAIN / DELTA / CARRY / CARRY_EXPIRED, ref_period_id, correction_id, kanno_basis, judgement_note), enum incentive_kind, kanno_basis.
+      Append-only; role ứng dụng không có quyền INSERT trực tiếp — chỉ hàm lock_period (SECURITY DEFINER) ghi được.
+    dod:
+      - "uq_incentive_results_main (period_id, participant_id) partial MAIN; CHECK ref_period_id bắt buộc khi DELTA / CARRY / CARRY_EXPIRED"
+      - "K8 DoD (e): role ứng dụng INSERT vào incentive_results bị từ chối"
+
+  - id: B-FG09-02
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] 入金・期のお支払額テーブル — migration BILLING_DB 4.44–4.50"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["BILLING_DB §4.44–§4.50"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: [B-FG07-01]
+    depends_on_spec: ["BILLING_DB 4.40–4.42 IF-ACC-01 (FG-11 — luồng C, B-PA-04)"]
+    hours_hint: 10
+    description: |
+      partner_code_mappings, payment_import_batches, payment_batch_voids, payments (paid_on = 入金日 ngân hàng — Q-INC-01), payment_allocations append-only (ALLOCATE / REVERSE, is_on_time, method), period_billings (snapshot LOCK), period_billing_tax_lines.
+    dod:
+      - "payment_allocations chặn UPDATE / DELETE; REVERSE phải có reverses_id; view v_period_paid tạo được"
+
+  - id: B-FG09-03
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K1 入力収集 — incentive_collect_inputs + input_hash"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["INC_ENGINE_TECH §3.1, §3.4, §4.1 (K1)", "INC_FUNC §2.1, §2.2"]
+    rfp_refs: [FR-INC-01, FR-INC-03, BR-INC-01]
+    depends_on: [B-FG09-01, B-FG09-02, B-FG08-01]
+    depends_on_spec: ["MKT_DB v_trade_effective (luồng A)", "TRADE_DB 4.30 cột 3b incentive_period_id (luồng A)"]
+    hours_hint: 12
+    description: |
+      Gom đầu vào của P theo IP(g) = P (GD kỳ + GD 後入力 chuyển sang P) + trade_adjustments.period_id = P + phân bổ 入金 của P; tập ứng viên DELTA Q (đầu vào ghi sau locked_at của Q, 修正申請 KANNO / INCENTIVE); chuẩn hóa → SHA-256.
+      Không đọc now(); judgement không vào hash. Tách riêng vì là chốt chặn 'đổi giữa 試算 và khóa' (E-INC-008).
+    dod:
+      - "DoD K1 (a)(b): 2 lần gọi không ghi mới → cùng H; thêm 1 phân bổ → H đổi"
+      - "DoD K1 (c): TV-13 / TV-15 GD LATE_ENTRY vào đầu vào kỳ 2027-09, kỳ 2027-08 không vào tập ứng viên"
+      - "DoD K1 (d): TV-01 điều chỉnh period_id 08 khi kỳ 08 OPEN → vào S_excl kỳ 08; lỗi E-INC-001 / 002 / 010 đúng status"
+
+  - id: B-FG09-04
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K2 入金充当 — allocate_payment_fifo (FIFO, 過入金, 取消, 手動)"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["INC_ENGINE_TECH §4.2 (K2)", "INC_FUNC §2.3", "BILLING_DB 4.48", "ADR-007 §2.7-14"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: [B-FG09-02]
+    depends_on_spec: []
+    hours_hint: 14
+    description: |
+      Chạy ngoài engine, song song K1 / K3. FIFO theo kỳ cũ nhất còn nợ (kỳ LOCKED = LOCK snapshot + điều chỉnh sau khóa); is_on_time = 入金日 CSV ≤ due_date (không theo ngày import);
+      tiền thừa → kỳ OPEN cũ nhất; hủy batch → dòng REVERSE âm; MANUAL có lý do. Nhánh 請求番号 KHÔNG làm ở đây (B-FG09-12, chờ E-02 — B-PD-02).
+      Tách riêng vì FIFO có thể làm người trả đủ mất 完納 (OPEN-L4-02) — phải test độc lập.
+    dod:
+      - "DoD K2: CSV nhập 2027-10-09 có 入金日 2027-10-07, hạn 2027-10-08 → is_on_time = true"
+      - "TV-06: 108.000 → kỳ 09 (trễ), 432.000 → kỳ 10; TV-05: paid_on 2027-10-12 > hạn → is_on_time = false"
+      - "Hủy batch → Σ phân bổ của batch = 0, không xóa dòng; participant_id NULL → không phân bổ, vào danh sách 要判断"
+
+  - id: B-FG09-05
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K3 完納判定 — 期のお支払額, 完納 / 要確認 (手数料差引の疑い)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:human-decision"]
+    spec_refs: ["INC_ENGINE_TECH §4.3 (K3)", "INC_FUNC §2.4, §2.5", "ADR-007 §2.6"]
+    rfp_refs: [FR-INC-01, BR-INC-01, CAP-HUMAN-01]
+    depends_on: [B-FG09-03]
+    depends_on_spec: ["RULE_DB 4.19 tax_rates, 4.23 rule_parameters TAX_ROUNDING (B-FG10-01)", "DEP-16 file cấu hình KANNO_FEE_SUSPECT_MAX_JPY (B-FG10-14)"]
+    hours_hint: 12
+    description: |
+      Thuế một lần trên tổng theo người × kỳ × suất (TAX_ROUNDING của V_X); B ≤ 0 không sinh MAIN; OT ≥ B → OK; 0 < thiếu ≤ FEE_MAX và OT > 0 → SUSPECT (engine không tự kết luận, gợi ý 非完納); còn lại NG.
+      Judgement chỉ cho SUSPECT, lý do 1–500. Hàm period_payable dùng chung cho SC-09-B1. Điểm chờ: E-06 (B-CLR-10), FEE_MAX (B-CLR-13).
+    dod:
+      - "DoD K3: TV-05 → NG, E = 0; TV-10 → SUSPECT; judgement KANNO + lý do → JUDGED, 9.900; NOT_KANNO → 0"
+      - "Thuế 8% của 1.050.000 = 84.000 (TV-01); E-INC-006 / 007 / 011 đúng 422"
+
+  - id: B-FG09-06
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K4 段階判定 — rate_tier_for (version của kỳ, 以上 / 未満)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:versioned-rule"]
+    spec_refs: ["INC_ENGINE_TECH §4.4 (K4)", "INC_FUNC §2.6", "RULE_DB 4.22"]
+    rfp_refs: [FR-INC-01, FR-INC-02, BR-INC-01, TBL-RATE-01]
+    depends_on: [B-FG09-05, B-FG10-01]
+    depends_on_spec: ["RULE_VERSION_TECH §4.6 rule_at (B-FG10-06)"]
+    hours_hint: 6
+    description: |
+      Version = V_X của kỳ (ngày 1), không phải ngày khóa / tính lại; tra incentive_rate_rows theo loại người (仲卸 / 売買参加者); E = 0 → bậc 1, 0 bp; bảng hỏng → E-INC-010.
+      Bảng tỷ lệ thật chờ E-03 (B-CLR-09) — test dùng bảng giả INCENTIVE_DB §5.
+    dod:
+      - "DoD K4: TV-12 1.000.000 → bậc 3, 999.999 → bậc 2; cùng người kỳ 09 / kỳ 10 tra v2 / v3"
+
+  - id: B-FG09-07
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K5 奨励金額 — incentive_amount số nguyên, floor ×110/1.000.000"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金"]
+    spec_refs: ["INC_ENGINE_TECH §3.2, §4.5 (K5)", "INC_FUNC §2.7"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: [B-FG09-06]
+    depends_on_spec: []
+    hours_hint: 4
+    description: |
+      I = div(E × ρ × 110, 1.000.000), IMMUTABLE, không làm tròn trung gian. Tách riêng vì là hàm dùng chung (SC-10-04 [15] ví dụ tính) và có ca biên tràn số.
+    dod:
+      - "DoD K5: TV-11 → 12.222; TV-12 → 9.900 / 5.499 / 8.800; TV-01 → 10.395"
+      - "Unit test ≥ 6 ca biên: E = 0, ρ = 0, ngay dưới / trên ngưỡng, E = 10^11 không tràn"
+
+  - id: B-FG09-08
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K6 次期差分 — compute_delta_rows (mọi kỳ đã khóa, tách dòng)"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:no-overwrite", "rule:versioned-rule"]
+    spec_refs: ["INC_ENGINE_TECH §4.6 (K6)", "INC_FUNC §2.8", "ADR-007 §2.4, §2.5"]
+    rfp_refs: [FR-INC-03, BR-INC-01, FR-CORR-02]
+    depends_on: [B-FG09-03, B-FG09-05, B-FG09-06, B-FG09-07]
+    depends_on_spec: ["STL_CORRECTION_DECIDE_TECH §4.4 No 4 (KANNO / INCENTIVE APPROVED — B-FG08-05)", "FG-15 data migration: kỳ migrate phải có incentive_runs (DEC-005 — luồng C)"]
+    hours_hint: 16
+    description: |
+      Tính lại toàn bộ từng Q (theo period_code) bằng V_Q, K' = K của MAIN (không hồi tố) trừ 修正申請 KANNO; C_INC cố định; D = I' − R; tách dòng theo nguồn (INCENTIVE mới, KANNO mới, phần còn lại) xác định bằng correction_id; năm TC của dòng = năm TC của P.
+      GD 後入力 không sinh DELTA (§3.4). Khối nặng nhất của đề — tách riêng để review lũy đẳng.
+    dod:
+      - "DoD K6: TV-02 +1.980 (K kỳ 08 giữ true); TV-03 −15.400 ghi ở 2028-05, tra v3, năm TC 2028"
+      - "TV-07: phân bổ sau khóa → DELTA 0; sau KANNO → +9.900 có correction_id, CORRECTION"
+      - "TV-13 / TV-15 không sinh DELTA kỳ 08; TV-14 +2.000 kỳ 11, +990 kỳ 12, không sinh −2.000, biến thể tách 2 dòng"
+      - "Chạy 2 lần liên tiếp không đầu vào mới → lần 2 sinh 0 dòng (lũy đẳng); Q không có incentive_runs → E-INC-010"
+
+  - id: B-FG09-09
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K7 繰越 — compute_carry_rows (CARRY, CARRY_EXPIRED cuối năm TC)"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["INC_ENGINE_TECH §4.7 (K7)", "INC_FUNC §2.9"]
+    rfp_refs: [FR-INC-03, BR-INC-01]
+    depends_on: [B-FG09-08]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Payout = max(0, Σ dòng của i ở P); Σ < 0 → CARRY âm ở P+1 (ref = kỳ gốc chuỗi âm); kỳ tháng 03 → CARRY_EXPIRED dương đóng số dư, không mang sang năm TC mới.
+      Cách thu phần CARRY_EXPIRED chờ Q-ARCH-08 (B-CLR-11) — engine chỉ ghi dòng.
+    dod:
+      - "DoD K7 / TV-04: 2028-05 Σ −12.100 → CARRY ở 2028-06; 2028-06 −2.200 → CARRY 2028-07 …; 2029-03 CARRY_EXPIRED +2.200, Σ = 0, payout 0"
+
+  - id: B-FG09-10
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K8 試算・期ロック — engine chế độ PREVIEW / LOCK + API"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:no-overwrite", "rule:human-decision"]
+    spec_refs: ["INC_ENGINE_TECH §4.8 (K8)", "INC_FUNC §2.10–§2.13"]
+    rfp_refs: [FR-INC-01, FR-INC-03, BR-INC-01, CAP-HUMAN-01]
+    depends_on: [B-FG09-03, B-FG09-04, B-FG09-05, B-FG09-06, B-FG09-07, B-FG09-08, B-FG09-09]
+    depends_on_spec: []
+    hours_hint: 32
+    description: |
+      Cha của 3 sub-issue theo bước (試算 / transaction khóa / route + MFA). K8 phụ thuộc tất cả khối. Chỉ lá chấm SWP.
+    dod:
+      - "Ba sub-issue xong; DoD K8 (a)–(e) đạt (kiểm ở B-FG09-18)"
+
+  - id: B-FG09-10.1
+    epic: EP-FG09
+    parent: B-FG09-10
+    kind: dev
+    title: "[FG-09] K8 試算 — compute_period_incentives, preview_incentives, API-INC-002"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金"]
+    spec_refs: ["INC_ENGINE_TECH §3.3, §4.8 No 10", "INC_FUNC §2.10, §2.11", "API-INC-002"]
+    rfp_refs: [FR-INC-01]
+    depends_on: [B-FG09-03, B-FG09-05, B-FG09-06, B-FG09-07, B-FG09-08, B-FG09-09]
+    depends_on_spec: ["IAM_AUDIT_DB audit_logs (luồng C)"]
+    hours_hint: 8
+    description: |
+      Hàm thuần chạy K1→K7 đúng thứ tự §3.3; 試算 với judgement nháp (thiếu → giữ 要確認), không ghi bảng nghiệp vụ, chỉ ghi audit INCENTIVE_PREVIEW (H, tổng, map người → thưởng). Quyền SETTLE / STL_HEAD, không MFA.
+    dod:
+      - "Gọi 試算 không đổi số dòng bất kỳ bảng nghiệp vụ nào; có đúng 1 dòng audit_logs INCENTIVE_PREVIEW / lần; kỳ LOCKED → 423 E-INC-002"
+
+  - id: B-FG09-10.2
+    epic: EP-FG09
+    parent: B-FG09-10
+    kind: dev
+    title: "[FG-09] K8 期ロック — lock_period một transaction (khóa, ghi, 端数調整)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["INC_ENGINE_TECH §4.8 No 2–9", "INC_FUNC §2.12", "BILLING_DB 4.42, 4.49, 4.50"]
+    rfp_refs: [FR-INC-01, FR-INC-03, BR-INC-01]
+    depends_on: [B-FG09-10.1, B-FG09-04]
+    depends_on_spec: ["BILLING_DB 4.42 accounting_export_lines 端数調整 (FG-11 — luồng C; B-PA-01, B-PA-02)", "DEP-12 tạo kỳ P+1 (B-FG10-12)", "DEP-13 outbox (luồng C)"]
+    hours_hint: 16
+    description: |
+      FOR UPDATE NOWAIT + advisory lock; kiểm điều kiện theo thứ tự (E-INC-009/002/003/004/005/014/013/008); chạy K1..K7 LOCK; bảo đảm P+1 tồn tại TRƯỚC khi ghi CARRY (B-PS-02);
+      ghi period_billings LOCK, incentive_runs (+ chứng cứ tick CSV), incentive_results, dòng 端数調整 theo suất (phạm vi theo trục kỳ — B-PA-01), LOCKED, outbox, audit PERIOD_LOCK. Lỗi bất kỳ → rollback toàn bộ.
+    dod:
+      - "DoD K8 (a): ép lỗi ở bước ghi outbox → không còn dòng incentive_results, P vẫn OPEN"
+      - "DoD K8 (b)(c)(d)(d2): 2 phiên → 1 phiên E-INC-009; đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014"
+
+  - id: B-FG09-10.3
+    epic: EP-FG09
+    parent: B-FG09-10
+    kind: dev
+    title: "[FG-09] K8 lockPeriodRoute — API-INC-003, token MFA PERIOD_LOCK, 代行"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金", "rule:human-decision"]
+    spec_refs: ["INC_ENGINE_TECH §4.8 No 1", "INC_FUNC §2.13", "API-INC-003", "ADR-002 §2-6a"]
+    rfp_refs: [FR-INC-01, NFR-SEC-01, CAP-HUMAN-01]
+    depends_on: [B-FG09-10.2]
+    depends_on_spec: ["DEP-01 API MFA verify + tiêu thụ token (luồng C)", "DEP-14 delegations (luồng C)"]
+    hours_hint: 8
+    description: |
+      Route handler: phiên, vai STL_HEAD / 代行 hiệu lực, tiêu thụ X-MFA-Token purpose = PERIOD_LOCK (không dùng lại step-up 10 phút), set_config app.user_id, gọi lock_period. Không có lịch tự động (CAP-HUMAN-01).
+    dod:
+      - "401 E-CMN-001, 403 E-CMN-002 (SETTLE, 代行 hết hạn), 403 E-CMN-005 (thiếu / dùng lại / sai purpose token) đúng; 200 trả kết quả chính thức"
+
+  - id: B-FG09-11
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K9 読み出し — lock-view, kết quả chính thức (API-INC-001, -004)"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金"]
+    spec_refs: ["INC_ENGINE_TECH §4.9 (K9)", "API-INC-001", "API-INC-004"]
+    rfp_refs: [FR-INC-01, FR-INC-03]
+    depends_on: [B-FG09-03, B-FG09-04, B-FG09-05]
+    depends_on_spec: ["IAM_AUDIT_DB audit_logs INCENTIVE_PREVIEW (luồng C)"]
+    hours_hint: 14
+    description: |
+      充当先の内訳, cảnh báo ⚠ (OLD_PERIOD_ALLOCATION / OVERPAYMENT / UNMAPPED_PAYMENT) + warningCount, 前期以前の調整 (không cộng vào B), 前期分の後入力 (đã trong B), thông tin tick CSV, so 2 lần 試算, lockConditions, permissions; kết quả chính thức + payout + CARRY_EXPIRED cho SC-09-05 / RPT-07.
+    dod:
+      - "DoD K9: TV-06 sinh OLD_PERIOD_ALLOCATION cho B05 kỳ 10; TV-02 hiện 216.000 ở 前期以前の調整 kỳ 09"
+      - "TV-13 hiện B12 08/31 200.000 ở 前期分の後入力 (không ở 前期以前の調整); 2 lần 試算 có phân bổ mới giữa → chênh đúng; kỳ chưa khóa hỏi kết quả → 404 E-INC-012"
+
+  - id: B-FG09-12
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] K2 請求番号充当 — nhánh INVOICE_NO (chỉ làm khi E-02 = có)"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:BE", "constraint:完納奨励金"]
+    spec_refs: ["INC_ENGINE_TECH §4.2 No 1", "INCENTIVE_DB §5 TV-06 (biến thể có 請求番号)", "SC-09-04_SPEC [6]"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: [B-FG09-04, B-CLR-02]
+    depends_on_spec: []
+    hours_hint: 6
+    description: |
+      Có 請求番号 → phân bổ toàn bộ vào kỳ của số đó (method = INVOICE_NO); không tra ra → rơi về FIFO + cảnh báo; ẩn ghi chú [6] trên SC-09-04. E-02 trả lời không có cột → đóng issue (B-PD-02).
+    dod:
+      - "TV-06 biến thể: 540.000 có 請求番号 → kỳ 10 完納, thưởng 2.750; số không tra ra → FIFO + cảnh báo"
+
+  - id: B-FG09-13
+    epic: EP-FG09
+    parent: null
+    kind: dev
+    title: "[FG-09] SC-09-04 奨励金計算・期ロック — màn (FE)"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:FE", "constraint:完納奨励金", "rule:human-decision"]
+    spec_refs: ["SC-09-04_SPEC §4–§6"]
+    rfp_refs: [FR-INC-01, FR-INC-03, CAP-HUMAN-01]
+    depends_on: [B-FG09-10, B-FG09-11]
+    depends_on_spec: []
+    hours_hint: 32
+    description: |
+      Cha của 3 sub-issue theo nhóm trạng thái màn (A–B, C, D–E). Màn không tính tiền, chỉ hiện số API trả. Chỉ lá chấm SWP.
+    dod:
+      - "Ba sub-issue xong; không có chữ 承認 trên màn"
+
+  - id: B-FG09-13.1
+    epic: EP-FG09
+    parent: B-FG09-13
+    kind: dev
+    title: "[FG-09] SC-09-04 ① 入金の割当・要確認 — [1]–[6], [14], [15], [17], [18]"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:FE", "constraint:完納奨励金", "rule:human-decision"]
+    spec_refs: ["SC-09-04_SPEC §4.1 nhóm A, B; §4.2 [14] [17]; §4.3 API-INC-001"]
+    rfp_refs: [FR-INC-01]
+    depends_on: [B-FG09-11]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Đầu màn (kỳ, 支払期日 lùi, version, bước); bảng phân bổ + ⚠; hộp 判断 cho dòng 要確認 (mặc định 非完納, lý do 1–500, nháp sessionStorage); 前期以前の調整; 前期分の後入力; tick 入金CSV không lưu nháp, không tự tick.
+    dod:
+      - "Validation §4.2 [14] [17] đúng; SETTLE chỉ thấy 「照合部門長の判断待ち」 (§4.4)"
+
+  - id: B-FG09-13.2
+    epic: EP-FG09
+    parent: B-FG09-13
+    kind: dev
+    title: "[FG-09] SC-09-04 試算 / 確定結果 — [7]–[11], [16], tab 交付率表"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:FE", "constraint:完納奨励金"]
+    spec_refs: ["SC-09-04_SPEC §4.1 nhóm C, D [11]; §4.3 API-INC-002, API-INC-004; §5 Standard [8] [11]"]
+    rfp_refs: [FR-INC-01, FR-INC-03]
+    depends_on: [B-FG09-13.1, B-FG09-10.1]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Bấm 試算 gửi judgement nháp, giữ inputHash làm expectedInputHash; bảng kết quả (本計算 / 差額 / 繰越 / 繰越失効, 参照期, 版), 端数調整行, 負の差額の繰越, 前回の試算との差; kỳ LOCKED đọc API-INC-004.
+    dod:
+      - "Không tự 試算 khi mở màn; nhãn 「古い試算」 khi inputHash đổi (§6.1)"
+
+  - id: B-FG09-13.3
+    epic: EP-FG09
+    parent: B-FG09-13
+    kind: dev
+    title: "[FG-09] SC-09-04 期ロック — C-31, C-30 MFA, điều kiện bật [13], lỗi"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-09", "feature:incentive", "kind:dev", "role:FE", "constraint:完納奨励金", "rule:human-decision", "rule:no-overwrite"]
+    spec_refs: ["SC-09-04_SPEC §4.1 nhóm E, §5 Error Handling, §6.1, §6.2"]
+    rfp_refs: [FR-INC-01, NFR-SEC-01, CAP-HUMAN-01]
+    depends_on: [B-FG09-13.2, B-FG09-10.3]
+    depends_on_spec: ["DEP-01 API MFA verify (luồng C)"]
+    hours_hint: 10
+    description: |
+      [13] bật chỉ khi đủ 8 điều kiện §6.2 (kèm câu lý do đầu tiên không đạt); C-31 hệ quả + checkbox ⚠ bắt buộc; C-30 luôn hỏi mã; xử lý E-INC-008/013/003/004/005/009/006/007/011/014/002/010, 403, mất mạng.
+    dod:
+      - "Mỗi dòng Error Handling SC-09-04 §5 có xử lý đúng; sau khóa màn chuyển chỉ đọc, C-10 → SC-09-05"
+
+  - id: B-FG09-14
+    epic: EP-FG09
+    parent: null
+    kind: test
+    title: "[FG-09] 完納・入金充当 テスト — TV-01, TV-05, TV-06, TV-10"
+    role: QA
+    assignee: QA-2
+    labels: ["fg:FG-09", "feature:incentive", "kind:test", "role:QA", "constraint:完納奨励金", "rule:human-decision"]
+    spec_refs: ["INCENTIVE_DB §5 TV-01, TV-05, TV-06, TV-10", "INC_ENGINE_TECH §5 ánh xạ TV (K1, K2, K3, K9)"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: [B-FG09-04, B-FG09-05, B-FG09-10.1]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Nhóm 1 — 完納 / phân bổ 入金: fixture CI dựng từ INCENTIVE_DB §5 (bảng tỷ lệ giả tới E-03), seed payments.paid_on theo TV. Thêm ca 入金日 ≤ hạn nhưng CSV nhập sau hạn (Q-INC-01).
+    dod:
+      - "TV-01 10.395; TV-05 MAIN 0; TV-06 kỳ 10 MAIN 0 + cảnh báo OLD_PERIOD_ALLOCATION; TV-10 SUSPECT → 0 / 9.900 theo judgement"
+      - "Chạy trong CI, fixture tái lập được"
+
+  - id: B-FG09-15
+    epic: EP-FG09
+    parent: null
+    kind: test
+    title: "[FG-09] 段階・端数・版 テスト — TV-11, TV-12 + biên K5"
+    role: QA
+    assignee: QA-2
+    labels: ["fg:FG-09", "feature:incentive", "kind:test", "role:QA", "constraint:完納奨励金", "rule:versioned-rule"]
+    spec_refs: ["INCENTIVE_DB §5 TV-11, TV-12", "INC_ENGINE_TECH §4.4, §4.5 DoD"]
+    rfp_refs: [FR-INC-01, FR-INC-02, TBL-RATE-01]
+    depends_on: [B-FG09-06, B-FG09-07]
+    depends_on_spec: ["RULE_DB seed v2 / v3 (RULE_VERSION_TECH §5.1)"]
+    hours_hint: 6
+    description: |
+      Nhóm 2 — bậc + làm tròn + chọn version theo kỳ. Seed v2 (bậc 3 = 80 bp, trước 2027-10) và v3.
+    dod:
+      - "TV-11 12.222; TV-12 9.900 / 5.499 / 8.800; ≥ 6 ca biên K5 (E = 0, ρ = 0, E = 10^11)"
+
+  - id: B-FG09-16
+    epic: EP-FG09
+    parent: null
+    kind: test
+    title: "[FG-09] 差分・繰越・後入力 テスト — TV-02, 03, 04, 07, 13, 14, 15"
+    role: QA
+    assignee: QA-2
+    labels: ["fg:FG-09", "feature:incentive", "kind:test", "role:QA", "constraint:完納奨励金", "rule:no-overwrite", "rule:versioned-rule"]
+    spec_refs: ["INCENTIVE_DB §5 TV-02, TV-03, TV-04, TV-07, TV-13, TV-14, TV-15", "INC_ENGINE_TECH §4.6, §4.7 DoD"]
+    rfp_refs: [FR-INC-03, BR-INC-01, FR-CORR-02]
+    depends_on: [B-FG09-08, B-FG09-09, B-FG09-10.2, B-FG08-05]
+    depends_on_spec: ["DEP-06 fn_trade_late_entry (luồng A) cho TV-13 / TV-15"]
+    hours_hint: 14
+    description: |
+      Nhóm 3 — chuỗi nhiều kỳ: khóa kỳ theo đúng ngày ghim ở TV (vd TV-14 kỳ 10 / 11 / 12), 修正申請 TRADE / KANNO / INCENTIVE / LATE_ENTRY duyệt giữa các lần khóa; kiểm lũy đẳng.
+    dod:
+      - "TV-02 +1.980; TV-03 −15.400 năm TC 2028; TV-04 CARRY_EXPIRED +2.200; TV-07 0 rồi +9.900 CORRECTION"
+      - "TV-13 4.400 (biến thể 0), không DELTA kỳ 08; TV-14 +2.000 / +990 và biến thể +2.990 hai dòng; TV-15 3.300 (biến thể 0)"
+
+  - id: B-FG09-17
+    epic: EP-FG09
+    parent: null
+    kind: test
+    title: "[FG-09] 支払期日・業務日 前提テスト — TV-08, TV-09"
+    role: QA
+    assignee: QA-2
+    labels: ["fg:FG-09", "feature:incentive", "kind:test", "role:QA", "constraint:完納奨励金"]
+    spec_refs: ["INCENTIVE_DB §5 TV-08, TV-09", "INC_ENGINE_TECH §5 (TV-08 lịch, TV-09 業務日 — tiền đề K1)"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: [B-FG10-12]
+    depends_on_spec: ["TRADE_AITAI_CONFIRM_TECH TRADE_START_TIME (luồng A) cho TV-09"]
+    hours_hint: 4
+    description: |
+      Nhóm 4 — tiền đề ngoài engine: 支払期日 lùi theo ngày ngân hàng (PREV_BANK_DAY), lô / GD quanh mốc 01:00–02:00. Engine chỉ đọc due_date / business_date; code nằm ở lịch (rough B-FG10-12) và trade (A).
+    dod:
+      - "TV-08 kỳ 2028-05 支払期日 2028-06-09; tiền 06-12 không 完納, 06-09 完納; TV-09 lô 01:30 thuộc 2027-09-01, GD 01:45 bị từ chối"
+
+  - id: B-FG09-18
+    epic: EP-FG09
+    parent: null
+    kind: test
+    title: "[FG-09] 期ロック 結合テスト — DoD K8 (a)–(e) + E2E SC-09-04"
+    role: QA
+    assignee: QA-2
+    labels: ["fg:FG-09", "feature:incentive", "kind:test", "role:QA", "constraint:完納奨励金", "rule:no-overwrite", "rule:human-decision"]
+    spec_refs: ["INC_ENGINE_TECH §4.8 DoD K8", "SC-09-04_SPEC §4.4, §5, §6"]
+    rfp_refs: [FR-INC-01, FR-INC-03, NFR-SEC-01]
+    depends_on: [B-FG09-10, B-FG09-13]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Test tích hợp transaction (ép lỗi, hai phiên đồng thời, đổi đầu vào giữa 試算 và khóa, quyền EXECUTE) + E2E màn theo ma trận vai §4.4 và mọi dòng Error Handling §5.
+    dod:
+      - "DoD K8 (a)(b)(c)(d)(d2)(e) đạt; ma trận vai §4.4 (STL-HEAD / SETTLE / OPS-HEAD / vai khác) đạt"
+
+  - id: B-FG09-19
+    epic: EP-FG09
+    parent: null
+    kind: rough
+    title: "[FG-09][概算] 入金CSV取込・コード対応・期別入金状況 — SC-09-01..03"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-09", "feature:incentive", "kind:rough", "role:BE", "constraint:完納奨励金", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-11", "api-list §4 POST /payment-imports, partner-code-mappings", "SCREEN-LIST #39–#41", "BILLING_DB 4.44–4.48"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: [B-CLR-04, B-CLR-03]
+    depends_on_spec: []
+    hours_hint: 108
+    description: |
+      Import CSV lưu 入金日 ngân hàng (không trùng khi nhập lại), hủy batch, bảng ánh xạ 取引先コード có lịch sử, màn số phải trả + 入金 theo kỳ (gán tay MANUAL gọi K2).
+      K2 đã spec ở B-FG09-04 — issue này chỉ phần màn / import. Giờ = LAB-1: BE FT-09-01 4 + FT-09-02 2 MD, FE NH 3 + CĐ 2,5 + DS 2 MD = 13,5 MD.
+    dod:
+      - "Có Screen Specification SC-09-01..03 + API Design import / mapping rồi tách lại"
+
+  - id: B-FG09-20
+    epic: EP-FG09
+    parent: null
+    kind: rough
+    title: "[FG-09][概算] 奨励金明細 + 期のお支払額通知 — SC-09-05, SC-09-B1"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-09", "feature:incentive", "kind:rough", "role:FE", "constraint:完納奨励金", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #43 SC-09-05, §4 SC-09-B1", "function-list FT-09-04", "INC_ENGINE_TECH §4.9 No 5, §5 Ranh giới"]
+    rfp_refs: [FR-INC-01, FR-INC-03]
+    depends_on: [B-CLR-05]
+    depends_on_spec: ["DEP-13 notify worker + mẫu FORM-INC-01 (luồng C)"]
+    hours_hint: 28
+    description: |
+      Chi tiết thưởng người × kỳ (version đã áp, delta, dư âm mang sang) đọc API-INC-004; batch gửi 期のお支払額 dùng chung period_payable (K3). Giờ = FE CT 1,5 MD + BE 2 MD.
+    dod:
+      - "Có Screen Specification SC-09-05 + spec batch SC-09-B1 rồi tách lại"
+
+  # ===================== EP-FG10 規則版・交付率・マスタ・カレンダー =====================
+  - id: B-FG10-01
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] 規則版・マスタテーブル — migration RULE_DB 4.16–4.23"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:BE", "rule:versioned-rule"]
+    spec_refs: ["RULE_DB §4.16–§4.19, §4.21–§4.23"]
+    rfp_refs: [FR-RULE-01, FR-INC-02, GOV-RULE-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      shippers, item_codes, code_values, tax_rates, rule_versions (fiscal_year GENERATED, rollback_of_id, cột đề nghị hủy — Q-RULE-02), incentive_rate_rows (chỉ sửa khi DRAFT), rule_parameters; seed v1 BASELINE.
+      Bảng master shippers / item_codes được lô (luồng A) đọc.
+    dod:
+      - "uq_rule_versions_active_from có; trigger chặn sửa incentive_rate_rows khi version ≠ DRAFT; seed v1 BASELINE FY2027"
+
+  - id: B-FG10-02
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] R1 規則版確認画面データ — rule_version_review + API-RULE-001"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:BE", "rule:versioned-rule"]
+    spec_refs: ["RULE_VERSION_TECH §4.1 (R1)", "RULE_FUNC §2.1, §2.5", "API-RULE-001"]
+    rfp_refs: [FR-RULE-01, NFR-OPS-02]
+    depends_on: [B-FG10-01, B-FG09-07]
+    depends_on_spec: ["DEP-01 MFA (luồng C)"]
+    hours_hint: 12
+    description: |
+      Xác thực, đọc + khóa version; dữ liệu màn: so sánh với bản hiện hành (diff 2 bảng + tham số), quota năm TC, ví dụ tính dùng incentive_amount (K5 — một công thức), chính sách E-14 đang build.
+    dod:
+      - "DoD R1: RV-02 → E-RULE-002; OPS-HEAD confirm → 403; RV-18 (a)(b)(c)(e) → 403 E-CMN-005, (d) CANCELLED"
+
+  - id: B-FG10-03
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] R2・R3 発効日・クォータ — kiểm nội dung + đếm 4 lần / năm TC"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:BE", "rule:versioned-rule"]
+    spec_refs: ["RULE_VERSION_TECH §4.2 (R2), §4.3 (R3)", "RULE_FUNC §2.1, §2.2"]
+    rfp_refs: [GOV-RULE-01, FR-INC-02, PRM-042]
+    depends_on: [B-FG10-02]
+    depends_on_spec: ["CLOSE_DB 4.24 business_days (d_bd — B-FG07-01)"]
+    hours_hint: 12
+    description: |
+      発効日 phải là ngày 1 tháng tương lai > d_bd, không trùng; bảng 5 bậc liền nhau; khóa năm TC (advisory) rồi đếm used(FY của 発効日) — CHANGE + ROLLBACK ở APPROVED / ACTIVE / SUPERSEDED, không đếm BASELINE / CANCELLED / lịch.
+    dod:
+      - "DoD R2: RV-03 E-RULE-004; RV-15 E-RULE-005; bậc không liền → E-RULE-013"
+      - "DoD R3: RV-05 used = 3; RV-06, RV-07 biên 3/31 → 4/1; RV-13 hai phiên → một E-RULE-006"
+
+  - id: B-FG10-04
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] R4 E-14 方針 — can_approve_rule_version (build N1)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:BE", "rule:versioned-rule"]
+    spec_refs: ["RULE_VERSION_TECH §3.2, §4.4 (R4)", "RULE_FUNC §2.3", "ADR-006 §2.5"]
+    rfp_refs: [GOV-RULE-01, FR-RULE-01]
+    depends_on: [B-FG10-03]
+    depends_on_spec: []
+    hours_hint: 6
+    description: |
+      Một hàm chính sách chứa toàn bộ khác biệt N1 / N2; build N1 (chặn rollback khi used ≥ 4 → E-RULE-009 chỉ đường 修正申請 INCENTIVE) theo B-PD-01. Không làm công tắc cấu hình. Truth table viết cho cả hai nhánh để đổi nhánh chỉ thay hàm.
+    dod:
+      - "DoD R4: bảng chân trị 24 ca (2 kind × used <4 / =4 / =5 × 2 stage × 2 nhánh) khớp §3.2"
+      - "RV-04 E-RULE-006 ở cả hai nhánh; RV-09 (N1) E-RULE-009"
+
+  - id: B-FG10-05
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] R5 確認 — API-RULE-002, ghi trạng thái, audit, thông báo maker"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:BE", "rule:versioned-rule", "rule:human-decision"]
+    spec_refs: ["RULE_VERSION_TECH §4.5 (R5)", "RULE_FUNC §2.6, §2.12", "API-RULE-002"]
+    rfp_refs: [FR-RULE-01, GOV-RULE-01, NFR-SEC-01]
+    depends_on: [B-FG10-04]
+    depends_on_spec: ["DEP-01 MFA ★ luôn hỏi mã (luồng C)", "DEP-13 outbox (luồng C)"]
+    hours_hint: 10
+    description: |
+      checker ≠ maker, MFA luôn hỏi lại mã (★); PENDING → APPROVED (発効待ち); ROLLBACK chép nội dung version cũ (rollback_of_id); audit + outbox maker. Dùng chữ 確認, không dùng 承認.
+    dod:
+      - "DoD R5: RV-01, RV-08, RV-10 (phần confirm), RV-11 — trạng thái + audit + outbox đúng"
+
+  - id: B-FG10-06
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] R6 発効 — activate_due_rule_versions + rule_at"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:BE", "rule:versioned-rule"]
+    spec_refs: ["RULE_VERSION_TECH §4.6 (R6)", "RULE_FUNC §2.4, §2.11", "ADR-006 §2.2"]
+    rfp_refs: [FR-INC-02, PRM-042]
+    depends_on: [B-FG10-05]
+    depends_on_spec: ["DEP-12 hàm mở 業務日 gọi activate (B-FG10-12)"]
+    hours_hint: 8
+    description: |
+      Mở 業務日 ngày 1 → APPROVED thành ACTIVE, bản trước SUPERSEDED; rule_at(d) đúng cả khi job chưa chạy; kỳ đã tạo / đã khóa giữ rule_version_id của nó.
+    dod:
+      - "DoD R6: RV-14, RV-17 (kỳ 09 giữ version cũ, DELTA kỳ 09 vẫn tra version kỳ 09)"
+
+  - id: B-FG10-07
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] R7 差し戻し・取消 — API-RULE-004, -005, -006"
+    role: BE
+    assignee: BE-5
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:BE", "rule:versioned-rule", "rule:no-overwrite"]
+    spec_refs: ["RULE_VERSION_TECH §4.7 (R7)", "RULE_FUNC §2.8–§2.10", "API-RULE-004", "API-RULE-005", "API-RULE-006"]
+    rfp_refs: [FR-RULE-01, GOV-RULE-01]
+    depends_on: [B-FG10-04]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      checker 差し戻す → DRAFT (giữ lịch sử); hủy version APPROVED cần maker đề nghị + checker khác (maker-checker), trước 発効日; hủy không tính quota.
+    dod:
+      - "DoD R7: RV-12 (a)(b)(c); return → maker sửa → nộp lại về PENDING, audit có cả hai lượt"
+
+  - id: B-FG10-08
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] N2 運用部門長決裁 — API-RULE-003 (chỉ làm khi E-14 = N2)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:BE", "rule:versioned-rule", "rule:human-decision"]
+    spec_refs: ["RULE_VERSION_TECH §3.2 N2, §4.5", "RULE_FUNC §2.7", "API-RULE-003", "SC-10-04_SPEC (khối 決裁 N2)"]
+    rfp_refs: [GOV-RULE-01]
+    depends_on: [B-FG10-04, B-CLR-01]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Thay hàm chính sách sang N2 + endpoint 決裁 thứ hai + bật khối 決裁 trên SC-10-04 + thông báo 経営層 + RPT-12 đếm lượt 5+. Workshop chọn N1 → đóng issue (B-PD-01). ~0,5 MD theo Q-RULE-01 cho phần đổi hàm; phần còn lại là API + màn.
+    dod:
+      - "RV-10 (đủ chuỗi), RV-11 đạt với nhánh N2"
+
+  - id: B-FG10-09
+    epic: EP-FG10
+    parent: null
+    kind: dev
+    title: "[FG-10] SC-10-04 規則版確認・ロールバック — màn (FE)"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:FE", "rule:versioned-rule"]
+    spec_refs: ["SC-10-04_SPEC §4–§6"]
+    rfp_refs: [FR-RULE-01, NFR-OPS-02]
+    depends_on: [B-FG10-02, B-FG10-05, B-FG10-07]
+    depends_on_spec: []
+    hours_hint: 20
+    description: |
+      Cha của 2 sub-issue. Chỉ lá chấm SWP.
+    dod:
+      - "Hai sub-issue xong; nhãn 「規則版確認」 không có chữ 承認"
+
+  - id: B-FG10-09.1
+    epic: EP-FG10
+    parent: B-FG10-09
+    kind: dev
+    title: "[FG-10] SC-10-04 — so sánh version, quota 「今年度 n/4 回」, ví dụ tính"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:FE", "rule:versioned-rule"]
+    spec_refs: ["SC-10-04_SPEC §4.1, §4.3 (API-RULE-001)"]
+    rfp_refs: [FR-RULE-01, GOV-RULE-01]
+    depends_on: [B-FG10-02]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Diff 2 bảng 交付率 (仲卸 / 売買参加者) + tham số, bộ đếm quota (không tính BASELINE), ví dụ tính thưởng, thông điệp chính sách E-14.
+    dod:
+      - "Hiển thị đúng §4.1; phân quyền §4.4"
+
+  - id: B-FG10-09.2
+    epic: EP-FG10
+    parent: B-FG10-09
+    kind: dev
+    title: "[FG-10] SC-10-04 — 確認 / 差し戻し / 取消, MFA ★, lỗi"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-10", "feature:rule", "kind:dev", "role:FE", "rule:versioned-rule", "rule:human-decision"]
+    spec_refs: ["SC-10-04_SPEC §4.2, §5, §6"]
+    rfp_refs: [FR-RULE-01, NFR-SEC-01]
+    depends_on: [B-FG10-09.1, B-FG10-05, B-FG10-07]
+    depends_on_spec: ["DEP-01 MFA (luồng C)"]
+    hours_hint: 10
+    description: |
+      Nút theo trạng thái / vai, lý do rollback / trả về, C-30 luôn hỏi mã; xử lý E-RULE-002/004/005/006/009/012/013, 403 E-CMN-005.
+    dod:
+      - "Mọi dòng Error Handling SC-10-04 §5 có xử lý đúng"
+
+  - id: B-FG10-10
+    epic: EP-FG10
+    parent: null
+    kind: test
+    title: "[FG-10] 規則版 テスト — RV-01..18 (quota, E-14 N1, hiệu lực, hủy)"
+    role: QA
+    assignee: QA-2
+    labels: ["fg:FG-10", "feature:rule", "kind:test", "role:QA", "rule:versioned-rule"]
+    spec_refs: ["RULE_VERSION_TECH §5.1 RV-01..RV-18", "SC-10-04_SPEC §5"]
+    rfp_refs: [GOV-RULE-01, FR-RULE-01, FR-INC-02]
+    depends_on: [B-FG10-05, B-FG10-06, B-FG10-07, B-FG10-09]
+    depends_on_spec: ["DEP-08 seed v1 BASELINE + bản PENDING CHANGE / ROLLBACK (specs/_index.md)"]
+    hours_hint: 12
+    description: |
+      Seed theo §5.1 (go-live 2027-08-01, d_bd 2027-09-14). RV-10, RV-11 (N2) chỉ chạy nếu B-FG10-08 được làm; nhánh N1 chạy RV-09.
+    dod:
+      - "18 RV có kịch bản + kết quả (RV-10/11 đánh dấu N/A khi build N1); RV-16 lịch không đổi quota"
+
+  - id: B-FG10-11
+    epic: EP-FG10
+    parent: null
+    kind: rough
+    title: "[FG-10][概算] 規則版作成・交付率表編集 (maker) — SC-10-01..03"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-10", "feature:rule", "kind:rough", "role:FE", "rule:versioned-rule", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-08", "api-list §4 POST/PUT rule-versions, submit", "SCREEN-LIST #44–#46", "ADR-006 §2.1–2.3"]
+    rfp_refs: [FR-RULE-01, FR-INC-02, GOV-RULE-01, TBL-RATE-01]
+    depends_on: [B-CLR-17]
+    depends_on_spec: []
+    hours_hint: 116
+    description: |
+      Danh sách version + bộ đếm quota, tạo / sửa DRAFT (tham số quy chế §3.1 PREMISE), sửa 2 bảng 交付率, submit_rule_version kiểm 5 bậc liền (engine K4 dựa vào kiểm này).
+      Giờ = LAB-1: BE phần maker FT-10-01 ~3 MD + FT-10-02 3 MD, FE DS 2 + NH 3 + SC-10-03 3,5 MD = 14,5 MD.
+    dod:
+      - "Có Screen Specification SC-10-01..03 + API Design tạo / sửa / nộp rồi tách lại"
+
+  - id: B-FG10-12
+    epic: EP-FG10
+    parent: null
+    kind: rough
+    title: "[FG-10][概算] 市場・銀行カレンダー・業務日開始・期作成 — SC-10-05, SC-07-B1"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-10", "feature:rule", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-12", "SCREEN-LIST #48, §4 SC-07-B1", "CLOSE_DB 4.20, 4.24, 4.43", "ADR-005 §2.2–2.4", "INC_ENGINE_TECH §5 Q-INC-03"]
+    rfp_refs: [FR-SETTLE-01, FR-INC-01, PRM-054]
+    depends_on: [B-CLR-18]
+    depends_on_spec: []
+    hours_hint: 92
+    description: |
+      Lịch 2 cờ (chợ / ngân hàng), 臨時休市 / 臨時開市 không tính quota; hàm mở 業務日 + job 01:00 dự phòng + gọi activate_due_rule_versions; tạo kỳ ở lần mở 業務日 đầu tháng với rule_at(ngày 1) và 支払期日 theo PAYMENT_DUE_RULE + ngày ngân hàng.
+      Giờ = LAB-1: BE FT-10-04 3 + FT-07-01 3 + phần 支払期日 của FT-09-04 ~2 MD, FE SC-10-05 3,5 MD = 11,5 MD.
+    dod:
+      - "Có Technical Design calendar + Screen Specification SC-10-05 + API Design rồi tách lại"
+
+  - id: B-FG10-13
+    epic: EP-FG10
+    parent: null
+    kind: rough
+    title: "[FG-10][概算] マスタ管理（税率・品目・単位・出荷者） — SC-10-07"
+    role: FE
+    assignee: FE-3
+    labels: ["fg:FG-10", "feature:rule", "kind:rough", "role:FE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #49", "function-list FT-10-05, FT-10-06", "RULE_DB 4.16–4.19"]
+    rfp_refs: [SCOPE-02, FR-LOT-01]
+    depends_on: [B-CLR-19]
+    depends_on_spec: []
+    hours_hint: 60
+    description: |
+      Thuế suất có ngày hiệu lực (8% / 10%, không chứa 110/100 của BR-INC-01), bảng mã 品目 / 単位 / 出荷者. Giờ = LAB-1: BE 5 MD + FE CĐ 2,5 MD = 7,5 MD.
+    dod:
+      - "Có Screen Specification SC-10-07 + API Design rồi tách lại"
+
+  - id: B-FG10-14
+    epic: EP-FG10
+    parent: null
+    kind: rough
+    title: "[FG-10][概算] 設定ファイル（履歴付き） — cơ chế đọc / ghi nhật ký (DEP-16)"
+    role: BE
+    assignee: BE-4
+    labels: ["fg:FG-10", "feature:rule", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-16", "lab-4/PREMISE.md §3.1", "SCREEN-LIST §3 SC-10-06"]
+    rfp_refs: [NFR-OPS-02, NFR-SEC-03]
+    depends_on: [B-CLR-20]
+    depends_on_spec: []
+    hours_hint: 24
+    description: |
+      Tham số không thuộc quy chế (KANNO_FEE_SUSPECT_MAX_JPY, PARTICIPATION_LIMIT_TAX_CODE, idle MFA, SLA…) đọc từ file cấu hình có nhật ký thay đổi (PRM-126). Giờ = LAB-1 FT-10-03 3 MD (sau giản lược ⑥).
+    dod:
+      - "Có Technical Design cơ chế file cấu hình rồi tách lại"
+
+  # ===================== EP-CLAR (issue làm rõ của luồng B) =====================
+  - id: B-CLR-01
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-14 — rollback quy chế khi đã đủ 4 lần / năm TC: chặn hay cho?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-10", "feature:rule", "kind:clarify", "role:BrSE", "rule:versioned-rule"]
+    spec_refs: ["lab-4/PREMISE.md §6 OPEN-L4-01", "ADR-006 §6 (E-14, Q-RULE-03, Q-ARCH-09)", "RULE_VERSION_TECH §5.3 Q-RULE-01"]
+    rfp_refs: [GOV-RULE-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 4
+    description: |
+      Workshop ban lãnh đạo: N1 (chặn, sửa tiền bằng 修正申請 INCENTIVE) hay N2 (cho, 運用部門長 決裁, đếm lượt 5+). Cùng buổi hỏi kèm Q-RULE-03 (danh sách 経営層 nhận thông báo — chỉ khi N2) và Q-ARCH-09 (mọi nội dung quy chế hiệu lực từ ngày 1).
+    dod:
+      - "Có câu trả lời ghi vào ADR-006 (→ Accepted) và PREMISE; B-FG10-08 làm hoặc đóng"
+
+  - id: B-CLR-02
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-02 — 入金CSV có 請求番号 / 対象年月 không? (FIFO làm mất 完納)"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金"]
+    spec_refs: ["lab-4/PREMISE.md §6 OPEN-L4-02", "ADR-007 §6 E-02", "INCENTIVE_DB §5 TV-06"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Hỏi 経理部 kèm ví dụ TV-06 (người trả đủ đúng hạn vẫn mất 完納 vì FIFO). Có cột → làm B-FG09-12; không → giữ FIFO + cảnh báo trên SC-09-04.
+    dod:
+      - "Có câu trả lời ghi vào ADR-007 §6 / PREMISE; B-FG09-12 mở khóa hoặc đóng"
+
+  - id: B-CLR-03
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-01 — định dạng 入金CSV và file kế toán (dòng 端数調整)"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金"]
+    spec_refs: ["SCREEN-LIST #39 (chờ E-01 / E-02)", "BILLING_DB 4.40 (chờ E-01)", "INC_ENGINE_TECH §4.8 No 6 (OPEN-DB-01)"]
+    rfp_refs: [FR-INC-01, IF-ACC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Xin mẫu CSV 入金 thật (cột 入金日, 取引先コード, số tiền, mã hóa) và cách thể hiện dòng 端数調整 trong file kế toán.
+    dod:
+      - "Có mẫu file / câu trả lời ghi vào spec; B-FG09-19 mở khóa"
+
+  - id: B-CLR-04
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] DEP-11 — viết spec SC-09-01..03 + API import / ánh xạ mã"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-11"]
+    rfp_refs: [FR-INC-01]
+    depends_on: [B-CLR-03]
+    depends_on_spec: []
+    hours_hint: 3
+    description: |
+      Điểm nội bộ (L4-D08): cần Screen Specification 3 màn + API Design trước khi tách issue lá. Xác nhận với khách luồng thao tác 照合事務局 khi nhập CSV / xử lý mã chưa ánh xạ.
+    dod:
+      - "Spec có ở specs/incentive/; B-FG09-19 được tách lại"
+
+  - id: B-CLR-05
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] SC-09-05 / SC-09-B1 — nội dung chi tiết thưởng và thông báo 期のお支払額"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #43, §4 SC-09-B1"]
+    rfp_refs: [FR-INC-01, FR-INC-03]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Người mua / 照合 cần xem gì ở chi tiết thưởng (version, delta, dư âm) và thông báo 期のお支払額 gửi khi nào, qua kênh nào.
+    dod:
+      - "Có câu trả lời + spec; B-FG09-20 được tách lại"
+
+  - id: B-CLR-06
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-INC-03 — tạo kỳ mới ở lần mở 業務日 đầu tháng?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金"]
+    spec_refs: ["INC_ENGINE_TECH §5 Q-INC-03", "CLOSE_DB 0.2.1 §4.43"]
+    rfp_refs: [FR-INC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Xác nhận giả định PL (tạo kỳ khi mở 業務日 đầu tháng; 期ロック chỉ bảo đảm kỳ kế tồn tại). Sai → đổi B-FG10-12 và B-FG09-10.2.
+    dod:
+      - "Có câu trả lời ghi vào INC_ENGINE_TECH §5 / CLOSE_DB"
+
+  - id: B-CLR-07
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-INC-01 (còn) — CSV ngân hàng về lúc nào sau 入金日?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金"]
+    spec_refs: ["INC_ENGINE_TECH §5 Q-INC-01"]
+    rfp_refs: [FR-INC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Hỏi 経理部; giả định PL: sáng 営業日 sau 入金日. Ảnh hưởng thời điểm 照合 tick 「支払期日分までの入金CSV取込済」 và ngày khóa kỳ sớm nhất.
+    dod:
+      - "Có câu trả lời ghi vào INC_ENGINE_TECH §5"
+
+  - id: B-CLR-08
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-INC-02 (còn) — ghi GD 後入力 trên 請求 kỳ P* thế nào?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["INC_ENGINE_TECH §3.4, §5 Q-INC-02"]
+    rfp_refs: [FR-INC-01, BR-INC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Hỏi 経理部 + 照合部門長; giả định PL: dòng riêng 「前期分の後入力（取引日 MM/DD）」 trong 期のお支払額 kỳ P*. Ảnh hưởng SC-09-B1 / mẫu thông báo.
+    dod:
+      - "Có câu trả lời ghi vào INC_ENGINE_TECH §3.4"
+
+  - id: B-CLR-09
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-03 — bảng 交付率 thật (incentive-rate-table.csv) 仲卸 / 売買参加者"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金", "rule:versioned-rule"]
+    spec_refs: ["RULE_DB 4.22 (chờ E-03)", "INCENTIVE_DB §5 (bảng giả, L4-A02)"]
+    rfp_refs: [TBL-RATE-01, BR-INC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Cần 5 bậc thật của 2 bảng để làm seed v1 BASELINE và đổi fixture UAT; CI vẫn dùng bảng giả cố định.
+    dod:
+      - "Có file bảng tỷ lệ; seed BASELINE cập nhật (B-FG10-01)"
+
+  - id: B-CLR-10
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-06 — 請求 kế toán tính thuế giống hệ thống (cách A) không?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金"]
+    spec_refs: ["ADR-007 §6 E-06", "INC_ENGINE_TECH §4.3 No 1 (DEC-011)"]
+    rfp_refs: [BR-INC-01, FR-INC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Cách A (hệ thống tự tính thuế một lần trên tổng theo suất) đang build ở K3. Cách B (nhập 請求額) +0,5–0,8 MM (DEC-011) và đổi K3.
+    dod:
+      - "Có câu trả lời ghi vào ADR-007 §6"
+
+  - id: B-CLR-11
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-ARCH-08 — thu phần âm còn lại cuối năm TC (CARRY_EXPIRED) thế nào?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["ADR-007 §6 Q-ARCH-08", "INC_ENGINE_TECH §4.7 No 3"]
+    rfp_refs: [FR-INC-03, BR-INC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Đang theo: dòng CARRY_EXPIRED hiện ở RPT-07, 照合部門 xử lý ngoài. Nếu trừ vào khoản khác → thêm bút toán IF-ACC-01.
+    dod:
+      - "Có câu trả lời ghi vào ADR-007 §6"
+
+  - id: B-CLR-12
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] OPEN-DB-08 — chênh lệch của kỳ đã khóa người mua trả thế nào?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金", "rule:no-overwrite"]
+    spec_refs: ["ADR-007 §6 OPEN-DB-08", "INC_ENGINE_TECH §4.9 No 3"]
+    rfp_refs: [FR-INC-03]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Đang theo: dòng 「前期以前の調整」 trên thông báo kỳ kế, không vào 期のお支払額. Phương án (b) hạn riêng → đổi FIFO (K2).
+    dod:
+      - "Có câu trả lời ghi vào ADR-007 §6"
+
+  - id: B-CLR-13
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] 手数料差引 — ngưỡng KANNO_FEE_SUSPECT_MAX_JPY và ai chịu phí chuyển khoản"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金", "rule:human-decision"]
+    spec_refs: ["INCENTIVE_DB §5 TV-10 (chờ 経理部)", "ADR-007 §2.6", "INC_ENGINE_TECH §4.3 No 4"]
+    rfp_refs: [BR-INC-01, CAP-HUMAN-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Hỏi 経理部 giá trị ngưỡng đánh dấu 要確認 và xác nhận gợi ý mặc định 非完納 (phí do người mua chịu — FQ-02, PRM-040) [Customer giả lập #7].
+    dod:
+      - "Có giá trị ngưỡng ghi vào file cấu hình mặc định; TV-10 xác nhận"
+
+  - id: B-CLR-14
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-ARCH-11 — 支払期日 rơi ngày ngân hàng nghỉ lùi về ngày nào?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-09", "feature:incentive", "kind:clarify", "role:BrSE", "constraint:完納奨励金"]
+    spec_refs: ["ADR-007 §6 Q-ARCH-11", "INCENTIVE_DB §5 TV-08"]
+    rfp_refs: [BR-INC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Đang theo PREV_BANK_DAY (ngày ngân hàng mở trước). Khác → chỉ đổi giá trị PAYMENT_DUE_RULE, sửa kỳ vọng TV-08.
+    dod:
+      - "Có câu trả lời ghi vào ADR-007 §6"
+
+  - id: B-CLR-15
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-08 — ngưỡng 修正申請 2 cấp (tạm 100.000 JPY)"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-08", "feature:settle", "kind:clarify", "role:BrSE", "rule:versioned-rule"]
+    spec_refs: ["ADR-005 §6 E-08", "ADJUST_DB 4.37"]
+    rfp_refs: [FR-CORR-02, PRM-033]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Giá trị CORR_TWO_LEVEL_THRESHOLD_JPY (tham số quy chế có version) dùng ở checklist mục 5 / 9 và số cấp 修正申請. Chỉ đổi giá trị seed.
+    dod:
+      - "Có giá trị ghi vào seed rule_parameters"
+
+  - id: B-CLR-16
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] DEP-09 — viết spec SC-08-01/02 + POST /corrections"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-08", "feature:settle", "kind:clarify", "role:BrSE", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-09"]
+    rfp_refs: [FR-CORR-01, FORM-CORR-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 3
+    description: |
+      Điểm nội bộ (L4-D08): cần Screen Specification + API Design cho lập / danh sách 修正申請 (4 scope, điền sẵn từ C-24) trước khi tách lá.
+    dod:
+      - "Spec có ở specs/settle/; B-FG08-08 được tách lại"
+
+  - id: B-CLR-17
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] DEP-08 — viết spec SC-10-01..03 (maker) + API tạo / sửa / nộp"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-10", "feature:rule", "kind:clarify", "role:BrSE", "rule:versioned-rule", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-08"]
+    rfp_refs: [FR-RULE-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 3
+    description: |
+      Điểm nội bộ (L4-D08): Screen Specification 3 màn maker + API Design; xác nhận với khách cách ルール管理者 nhập tham số §3.1 cùng bảng tỷ lệ.
+    dod:
+      - "Spec có ở specs/rule/; B-FG10-11 được tách lại"
+
+  - id: B-CLR-18
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] DEP-12 — Technical Design calendar + spec SC-10-05, mở 業務日"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-10", "feature:rule", "kind:clarify", "role:BrSE", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-12", "ADR-005 §6 E-16"]
+    rfp_refs: [FR-SETTLE-01, PRM-054]
+    depends_on: [B-CLR-06]
+    depends_on_spec: []
+    hours_hint: 3
+    description: |
+      Cần Function / Technical Design calendar (mở ngày, job 01:00, tạo kỳ) + Screen Specification SC-10-05; kèm xác nhận giờ nhận lô E-16 và cách nhập lịch năm (CSV hay màn).
+    dod:
+      - "Spec có; B-FG10-12 được tách lại"
+
+  - id: B-CLR-19
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] SC-10-07 — spec màn master (税率・品目・単位・出荷者)"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-10", "feature:rule", "kind:clarify", "role:BrSE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #49"]
+    rfp_refs: [SCOPE-02]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Xin danh mục mã 品目 / 出荷者 hiện dùng (giấy / Excel) và ai được sửa; viết Screen Specification + API Design.
+    dod:
+      - "Spec có; B-FG10-13 được tách lại"
+
+  - id: B-CLR-20
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] DEP-16 — Technical Design file cấu hình có nhật ký (PRM-126)"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-10", "feature:rule", "kind:clarify", "role:BrSE", "needs-spec"]
+    spec_refs: ["specs/_index.md DEP-16", "lab-4/PREMISE.md §3.1"]
+    rfp_refs: [NFR-OPS-02]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Điểm nội bộ: chốt cơ chế đọc / ghi nhật ký file cấu hình và danh sách khóa; hỏi 経理部 mặc định 軽減税率 8% cho PARTICIPATION_LIMIT_TAX_CODE.
+    dod:
+      - "Technical Design có; B-FG10-14 được tách lại"
+
+  - id: B-CLR-21
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] FG-07 chưa spec — SC-07-01, SC-07-B2, SC-07-03, SC-07-04"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-07", "feature:settle", "kind:clarify", "role:BrSE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #32, #34, #35, §4 SC-07-B2"]
+    rfp_refs: [FR-SETTLE-01, FR-SETTLE-03]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 3
+    description: |
+      Cần Screen Specification bảng đối soát + tranh chấp và Technical Design 精算 ngày; hỏi khách mặc định SLA tranh chấp (3 営業日) và cột cần ở bảng đối soát.
+    dod:
+      - "Spec có; B-FG07-07, B-FG07-08 được tách lại"
+
+  - id: B-CLR-22
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-ARCH-02 — có cần mở lại 業務日 khi khóa nhầm không?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-07", "feature:settle", "kind:clarify", "role:BrSE", "rule:no-overwrite"]
+    spec_refs: ["ADR-005 §6 Q-ARCH-02"]
+    rfp_refs: [BR-CLOSE-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Đang theo: không mở lại; sửa bằng 修正申請 / 後入力. Cần → luồng mở khóa có 運用部門長 決裁 + MFA + audit (~0,2–0,3 MM, ngoài backlog hiện tại).
+    dod:
+      - "Có câu trả lời ghi vào ADR-005 §6"
+
+  - id: B-CLR-23
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-12 / E-13 — có làm đổi tiền không (tham số quy chế hay file cấu hình)?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-10", "feature:rule", "kind:clarify", "role:BrSE", "rule:versioned-rule"]
+    spec_refs: ["lab-4/PREMISE.md §6 OPEN-L4-03", "ADR-006 §6"]
+    rfp_refs: [GOV-RULE-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Tạm xếp là tham số quy chế (tốn lượt quota khi đổi). Xếp nhầm → thiếu maker-checker hoặc tốn một lượt trong 4 lần / năm.
+    dod:
+      - "Có câu trả lời ghi vào PREMISE §3.1"
+
+gaps:
+  - id: B-GAP-01
+    spec: "INCENTIVE_DB §4.52 Overview (0.3.2) vs INC_ENGINE_TECH §3.4, K1-4, K6-1 (0.1.1)"
+    problem: "INCENTIVE_DB 4.52 còn ghi GD LATE_ENTRY (trades có trade_date thuộc kỳ khóa, created_at > locked_at) là đầu vào DELTA (recheck N-02); TECH 0.1.1 và ADR-007 0.3.2 đã bỏ theo Q-INC-02 (GD 後入力 chuyển sang kỳ đang mở, không DELTA). Dev đọc DB Design sẽ cài sai K1-4."
+    handling: fix-design
+    ref: B-PS-01
+    open_reason: ""
+  - id: B-GAP-02
+    spec: "INC_ENGINE_TECH §4.8 No 5 vs No 7; K7 Error"
+    problem: "K8 ghi dòng CARRY sang P+1 ở No 5 nhưng tới No 7 mới bảo đảm P+1 tồn tại; K7 lại nói 'P+1 do K8 bảo đảm tồn tại trước khi ghi' → thứ tự mâu thuẫn, FK period_id có thể vỡ khi P+1 chưa được tạo (Q-INC-03 chưa chốt)."
+    handling: fix-design
+    ref: B-PS-02
+    open_reason: ""
+  - id: B-GAP-03
+    spec: "INC_ENGINE_TECH §4.8 No 6 (端数調整), FT-09-10"
+    problem: "'Σ thuế đã xuất theo ngày trong IF-ACC-01 của P' không nói theo trục nào: nếu theo business_date thì điều chỉnh của kỳ đã khóa (period_id = Q, business_date trong P) và GD 後入力 bị tính lệch → dòng 端数調整 sai cỡ cả khoản thuế, không còn là chênh làm tròn."
+    handling: assumption
+    ref: B-PA-01
+    open_reason: ""
+  - id: B-GAP-04
+    spec: "INC_ENGINE_TECH §4.8 No 6; BILLING_DB 4.41 (batch tạo sau 日次締め, đóng băng)"
+    problem: "Dòng 端数調整 'gắn batch của 業務日 đang mở' nhưng batch IF-ACC-01 của ngày đó chỉ được tạo lúc 日次締め và đóng băng khi tạo → lúc 期ロック chưa có batch để gắn."
+    handling: assumption
+    ref: B-PA-02
+    open_reason: ""
+  - id: B-GAP-05
+    spec: "MKT_DB §4.0 (Ngày mở, enforce_open_business_day); CLOSE_DB 4.24"
+    problem: "Trigger ngày mở phải gắn vào bảng nghiệp vụ của mọi module (lô, GD, giao — luồng A; điều chỉnh, 入金 — luồng B) nhưng spec không nói ai tạo hàm trigger, ai gắn vào bảng nào khi chia 3 luồng."
+    handling: assumption
+    ref: B-PA-03
+    open_reason: ""
+  - id: B-GAP-06
+    spec: "BILLING_DB §4.40–§4.42 (IF-ACC-01) trong nguồn đọc luồng B; function-list FG-11 FT-11-07"
+    problem: "BILLING_DB thuộc nguồn đọc của B nhưng 3 bảng journal_mappings / accounting_export_* là IF-ACC-01 (FG-11, luồng C). Không rõ ai tạo migration."
+    handling: assumption
+    ref: B-PA-04
+    open_reason: ""
+  - id: B-GAP-07
+    spec: "ADJUST_DB §4.32 trade_fixes; TRADE_SAME_DAY_FIX_TECH (luồng A); STL_DAY_CLOSE checklist #5, #9"
+    problem: "trade_fixes nằm trong ADJUST_DB (nguồn B) nhưng logic ghi là 当日訂正 của luồng A; checklist 日次締め (B) đọc nó. Chủ sở hữu migration không rõ."
+    handling: assumption
+    ref: B-PA-05
+    open_reason: ""
+  - id: B-GAP-08
+    spec: "INC_ENGINE_TECH §4.2 (K2 chạy lúc nhập CSV / hủy batch / gán tay); BILLING_DB 4.48"
+    problem: "Phân bổ FIFO vào kỳ OPEN chốt theo B tại lúc nhập; sau đó 修正申請 / 当日訂正 làm B của kỳ đó giảm thì phân bổ thừa không được dời sang kỳ đang thiếu → người mua có thể mất 完納 ở kỳ khác. Spec không có quy tắc phân bổ lại (chỉ có cảnh báo OVERPAYMENT ở K9)."
+    handling: assumption
+    ref: B-PA-06
+    open_reason: ""
+  - id: B-GAP-09
+    spec: "SC-09-04_SPEC §6.2 câu ví dụ; API-INC-001 ví dụ response"
+    problem: "Câu ví dụ nút mờ ghi 「支払期日（2027/09/10）」 trong khi [1] ví dụ kỳ 2027-09 hạn 2027/10/08; ví dụ API-INC-001 có lateEntries tradeDate 2027-07-30, trước go-live 2027-08-01 (L4-A09)."
+    handling: open
+    ref: ""
+    open_reason: "Chỉ là số minh họa, không đổi logic hay issue nào; PL sửa cùng lượt rà bản ja/ sau Gate A."
+
+not_issued:
+  - spec: "SCREEN-LIST C7: SC-09-01, SC-09-02, SC-09-03 (DEP-11)"
+    reason: "Chưa có Screen Specification / API Design (L4-D08); K2 phân bổ FIFO đã spec nên tách thành issue lá B-FG09-04, phần màn + import để thô"
+    covered_by: [B-FG09-19, B-CLR-04, B-CLR-03]
+  - spec: "SCREEN-LIST C7: SC-09-05, batch SC-09-B1"
+    reason: "Chưa có Screen Specification (L4-D08)"
+    covered_by: [B-FG09-20, B-CLR-05]
+  - spec: "SCREEN-LIST C6: SC-07-01, SC-07-03, SC-07-04, batch SC-07-B2"
+    reason: "Chưa có Screen Specification / Technical Design 精算 (L4-D08)"
+    covered_by: [B-FG07-07, B-FG07-08, B-CLR-21]
+  - spec: "SCREEN-LIST C6: SC-08-01, SC-08-02 (DEP-09)"
+    reason: "Chưa có Screen Specification / API Design POST /corrections (L4-D08)"
+    covered_by: [B-FG08-08, B-CLR-16]
+  - spec: "SCREEN-LIST C8: SC-10-01, SC-10-02, SC-10-03 (DEP-08)"
+    reason: "Chưa có Screen Specification / API Design phía maker (L4-D08)"
+    covered_by: [B-FG10-11, B-CLR-17]
+  - spec: "SCREEN-LIST C8: SC-10-05 + batch SC-07-B1 (DEP-12)"
+    reason: "Chưa có Function / Technical Design calendar, Screen Specification SC-10-05"
+    covered_by: [B-FG10-12, B-CLR-18]
+  - spec: "SCREEN-LIST C8: SC-10-07"
+    reason: "Chưa có Screen Specification (L4-D08)"
+    covered_by: [B-FG10-13, B-CLR-19]
+  - spec: "DEP-16 file cấu hình có nhật ký (SC-10-06 bị giản lược ⑥)"
+    reason: "Chưa có Technical Design cơ chế"
+    covered_by: [B-FG10-14, B-CLR-20]
+  - spec: "ADR-006 §3 phương án F / G"
+    reason: "L4-D06: chỉ là tư liệu workshop E-14, effort ~0,3–0,5 MM ngoài DEC-048 — không đưa vào backlog 第1期"
+    covered_by: [B-CLR-01]
+  - spec: "ADR-007 §6 Q-ARCH-12 (税区分 của 完納奨励金 ở IF-ACC-01), BILLING_DB 4.40–4.42, RPT-07, mẫu email FORM-INC-01"
+    reason: "Thuộc FG-11 / FG-12 của luồng C; B chỉ ghi dòng (端数調整, CARRY_EXPIRED, outbox) — PL nối khi gộp"
+    covered_by: []
+
+premise:
+  spec_changes:
+    - id: B-PS-01
+      spec: "specs/system-design/database-design/INCENTIVE_DB.md §4.52 Overview"
+      change: Sửa
+      before_after: "Đầu vào DELTA gồm 'trades có trade_date thuộc kỳ đó và created_at > locked_at — GD LATE_ENTRY (recheck N-02, TV-13)' → bỏ cụm này; thêm 'GD 後入力 cho kỳ đã khóa mang incentive_period_id = kỳ đang mở, không vào tập ứng viên DELTA (Q-INC-02, INC_ENGINE_TECH §3.4)'"
+      why: "B-GAP-01: INCENTIVE_DB 0.3.2 mâu thuẫn INC_ENGINE_TECH 0.1.1 §3.4 / K1-4 / K6-1 và ADR-007 0.3.2 §2.4-8; DoD K1 (c), K6 (TV-13 / TV-15) theo TECH"
+      issues: [B-FG09-03, B-FG09-08, B-FG09-16]
+    - id: B-PS-02
+      spec: "specs/incentive/technical-design/INC_ENGINE_TECH.md §4.8 Detail No 5, No 7"
+      change: Sửa
+      before_after: "No 5 ghi incentive_results (gồm CARRY sang P+1) rồi No 7 mới 'bảo đảm P+1 tồn tại' → đưa 'bảo đảm P+1 tồn tại' lên trước No 5 (tách thành No 4a); No 7 chỉ còn UPDATE LOCKED"
+      why: "B-GAP-02: thứ tự K8 trái với câu Error của K7 ('P+1 do K8 bảo đảm tồn tại trước khi ghi'); TV-04 ghi CARRY sang kỳ kế, FK incentive_results.period_id → payment_periods"
+      issues: [B-FG09-10.2, B-FG09-16]
+  assumptions:
+    - id: B-PA-01
+      assumption: "Dòng 端数調整 của P = Σ_r T(i,P,r) của K3 − Σ thuế ngày đã xuất của CHÍNH tập đầu vào K1 của P (GD có IP(g) = P + trade_adjustments.period_id = P), không lọc theo business_date. Thuế của điều chỉnh gán vào kỳ đã khóa không vào 端数調整 của P."
+      open_point: "INC_ENGINE_TECH §4.8 No 6 không nói trục; FT-09-10 chỉ nói 'chênh làm tròn'"
+      impact: "B-FG09-10.2 (+0); nếu 経理部 muốn theo business_date → thêm khoản đối ứng cho 前期以前の調整, ~1 MD"
+    - id: B-PA-02
+      assumption: "期ロック ghi dòng 端数調整 vào accounting_export_lines với business_date = 業務日 đang mở và batch_id NULL; batch IF-ACC-01 của ngày đó (tạo lúc 日次締め — luồng C) nhặt các dòng chờ rồi đóng băng."
+      open_point: "INC_ENGINE_TECH §4.8 No 6 'gắn batch của 業務日 đang mở' trong khi BILLING_DB 4.41 chỉ tạo batch sau 日次締め"
+      impact: "B-FG09-10.2; cần luồng C xác nhận cột batch_id nullable ở BILLING_DB 4.42"
+    - id: B-PA-03
+      assumption: "B tạo hàm trigger enforce_open_business_day trong migration CLOSE_DB (B-FG07-01); mỗi luồng tự gắn trigger vào bảng của mình trong migration của bảng đó."
+      open_point: "MKT_DB §4.0 không nói ai tạo / gắn khi chia luồng"
+      impact: "B-FG07-01 (+2 giờ); migration của luồng A phụ thuộc B-FG07-01"
+    - id: B-PA-04
+      assumption: "Migration + logic BILLING_DB 4.40–4.42 (IF-ACC-01) thuộc luồng C (FG-11); B chỉ làm 4.44–4.50 và ghi dòng 端数調整 qua lock_period."
+      open_point: "Brief §8 xếp BILLING_DB vào nguồn đọc của B, function-list xếp IF-ACC-01 vào FG-11"
+      impact: "B-FG09-02 không gồm 4.40–4.42; nếu PL gán cho B → +1 issue migration ~6 giờ"
+    - id: B-PA-05
+      assumption: "B tạo bảng trade_fixes (ADJUST_DB 4.32) trong B-FG08-01; luồng A viết logic ghi (TRADE_SAME_DAY_FIX); B chỉ đọc ở checklist."
+      open_point: "ADJUST_DB thuộc nguồn B nhưng trade_fixes do module trade ghi"
+      impact: "B-FG08-01; luồng A phụ thuộc migration này"
+    - id: B-PA-06
+      assumption: "Không tự phân bổ lại 入金 khi B của kỳ OPEN giảm sau khi đã phân bổ; K9 cảnh báo OVERPAYMENT, 照合 dời bằng thao tác MANUAL (REVERSE dòng cũ + ALLOCATE mới, lý do bắt buộc) ở SC-09-03 trước 期ロック."
+      open_point: "INC_ENGINE_TECH §4.2 chỉ định nghĩa thời điểm chạy K2 (nhập / hủy / gán tay), không có ca B giảm sau phân bổ"
+      impact: "B-FG09-04 (MANUAL hỗ trợ dời), B-FG09-19 (màn SC-09-03); nếu khách muốn tự phân bổ lại → +1–2 MD và đổi input_hash"
+  decisions:
+    - id: B-PD-01
+      problem: "E-14 chưa trả lời — build nhánh nào trong backlog 第1期"
+      options_lab4: "RULE_VERSION_TECH §3.2: N1 / N2 trong một hàm, chọn lúc build; Q-RULE-01 giả định N1"
+      chosen: "Build N1 (B-FG10-04); phần riêng của N2 (API-RULE-003, khối 決裁 trên SC-10-04, thông báo 経営層) là issue riêng B-FG10-08 bị chặn bởi B-CLR-01 — workshop chọn N1 thì đóng"
+      why: "Không nới GOV-RULE-01 khi chưa có quyết định ban lãnh đạo (luật 5); tách để giờ của N2 không lẫn vào baseline"
+    - id: B-PD-02
+      problem: "Nhánh phân bổ theo 請求番号 (K2 No 1) khi E-02 chưa trả lời"
+      options_lab4: "INC_ENGINE_TECH §4.2 No 1: code nhánh INVOICE_NO và tắt bằng cờ triển khai"
+      chosen: "Không code nhánh INVOICE_NO trong B-FG09-04; tách issue B-FG09-12 chặn bởi B-CLR-02, làm khi E-02 = có cột"
+      why: "Câu trả lời E-02 kéo theo định dạng CSV (E-01) — code trước dễ phải viết lại; cờ tắt vẫn tốn giờ test; TV-06 biến thể vẫn có chỗ ở B-FG09-12"
+    - id: B-PD-03
+      problem: "Ai tạo kỳ P+1 (Q-INC-03)"
+      options_lab4: "Prototype 0023: tạo lúc khóa P (K8-7); CLOSE_DB 0.2.1 / DEP-12: tạo ở lần mở 業務日 đầu tháng"
+      chosen: "Logic tạo kỳ + 支払期日 nằm ở rough calendar B-FG10-12; K8 (B-FG09-10.2) chỉ gọi cùng hàm 'bảo đảm tồn tại' (B-PS-02)"
+      why: "trade_adjustments.period_id NOT NULL cần kỳ của tháng mới trước khi kỳ cũ khóa (INC_ENGINE_TECH §5 Q-INC-03); một hàm tạo kỳ dùng chung tránh hai đường tạo"

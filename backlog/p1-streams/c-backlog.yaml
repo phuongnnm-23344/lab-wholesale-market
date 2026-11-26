@@ -1,0 +1,1939 @@
+# LAB-5 P1 — backlog luồng C (nền tảng, iam, module dùng chung, migrate, test, khung EP-CLAR)
+# Nguồn: plans/lab/Lab 5/p1-shared-brief.md · Người viết: PL luồng C · 2026-11-26
+# hours_hint của issue rough = (BE MD theo FT + FE MD theo loại màn, LAB-1 estimate-unit-rates-and-feature-effort.py) × 8 giờ,
+# PC/TAB × 1,3; chỉ để kiểm độ hạt, không phải estimate (SWP / giờ chốt ở P3).
+
+stream: C
+
+epics:
+  - id: EP-FG02
+    title: "[FG-02] アカウント・認証・権限 — tài khoản, MFA, 代行, PIN"
+    labels: [epic, "fg:FG-02", "feature:iam"]
+    rfp_refs: [FR-IAM-01, FR-IAM-02, NFR-SEC-01, NFR-SEC-03, SEC-IAM-02, TBL-ROLE-01, CAP-01]
+    summary: "Đăng nhập nội bộ, phiên server-side, đổi người bằng PIN trên máy dùng chung (cả offline), MFA step-up, vai / quyền duyệt / 代行 kiểm trong DB. Nguồn: ADR-002, ADR-003, IAM_AUDIT_DB 4.1–4.8 + 4.58, api-conventions §4. Không có Screen Specification (L4-D08) → màn là issue thô."
+  - id: EP-FG11
+    title: "[FG-11] 帳票・データ出力 — 12 báo cáo, CSV kế toán"
+    labels: [epic, "fg:FG-11", "feature:report"]
+    rfp_refs: [FR-RPT-01, FR-RPT-02, FR-RPT-03, IF-ACC-01, NFR-PERF-01, CAP-07]
+    summary: "12 báo cáo cố định (RPT-01..12), batch báo cáo ngày trước 11:00, CSV kế toán IF-ACC-01 đóng băng lúc tạo + ánh xạ 仕訳, xuất dữ liệu có cấu trúc, PDF phiếu. Chỉ có ở mức 画面一覧 + ARCHITECTURE §9 + BILLING_DB 4.40–4.42 → phần lớn là issue thô."
+  - id: EP-FG12
+    title: "[FG-12] 通知 — thông báo in-app + email"
+    labels: [epic, "fg:FG-12", "feature:notify"]
+    rfp_refs: [FR-NOTIFY-01, FR-NOTIFY-02, FR-NOTIFY-03, BR-NOTIFY-01, CAP-07]
+    summary: "Outbox ghi trong cùng transaction nghiệp vụ, worker gửi SES, gửi lại ≤ 3, lỗi hẳn → danh sách in ở quầy + danh sách 未送信; khung thông báo trên SC-00-03. Nguồn: ARCHITECTURE §3/§9, IAM_AUDIT_DB 4.53, L4-A08 (DEP-13)."
+  - id: EP-FG13
+    title: "[FG-13] 監査・セキュリティ — 監査ログ, bảo mật, lưu 7 năm"
+    labels: [epic, "fg:FG-13", "feature:audit"]
+    rfp_refs: [FR-AUDIT-01, FR-AUDIT-02, FR-AUDIT-03, NFR-SEC-03, NFR-SEC-04, DR-RET-01, TBL-ATTACH-01, "09-06"]
+    summary: "監査ログ chỉ thêm (chia theo năm TC), đính kèm chung trên S3 theo loại chứng từ, sự kiện bảo mật, lưu 7 năm / lưu lạnh, APPI giản lược. Nguồn: ADR-009, IAM_AUDIT_DB 4.53–4.56, log-convention."
+  - id: EP-FG14
+    title: "[FG-14] 運用監視・可用性 — giám sát, backup RTO/RPO"
+    labels: [epic, "fg:FG-14", "feature:ops"]
+    rfp_refs: [NFR-AVL-01, NFR-AVL-03, NFR-OPS-01, NFR-PERF-01, NFR-PERF-02, ACC-05]
+    summary: "Giám sát + alarm, cảnh báo thay kiểm tra 01:45 (FT-14-02 đã cắt), backup PITR + Multi-AZ + bản sao Osaka, runbook khôi phục, hướng dẫn hiệu năng truy vấn. Nguồn: ADR-001, ADR-009, ARCHITECTURE §3, §11."
+  - id: EP-FG15
+    title: "[FG-15] データ移行 — chuyển đổi dữ liệu"
+    labels: [epic, "fg:FG-15", "feature:migrate"]
+    rfp_refs: [MIG-01, MIG-02, MIG-03, MIG-04, ACC-04, CAP-08]
+    summary: "Nạp ≤ 5 nguồn Excel/CSV qua bảng tạm, cleansing + hàng đợi 要判断 (SC-15-02, người quyết), đối chiếu 100% số bản ghi + tiền, ≥ 2 rehearsal + rollback. Chỉ có ARCHITECTURE §9 dòng Migration + 画面一覧 → toàn bộ là issue thô."
+  - id: EP-PLAT
+    title: "[PLAT] 基盤 — nền tảng AWS, CI/CD, khung app, quy ước chung"
+    labels: [epic, "feature:platform"]
+    rfp_refs: [NFR-AVL-01, NFR-SEC-04, NFR-USE-01, NFR-COMP-01]
+    summary: "Phạm vi S0 của wbs-schedule-ja.md: IaC AWS Tokyo (ADR-001), CI/CD, khung modular monolith, lớp gọi DB, quy ước API / lỗi / log (specs/_common), khung màn + trạng thái dùng chung (wireframes/_common-layout.md), công cụ seed fixture."
+  - id: EP-TEST
+    title: "[TEST] 総合テスト・UAT・リリース"
+    labels: [epic, "feature:test"]
+    rfp_refs: [ACC-02, ACC-03, ACC-05, ACC-06, NFR-PERF-01, NFR-PERF-02, NFR-AVL-03]
+    summary: "Kế hoạch W4–W6 của wbs-schedule-ja.md: test tổng (kịch bản nghiệp vụ, phân quyền 462 tổ hợp, tải, bảo mật, diễn tập DR), hỗ trợ UAT, cutover / go-no-go / rollback, bàn giao vận hành."
+  - id: EP-CLAR
+    title: "[CLAR] 要確認 — các điểm cần làm rõ với khách / nội bộ"
+    labels: [epic, "kind:clarify"]
+    rfp_refs: []
+    summary: "Khung epic chứa mọi issue kind:clarify của 3 luồng (DEP-xx, OPEN-*, E-xx, Q-*, ADR §6 Điểm mở). Luồng C khai báo; luồng A, B chỉ trỏ epic: EP-CLAR."
+
+issues:
+  # ───────────────────────── EP-PLAT ─────────────────────────
+  - id: C-PLAT-01
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] AWS基盤 IaC — CDK dựng dev / stg / prod trên Tokyo"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:platform", "kind:dev", "role:INFRA"]
+    spec_refs: ["ADR-001 §2", "ARCHITECTURE §3", "ADR-009 §2.1"]
+    rfp_refs: [NFR-AVL-01, NFR-SEC-04, DR-RET-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 42
+    description: |
+      Issue cha: hạ tầng AWS ap-northeast-1 bằng AWS CDK (TypeScript), tài khoản đứng tên khách, 3 môi trường giống nhau.
+      Gồm 4 sub-issue theo nhóm tài nguyên. Không gồm bản sao Osaka / AWS Backup (C-FG14-03) và alarm (C-FG14-01).
+    dod:
+      - "Cả 4 sub-issue xong; `cdk deploy` dựng lại stg từ đầu không cần thao tác tay"
+  - id: C-PLAT-01.1
+    epic: EP-PLAT
+    parent: C-PLAT-01
+    kind: dev
+    title: "[PLAT] ネットワーク・RDS — VPC, RDS PostgreSQL Multi-AZ, PITR, KMS"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:platform", "kind:dev", "role:INFRA"]
+    spec_refs: ["ADR-001 §2-2", "ADR-009 §2.1-1,2", "ARCHITECTURE §3 (RDS)"]
+    rfp_refs: [NFR-AVL-01, NFR-AVL-03, NFR-SEC-04]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      VPC 2 AZ, subnet riêng cho DB; RDS for PostgreSQL Multi-AZ DB instance, PITR 35 ngày, mã hóa KMS,
+      maintenance window 20:00–24:00 JST. Không gồm sao chép sang Osaka.
+    dod:
+      - "RDS Multi-AZ chạy ở stg, PITR bật 35 ngày, storage mã hóa KMS"
+      - "Maintenance window nằm ngoài 01:00–10:00 JST (PRM-081)"
+  - id: C-PLAT-01.2
+    epic: EP-PLAT
+    parent: C-PLAT-01
+    kind: dev
+    title: "[PLAT] アプリ実行環境 — ECS Fargate ≥ 2 task, ALB, CloudFront + WAF"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:platform", "kind:dev", "role:INFRA"]
+    spec_refs: ["ADR-001 §2-2,4", "ARCHITECTURE §3 (CloudFront + WAF, ALB + ECS)"]
+    rfp_refs: [NFR-AVL-01, NFR-SEC-03, NFR-SEC-04]
+    depends_on: [C-PLAT-01.1]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      ECS Fargate ≥ 2 task trên 2 AZ, auto scaling theo CPU; ALB; CloudFront + WAF (rule set managed + rate-based cho đăng nhập / PIN); TLS.
+      Giới hạn IP cho màn quản trị để chờ C-CLR-10.
+    dod:
+      - "Ứng dụng mẫu chạy qua CloudFront → ALB → 2 task ở 2 AZ; tắt 1 task không mất dịch vụ"
+      - "Rule rate-based cho đường đăng nhập / PIN bật, có test vượt ngưỡng bị chặn"
+  - id: C-PLAT-01.3
+    epic: EP-PLAT
+    parent: C-PLAT-01
+    kind: dev
+    title: "[PLAT] ジョブ基盤 — ECS task theo lịch + EventBridge Scheduler (Asia/Tokyo)"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:platform", "kind:dev", "role:INFRA"]
+    spec_refs: ["ADR-001 §2-2", "ARCHITECTURE §3 (ECS task theo lịch)"]
+    rfp_refs: [NFR-OPS-01]
+    depends_on: [C-PLAT-01.2]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Cùng image với app, entrypoint job; lịch cron múi giờ Asia/Tokyo cho job mở 業務日 01:00 (logic thuộc calendar),
+      worker outbox, batch báo cáo / IF-ACC-01. Chỉ dựng khung chạy, không viết logic job.
+    dod:
+      - "Một job mẫu chạy đúng giờ JST theo lịch, log kết quả ra CloudWatch"
+  - id: C-PLAT-01.4
+    epic: EP-PLAT
+    parent: C-PLAT-01
+    kind: dev
+    title: "[PLAT] S3・SES・Secrets — lưu file theo loại chứng từ, email, secret"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:platform", "kind:dev", "role:INFRA", "rule:no-overwrite"]
+    spec_refs: ["ADR-009 §2.2-9", "ARCHITECTURE §3 (S3, SES, Secrets Manager + KMS)"]
+    rfp_refs: [DR-RET-01, TBL-ATTACH-01, NFR-SEC-04, BR-NOTIFY-01]
+    depends_on: [C-PLAT-01.1]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      S3 versioning, mã hóa, chặn public, lifecycle theo tag `doc_class` (7 năm online / 3 năm → Glacier), KHÔNG có rule tự xóa.
+      SES domain đã xác thực (SPF / DKIM / DMARC), đường bounce / complaint về app. Secrets Manager + KMS, xoay vòng.
+    dod:
+      - "Lifecycle theo tag đúng bảng ADR-009 §2.2-9; không tồn tại rule Expiration nào"
+      - "SES gửi được từ stg với domain đã xác thực; không có secret trong repo / image (quét CI)"
+  - id: C-PLAT-02
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] CI/CD — build, test, quét secret, deploy rolling, chặn giờ chợ"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:platform", "kind:dev", "role:INFRA"]
+    spec_refs: ["ADR-001 §2-4", "ARCHITECTURE §3 (deploy rolling)"]
+    rfp_refs: [NFR-AVL-01, NFR-SEC-04]
+    depends_on: [C-PLAT-01.2]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Pipeline: lint + typecheck + unit test + migration check + quét secret + build image + deploy rolling dev → stg → prod (prod cần người bấm).
+      Pipeline từ chối deploy prod trong 01:00–10:00 JST (PRM-081).
+    dod:
+      - "PR chạy đủ bước, đỏ thì không merge được"
+      - "Thử deploy prod lúc 03:00 JST bị pipeline từ chối, có log lý do"
+  - id: C-PLAT-03
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] アプリ骨格 — Next.js modular monolith 13 module + quy tắc phụ thuộc"
+    role: BE
+    assignee: BE-6
+    labels: ["feature:platform", "kind:dev", "role:BE"]
+    spec_refs: ["ARCHITECTURE §2", "ADR-001 §2-1,3"]
+    rfp_refs: [NFR-COMP-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Cấu trúc thư mục theo 13 module ARCHITECTURE §2 (iam … sync), mỗi module có service công khai;
+      lint rule chặn import chéo vào phần nội bộ của module khác. Giữ code Next.js + zod của prototype khi chuyển.
+    dod:
+      - "Import trái quy tắc (module A đọc file nội bộ module B) làm lint đỏ"
+      - "Có README ngắn về quy tắc phụ thuộc trong docs/"
+  - id: C-PLAT-04
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] DB呼出層 — client SQL có kiểu, DB role chỉ EXECUTE, set_config ngữ cảnh"
+    role: BE
+    assignee: BE-6
+    labels: ["feature:platform", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-001 §2-3", "ADR-002 §2.1-4", "ARCHITECTURE §4.3"]
+    rfp_refs: [FR-AUDIT-01]
+    depends_on: [C-PLAT-03]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Thay `supabase.rpc` bằng client SQL có kiểu gọi thẳng hàm DB; app kết nối bằng DB role chỉ có EXECUTE.
+      Mỗi transaction ghi đặt `app.user_id`, `app.device_id`, `app.mfa_verified_at` bằng `set_config(..., true)`.
+    dod:
+      - "DB role của app không SELECT / UPDATE thẳng bảng được (test quyền)"
+      - "Hàm DB đọc được 3 biến ngữ cảnh; biến không rò sang transaction khác (test 2 request song song)"
+  - id: C-PLAT-05
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] マイグレーション基盤 — công cụ migration + quy ước chung MKT_DB §4.0"
+    role: BE
+    assignee: BE-6
+    labels: ["feature:platform", "kind:dev", "role:BE", "rule:no-overwrite"]
+    spec_refs: ["MKT_DB §4.0", "MKT_DB §4.0a"]
+    rfp_refs: [DR-RET-01]
+    depends_on: [C-PLAT-01.1]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Chọn và cài công cụ migration, schema `app` / `audit`, enum chung, kiểu tiền / ngày theo MKT_DB §4.0,
+      trigger append-only dùng chung (chặn UPDATE / DELETE) để các luồng gắn vào bảng của mình. Không tạo bảng nghiệp vụ.
+    dod:
+      - "Migration chạy lên / xuống được trên DB trống ở CI"
+      - "Trigger append-only dùng chung có test: UPDATE / DELETE bị từ chối"
+  - id: C-PLAT-06
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] API共通 — route handler, zod, body lỗi E-CMN-001..008, traceId"
+    role: BE
+    assignee: BE-6
+    labels: ["feature:platform", "kind:dev", "role:BE"]
+    spec_refs: ["api-conventions §2, §3, §5, §6, §7", "error-codes §3"]
+    rfp_refs: [NFR-USE-01]
+    depends_on: [C-PLAT-03, C-PLAT-04]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Khung route handler `/api/v1`, validate zod, ánh xạ lỗi PG (`42501`, `40P01`, `40001`, `22P02`, `DAY_LOCKED`) sang E-CMN,
+      body lỗi chuẩn §3.2 có `traceId`, khóa lạc quan `version` (409 E-CMN-008), 423 E-CMN-003.
+    dod:
+      - "Mỗi mã E-CMN-001..008 có một test tích hợp trả đúng status + body"
+      - "Không có stack trace trong body lỗi 500"
+  - id: C-PLAT-07
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] アプリログ — log JSON một dòng theo log-convention, cấm ghi bí mật"
+    role: BE
+    assignee: BE-6
+    labels: ["feature:platform", "kind:dev", "role:BE"]
+    spec_refs: ["log-convention §2, §4"]
+    rfp_refs: [NFR-OPS-01, "09-06"]
+    depends_on: [C-PLAT-03]
+    depends_on_spec: []
+    hours_hint: 6
+    description: |
+      Logger dùng chung theo giả định C-PA-01: JSON một dòng, thời gian UTC, category = tên module, traceId.
+      Bộ lọc che mật khẩu, PIN, token, nội dung CSV 入金, dữ liệu cá nhân. Log ứng dụng tách khỏi 監査ログ.
+    dod:
+      - "Test: ghi object có trường password / pin / token → log chỉ còn giá trị đã che"
+      - "Quy ước đổi theo câu trả lời C-CLR-15 thì chỉ sửa một module logger"
+  - id: C-PLAT-08
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] シード — công cụ nạp fixture giả cho dev / stg (không có ở prod)"
+    role: BE
+    assignee: BE-6
+    labels: ["feature:platform", "kind:dev", "role:BE"]
+    spec_refs: ["specs/_index.md cột 'Seed / giả định khi test'", "PREMISE L4-A02, M01, M24"]
+    rfp_refs: []
+    depends_on: [C-PLAT-05]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Script nạp bộ seed theo cột "Seed" của DEP-01..17 (dữ liệu trông rõ là giả), chạy lại được, không nhập tay vào DB.
+      Mỗi luồng thêm file seed của mình theo quy ước chung. Production không có script reset, không có cột `is_sample`.
+    dod:
+      - "`seed` chạy 2 lần liên tiếp cho cùng kết quả"
+      - "Pipeline prod không chứa bước seed / reset (kiểm trong CI)"
+  - id: C-PLAT-09
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] 画面枠（PC） — header 業務日, người đang dùng, menu theo quyền"
+    role: FE
+    assignee: FE-4
+    labels: ["feature:platform", "kind:dev", "role:FE"]
+    spec_refs: ["wireframes/_common-layout.md §1, §3 C-1..C-12"]
+    rfp_refs: [NFR-USE-01, TBL-ROLE-01]
+    depends_on: [C-PLAT-03]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Khung PC 1366 × 900 theo §1: C-1 tên hệ thống (băng 「検証環境」 ở môi trường thử), C-2 業務日 + 「締め済」, C-4 người đang dùng,
+      C-5 利用者切替, C-6 ログアウト, C-7 menu chỉ hiện nhóm có quyền (相対取引 đứng đầu nhóm 取引), C-8..C-12. Đi hết bằng bàn phím.
+    dod:
+      - "Menu lấy từ API ma trận quyền (C-FG02-09), không chép tay danh sách vai"
+      - "Đi qua toàn bộ khung chỉ bằng Tab / Enter"
+  - id: C-PLAT-10
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] 画面枠（タブレット） — khung tablet + ホーム lưới nút theo vai (C-13, C-14)"
+    role: FE
+    assignee: FE-4
+    labels: ["feature:platform", "kind:dev", "role:FE"]
+    spec_refs: ["wireframes/_common-layout.md §2, §2.1, C-13, C-14"]
+    rfp_refs: [NFR-COMP-01, NFR-USE-01]
+    depends_on: [C-PLAT-09]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Khung tablet dọc 1024 × 1366, nút ≥ 48px dùng được khi đeo găng; nút chữ 「ホーム」 cố định góc trái trên;
+      lưới 4–6 nút theo vai, thứ tự cố định, số đếm việc chờ (Q-WF-02 [Customer giả lập, 2026-11-25]).
+    dod:
+      - "Mỗi vai hiện trường thấy đúng 4–6 nút theo §2.1, thứ tự không đổi theo tần suất"
+      - "Số đếm việc chờ lấy qua API của module sở hữu dữ liệu (để trống khi API chưa có, không giả số)"
+  - id: C-PLAT-11
+    epic: EP-PLAT
+    parent: null
+    kind: dev
+    title: "[PLAT] 共通状態表示 — trạng thái dùng chung C-20..C-29, C-31 (gồm SC-00-05)"
+    role: FE
+    assignee: FE-4
+    labels: ["feature:platform", "kind:dev", "role:FE", "rule:no-overwrite"]
+    spec_refs: ["wireframes/_common-layout.md §4 C-20..C-29, C-31", "SCREEN-LIST #4 SC-00-05", "api-conventions §7"]
+    rfp_refs: [NFR-USE-01, FR-CORR-03]
+    depends_on: [C-PLAT-09]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Component dùng chung: đang tải, rỗng, lỗi nhập dưới ô, lỗi nghiệp vụ 409, banner 423 「締め済」 + nút 「修正申請を作成 →」 (= SC-00-05),
+      không có quyền, lỗi hệ thống có mã lỗi, nhãn 決裁待ち / 確認待ち, mất mạng / có mạng lại, xác nhận hành động không quay lại được.
+      C-30 (hộp MFA) làm ở C-FG02-06.3.
+    dod:
+      - "Mỗi trạng thái có story / trang mẫu; banner 423 giữ nguyên nội dung đang nhập"
+      - "Nhãn chờ duyệt dùng 決裁 / 確認, không dùng 「承認」 (L4-D03)"
+
+  # ───────────────────────── EP-FG02 iam ─────────────────────────
+  - id: C-FG02-01
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] iamテーブル — migration IAM_AUDIT_DB 4.1–4.8, 4.58"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["IAM_AUDIT_DB §2, §4.1–4.8, §4.58"]
+    rfp_refs: [FR-IAM-01, FR-IAM-02]
+    depends_on: [C-PLAT-05]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Tạo `staff_accounts`, `staff_authorities`, `delegations`, `staff_pins`, `mfa_factors`, `devices`, `staff_sessions`,
+      `role_read_matrix`, `staff_roles` đúng cột / ràng buộc / index của Database Design; vai và quyền duyệt cấp / thu có lịch sử (chỉ thêm).
+    dod:
+      - "Schema khớp IAM_AUDIT_DB (so bằng script so cột)"
+      - "Thu hồi vai / quyền = thêm dòng lịch sử, không UPDATE đè (test)"
+  - id: C-FG02-02
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] 社内ログイン — đăng nhập mật khẩu, phiên server-side, đăng xuất"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-002 §2.1-1,2, §2.2-7", "IAM_AUDIT_DB 4.1, 4.7"]
+    rfp_refs: [FR-IAM-01, NFR-SEC-01, NFR-SEC-03]
+    depends_on: [C-FG02-01, C-PLAT-06]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Mật khẩu băm argon2id; phiên lưu DB, cookie HttpOnly / Secure / SameSite=Strict; dừng tài khoản → xóa phiên ngay.
+      Tài khoản システム管理者 phải qua MFA ngay sau mật khẩu (gọi C-FG02-06.1). Đăng nhập bị từ chối có log. API Design viết trước khi merge (tiền tố IAM).
+    dod:
+      - "API Design của API đăng nhập / đăng xuất có ở api-list (ID API-IAM-…) và được review"
+      - "Tài khoản bị dừng: phiên đang mở bị thu hồi trong request kế tiếp (401 E-CMN-001)"
+      - "SYSADM không vào được màn nào khi chưa xong MFA"
+  - id: C-FG02-03
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] 端末登録 — đăng ký thiết bị dùng chung + đăng nhập thiết bị đầu ca"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-002 §2.1-3", "IAM_AUDIT_DB 4.6"]
+    rfp_refs: [FR-IAM-01, NFR-SEC-03]
+    depends_on: [C-FG02-02]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      SYSADM cấp device id cho tablet bến / PC bàn GD / PC văn phòng; đăng nhập thiết bị một lần đầu ca (giả định C-PA-02).
+      Thiết bị bị đánh dấu 「端末回収不能」 (settle, API-STL-003) thì không đăng nhập được nữa.
+    dod:
+      - "Thiết bị chưa đăng ký không vào được màn đổi người"
+      - "Thiết bị 端末回収不能 bị từ chối đăng nhập (test với trạng thái do settle ghi)"
+  - id: C-FG02-04
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] 利用者切替（PIN） — đổi người bằng 社員番号 + PIN 4 số, khóa theo người + máy"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-002 §2.1-3, §2.3-11", "IAM_AUDIT_DB 4.4, 4.7", "PREMISE M22"]
+    rfp_refs: [FR-IAM-01, NFR-SEC-03]
+    depends_on: [C-FG02-03]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Đổi người trên máy dùng chung trong vài giây; đổi người làm hết hiệu lực MFA step-up ngay.
+      Sai PIN 5 lần → khóa 15 phút, đếm cả theo người lẫn theo thiết bị; PIN tạm phải đổi ở lần dùng đầu.
+    dod:
+      - "5 lần sai trên cùng máy với 5 người khác nhau → máy bị khóa (theo thiết bị)"
+      - "Sau đổi người, gọi API cần step-up trả 403 E-CMN-005"
+  - id: C-FG02-05
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] オフラインPIN — đổi người khi mất mạng bằng PIN gắn thiết bị, có hạn N giờ"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-008 §2 (PIN offline)", "ADR-002 §2.1-3", "ARCHITECTURE §8"]
+    rfp_refs: [NFR-AVL-02, NFR-SEC-03]
+    depends_on: [C-FG02-04]
+    depends_on_spec: ["ADR-008 hàng đợi offline / PWA (luồng sở hữu sync)"]
+    hours_hint: 10
+    description: |
+      Bản băm PIN của người đã đăng nhập online trên máy đó trong N giờ (tạm 12 giờ, file cấu hình — C-CLR-04) lưu trên thiết bị,
+      thu hồi từ xa khi dừng tài khoản / máy mất. Offline không cho duyệt, không cho chốt GD.
+    dod:
+      - "Quá N giờ kể từ lần online cuối → PIN offline bị từ chối"
+      - "Tài khoản bị dừng: lần thiết bị có mạng kế tiếp xóa bản băm PIN của người đó"
+  - id: C-FG02-06
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] MFA step-up — xác thực mã, hiệu lực 10 phút, token một lần (DEP-01)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["specs/_index.md DEP-01", "ADR-002 §2.2-5..7", "api-conventions §4", "PREMISE §3.2"]
+    rfp_refs: [NFR-SEC-01, NFR-SEC-03, CAP-HUMAN-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 28
+    description: |
+      Issue cha cho DEP-01 — C-30 ở SC-01-02, SC-06-05, SC-07-02, SC-08-03, SC-09-04, SC-10-04 đều gọi.
+      Chia BE xác thực / BE kiểm ở API nghiệp vụ / FE hộp thoại C-30.
+    dod:
+      - "3 sub-issue xong; 6 màn cốt lõi gọi được MFA thật thay token giả ký khóa test"
+  - id: C-FG02-06.1
+    epic: EP-FG02
+    parent: C-FG02-06
+    kind: dev
+    title: "[FG-02] MFA検証API — POST /auth/mfa/verify, step-up theo phiên, khóa sau 5 lần sai"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["api-conventions §4", "ADR-002 §2.2-6,6a, §2.3-11", "IAM_AUDIT_DB 4.5, 4.7"]
+    rfp_refs: [NFR-SEC-01, NFR-SEC-03]
+    depends_on: [C-FG02-02]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Xác thực TOTP 6 số (cửa sổ ±1 bước) → ghi mốc step-up vào (người, thiết bị, phiên); hết khi quá 10 phút hoặc idle > 3 phút
+      (giá trị trong file cấu hình — DEP-16). Sai 5 lần → khóa tạm + sự kiện bảo mật. Mã lỗi `E-IAM-…`. Viết API Design trước khi merge.
+    dod:
+      - "API Design `POST /api/v1/auth/mfa/verify` có ở api-list, mã E-IAM thêm vào error-codes"
+      - "Test biên: 9:59 còn hiệu lực, 10:01 hết; idle 3:01 hết; đổi người hết ngay"
+      - "Sai mã lần 5 → khóa, có dòng 監査ログ và sự kiện bảo mật"
+  - id: C-FG02-06.2
+    epic: EP-FG02
+    parent: C-FG02-06
+    kind: dev
+    title: "[FG-02] MFAトークン — token một lần theo purpose + middleware kiểm cho API nghiệp vụ"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE", "rule:human-decision"]
+    spec_refs: ["api-conventions §4 (bảng hai mức, danh sách purpose)", "ADR-002 §2.2-6a"]
+    rfp_refs: [NFR-SEC-01, CAP-HUMAN-01]
+    depends_on: [C-FG02-06.1]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Khi verify có `purpose` → trả `{ mfaToken, expiresAt }` dùng một lần, gắn người + thiết bị + purpose.
+      Middleware dùng chung: API ★ đọc header `X-MFA-Token`; API step-up theo phiên chỉ đọc `app.mfa_verified_at`; thiếu → 403 E-CMN-005.
+    dod:
+      - "Token dùng lần 2, sai purpose, khác người hoặc khác thiết bị → 403 E-CMN-005 (4 test)"
+      - "Đủ 7 purpose đang có ở api-conventions §4; thêm purpose mới chỉ cần thêm một dòng cấu hình"
+  - id: C-FG02-06.3
+    epic: EP-FG02
+    parent: C-FG02-06
+    kind: dev
+    title: "[FG-02] MFAダイアログ（C-30） — hộp nhập mã 6 số dùng chung"
+    role: FE
+    assignee: FE-4
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:FE"]
+    spec_refs: ["wireframes/_common-layout.md §4 C-30"]
+    rfp_refs: [NFR-SEC-01, NFR-USE-01]
+    depends_on: [C-FG02-06.1, C-PLAT-11]
+    depends_on_spec: []
+    hours_hint: 6
+    description: |
+      Hộp thoại 「この操作の前に本人確認を行います」 + ô mã 6 số; nhận 403 E-CMN-005 thì mở, xác thực xong gửi lại thao tác đang chờ;
+      hành động ★ luôn mở lại hộp dù step-up còn hiệu lực.
+    dod:
+      - "Màn cốt lõi chỉ cần gọi một hàm; giữ nguyên dữ liệu đang nhập khi mở / đóng hộp"
+  - id: C-FG02-07
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] MFA手段登録 — đăng ký / thu hồi TOTP app, token phần cứng, mã dự phòng"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-002 §2.2-8,9,10, §2.3-12a", "IAM_AUDIT_DB 4.5"]
+    rfp_refs: [NFR-SEC-01, SEC-IAM-02]
+    depends_on: [C-FG02-06.1]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Logic phía server: đăng ký app TOTP / gắn token phần cứng (seed nạp qua KMS, không lưu bản rõ), mã dự phòng một lần do SYSADM cấp
+      (SYSADM phải MFA, có audit, hết hạn trong ngày), thu hồi khi mất token. Màn SC-02-02 là issue thô C-FG02-14.
+    dod:
+      - "Seed TOTP không xuất hiện bản rõ ở DB / log (test)"
+      - "Mã dự phòng dùng được đúng 1 lần, hết hạn cuối ngày; mỗi lần cấp có dòng 監査ログ"
+  - id: C-FG02-08
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] 権限確認 — assert_caller trong DB + requireRole ở app + ràng buộc SoD"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE", "rule:human-decision"]
+    spec_refs: ["ADR-003 §2-1,3,4", "IAM_AUDIT_DB 4.2, 4.3, 4.58"]
+    rfp_refs: [FR-IAM-01, TBL-ROLE-01, CAP-HUMAN-01]
+    depends_on: [C-FG02-01, C-PLAT-04]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      `assert_caller(vai, quyền duyệt)` đọc `app.user_id` + vai / quyền duyệt / 代行 có hiệu lực tại `now()`; helper SoD
+      (người duyệt ≠ người lập, cấp 1 ≠ cấp 2, maker ≠ checker…) để các module gọi. Một người nhiều vai theo giả định OPEN-DB-10 (C-CLR-05).
+    dod:
+      - "Test: 代行 hết hạn → 403 E-CMN-002; quyền duyệt đã thu hồi → 403"
+      - "Helper SoD có test cho từng cặp ADR-003 §2-4 liệt kê"
+  - id: C-FG02-09
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] 閲覧権限 — RLS theo role_read_matrix + API menu đọc cùng bảng"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-003 §2-5", "IAM_AUDIT_DB 4.8", "PREMISE L4-A06, M18"]
+    rfp_refs: [TBL-ROLE-01, "09-06"]
+    depends_on: [C-FG02-08]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Ma trận quyền đọc viết một lần dưới dạng dữ liệu (`role_read_matrix`, seed từ cột 閲 của role-list theo nhóm dữ liệu — C-PA-03);
+      policy RLS theo `app.user_id` và API menu (C-7) cùng đọc bảng này. Không gồm quyền hiển thị từng item của màn chưa có spec.
+    dod:
+      - "Đổi một dòng ma trận → cả RLS lẫn menu đổi theo, không sửa code"
+      - "Test mỗi vai × mỗi nhóm dữ liệu: đọc được / bị chặn đúng ma trận"
+  - id: C-FG02-10
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] 代行者指定API — tạo / kết thúc 代行 có hạn, ghi 「thay cho ai」 (DEP-14)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["specs/_index.md DEP-14", "IAM_AUDIT_DB 4.3", "api-list §4 (GET/POST /delegations)"]
+    rfp_refs: [FR-IAM-02, FR-AUDIT-01]
+    depends_on: [C-FG02-08]
+    depends_on_spec: ["STL_CORRECTION_DECIDE_TECH (cấp 1 khi 照合部門長 vắng — Q-STL-04)", "STL_DAY_CLOSE_TECH (khóa thay)"]
+    hours_hint: 10
+    description: |
+      Chỉ định trước người 代行 cho khóa ngày, từng cấp duyệt 修正申請, checker quy chế; có ngày bắt đầu / kết thúc, tự hết hạn.
+      Mọi thao tác qua 代行 ghi 監査ログ trường 「代行: thay cho ai」. Viết API Design trước khi merge. Tab FE ở issue thô C-FG02-14.
+    dod:
+      - "API Design `GET/POST /api/v1/delegations` có ở api-list"
+      - "Seed một 代行 STL_HEAD có hiệu lực theo DEP-14 dùng được cho test SC-08-03 / SC-07-02"
+      - "Quá ngày kết thúc → assert_caller từ chối mà không cần job dọn"
+  - id: C-FG02-11
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] 社員番号照会API — tra tên theo 社員番号, chỉ tài khoản ACTIVE (DEP-02)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE", "rule:human-decision"]
+    spec_refs: ["specs/_index.md DEP-02", "IAM_AUDIT_DB 4.1", "api-list §4"]
+    rfp_refs: [FR-IAM-01, CAP-HUMAN-01]
+    depends_on: [C-FG02-01, C-PLAT-06]
+    depends_on_spec: ["LOT_INSPECTION_RECORD_TECH (SC-03-05 [8])", "DEL_EXCEPTION_DISPUTE_TECH (SC-06-04 [5])"]
+    hours_hint: 4
+    description: |
+      `GET /api/v1/staff/lookup?employeeNo=` cho SC-03-05 (ghi người 目利き) và SC-06-04. Không có / không ACTIVE → trả rỗng,
+      feature gọi trả lỗi của mình (`E-LOT-012`…). Viết API Design trước khi merge.
+    dod:
+      - "API Design có ở api-list; tài khoản SUSPENDED không trả về (test)"
+  - id: C-FG02-12
+    epic: EP-FG02
+    parent: null
+    kind: dev
+    title: "[FG-02] セッション管理 — timeout theo loại máy, mở khóa / đặt lại PIN ban đêm có MFA"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-002 §2.1-3, §2.3-12", "PREMISE §3.2 (mở khóa / đặt lại PIN người khác)", "ARCHITECTURE §11 NFR-SEC-03"]
+    rfp_refs: [NFR-SEC-03]
+    depends_on: [C-FG02-04, C-FG02-06.1]
+    depends_on_spec: ["specs/_index.md DEP-16 (file cấu hình có nhật ký)"]
+    hours_hint: 8
+    description: |
+      Timeout PC ~30 phút / tablet ~5 phút đưa về màn đổi người, giữ dữ liệu đang nhập (giá trị trong file cấu hình).
+      運用部門長 hoặc 配送部門責任者 mở khóa / đặt lại PIN người khác: cần MFA, PIN mới là PIN tạm, có audit.
+    dod:
+      - "Người không có quyền 運用部門長 / 配送部門責任者 gọi mở khóa → 403"
+      - "Đặt lại PIN → lần đầu dùng bắt đổi PIN"
+  - id: C-FG02-13
+    epic: EP-FG02
+    parent: null
+    kind: rough
+    title: "[FG-02][概算] 社内ログイン・利用者切替・ホーム — SC-00-01..03 (chưa spec)"
+    role: FE
+    assignee: FE-4
+    labels: ["fg:FG-02", "feature:iam", "kind:rough", "role:FE", "needs-spec", "rule:aitai-main"]
+    spec_refs: ["SCREEN-LIST #1–3 (C1)", "wireframes/_common-layout.md C-4, C-5, C-14"]
+    rfp_refs: [FR-IAM-01, NFR-USE-01, NFR-COMP-01, FR-NOTIFY-01]
+    depends_on: [C-FG02-02, C-FG02-04, C-PLAT-09, C-PLAT-10]
+    depends_on_spec: []
+    hours_hint: 72
+    description: |
+      Ba màn ở mức 画面一覧: đăng nhập (PC/TAB), đổi người bằng PIN (bàn số to trên tablet), ホーム PC theo vai
+      (相対 là lối tắt đầu cho TRADE; khung thông báo gộp SC-00-04; trạng thái mạng + số chưa đồng bộ). Giờ: (2 + 3 + 2) MD × 1,3 PC/TAB × 8.
+    dod:
+      - "Có Screen Specification SC-00-01..03 rồi tách lại thành issue dev"
+  - id: C-FG02-14
+    epic: EP-FG02
+    parent: null
+    kind: rough
+    title: "[FG-02][概算] MFA登録・アカウント管理画面 — SC-02-02, SC-02-03 + tab 代行者 (chưa spec)"
+    role: FE
+    assignee: FE-4
+    labels: ["fg:FG-02", "feature:iam", "kind:rough", "role:FE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #11–12 (C2)", "specs/_index.md DEP-14"]
+    rfp_refs: [FR-IAM-02, NFR-SEC-01]
+    depends_on: [C-FG02-07, C-FG02-10]
+    depends_on_spec: []
+    hours_hint: 40
+    description: |
+      SC-02-02 đăng ký / đặt lại MFA (cách nhận mã cho người không dùng điện thoại riêng) và SC-02-03 danh sách / chi tiết tài khoản
+      có tab 代行者 (gộp SC-02-05), MFA trước khi đổi vai / quyền. Giờ: (2 + 3) MD × 8.
+    dod:
+      - "Có Screen Specification SC-02-02, SC-02-03 rồi tách lại thành issue dev"
+  - id: C-FG02-15
+    epic: EP-FG02
+    parent: null
+    kind: rough
+    title: "[FG-02][概算] アカウント・ロール管理API — cấp / dừng / mở lại / thu hồi, gán vai (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-02", "feature:iam", "kind:rough", "role:BE", "needs-spec", "rule:no-overwrite"]
+    spec_refs: ["IAM_AUDIT_DB 4.1, 4.2, 4.58", "ADR-003 §2-1"]
+    rfp_refs: [FR-IAM-02, TBL-ROLE-01]
+    depends_on: [C-FG02-08]
+    depends_on_spec: []
+    hours_hint: 36
+    description: |
+      API quản trị tài khoản cho SC-02-03: phát hành / tạm dừng / mở lại / thu hồi có lịch sử (照合事務局 yêu cầu → SYSADM làm),
+      cấp / thu 7 vai và 3 quyền duyệt. Chưa có API Design. Giờ: (FT-02-05 3 + phần quản trị FT-02-06 1,5) MD × 8.
+    dod:
+      - "Có API Design (ID ở api-list) rồi tách lại thành issue dev"
+  - id: C-FG02-16
+    epic: EP-FG02
+    parent: null
+    kind: test
+    title: "[FG-02] 認証テスト — kịch bản đăng nhập, PIN, MFA step-up, token một lần"
+    role: QA
+    assignee: QA-3
+    labels: ["fg:FG-02", "feature:iam", "kind:test", "role:QA"]
+    spec_refs: ["ADR-002 §2.1–2.3", "api-conventions §4", "PREMISE §3.2"]
+    rfp_refs: [NFR-SEC-01, NFR-SEC-03, FR-IAM-01]
+    depends_on: [C-FG02-02, C-FG02-04, C-FG02-05, C-FG02-06, C-FG02-12]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Kịch bản + dữ liệu test: khóa PIN theo người và theo máy, PIN offline quá N giờ, MFA biên 10 phút / idle 3 phút,
+      ★ luôn hỏi lại mã, token sai purpose / dùng lại, SYSADM MFA khi đăng nhập, timeout theo loại máy.
+    dod:
+      - "Mọi hàng của PREMISE §3.2 có ít nhất một case (hỏi / không hỏi MFA)"
+  - id: C-FG02-17
+    epic: EP-FG02
+    parent: null
+    kind: test
+    title: "[FG-02] 認可テスト — vai, quyền duyệt, 代行, SoD, ma trận đọc"
+    role: QA
+    assignee: QA-3
+    labels: ["fg:FG-02", "feature:iam", "kind:test", "role:QA", "rule:human-decision"]
+    spec_refs: ["ADR-003 §2-1,3,4,5", "IAM_AUDIT_DB 4.3, 4.8"]
+    rfp_refs: [TBL-ROLE-01, FR-IAM-02, CAP-HUMAN-01]
+    depends_on: [C-FG02-08, C-FG02-09, C-FG02-10]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Kịch bản: 代行 trước / trong / sau hạn, thu hồi quyền duyệt, từng cặp SoD, RLS theo ma trận đọc ở mức nhóm dữ liệu.
+      Bộ 462 tổ hợp màn × vai chạy ở C-TEST-03.
+    dod:
+      - "Mỗi cặp SoD ở ADR-003 §2-4 có case bị chặn"
+
+  # ───────────────────────── EP-FG13 audit ─────────────────────────
+  - id: C-FG13-01
+    epic: EP-FG13
+    parent: null
+    kind: dev
+    title: "[FG-13] 横断テーブル — migration IAM_AUDIT_DB 4.53–4.56 (audit chia năm TC)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-13", "feature:audit", "kind:dev", "role:BE", "rule:no-overwrite"]
+    spec_refs: ["IAM_AUDIT_DB §4.53–4.56", "ADR-009 §2.2-7"]
+    rfp_refs: [FR-AUDIT-01, DR-RET-01, TBL-ATTACH-01]
+    depends_on: [C-PLAT-05]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Tạo `notifications`, `attachments`, `offline_sync_records`, `audit_logs` (partition theo năm TC, chỉ INSERT).
+      `offline_sync_records` dùng bởi module sync (luồng sở hữu sync trỏ tới issue này qua mã bảng). Không gồm logic.
+    dod:
+      - "DB role của app không UPDATE / DELETE được `audit_logs` (test quyền + trigger)"
+      - "Partition năm TC kế tiếp được tạo trước 4/1 (job hoặc script, có test)"
+  - id: C-FG13-02
+    epic: EP-FG13
+    parent: null
+    kind: dev
+    title: "[FG-13] 監査ログ記録 — hàm ghi audit dùng chung: ai, khi, lý do, 代行, trước / sau"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-13", "feature:audit", "kind:dev", "role:BE", "rule:no-overwrite"]
+    spec_refs: ["IAM_AUDIT_DB 4.56", "log-convention §4 #5", "PREMISE M24"]
+    rfp_refs: [FR-AUDIT-01, FR-IAM-02]
+    depends_on: [C-FG13-01, C-PLAT-04]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Hàm DB `write_audit(...)` gọi trong cùng transaction với thao tác: người, thiết bị, thời điểm, loại thao tác, bản ghi,
+      before / after, lý do, 「代行: thay cho ai」. Trigger mẫu cho bảng master sửa tại chỗ. Các module gọi hàm này, không tự ghi bảng.
+    dod:
+      - "Thao tác bị rollback thì không còn dòng audit (test)"
+      - "Thao tác qua 代行 có cả người làm và người được thay"
+  - id: C-FG13-03
+    epic: EP-FG13
+    parent: null
+    kind: dev
+    title: "[FG-13] 添付ファイル共通API — upload / tải chứng từ, loại chứng từ, hạn lưu (DEP-03)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-13", "feature:audit", "kind:dev", "role:BE", "rule:no-overwrite"]
+    spec_refs: ["specs/_index.md DEP-03", "ADR-009 §2.2-9", "IAM_AUDIT_DB 4.54", "api-list §4"]
+    rfp_refs: [TBL-ATTACH-01, DR-RET-01]
+    depends_on: [C-FG13-01, C-PLAT-01.4, C-PLAT-06]
+    depends_on_spec: ["DEL_EXCEPTION_DISPUTE_TECH (SC-06-04 [11])", "STL_CORRECTION_DECIDE_TECH (SC-08-03 [6])"]
+    hours_hint: 12
+    description: |
+      `POST /api/v1/attachments`, `GET /api/v1/attachments/{id}`: trả `attachmentId`, gắn `doc_class` + tag S3,
+      tính `retention_until` / `archive_after`; giới hạn loại / cỡ để trong cấu hình, giá trị chờ C-CLR-07. Mã lỗi `E-ATT-…` thay `E-DEL-029` tạm.
+    dod:
+      - "API Design có ở api-list; mã E-ATT thêm vào error-codes"
+      - "Không có API xóa file; tải về kiểm quyền đọc theo bản ghi chủ"
+  - id: C-FG13-04
+    epic: EP-FG13
+    parent: null
+    kind: dev
+    title: "[FG-13] 異常行動ログ — sự kiện bảo mật: đăng nhập sai, ngoài giờ, xuất hàng loạt"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-13", "feature:audit", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-002 §2.3-11", "ARCHITECTURE §11 (NFR-SEC-03)"]
+    rfp_refs: [NFR-SEC-03, NFR-OPS-01]
+    depends_on: [C-PLAT-07, C-FG02-02]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Phát sự kiện bảo mật có cấu trúc (log + metric) cho: khóa do sai mật khẩu / PIN / MFA, đăng nhập ngoài giờ dịch vụ,
+      xuất CSV vượt ngưỡng. Ngưỡng trong file cấu hình. Alarm nhận sự kiện ở C-FG14-01.
+    dod:
+      - "Mỗi loại sự kiện có test sinh ra đúng một metric"
+  - id: C-FG13-05
+    epic: EP-FG13
+    parent: null
+    kind: rough
+    title: "[FG-13][概算] 保管期限・物理削除決裁 — xóa sau hạn có 決裁, tách partition audit"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-13", "feature:audit", "kind:rough", "role:BE", "needs-spec", "rule:no-overwrite", "rule:human-decision"]
+    spec_refs: ["ADR-009 §2.2-7, §2.2-9", "api-conventions §4 (xóa vật lý chưa có API)", "PREMISE §3.2 ★ 決裁 xóa vật lý"]
+    rfp_refs: [DR-RET-01, TBL-ATTACH-01]
+    depends_on: [C-FG13-03]
+    depends_on_spec: []
+    hours_hint: 24
+    description: |
+      Job lập danh sách chứng từ đến `retention_until`; 運用部門長 決裁 có MFA ★ rồi mới xóa; tách partition `audit_logs` > 7 năm,
+      xuất S3 rồi bỏ theo quy trình có duyệt. Chưa có API / màn, người quyết và quy trình chờ C-CLR-08. Giờ: FT-13-07 3 MD × 8.
+    dod:
+      - "Có API Design + purpose MFA mới ở api-conventions §4 rồi tách lại thành issue dev"
+  - id: C-FG13-06
+    epic: EP-FG13
+    parent: null
+    kind: rough
+    title: "[FG-13][概算] 監査ログ検索・詳細 — SC-13-01, SC-13-02 + xuất CSV có MFA (chưa spec)"
+    role: FE
+    assignee: FE-4
+    labels: ["fg:FG-13", "feature:audit", "kind:rough", "role:FE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #66–67 (C9)", "PREMISE §3.2 (xuất 監査ログ)"]
+    rfp_refs: [FR-AUDIT-02, NFR-PERF-01]
+    depends_on: [C-FG13-02]
+    depends_on_spec: []
+    hours_hint: 52
+    description: |
+      Tìm audit theo mã GD, 業務日, người tham gia, loại thao tác (p95 ≤ 2 giây, bắt buộc khoảng ngày); chi tiết before / after,
+      「代行: thay cho ai」; xuất CSV theo khoảng ngày có MFA. Giờ: (BE FT-13-02 3 + FE DS 2 + CT 1,5) MD × 8.
+    dod:
+      - "Có Screen Specification + API Design SC-13-01 / 02 rồi tách lại thành issue dev"
+  - id: C-FG13-07
+    epic: EP-FG13
+    parent: null
+    kind: rough
+    title: "[FG-13][概算] 個人情報請求対応 — SC-13-03 (giản lược C-06, chưa spec)"
+    role: FE
+    assignee: FE-4
+    labels: ["fg:FG-13", "feature:audit", "kind:rough", "role:FE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #68 (C9)", "function-list §7.1 C-06"]
+    rfp_refs: ["09-06"]
+    depends_on: [C-FG13-02]
+    depends_on_spec: []
+    hours_hint: 40
+    description: |
+      Theo C-06: sổ tiếp nhận yêu cầu nằm ngoài hệ thống; hệ thống chỉ có thao tác ẩn danh hóa / dừng sử dụng của quản trị + audit,
+      log truy cập dữ liệu cá nhân giữ nguyên. Giờ: (BE FT-13-04 3 + FE NH 3) MD × 8, chưa trừ phần C-06.
+    dod:
+      - "Có Screen Specification + API Design SC-13-03 rồi tách lại thành issue dev"
+  - id: C-FG13-08
+    epic: EP-FG13
+    parent: null
+    kind: rough
+    title: "[FG-13][概算] 適用規則版の表示 — hiện version quy chế đã áp cho 精算 / thưởng (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-13", "feature:audit", "kind:rough", "role:BE", "needs-spec", "rule:versioned-rule"]
+    spec_refs: ["function-list FG-13 (FT-13-03)"]
+    rfp_refs: [FR-AUDIT-03]
+    depends_on: []
+    depends_on_spec: ["RULE_VERSION_TECH (version hiệu lực)", "INC_ENGINE_TECH (version ghi trên kết quả thưởng)"]
+    hours_hint: 16
+    description: |
+      Mỗi bản ghi thưởng / 精算 hiện version quy chế / tỷ lệ đã dùng, có liên kết sang version. Chỗ hiển thị (màn nào, báo cáo nào)
+      chưa đặc tả. Giờ: FT-13-03 2 MD × 8.
+    dod:
+      - "Có Function Spec nêu màn / báo cáo hiển thị rồi tách lại thành issue dev"
+  - id: C-FG13-09
+    epic: EP-FG13
+    parent: null
+    kind: test
+    title: "[FG-13] 監査・添付テスト — audit chỉ thêm, đủ trường 代行, đính kèm theo loại chứng từ"
+    role: QA
+    assignee: QA-3
+    labels: ["fg:FG-13", "feature:audit", "kind:test", "role:QA", "rule:no-overwrite"]
+    spec_refs: ["IAM_AUDIT_DB 4.54, 4.56", "ADR-009 §2.2-7,9"]
+    rfp_refs: [FR-AUDIT-01, DR-RET-01, TBL-ATTACH-01]
+    depends_on: [C-FG13-02, C-FG13-03, C-FG13-04]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Kịch bản: thử UPDATE / DELETE audit bằng mọi DB role của app; audit khi rollback; 代行; ghi qua ranh giới năm TC 3/31 → 4/1;
+      đính kèm mỗi `doc_class` có tag + hạn đúng; không có đường xóa file.
+    dod:
+      - "Mỗi `doc_class` ở ADR-009 §2.2-9 có ít nhất một case"
+
+  # ───────────────────────── EP-FG12 notify ─────────────────────────
+  - id: C-FG12-01
+    epic: EP-FG12
+    parent: null
+    kind: dev
+    title: "[FG-12] 通知キュー登録 — hàm ghi outbox trong transaction + API khung thông báo in-app"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-12", "feature:notify", "kind:dev", "role:BE"]
+    spec_refs: ["IAM_AUDIT_DB 4.53", "ARCHITECTURE §9 (Email)", "SCREEN-LIST #3 (khung thông báo, PRM-130)"]
+    rfp_refs: [FR-NOTIFY-01, BR-NOTIFY-01]
+    depends_on: [C-FG13-01, C-PLAT-04]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Hàm DB `enqueue_notification(...)` để module nghiệp vụ gọi trong cùng transaction (rollback thì không có thông báo);
+      API đọc / đánh dấu đã đọc cho khung thông báo trên ホーム. Không gồm gửi email (C-FG12-02).
+    dod:
+      - "Thao tác nghiệp vụ rollback → không còn dòng outbox (test)"
+      - "API Design khung thông báo có ở api-list"
+  - id: C-FG12-02
+    epic: EP-FG12
+    parent: null
+    kind: dev
+    title: "[FG-12] 通知ワーカー — gửi SES, gửi lại ≤ 3, lỗi hẳn → danh sách in + 未送信 (DEP-13)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-12", "feature:notify", "kind:dev", "role:BE"]
+    spec_refs: ["specs/_index.md DEP-13", "ARCHITECTURE §3 (SES), §9 (Email)", "PREMISE L4-A08"]
+    rfp_refs: [FR-NOTIFY-01, BR-NOTIFY-01]
+    depends_on: [C-FG12-01, C-PLAT-01.3, C-PLAT-01.4]
+    depends_on_spec: []
+    hours_hint: 14
+    description: |
+      Job đọc outbox, gửi qua SES, gửi lại tối đa 3 lần, nhận bounce / complaint; lỗi hẳn → vào danh sách in ở quầy hôm sau
+      và danh sách 「未送信」 cho 照合. Không SMS / FAX / LINE. Mẫu câu thuộc issue thô C-FG12-04.
+    dod:
+      - "Test: lỗi tạm 2 lần rồi thành công → 1 email; lỗi 4 lần → không gửi nữa, có dòng danh sách in + 未送信"
+      - "Gửi hai worker song song không gửi trùng một thông báo"
+  - id: C-FG12-03
+    epic: EP-FG12
+    parent: null
+    kind: dev
+    title: "[FG-12] 重大通知 — đường ưu tiên Critical ≤ 5 phút, lỗi → hàng đợi cảnh báo"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-12", "feature:notify", "kind:dev", "role:BE"]
+    spec_refs: ["function-list FG-12 (FT-12-02)", "ARCHITECTURE §3 (CloudWatch, NOTIFY-02 ≤ 5 phút)"]
+    rfp_refs: [FR-NOTIFY-02, NFR-OPS-01]
+    depends_on: [C-FG12-02]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Thông báo mức Critical đi đường riêng, gửi xong trong 5 phút, retry 3; thất bại → hàng đợi cảnh báo + alarm (C-FG14-01).
+      Danh sách sự kiện Critical tạm theo C-PA-05, chốt ở C-CLR-13.
+    dod:
+      - "Đo trên stg: từ lúc ghi outbox Critical tới khi SES nhận ≤ 5 phút"
+  - id: C-FG12-04
+    epic: EP-FG12
+    parent: null
+    kind: rough
+    title: "[FG-12][概算] 通知事象・文面 — sự kiện baseline, email 支払義務・奨励金結果 (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-12", "feature:notify", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["PREMISE L4-A08 (nội dung email tối thiểu)", "specs/_index.md DEP-13 (mẫu câu)"]
+    rfp_refs: [FR-NOTIFY-01, BR-NOTIFY-01]
+    depends_on: [C-FG12-02]
+    depends_on_spec: ["SC-09-B1 / INC_FUNC (email 期のお支払額 — luồng incentive)", "SC-01-B1 (báo sắp hết hạn — luồng party)"]
+    hours_hint: 32
+    description: |
+      Danh sách sự kiện baseline (sắp hết hạn 30 ngày, đổi trạng thái tư cách, tranh chấp mở, lỗi xuất, giao tồn đọng, CORR chờ duyệt,
+      nghĩa vụ thanh toán, kết quả thưởng) + mẫu câu tiếng Nhật; người nhận, giờ gửi trong file cấu hình. Giờ: (FT-12-05 3 + mẫu 1) MD × 8.
+    dod:
+      - "Có Technical Design worker + mẫu câu được khách duyệt (C-CLR-13) rồi tách lại thành issue dev"
+  - id: C-FG12-05
+    epic: EP-FG12
+    parent: null
+    kind: rough
+    title: "[FG-12][概算] 通知送信ログ — SC-12-02, gửi lại tay, danh sách in (chưa spec)"
+    role: FE
+    assignee: FE-4
+    labels: ["fg:FG-12", "feature:notify", "kind:rough", "role:FE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #65 (C9)", "PREMISE L4-A08"]
+    rfp_refs: [FR-NOTIFY-01]
+    depends_on: [C-FG12-02]
+    depends_on_spec: []
+    hours_hint: 24
+    description: |
+      Màn log gửi thông báo cho SYSADM: trạng thái, số lần gửi, lỗi; danh sách 「未送信」 cho 照合; in danh sách quầy.
+      Giờ: (FE DS 2 + BE 1) MD × 8.
+    dod:
+      - "Có Screen Specification SC-12-02 rồi tách lại thành issue dev"
+  - id: C-FG12-06
+    epic: EP-FG12
+    parent: null
+    kind: test
+    title: "[FG-12] 通知テスト — outbox theo transaction, gửi lại ≤ 3, Critical ≤ 5 phút"
+    role: QA
+    assignee: QA-3
+    labels: ["fg:FG-12", "feature:notify", "kind:test", "role:QA"]
+    spec_refs: ["PREMISE L4-A08", "ARCHITECTURE §9 (Email)"]
+    rfp_refs: [FR-NOTIFY-01, FR-NOTIFY-02, BR-NOTIFY-01]
+    depends_on: [C-FG12-02, C-FG12-03]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Kịch bản với SES sandbox: rollback không gửi, lỗi tạm / lỗi hẳn, bounce, danh sách in hôm sau, đo thời gian Critical.
+      Không gửi email thật tới người ngoài.
+    dod:
+      - "Báo cáo đo Critical có số liệu thật từ stg"
+
+  # ───────────────────────── EP-FG11 report ─────────────────────────
+  - id: C-FG11-01
+    epic: EP-FG11
+    parent: null
+    kind: rough
+    title: "[FG-11][概算] 帳票基盤・帳票メニュー — SC-11-01, batch trước 11:00 (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-11", "feature:report", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #50, §4 SC-11-B1", "ADR-009 §2.2-8", "PREMISE M12"]
+    rfp_refs: [FR-RPT-01, NFR-PERF-01]
+    depends_on: [C-PLAT-01.3, C-FG14-05]
+    depends_on_spec: []
+    hours_hint: 72
+    description: |
+      Khung chung: tham số lọc (bắt buộc khoảng 業務日 + phân trang), xuất CSV, in PDF / trình duyệt, ghi metadata lần xuất,
+      menu 12 báo cáo theo vai, batch báo cáo ngày xong trước 11:00. Giờ: (FT-11-01 6 + FE DS 2 + batch 1) MD × 8.
+    dod:
+      - "Có Technical Design khung báo cáo + Screen Specification SC-11-01 rồi tách lại thành issue dev"
+  - id: C-FG11-02
+    epic: EP-FG11
+    parent: null
+    kind: rough
+    title: "[FG-11][概算] 日次帳票 RPT-01..05 — SC-11-02..06, gồm lọc 継続協議 RPT-04 (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-11", "feature:report", "kind:rough", "role:BE", "needs-spec", "rule:aitai-main"]
+    spec_refs: ["SCREEN-LIST #51–55 (C9)", "specs/_index.md DEP-17", "MKT_DB §4.0a view công bố"]
+    rfp_refs: [FR-RPT-01, RPT-01, RPT-02, RPT-03, RPT-04, RPT-05]
+    depends_on: [C-FG11-01]
+    depends_on_spec: ["TRADE_DB 4.36 dispute_confirmations.conclusion (DEP-17)", "STL_DAY_CLOSE_TECH (bảng đối soát FORM-SETTLE-01)"]
+    hours_hint: 102
+    description: |
+      RPT-01 tách 相対 / せり (相対 đứng trước); RPT-02 lịch sử lô + trạng thái GD; RPT-03 bản in cho quầy 受付; RPT-04 lọc được
+      継続協議 + lịch sử từng lần họp (DEP-17, Q-DEL-07); RPT-05 theo FORM-SETTLE-01. Giờ: (BE 9 + FE BC 0,75 × 5) MD × 8.
+    dod:
+      - "Có spec báo cáo (cột, bộ lọc, nguồn view) cho từng RPT rồi tách lại thành issue dev"
+  - id: C-FG11-03
+    epic: EP-FG11
+    parent: null
+    kind: rough
+    title: "[FG-11][概算] 期別・月次帳票 RPT-07..12 — SC-11-08..13 (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-11", "feature:report", "kind:rough", "role:BE", "needs-spec", "rule:aitai-main", "rule:versioned-rule", "rule:no-overwrite"]
+    spec_refs: ["SCREEN-LIST #56–61 (C9)", "PREMISE M08 (CARRY_EXPIRED ở RPT-07)"]
+    rfp_refs: [FR-RPT-01, FR-RPT-02, RPT-07, RPT-08, RPT-09, RPT-10, RPT-11, RPT-12]
+    depends_on: [C-FG11-01]
+    depends_on_spec: ["INC_ENGINE_TECH (kết quả kỳ, CARRY, CARRY_EXPIRED cho RPT-07)", "ADJUST_DB (RPT-08)", "RULE_DB (RPT-12, số lần rollback nhánh N2)"]
+    hours_hint: 136
+    description: |
+      RPT-07 kết quả 完納奨励金 theo kỳ (gồm dư âm mang sang / CARRY_EXPIRED), RPT-08 log điều chỉnh sau khóa, RPT-09 tranh chấp + SLA,
+      RPT-10 tháng theo người tham gia (so cùng kỳ năm trước), RPT-11 tháng 相対 / せり, RPT-12 thay đổi quy chế + version.
+      Giờ: (BE 12,5 + FE BC 0,75 × 6) MD × 8.
+    dod:
+      - "Có spec báo cáo cho từng RPT rồi tách lại thành issue dev"
+  - id: C-FG11-04
+    epic: EP-FG11
+    parent: null
+    kind: rough
+    title: "[FG-11][概算] 会計連携CSV・RPT-06・仕訳マッピング — SC-11-14, SC-11-15 (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-11", "feature:report", "kind:rough", "role:BE", "needs-spec", "rule:no-overwrite"]
+    spec_refs: ["SCREEN-LIST #62–63 (C9)", "ARCHITECTURE §9 (Kế toán IF-ACC-01)", "PREMISE M06"]
+    rfp_refs: [IF-ACC-01, FR-RPT-01, RPT-06]
+    depends_on: [C-FG11-01]
+    depends_on_spec: ["BILLING_DB 4.40–4.42 (journal_mappings, accounting_export_batches/lines)", "STL_DAY_CLOSE_TECH §4 bước 5 (xếp hàng job IF-ACC-01)"]
+    hours_hint: 128
+    description: |
+      Batch tạo sau 日次締め, đóng băng nội dung lúc tạo (kể cả ánh xạ), xuất lại cùng ngày trả đúng file cũ, dòng 端数調整 ở 期ロック,
+      MFA khi xuất; bảng ánh xạ 勘定科目 / 税区分 có lịch sử, đổi chỉ áp batch sau. Định dạng chờ E-01 (C-CLR-12).
+      Giờ: (FT-11-07 6 + FT-11-14 3 + phần Gate-1 2 + FE 2,5 + 2,5) MD × 8.
+    dod:
+      - "Có Technical Design batch IF-ACC-01 + API Design + Screen Specification SC-11-14 / 15 rồi tách lại thành issue dev"
+  - id: C-FG11-05
+    epic: EP-FG11
+    parent: null
+    kind: rough
+    title: "[FG-11][概算] データ出力 — SC-11-16, 3 loại CSV cấu trúc cố định có MFA (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-11", "feature:report", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #64 (C9)", "ARCHITECTURE §10 (phân tích / dự báo chỉ là điểm mở rộng)"]
+    rfp_refs: [FR-RPT-03]
+    depends_on: [C-FG11-01]
+    depends_on_spec: []
+    hours_hint: 30
+    description: |
+      Xuất CSV theo miền dữ liệu với bộ lọc cố định (không self-service — gói ④), MFA khi có dữ liệu cá nhân.
+      Không gồm kho dữ liệu / phân tích / dự báo (Option, luật 6). Giờ: (FT-11-15 3 + FE BC 0,75) MD × 8.
+    dod:
+      - "Có Screen Specification SC-11-16 + danh sách 3 loại CSV rồi tách lại thành issue dev"
+  - id: C-FG11-06
+    epic: EP-FG11
+    parent: null
+    kind: dev
+    title: "[FG-11] PDF帳票基盤 — sinh PDF ở server theo mẫu FORM, PC in thẳng"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-11", "feature:report", "kind:dev", "role:BE"]
+    spec_refs: ["ARCHITECTURE §9 (Máy in hiện trường)", "PREMISE M05"]
+    rfp_refs: [FR-RPT-01]
+    depends_on: [C-PLAT-03]
+    depends_on_spec: ["API-TRD-004 (in 取引確認票 — module trade gọi)"]
+    hours_hint: 12
+    description: |
+      Thành phần dùng chung: nhận dữ liệu + mã mẫu → PDF; PC bàn GD dùng kiosk printing của Chrome / Edge in thẳng.
+      Bố cục từng phiếu do module sở hữu (vd. 取引確認票 ở trade). Model máy in chờ C-CLR-11.
+    dod:
+      - "Một mẫu thử in thẳng từ Chrome kiosk trên PC thử, chữ Nhật không lỗi font"
+  - id: C-FG11-07
+    epic: EP-FG11
+    parent: null
+    kind: test
+    title: "[FG-11] 帳票テスト — số liệu khớp nguồn, batch trước 11:00, IF-ACC-01 đóng băng"
+    role: QA
+    assignee: QA-3
+    labels: ["fg:FG-11", "feature:report", "kind:test", "role:QA", "rule:no-overwrite"]
+    spec_refs: ["function-list FG-11", "ARCHITECTURE §9"]
+    rfp_refs: [FR-RPT-01, IF-ACC-01, NFR-PERF-01]
+    depends_on: [C-FG11-06]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Kịch bản test cho nhóm báo cáo theo function-list (đối chiếu tổng RPT-01 với view `v_trade_effective`, xuất lại IF-ACC-01
+      cùng ngày trả đúng file cũ, đổi ánh xạ không đổi batch đã tạo, thời gian batch). Case chi tiết viết thêm khi rough được tách.
+    dod:
+      - "Kịch bản phủ 12 RPT + IF-ACC-01; case IF-ACC-01 đóng băng có dữ liệu test cụ thể"
+
+  # ───────────────────────── EP-FG14 ops ─────────────────────────
+  - id: C-FG14-01
+    epic: EP-FG14
+    parent: null
+    kind: dev
+    title: "[FG-14] 運用監視 — alarm health, batch, xuất / nhập, email, sự kiện bảo mật"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["fg:FG-14", "feature:ops", "kind:dev", "role:INFRA"]
+    spec_refs: ["ARCHITECTURE §3 (CloudWatch + giám sát SaaS), §11 NFR-OPS-01"]
+    rfp_refs: [NFR-OPS-01, FR-NOTIFY-02, NFR-AVL-01]
+    depends_on: [C-PLAT-01.2, C-PLAT-01.3]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      CloudWatch + giám sát SaaS: health app / DB, lỗi job, lỗi xuất / nhập CSV, lỗi gửi email, sự kiện bảo mật (C-FG13-04)
+      → on-call. Alarm Critical tới người nhận ≤ 5 phút.
+    dod:
+      - "Mỗi loại alarm có test bắn thử trên stg và có người nhận thật"
+  - id: C-FG14-02
+    epic: EP-FG14
+    parent: null
+    kind: dev
+    title: "[FG-14] 開場前チェック代替 — alarm trước 01:45 thay kiểm tra tự động (SC-14-B1)"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["fg:FG-14", "feature:ops", "kind:dev", "role:INFRA"]
+    spec_refs: ["SCREEN-LIST §4 SC-14-B1", "function-list FG-14 (FT-14-02 đã cắt)"]
+    rfp_refs: [NFR-OPS-01, NFR-AVL-01]
+    depends_on: [C-FG14-01]
+    depends_on_spec: ["CLOSE_DB 4.20 / DEP-12 (業務日 mới đã OPEN — module calendar)"]
+    hours_hint: 8
+    description: |
+      Theo giả định C-PA-06: alarm cho các điểm FT-14-02 liệt kê — đăng nhập được, DB, 業務日 mới đã mở, lịch, gửi mail —
+      gửi IT + 照合部門長 trước 01:45 mỗi ngày chợ mở. Không làm màn / job kiểm tra riêng.
+    dod:
+      - "Giả lập 業務日 chưa mở lúc 01:40 trên stg → alarm tới người nhận trước 01:45"
+  - id: C-FG14-03
+    epic: EP-FG14
+    parent: null
+    kind: dev
+    title: "[FG-14] バックアップ — PITR, AWS Backup, bản sao sang Osaka (SC-14-B2)"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["fg:FG-14", "feature:ops", "kind:dev", "role:INFRA"]
+    spec_refs: ["ADR-009 §2.1-2,3,5", "SCREEN-LIST §4 SC-14-B2"]
+    rfp_refs: [NFR-AVL-03, DR-RET-01, NFR-SEC-04]
+    depends_on: [C-PLAT-01.1, C-PLAT-01.4]
+    depends_on_spec: []
+    hours_hint: 14
+    description: |
+      Snapshot hằng ngày ngoài giờ dịch vụ (35 ngày + 12 tháng cuối tháng), sao chép tự động backup RDS kèm log PITR và S3 sang
+      ap-northeast-3, mã hóa KMS. Phạm vi Osaka theo giả định ADR-009 chờ C-CLR-09.
+    dod:
+      - "Bản sao ở Osaka có log PITR mới nhất trễ ≤ 15 phút (đo trên stg)"
+  - id: C-FG14-04
+    epic: EP-FG14
+    parent: null
+    kind: dev
+    title: "[FG-14] 復旧ランブック — 3 tình huống: hỏng dữ liệu, mất AZ, mất region"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["fg:FG-14", "feature:ops", "kind:dev", "role:INFRA"]
+    spec_refs: ["ADR-009 §2.1-4"]
+    rfp_refs: [NFR-AVL-03, ACC-05]
+    depends_on: [C-FG14-03]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Runbook từng bước: PITR về trước sự cố rồi đối chiếu 監査ログ; failover AZ; dựng stack bằng IaC ở Osaka + khôi phục DB.
+      Diễn tập đo thời gian thật ở C-TEST-06.
+    dod:
+      - "Runbook đã được người không viết nó đi thử một lần trên stg"
+  - id: C-FG14-05
+    epic: EP-FG14
+    parent: null
+    kind: dev
+    title: "[FG-14] 性能基盤 — helper truy vấn bắt buộc khoảng 業務日 + phân trang, quy ước index"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-14", "feature:ops", "kind:dev", "role:BE"]
+    spec_refs: ["ADR-009 §2.2-8", "PREMISE M23", "ARCHITECTURE §11 NFR-PERF-01/02"]
+    rfp_refs: [NFR-PERF-01, NFR-PERF-02]
+    depends_on: [C-PLAT-06]
+    depends_on_spec: []
+    hours_hint: 8
+    description: |
+      Helper dùng chung cho API danh sách / báo cáo: thiếu khoảng 業務日 → 422, phân trang bắt buộc, giới hạn khoảng tối đa;
+      quy ước index `(business_date, ...)` cho bảng lớn; auto scaling ECS theo CPU.
+    dod:
+      - "API danh sách gọi không có khoảng ngày → 422 E-CMN-007 (test)"
+  - id: C-FG14-06
+    epic: EP-FG14
+    parent: null
+    kind: rough
+    title: "[FG-14][概算] 運用ダッシュボード — SC-14-01 rút gọn: 1 trang trạng thái + email (chưa spec)"
+    role: FE
+    assignee: FE-4
+    labels: ["fg:FG-14", "feature:ops", "kind:rough", "role:FE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST #69 (C9)", "function-list §7.1 C-04"]
+    rfp_refs: [NFR-OPS-01, ACC-05]
+    depends_on: [C-FG14-01]
+    depends_on_spec: []
+    hours_hint: 16
+    description: |
+      Một trang trạng thái job / batch / gửi mail cho SYSADM + 照合部門長 (rút gọn C-04). Giờ: (BE 1 + FE 1) MD × 8 sau cắt C-04.
+    dod:
+      - "Có Screen Specification SC-14-01 rồi tách lại thành issue dev"
+  - id: C-FG14-07
+    epic: EP-FG14
+    parent: null
+    kind: test
+    title: "[FG-14] 監視テスト — bắn lỗi thử cho từng alarm, đo thời gian tới người nhận"
+    role: QA
+    assignee: QA-3
+    labels: ["fg:FG-14", "feature:ops", "kind:test", "role:QA"]
+    spec_refs: ["ARCHITECTURE §3, §11"]
+    rfp_refs: [NFR-OPS-01, FR-NOTIFY-02]
+    depends_on: [C-FG14-01, C-FG14-02]
+    depends_on_spec: []
+    hours_hint: 6
+    description: |
+      Kịch bản bắn lỗi: job lỗi, email lỗi, xuất lỗi, đăng nhập sai liên tiếp, 業務日 chưa mở 01:40 → ghi thời gian alarm tới.
+      Tải, DR chạy ở EP-TEST.
+    dod:
+      - "Bảng kết quả có thời gian thật cho mỗi alarm"
+
+  # ───────────────────────── EP-FG15 migrate ─────────────────────────
+  - id: C-FG15-01
+    epic: EP-FG15
+    parent: null
+    kind: rough
+    title: "[FG-15][概算] 移行データ取込・変換 — ≤ 5 nguồn Excel/CSV → bảng tạm → nạp (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-15", "feature:migrate", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["ARCHITECTURE §9 (Migration)", "PREMISE M01", "SCREEN-LIST §3 SC-15-01 (script + log, C-07)"]
+    rfp_refs: [MIG-01, MIG-02]
+    depends_on: [C-PLAT-05]
+    depends_on_spec: []
+    hours_hint: 48
+    description: |
+      Script (không màn) nạp master + khoản còn mở + chi tiết năm TC hiện tại và năm trước + 2 kỳ thưởng vào bảng tạm, kiểm, nạp.
+      Nguồn, ánh xạ cột chưa có (C-CLR-14). Giờ: FT-15-01 6 MD × 8.
+    dod:
+      - "Có tài liệu mapping nguồn → bảng đích (MIG-02) rồi tách lại thành issue dev"
+  - id: C-FG15-02
+    epic: EP-FG15
+    parent: null
+    kind: rough
+    title: "[FG-15][概算] クレンジング・要判断データ対応 — SC-15-02, người quyết từng dòng (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-15", "feature:migrate", "kind:rough", "role:BE", "needs-spec", "rule:human-decision"]
+    spec_refs: ["SCREEN-LIST #70 (C9)"]
+    rfp_refs: [MIG-02, CAP-HUMAN-01]
+    depends_on: [C-FG15-01]
+    depends_on_spec: []
+    hours_hint: 52
+    description: |
+      Quy tắc cleansing hàng loạt cho 3 loại dữ liệu bẩn (mã người tham gia lệch, lô trùng theo ngày, trường quan trọng trống);
+      dòng mơ hồ vào hàng đợi để 照合事務局 quyết từng dòng, đếm giờ / trần 40 giờ. Không tự đoán. Giờ: (FT-15-02 4 + FE DU 2,5) MD × 8.
+    dod:
+      - "Có Screen Specification SC-15-02 + quy tắc cleansing rồi tách lại thành issue dev"
+  - id: C-FG15-03
+    epic: EP-FG15
+    parent: null
+    kind: rough
+    title: "[FG-15][概算] 移行照合 — đối chiếu 100% số bản ghi + tổng tiền, file để ký (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-15", "feature:migrate", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST §3 SC-15-03 (file đối chiếu, C-07)"]
+    rfp_refs: [MIG-03, ACC-04]
+    depends_on: [C-FG15-01]
+    depends_on_spec: []
+    hours_hint: 24
+    description: |
+      So nguồn ↔ đích theo loại dữ liệu × kỳ, khớp 100%, danh sách lỗi + trạng thái xử lý; xuất file đối chiếu để ký lúc cutover.
+      Giờ: FT-15-03 3 MD × 8.
+    dod:
+      - "Có định nghĩa phép đối chiếu theo loại dữ liệu rồi tách lại thành issue dev"
+  - id: C-FG15-04
+    epic: EP-FG15
+    parent: null
+    kind: rough
+    title: "[FG-15][概算] リハーサル・ロールバック — ≥ 2 lần rehearsal, rollback (chưa spec)"
+    role: BE
+    assignee: BE-6
+    labels: ["fg:FG-15", "feature:migrate", "kind:rough", "role:BE", "needs-spec"]
+    spec_refs: ["SCREEN-LIST §4 SC-15-B1", "wbs-schedule-ja.md W5 (rehearsal 6/20, 7/11), §2.1"]
+    rfp_refs: [MIG-03, MIG-04]
+    depends_on: [C-FG15-01, C-FG15-03]
+    depends_on_spec: []
+    hours_hint: 24
+    description: |
+      Script chạy lại toàn bộ migrate, đo thời gian, tiêu chí và thủ tục rollback; lần trích cuối sau 7/31 日次締め.
+      Giờ: (FT-15-04 2 + batch 1) MD × 8.
+    dod:
+      - "Có kế hoạch rehearsal + tiêu chí rollback (MIG-04) được khách đồng ý rồi tách lại thành issue dev"
+  - id: C-FG15-05
+    epic: EP-FG15
+    parent: null
+    kind: test
+    title: "[FG-15] 移行テスト — kịch bản rehearsal + bộ dữ liệu bẩn 3 loại DS-DIRTY-01"
+    role: QA
+    assignee: QA-3
+    labels: ["fg:FG-15", "feature:migrate", "kind:test", "role:QA", "rule:human-decision"]
+    spec_refs: ["function-list FG-15"]
+    rfp_refs: [MIG-02, MIG-03, ACC-04]
+    depends_on: [C-FG15-01]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Kịch bản + dữ liệu giả có 3 loại lỗi DS-DIRTY-01; kiểm dòng mơ hồ không bị tự nạp, đối chiếu khớp 100%, rollback về trạng thái trước.
+    dod:
+      - "Mỗi loại dữ liệu bẩn có case; case đối chiếu lệch 1 đồng phải bị bắt"
+
+  # ───────────────────────── EP-TEST ─────────────────────────
+  - id: C-TEST-01
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] 総合テスト計画 — phạm vi W4, tiêu chí vào / ra, truy vết ACC-02 / ACC-03"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA"]
+    spec_refs: ["wbs-schedule-ja.md §2 W4", "specs/_index.md (12 Screen Specification)"]
+    rfp_refs: [ACC-02, ACC-03]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Kế hoạch test tổng: mọi P0 / P1 có test case + kết quả (ACC-02), NFR có báo cáo đo thật (ACC-03), môi trường stg, dữ liệu,
+      lịch W4 2027-05-24 → 06-04, tiêu chí G3.
+    dod:
+      - "Bảng truy vết FR / NFR → kịch bản không còn dòng trống"
+  - id: C-TEST-02
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] 業務シナリオ — một ngày chợ và một kỳ xuyên module, 相対 là luồng chính"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA", "rule:aitai-main", "rule:no-overwrite"]
+    spec_refs: ["ARCHITECTURE §4.1, §4.2"]
+    rfp_refs: [ACC-02]
+    depends_on: [C-TEST-01]
+    depends_on_spec: ["Test vector TV-01..15 (INCENTIVE_DB §5 — luồng incentive)"]
+    hours_hint: 16
+    description: |
+      Kịch bản B.8: 受付 → 相対 / せり → 引渡し → 日次締め qua ranh giới 業務日 01:00; 修正申請 sau khóa; một kỳ 入金 → 期ロック.
+      Dùng test vector của các luồng, không tự đặt số tiền mới.
+    dod:
+      - "Kịch bản chạy hết trên stg với dữ liệu seed, kết quả ghi vào báo cáo W4"
+  - id: C-TEST-03
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] 権限テスト — 462 tổ hợp vai × màn × thao tác"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA", "rule:permit-vs-approval", "rule:human-decision"]
+    spec_refs: ["wbs-schedule-ja.md §2 W4 (権限テスト 462)", "ADR-003 §2"]
+    rfp_refs: [TBL-ROLE-01, ACC-02]
+    depends_on: [C-TEST-01]
+    depends_on_spec: []
+    hours_hint: 28
+    description: |
+      Issue cha: chạy đủ ma trận vai × màn × thao tác; tách nhóm ghi / duyệt và nhóm chỉ đọc. Kiểm cả việc 許可 (仲卸) và
+      承認 (売買参加者) là hai thao tác, hai người quyết khác nhau.
+    dod:
+      - "2 sub-issue xong, 462 tổ hợp có kết quả"
+  - id: C-TEST-03.1
+    epic: EP-TEST
+    parent: C-TEST-03
+    kind: test
+    title: "[TEST] 権限テスト（更新・決裁） — tổ hợp ghi / duyệt / MFA"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA", "rule:permit-vs-approval", "rule:human-decision"]
+    spec_refs: ["ADR-003 §2-1..4", "PREMISE §3.2"]
+    rfp_refs: [TBL-ROLE-01, CAP-HUMAN-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 16
+    description: |
+      Tổ hợp có ghi / duyệt: đúng vai làm được, sai vai bị 403, thao tác §3.2 hỏi MFA, SoD bị chặn.
+    dod:
+      - "Mọi tổ hợp ghi / duyệt có kết quả pass / fail"
+  - id: C-TEST-03.2
+    epic: EP-TEST
+    parent: C-TEST-03
+    kind: test
+    title: "[TEST] 権限テスト（閲覧） — tổ hợp chỉ đọc theo cột 閲 của role-list"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA"]
+    spec_refs: ["ADR-003 §2-5", "PREMISE L4-A06"]
+    rfp_refs: [TBL-ROLE-01, "09-06"]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Tổ hợp chỉ đọc: menu, URL trực tiếp, API danh sách trả đúng phạm vi theo ma trận đọc.
+    dod:
+      - "Mọi tổ hợp đọc có kết quả pass / fail"
+  - id: C-TEST-04
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] 性能・負荷テスト — dữ liệu 7 năm, burst × 2 vào 02:15–05:00"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA"]
+    spec_refs: ["ADR-009 §2.2-10", "ARCHITECTURE §1 (tải), §11"]
+    rfp_refs: [NFR-PERF-01, NFR-PERF-02]
+    depends_on: [C-TEST-01]
+    depends_on_spec: []
+    hours_hint: 24
+    description: |
+      Issue cha: dựng dữ liệu giả lập đủ 7 năm (BE) và chạy tải ~77 đồng thời × 2 × 1,5, p95 tìm kiếm ≤ 2 giây (QA).
+    dod:
+      - "2 sub-issue xong; báo cáo tải có số đo thật (ACC-03)"
+  - id: C-TEST-04.1
+    epic: EP-TEST
+    parent: C-TEST-04
+    kind: test
+    title: "[TEST] 負荷データ — sinh dữ liệu giả lập 7 năm theo FIG-LOAD-01"
+    role: BE
+    assignee: BE-6
+    labels: ["feature:test", "kind:test", "role:BE"]
+    spec_refs: ["ADR-009 §2.2-10", "ARCHITECTURE §1 (350–600 lô, 700–1.200 GD / ngày)"]
+    rfp_refs: [NFR-PERF-02]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Script sinh dữ liệu giả 7 năm (lô, GD, giao, 監査ログ theo partition) đúng tỷ lệ 相対 / せり 90 / 10 theo giá trị, chạy trên stg.
+    dod:
+      - "Số dòng từng bảng lớn khớp tính toán 7 năm × tải năm 5"
+  - id: C-TEST-04.2
+    epic: EP-TEST
+    parent: C-TEST-04
+    kind: test
+    title: "[TEST] 負荷テスト実施 — kịch bản tải, đo p95, báo cáo"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA", "rule:aitai-main"]
+    spec_refs: ["ARCHITECTURE §11 NFR-PERF-01/02"]
+    rfp_refs: [NFR-PERF-01, NFR-PERF-02, ACC-03]
+    depends_on: [C-TEST-04.1]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Kịch bản tải dồn vào 02:15–05:00, trọng tâm chốt 相対 + tìm kiếm; đo p95, lỗi, CPU / DB; báo cáo kèm đề xuất chỉnh.
+    dod:
+      - "p95 tìm kiếm thường ≤ 2 giây ở tải thiết kế, hoặc có danh sách lỗi hiệu năng đã mở issue"
+  - id: C-TEST-05
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] セキュリティ診断 — OWASP, cấu hình AWS, quét phụ thuộc"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA"]
+    spec_refs: ["ARCHITECTURE §11 (NFR-SEC-*)", "ADR-002", "ADR-003"]
+    rfp_refs: [NFR-SEC-01, NFR-SEC-03, NFR-SEC-04, "09-06", ACC-03]
+    depends_on: [C-TEST-01]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Kiểm OWASP Top 10 cho API, phiên / cookie, CSRF, IDOR theo ma trận quyền; quét cấu hình AWS và phụ thuộc (SBOM cho 11-02).
+    dod:
+      - "Báo cáo chẩn đoán; lỗi mức cao đã sửa hoặc có quyết định chấp nhận ghi lại"
+  - id: C-TEST-06
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] リストア訓練 — diễn tập khôi phục, đo RTO / RPO thật, biên bản"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:test", "kind:test", "role:INFRA"]
+    spec_refs: ["ADR-009 §2.1-4"]
+    rfp_refs: [NFR-AVL-03, ACC-05]
+    depends_on: [C-FG14-04]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Chạy runbook C-FG14-04 trên stg cho tình huống hỏng dữ liệu (PITR) và mất region (Osaka); đo thời gian thật.
+    dod:
+      - "Biên bản có RTO ≤ 4 giờ và RPO ≤ 15 phút đo được, hoặc ghi rõ phần chưa đạt"
+  - id: C-TEST-07
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] UAT支援 — kịch bản UAT, dữ liệu mẫu đã che, ghi / phân loại / test lại lỗi"
+    role: QA
+    assignee: QA-3
+    labels: ["feature:test", "kind:test", "role:QA"]
+    spec_refs: ["wbs-schedule-ja.md §2 W5", "function-list §5 SV-01"]
+    rfp_refs: [ACC-06]
+    depends_on: [C-TEST-02]
+    depends_on_spec: []
+    hours_hint: 16
+    description: |
+      Chuẩn bị kịch bản UAT theo 4 nhóm người dùng, dữ liệu mẫu che thông tin cá nhân; hỗ trợ 3 SME × 4 giờ / tuần × 6 tuần,
+      ghi lỗi, phân loại, test lại tới go / no-go 2027-07-16.
+    dod:
+      - "Sổ lỗi UAT có trạng thái từng lỗi; dữ liệu UAT không chứa thông tin cá nhân thật"
+  - id: C-TEST-08
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] 切替計画 — cutover 7/31 → 8/1, tiêu chí go / no-go, quy trình rollback"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:test", "kind:test", "role:INFRA"]
+    spec_refs: ["wbs-schedule-ja.md §2 W6, §2.1"]
+    rfp_refs: [MIG-04, ACC-06]
+    depends_on: [C-FG15-04]
+    depends_on_spec: []
+    hours_hint: 12
+    description: |
+      Kế hoạch giờ đóng băng sau 7/31 日次締め, người duyệt từng bước, xử lý GD phát sinh lúc chuyển, tiêu chí go / no-go,
+      rollback (dời 9/5). Không coi cutover là "một click".
+    dod:
+      - "Kế hoạch được diễn tập ở rehearsal lần 2 (7/11), có biên bản"
+  - id: C-TEST-09
+    epic: EP-TEST
+    parent: null
+    kind: test
+    title: "[TEST] 運用移管 — runbook, danh sách alarm, sổ tay vận hành, walkthrough"
+    role: INFRA
+    assignee: INFRA-1
+    labels: ["feature:test", "kind:test", "role:INFRA"]
+    spec_refs: ["function-list §5 SV-05", "wbs-schedule-ja.md §2 W8"]
+    rfp_refs: [ACC-05]
+    depends_on: [C-FG14-04, C-FG14-01]
+    depends_on_spec: []
+    hours_hint: 10
+    description: |
+      Gom runbook khôi phục, danh sách alarm + người nhận, sổ tay vận hành; walkthrough với IT khách trước bàn giao.
+    dod:
+      - "Biên bản walkthrough runbook có chữ ký IT khách (ACC-05)"
+
+  # ───────────────────────── EP-CLAR (issue làm rõ của luồng C) ─────────────────────────
+  - id: C-CLR-01
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-15 — step-up MFA có được IT / kiểm toán chấp nhận? ルール管理者 có là 管理者?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-02", "feature:iam", "kind:clarify", "role:BrSE"]
+    spec_refs: ["ADR-002 §6 (E-15), §2.3-12b", "PREMISE L4-A07"]
+    rfp_refs: [NFR-SEC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Giả định đang theo: step-up trước hành động §3.2, ルール管理者 không MFA khi đăng nhập. Nếu khách đòi MFA mọi lần đăng nhập
+      → đổi luồng đăng nhập (±0,1–0,2 MM). Mở khóa: C-FG02-02, C-FG02-06.
+    dod:
+      - "Có câu trả lời ghi vào ADR-002 §6 / PREMISE; issue phụ thuộc được mở khóa"
+  - id: C-CLR-02
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-ARCH-03 — số người cần token phần cứng, ai mua, ai giữ runbook token"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-02", "feature:iam", "kind:clarify", "role:BrSE"]
+    spec_refs: ["ADR-002 §6 (Q-ARCH-03), §2.3-12a"]
+    rfp_refs: [NFR-SEC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Giả định: ~nửa trong 12–13 người có quyền duyệt, khách mua, IT khách giữ runbook. Chỉ đổi chi phí phía khách. Liên quan C-FG02-07.
+    dod:
+      - "Có câu trả lời ghi vào ADR-002 §6; issue phụ thuộc được mở khóa"
+  - id: C-CLR-03
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-ARCH-10 — khách có IdP doanh nghiệp muốn dùng cho PC văn phòng không?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-02", "feature:iam", "kind:clarify", "role:BrSE"]
+    spec_refs: ["ADR-002 §6 (Q-ARCH-10)", "ARCHITECTURE §13"]
+    rfp_refs: [FR-IAM-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Giả định: không — tài khoản do hệ thống quản lý. Có → SSO là cải tiến tách giá (không vào backlog 第1期). Liên quan C-FG02-02.
+    dod:
+      - "Có câu trả lời ghi vào ADR-002 §6"
+  - id: C-CLR-04
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-18 / Q-ARCH-04 — chấp nhận đổi người offline bằng PIN gắn máy? N giờ?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-02", "feature:iam", "kind:clarify", "role:BrSE"]
+    spec_refs: ["ADR-008 §6 (E-18 / Q-ARCH-04)", "ARCHITECTURE §13"]
+    rfp_refs: [NFR-AVL-02, NFR-SEC-03]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Giả định: N = 12 giờ trong file cấu hình, bản băm PIN trên thiết bị, thu hồi từ xa. Không chấp nhận → offline chỉ người đang
+      đăng nhập (bỏ phần lớn C-FG02-05).
+    dod:
+      - "Có câu trả lời ghi vào ADR-008 §6; C-FG02-05 được mở khóa hoặc thu hẹp"
+  - id: C-CLR-05
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] OPEN-DB-10 — một người giữ nhiều vai trên một tài khoản được không?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-02", "feature:iam", "kind:clarify", "role:BrSE"]
+    spec_refs: ["ADR-003 §6 (OPEN-DB-10)", "MKT_DB §7 OPEN-DB-10", "IAM_AUDIT_DB 4.58"]
+    rfp_refs: [TBL-ROLE-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Giả định: cho nhiều vai / tài khoản (PRM-089 mỗi người một tài khoản), SoD kiểm theo người. Khác → thêm ràng buộc ở `staff_roles`.
+      Liên quan C-FG02-01, C-FG02-08.
+    dod:
+      - "Có câu trả lời ghi vào ADR-003 §6 / MKT_DB §7"
+  - id: C-CLR-06
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] DEP-14 — người 代行 thật cho 照合部門長, phạm vi 代行 từng thao tác"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-02", "feature:iam", "kind:clarify", "role:BrSE"]
+    spec_refs: ["specs/_index.md DEP-14", "wbs-schedule-ja.md W5 (chỉ định 代行 trước cuối tháng 5)"]
+    rfp_refs: [FR-IAM-02]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Hỏi 経営陣: ai là 代行 của 照合部門長 (khóa ngày, cấp 1 修正申請, checker quy chế); 代行 có được làm cấp 2 không.
+      Mở khóa dữ liệu seed thật cho UAT và C-FG02-14.
+    dod:
+      - "Có danh sách 代行 ghi vào spec / PREMISE trước UAT"
+  - id: C-CLR-07
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] DEP-03 — giới hạn loại / cỡ file đính kèm và quy tắc mã lỗi E-ATT"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-13", "feature:audit", "kind:clarify", "role:BrSE"]
+    spec_refs: ["specs/_index.md DEP-03", "error-codes §5 (E-ATT)"]
+    rfp_refs: [TBL-ATTACH-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Loại file (PDF / ảnh scan), cỡ tối đa, số file mỗi bản ghi. Đang tạm dùng `E-DEL-029`. Mở khóa giá trị cấu hình của C-FG13-03.
+    dod:
+      - "Giá trị ghi vào API Design đính kèm; E-ATT thay E-DEL-029"
+  - id: C-CLR-08
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-ARCH-07 — hạn lưu chứng từ, xóa sau hạn, tách partition audit > 7 năm"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-13", "feature:audit", "kind:clarify", "role:BrSE", "rule:no-overwrite"]
+    spec_refs: ["ADR-009 §6 (Q-ARCH-07), §2.2-7", "ARCHITECTURE §13"]
+    rfp_refs: [DR-RET-01, TBL-ATTACH-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      (a) Theo TBL-ATTACH-01 hay B.7; (b) sau hạn xóa có duyệt hay giữ; (c) khôi phục lưu lạnh ≤ 1 ngày làm việc đủ chưa;
+      (d) thêm: ai duyệt tách / bỏ partition `audit_logs` cũ hơn 7 năm (ADR-009 §2.2-7 chưa nêu người duyệt — C-GAP-05).
+    dod:
+      - "Có câu trả lời ghi vào ADR-009 §6; C-FG13-05 tách lại được"
+  - id: C-CLR-09
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-ARCH-01 — RTO 4h / RPO 15 phút có áp cho sự cố cả region Tokyo?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-14", "feature:ops", "kind:clarify", "role:BrSE"]
+    spec_refs: ["ADR-009 §6 (Q-ARCH-01)"]
+    rfp_refs: [NFR-AVL-03]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Giả định: có → bản sao Osaka + IaC. Không → bỏ phần Osaka của C-FG14-03; cần chờ nóng → vượt TCO, phải đàm phán.
+    dod:
+      - "Có câu trả lời ghi vào ADR-009 §6"
+  - id: C-CLR-10
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] Q-ARCH-06 — giới hạn màn quản trị theo IP mạng chợ qua WAF được không?"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-13", "feature:platform", "kind:clarify", "role:BrSE"]
+    spec_refs: ["ARCHITECTURE §3 (CloudFront + WAF), §13 Q-ARCH-06"]
+    rfp_refs: [NFR-SEC-03]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 1
+    description: |
+      Giả định: có. Không → chỉ dựa MFA. Liên quan rule WAF ở C-PLAT-01.2.
+    dod:
+      - "Có câu trả lời ghi vào ARCHITECTURE §13"
+  - id: C-CLR-11
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-05 / Q-ARCH-05 — model tablet, máy in hiện trường và cách nối"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-11", "feature:report", "kind:clarify", "role:BrSE"]
+    spec_refs: ["ADR-008 §6 (E-05 / Q-ARCH-05)", "ADR-002 §6 (E-05)", "ARCHITECTURE §9 (Máy in)"]
+    rfp_refs: [NFR-COMP-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Giả định: PWA trên trình duyệt, in từ PC bàn GD. Chỉ nối được tablet / in nhiệt → agent in cục bộ (CR-10). Khảo sát hiện trường SV-06.
+      Liên quan C-FG11-06; luồng khác có in phiếu cũng phụ thuộc điểm này.
+    dod:
+      - "Có câu trả lời ghi vào ADR-008 §6; danh sách thiết bị khuyến nghị chốt"
+  - id: C-CLR-12
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] E-01 / OPEN-DB-01 — định dạng file IF-ACC-01, mã 勘定科目 / 税区分"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-11", "feature:report", "kind:clarify", "role:BrSE"]
+    spec_refs: ["MKT_DB §7 OPEN-DB-01", "BILLING_DB 4.40–4.42", "ARCHITECTURE §9 (Kế toán IF-ACC-01)"]
+    rfp_refs: [IF-ACC-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 3
+    description: |
+      Xin mẫu file import của phần mềm kế toán hiện có (thứ tự cột, mã hóa ký tự, mã 勘定科目 / 税区分). Giả định: trường tối thiểu
+      theo DR-SETTLE-01. Mở khóa C-FG11-04.
+    dod:
+      - "Có mẫu file + bảng mã ghi vào BILLING_DB / Technical Design IF-ACC-01"
+  - id: C-CLR-13
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] DEP-13 — mẫu câu email tối thiểu + danh sách sự kiện Critical"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-12", "feature:notify", "kind:clarify", "role:BrSE"]
+    spec_refs: ["specs/_index.md DEP-13", "PREMISE L4-A08", "function-list FG-12 (FT-12-02)"]
+    rfp_refs: [FR-NOTIFY-01, FR-NOTIFY-02, BR-NOTIFY-01]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 3
+    description: |
+      (1) Mẫu câu tiếng Nhật cho từng email tối thiểu của L4-A08 (kể cả câu về phí chuyển khoản, tài khoản nhận tiền);
+      (2) sự kiện nào là Critical (≤ 5 phút) — LAB-4 chưa có danh sách (C-GAP-03). Mở khóa C-FG12-03, C-FG12-04.
+    dod:
+      - "Mẫu câu + danh sách Critical được khách duyệt, ghi vào Technical Design notify"
+  - id: C-CLR-14
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] MIG-01 / E-03 — danh mục nguồn migrate, chủ dữ liệu, fixture Appendix C"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["fg:FG-15", "feature:migrate", "kind:clarify", "role:BrSE"]
+    spec_refs: ["PREMISE L4-A02", "ARCHITECTURE §9 (Migration)"]
+    rfp_refs: [MIG-01, MIG-02]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 3
+    description: |
+      Danh sách ≤ 5 file nguồn, chủ dữ liệu, khoảng thời gian, khóa; fixture C.1 (khách nhắm gửi 2026-12-01 [Giả lập]).
+      Mở khóa C-FG15-01..04 và dữ liệu cho C-PLAT-08.
+    dod:
+      - "Inventory nguồn (MIG-01) có chữ ký chủ dữ liệu; fixture nhận được"
+  - id: C-CLR-15
+    epic: EP-CLAR
+    parent: null
+    kind: clarify
+    title: "[要確認] log-convention §3 — timezone, category, cấm ghi, nơi / thời gian lưu log"
+    role: BrSE
+    assignee: BrSE-1
+    labels: ["feature:platform", "kind:clarify", "role:BrSE"]
+    spec_refs: ["log-convention §3, §4"]
+    rfp_refs: [NFR-OPS-01, "09-06"]
+    depends_on: []
+    depends_on_spec: []
+    hours_hint: 2
+    description: |
+      Câu hỏi nội bộ (chuyên gia spec-standards), không hỏi khách: 6 câu ở §3; §4 trỏ "ADR về quan sát hệ thống (P2-A)" nhưng
+      ADR này không có trong ADR-001..010 (C-GAP-01). Thời gian lưu log ứng dụng hỏi thêm IT khách. Liên quan C-PLAT-07.
+    dod:
+      - "Có câu trả lời ghi vào log-convention §4 (hoặc ADR mới); C-PLAT-07 chỉnh theo"
+
+gaps:
+  - id: C-GAP-01
+    spec: "log-convention §4 (cột 'Nơi chốt')"
+    problem: "Ba dòng trỏ tới 'ADR về quan sát hệ thống (P2-A)' nhưng ADR-001..010 không có ADR này; định dạng / timezone / thời gian lưu log ứng dụng chưa chốt"
+    handling: clarify
+    ref: C-CLR-15
+    open_reason: ""
+  - id: C-GAP-02
+    spec: "specs/_index.md (bảng DEP) ↔ STL_DAY_CLOSE_TECH §4 bước 5"
+    problem: "SC-07-02 (màn cốt lõi) xếp hàng job tạo batch IF-ACC-01 nhưng bảng DEP-01..17 không có dòng nào cho batch này; BILLING_DB 4.40–4.42 có bảng, thiếu Technical Design (đóng băng, xuất lại, 端数調整) và định dạng (E-01)"
+    handling: clarify
+    ref: C-CLR-12
+    open_reason: ""
+  - id: C-GAP-03
+    spec: "function-list FG-12 (FT-12-02) / ARCHITECTURE §3"
+    problem: "Thông báo Critical ≤ 5 phút (FR-NOTIFY-02) không có danh sách sự kiện nào trong bộ LAB-4 — chỉ có ví dụ ở function-list"
+    handling: clarify
+    ref: C-CLR-13
+    open_reason: ""
+  - id: C-GAP-04
+    spec: "ADR-002 §2.1-3, IAM_AUDIT_DB 4.6"
+    problem: "'Đăng nhập thiết bị một lần đầu ca bằng tài khoản có quyền' — không nói vai nào được đăng nhập thiết bị, phiên thiết bị kéo dài bao lâu"
+    handling: assumption
+    ref: C-PA-02
+    open_reason: ""
+  - id: C-GAP-05
+    spec: "ADR-009 §2.2-7"
+    problem: "Tách / bỏ partition audit_logs cũ hơn 7 năm 'theo quy trình có duyệt' nhưng không nêu người duyệt, có MFA không, có purpose MFA không (api-conventions §4 chưa có)"
+    handling: clarify
+    ref: C-CLR-08
+    open_reason: ""
+  - id: C-GAP-06
+    spec: "ADR-003 §2-5, IAM_AUDIT_DB 4.8; SCREEN-LIST §0 cột Vai"
+    problem: "Ma trận đọc ở DB theo 'vai × nhóm dữ liệu', còn SCREEN-LIST nói quyền đọc 'ghi ở spec từng màn' — 58 màn chưa spec thì không có quyền đọc mức item"
+    handling: assumption
+    ref: C-PA-03
+    open_reason: ""
+  - id: C-GAP-07
+    spec: "ADR-002 §2.2-8..10 / specs/_index.md DEP-01"
+    problem: "DEP-01 chỉ nêu API xác thực mã; đăng ký / thu hồi phương thức MFA và mã dự phòng (điều kiện để MFA chạy được) không có trong bảng DEP, không có API Design"
+    handling: assumption
+    ref: C-PA-04
+    open_reason: ""
+  - id: C-GAP-08
+    spec: "IAM_AUDIT_DB 4.55 offline_sync_records ↔ specs/_index.md DEP-04 (sync)"
+    problem: "Bảng hàng đợi offline nằm trong file DB của luồng C nhưng API / Technical Design sync thuộc DEP-04 của luồng A — dễ hai luồng cùng tạo migration"
+    handling: open
+    ref: ""
+    open_reason: "Phân chia giữa luồng, không phải lỗi spec: C tạo migration (C-FG13-01), luồng A trỏ depends_on_spec IAM_AUDIT_DB 4.55; PL xác nhận khi gộp"
+
+not_issued:
+  - spec: "SCREEN-LIST C1: SC-00-01, SC-00-02, SC-00-03 (gồm SC-00-04 gộp vào khung thông báo)"
+    reason: "chưa có Screen Specification (L4-D08); phần BE đã có quy tắc ở ADR-002 nên thành issue dev riêng"
+    covered_by: [C-FG02-13, C-FG02-02, C-FG02-04, C-CLR-01]
+  - spec: "SCREEN-LIST C1: SC-00-05 エラー・ロック済み案内"
+    reason: "không có Screen Specification riêng; mẫu trạng thái C-24 trong _common-layout.md đủ để làm dev"
+    covered_by: [C-PLAT-11]
+  - spec: "SCREEN-LIST C2 (phần SC-02): SC-02-02, SC-02-03 + tab 代行者 (SC-02-05 gộp); API quản trị tài khoản / vai"
+    reason: "chưa có Screen Specification / API Design (L4-D08); API 代行 là DEP-14 nên làm dev"
+    covered_by: [C-FG02-14, C-FG02-15, C-FG02-10, C-CLR-06]
+  - spec: "SCREEN-LIST C9: SC-11-01..SC-11-16 (12 báo cáo, IF-ACC-01, 仕訳, データ出力) + batch SC-11-B1; DEP-17"
+    reason: "chưa có Screen Specification / spec báo cáo; định dạng IF-ACC-01 chờ E-01"
+    covered_by: [C-FG11-01, C-FG11-02, C-FG11-03, C-FG11-04, C-FG11-05, C-CLR-12]
+  - spec: "SCREEN-LIST C9: SC-12-02 + batch SC-12-B1; mẫu câu thông báo (DEP-13)"
+    reason: "chưa có Screen Specification / Technical Design worker + mẫu câu"
+    covered_by: [C-FG12-04, C-FG12-05, C-CLR-13]
+  - spec: "SCREEN-LIST C9: SC-13-01, SC-13-02, SC-13-03; FT-13-03 適用規則版の表示; xóa vật lý chứng từ (B.7)"
+    reason: "chưa có Screen Specification / API Design; quy trình xóa sau hạn chờ Q-ARCH-07"
+    covered_by: [C-FG13-05, C-FG13-06, C-FG13-07, C-FG13-08, C-CLR-08]
+  - spec: "SCREEN-LIST C9: SC-14-01 + batch SC-14-B1 (thay FT-14-02), SC-14-B2"
+    reason: "SC-14-01 chưa có Screen Specification; hai batch đã đủ rõ ở ADR-009 / ARCHITECTURE nên làm dev"
+    covered_by: [C-FG14-06, C-FG14-02, C-FG14-03]
+  - spec: "SCREEN-LIST C9: SC-15-02 + batch SC-15-B1; SC-15-01, SC-15-03 (đổi thành script + file, C-07)"
+    reason: "chưa có spec migrate nào; nguồn dữ liệu chưa có (E-03)"
+    covered_by: [C-FG15-01, C-FG15-02, C-FG15-03, C-FG15-04, C-CLR-14]
+  - spec: "FT-12-03 通知設定 / SC-10-06 運用パラメータ"
+    reason: "không có màn ở 第1期 (PRM-126): file cấu hình có nhật ký — issue thuộc DEP-16 (luồng B theo brief §8), luồng C chỉ trỏ depends_on_spec"
+    covered_by: []
+  - spec: "FT-12-04 アプリ内通知一覧 (SC-00-04)"
+    reason: "gộp vào khung thông báo trên SC-00-03 (PRM-130)"
+    covered_by: [C-FG12-01, C-FG02-13]
+  - spec: "FT-02-03 / SC-02-01 外部参加者ログイン（メールOTP）, SC-01-07 マイページ, ARCHITECTURE §10 (portal, giao dịch từ xa, AI, phân tích)"
+    reason: "第2期 / Option — tách riêng theo luật 6 (L4-A08, ADR-010); không vào backlog 第1期"
+    covered_by: []
+
+premise:
+  spec_changes: []
+  assumptions:
+    - {id: C-PA-01, assumption: "Log ứng dụng: JSON một dòng, lưu UTC / hiển thị JST, category = tên module, che mật khẩu / PIN / token / CSV 入金 / dữ liệu cá nhân — đúng giả định PL đã ghi ở log-convention §4", open_point: "log-convention §3 câu 1–6 chưa có câu trả lời; ADR quan sát được trỏ tới không tồn tại (C-GAP-01)", impact: "C-PLAT-07 (đổi quy ước chỉ sửa một module logger)"}
+    - {id: C-PA-02, assumption: "Thiết bị do SYSADM đăng ký; đăng nhập thiết bị đầu ca bằng bất kỳ tài khoản ACTIVE có vai hiện trường; phiên thiết bị hết khi đăng xuất thiết bị hoặc thiết bị bị 端末回収不能", open_point: "ADR-002 §2.1-3 không nêu vai nào và thời hạn phiên thiết bị (C-GAP-04)", impact: "C-FG02-03 (~8 giờ); nếu chỉ trưởng ca được đăng nhập thiết bị → thêm kiểm vai, < 2 giờ"}
+    - {id: C-PA-03, assumption: "role_read_matrix seed từ cột 閲 của role-list theo nhóm dữ liệu (D-PARTY … D-INCENTIVE); quyền hiển thị từng item thêm khi có Screen Specification của màn", open_point: "SCREEN-LIST nói quyền đọc ghi ở spec từng màn, 58 màn chưa có spec (C-GAP-06)", impact: "C-FG02-09, C-TEST-03.2"}
+    - {id: C-PA-04, assumption: "Đăng ký / thu hồi phương thức MFA và cấp mã dự phòng là API nội bộ SYSADM thao tác ở PC văn phòng theo ADR-002 §2.2-8..10; khi test dùng seed TOTP khóa test", open_point: "Không có trong DEP-01, không có API Design (C-GAP-07)", impact: "C-FG02-07 (~12 giờ), màn ở C-FG02-14"}
+    - {id: C-PA-05, assumption: "Sự kiện Critical tạm: không chốt được GD, không khóa được ngày, lỗi xuất / nhập CSV kế toán, batch báo cáo trễ 11:00 — lấy từ ví dụ FT-12-02", open_point: "FR-NOTIFY-02 không có danh sách sự kiện trong LAB-4 (C-GAP-03)", impact: "C-FG12-03; thêm sự kiện chỉ thêm dòng cấu hình"}
+    - {id: C-PA-06, assumption: "Thay kiểm tra 01:45 bằng alarm cho đúng các điểm FT-14-02 liệt kê (đăng nhập, DB, 業務日 mới đã mở, lịch, gửi mail), gửi IT + 照合部門長", open_point: "SC-14-B1 chỉ ghi 'thay bằng cảnh báo giám sát', không nêu điểm kiểm", impact: "C-FG14-02 (~8 giờ)"}
+    - {id: C-PA-07, assumption: "Seed dev / stg dùng đúng cột 'Seed / giả định khi test' của bảng DEP, dữ liệu trông rõ là giả, nạp bằng script; tới khi có fixture thật (E-03) không tự đặt số liệu mới", open_point: "Fixture Appendix C chưa có (L4-A02)", impact: "C-PLAT-08 và dữ liệu test mọi luồng"}
+  decisions:
+    - {id: C-PD-01, problem: "iam (FG-02, Iteration 1 = S1) không có Screen Specification / API Design nào, nhưng ADR-002 / ADR-003 + IAM_AUDIT_DB đã quy định cơ chế bằng điều khoản đánh số", options_lab4: "L4-D08 chỉ nói màn chưa spec → issue thô; bảng DEP-01/02/14 cho phép coi API là 'phần còn thiếu' trên thiết kế nền đã có", chosen: "Cơ chế có điều khoản ở ADR + bảng ở DB (phiên, PIN, MFA, assert_caller, RLS, 代行, tra 社員番号) → issue dev, DoD gồm 'viết API Design (ID ở api-list) trước khi merge'; màn hình và API quản trị CRUD → issue thô", why: "Nếu để toàn bộ iam là thô thì Iteration 1 (S1 FG-01, FG-02 — plan-lab5 §0 dòng 13) không có việc dev nào của FG-02, trong khi 6 màn cốt lõi đã gọi C-30 / DEP-01; không tự thiết kế màn nên vẫn giữ L4-D08"}
+    - {id: C-PD-02, problem: "FG-11 có 15 chức năng / 16 màn chưa spec; một issue thô cho cả FG khoảng 470 giờ", options_lab4: "Q5 plan-lab5: 1 issue thô / nhóm chức năng", chosen: "Chia FG-11 thành 5 issue thô theo nhóm màn cùng loại (khung + menu, báo cáo ngày, báo cáo kỳ / tháng, IF-ACC-01 + 仕訳, xuất dữ liệu); FG-02 / FG-13 / FG-15 chia theo màn liền nhau", why: "Brief §4 cho phép 'một issue / nhóm màn hoặc chức năng'; nhóm theo loại giúp xếp sprint (báo cáo kỳ phụ thuộc engine 完納奨励金, báo cáo ngày không) mà vẫn không tách tới từng màn"}
+    - {id: C-PD-03, problem: "Bảng xuyên suốt của IAM_AUDIT_DB (4.53–4.56) được nhiều module dùng", options_lab4: "Database Design tách theo cụm (L4-D04) nhưng không nói ai tạo migration", chosen: "Luồng C tạo một migration cho cả 4 bảng (C-FG13-01), module khác trỏ mã bảng", why: "Brief §4: '1 migration nhóm bảng'; tránh hai luồng cùng tạo offline_sync_records (C-GAP-08)"}
