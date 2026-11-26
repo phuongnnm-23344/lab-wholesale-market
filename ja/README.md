@@ -40,7 +40,7 @@
 | # | QC-01 の規定 | プロジェクトの対応 | 理由 |
 |---|---|---|---|
 | 1 | §1: specは独立したManagement Repositoryに置き、**コードリポジトリには置かない** | Specを `prototype/` と同じリポジトリに置く | 演習上の理由: レビュアーがプロトタイプと設計を並べて見て、LAB-2の実データ表と照合できるように1リポジトリにまとめる。実プロジェクトでは2つのリポジトリに分け、READMEで相互参照する |
-| 2 | §2: 標準のグループは `requirements/`、`specs/` のみ | `architecture/`、`wireframes/` と、ルートに `PREMISE.md`、`AI-report.md` を追加 | §1 では、READMEに行があれば同階層のグループを追加できる。LAB-4の課題がこれらのグループを要求している |
+| 2 | §2: 標準のグループは `requirements/`、`specs/` のみ | `architecture/`、`wireframes/`、`ja/` と、ルートに `PREMISE.md`、`AI-report.md` を追加 | §1 では、READMEに行があれば同階層のグループを追加できる。LAB-4の課題がこれらのグループを要求している。`ja/` は正本のベトナム語版から生成した日本語版 — 規則は4.1節末尾の注記を参照 |
 | 3 | §2: `main` から分岐した `ver/{名称}` で作業し、リリース時に `main` へマージ | `ver/lab-4` を `main`（LAB-2の `0a99d10`）から分岐し、LAB-4提出時に `main` へマージ | ブランチ規則どおり。ここでの「リリース」は提出時点を指す。**一点だけ異なる:** QC-01では `ver/{名称}` が `feature/spec-{slug}` / `cr/{slug}` からの変更を **PR経由** でのみ受け入れる。演習は一人で行うため、`ver/lab-4` へ直接コミットし、`feature/spec-*` とPRは作成しない。実プロジェクトではQC-01に従う |
 | 4 | §4: Screen IDは `{接頭辞}_{名称}` 形式 | `SC-xx-yy` を維持 | LAB-1 → LAB-2 → LAB-4 → LAB-5のタスクまで1つのIDで追跡する |
 | 5 | §2: 見本名 `sample-AUTH_DB.md`、`sample-AUTH_FUNC.md`、`sample-AUTH_LOGIN_TECH.md` | `spec-standards/03-specs/02-samples/` の実名を維持（`sample-AUTH_DATABASE.md`、`sample-AUTH_FUNCTIONS.md`、`sample-AUTH_LOGIN_DETAIL.md`） | 制約5: ひな形・見本はその場で修正しない。QC-01 §2 の構成と、標準リポジトリの実際の見本セットが食い違っている |
@@ -50,6 +50,7 @@
 | 9 | BM-2-901-51 §4.1: `ID` 列はアルファベットの節（`A`、`B`…）と項目 `1.0` 形式、参照は `A-2` 形式 | `ID` / `No` 列 = **to-beワイヤーフレームの項目番号**（`[1]`、`[2]`…）。`A/B/C` の文字は表示上のグループにすぎない。共通枠は `wireframes/_common-layout.md` の `C-xx` を使用 | ワイヤーフレームの単一の番号からSpecification → 注釈付き画像 → LAB-5のissueまで追跡する（Gate 1で顧客が番号単位で指摘済み）。ひな形どおりに番号を振り直すと、feedbackやADR内のすべての `[n]` 参照が壊れる |
 | 10 | BM-2-901-51: 役割別の権限の項目がなく、§6 は一般的な注記のみ | **§4.4 役割別の権限** を追加（役割 × 項目の表: 表示 / 非表示 / 閲覧のみ / 操作）と §6.x の項目（状態、オフライン、未決事項）を追加。**12ファイルでの位置:** 役割別の権限は **§4.4**（SC-03-01、SC-03-05、SC-04-01、SC-05-02、SC-09-04、SC-10-04）または **§6.2**（SC-01-02、SC-06-02、SC-06-04、SC-06-05、SC-07-02、SC-08-03）。画面の状態は12ファイルすべて **§6.1**（集約表。枝ごとの詳細は §5 Event + `C-xx`）。権限の位置が2つあるのは、3つの流れが並行して書いたため。内容は同じ役割 × 項目の表で、LAB-5で §4.4 に統一できる | LAB-4の課題は「役割別の表示権限」と、画面ごとの状態（空、エラー、423、決裁待ち、オフライン）を必須としている。ひな形の項目はそのまま残し、項目だけ追加する |
 | 11 | BM-2-901-51 §3: `_layout.png` はFigma / Draw.io / XDから出力 | Figmaは使わない。画像 `{SCREEN_ID}_annotated.png` は `wireframes/html/{SCREEN_ID}.html` の **バリアントA**（主画面）を `scripts/render-wireframes.py --spec` で描画（5節）。他のバリアント（ダイアログ、エラー、別の役割）は `wireframes/pdf/wireframes-all.pdf` / `wireframes/png/{SCREEN_ID}.png` にあり、Aの画像に出ないバッジはSPEC内の画像の下に列挙する。現状（as-is）の画像は `wireframes/assets/` に置く | 設計ファイルはまだない。ワイヤーフレームのHTMLが to-be の画像の唯一の出典 — HTMLから作るため、従来の方式（Markdownワイヤーフレーム + ブロック描画スクリプト）に代わる。1つのコマンドで再生成できるため、画像の番号は常に §4.1 の `No` / ID 列と一致する |
+| 12 | BM-2-901-53 §2: シーケンス図は Draw.io / Figma / PlantUML で作成し、元ファイルへのリンクを付ける | **TECH ファイル内の Mermaid** で作成 — Mermaid ブロックが編集用の原本。画像 `assets/{DESIGN_ID}_sequence.png` は同じブロックから `scripts/export-mermaid-png.py` で出力（5節） | Draw.io / Figma のファイルはない。Mermaid は git で差分を確認でき、画像は同じブロックから生成するため、画像と §4 がずれない。ひな形も Mermaid を任意の併用形式として認めている |
 
 見本ファイル内の相対リンク（`../01-templates/…`）は標準リポジトリの構成を指しているため、本リポジトリでは開けません — 制約5に従いそのまま残します。
 
@@ -114,7 +115,7 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 | 各 `_index.md` | 各フォルダ | **QC-01 §3の規定を継承**、内容は新規 | `architecture/`、`adr/`、`wireframes/` は新しいグループにも同じ形式の索引表を使用 |
 | 7 `specs/{feature}/README.md` | `specs/{feature}/` | **QC-01 §3の規定を継承**、内容は新規 | featureのナビゲーションページ（設計文書ではないため `specs/_index.md` に行はない — QC-01どおり） |
 | Screen Specification 12 file | `specs/{feature}/screen-specification/` | **ひな形に沿って作成、一部調整** | 例外 #9（ID列 = ワイヤーフレームの項目番号、`C-xx`）、#10（§4.4 または §6.2 に役割別の権限、§6.1 に画面の状態、§6.x にオフライン / 未決事項を追加 — ファイルごとの一覧は #10）、#11（画像 = ワイヤーフレームHTMLのバリアントA、Figmaではない） |
-| Function Specifications 7 file, Technical Design 15 file | `specs/{feature}/` | **ひな形に沿って作成** | Technical Design: Mermaidを原本として残し、そこから PNG `{DESIGN_ID}_sequence.png` を生成（ひな形 §2 が画像を要求） |
+| Function Specifications 7 file, Technical Design 15 file | `specs/{feature}/` | **ひな形に沿って作成** | Technical Design: Mermaidを原本として残し、そこから PNG `{DESIGN_ID}_sequence.png` を生成（ひな形 §2 が画像を要求）— 例外 #12 |
 | Database Design 10 file | `specs/system-design/database-design/` | **ひな形に沿って作成、一部調整** | 例外 #7（総括ファイル `MKT_DB.md` を追加）、#8（Index / FK は1行形式） |
 | API Design 42 file | `specs/system-design/api-design/{feature}/` | **ひな形に沿って作成** | エラーbodyはプロトタイプに合わせ、ひな形の `errors[]` の例とは異なる — 理由は `api-conventions.md` の取り決め3 |
 | Screen ID `SC-xx-yy`、Spec をコードのリポジトリに置く、ルートに追加したフォルダ群、実際のテンプレート名 | — | **QC-01の例外** #1–#5 | 各点の理由は3節 |
