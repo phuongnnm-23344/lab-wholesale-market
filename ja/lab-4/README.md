@@ -1,4 +1,4 @@
- > **LAB-2 プロトタイプ（Product A — 桜水産市場、模擬データ）:** 参照 [`prototype/README.md`](../prototype/README.md).
+ > **LAB-2 プロトタイプ（Product A — 桜水産市場、模擬データ）:** 参照 [`prototype/README.md`](../../prototype/README.md).
 > アプリ: https://lab-wholesale-market-fup2.vercel.app/ · デモ用アカウント、パスワード、デモシナリオはすべて上記READMEにあります。
 > 直下はLAB-4設計一式のナビゲーションです。「GitHub Project Management Template」の節以降は、本リポジトリの元になったSun*のプロジェクト管理テンプレートのREADMEです。
 
@@ -16,13 +16,13 @@
 | グループ / ファイル | 内容 | Template | 継承 / 新規 | 作成者 | 索引表 |
 |---|---|---|---|---|---|
 | [`PREMISE.md`](PREMISE.md) | LAB-4の前提条件: LAB-1からの追加・削除、新しい前提、確定した方向性、プロトタイプと異なる箇所の扱い | 標準規約どおりのFrontmatter + History | **新規**（課題要件） | PL | — |
-| [`requirements/`](../requirements) | **WHAT** — 要件文書 `REQ-{ストーリー番号}-{slug}.md` | `BM-2-901-63` | 継承 | BrSE / PL | [`requirements/_index.md`](requirements/_index.md) |
-| [`specs/`](../specs) | **HOW** — Screen Specification · Function Specifications · Technical Design を `specs/{feature}/` に、Database Design · API Design を `specs/system-design/` に、共通文書を `specs/_common/` に配置 | `BM-2-901-50` … `BM-2-901-54` | 継承 | PL (BrSE, Tech Lead, Dev) | [`specs/_index.md`](specs/_index.md) |
-| [`architecture/`](../architecture) | to-beアーキテクチャ: システム構成要素、主要なデータフロー、連携ポイント | 標準には含まれない | **新規**（課題要件） | PL (Tech Lead) | [`architecture/_index.md`](architecture/_index.md) |
-| [`architecture/adr/`](../architecture/adr) | ADR: 背景 · 決定 · 不採用案 · 影響 | 標準には含まれない | **新規**（課題要件） | PL (Tech Lead) | [`architecture/adr/_index.md`](architecture/adr/_index.md) |
-| [`wireframes/`](../wireframes) | 画面一覧 / 画面遷移（第1期70画面）、中核10画面 + 補足5画面のto-beワイヤーフレーム。Screen Specificationは **12画面** に完全版（代表10画面 + デリバリーの連結2画面 — PREMISE L4-D07） | 標準には含まれない | **新規**（課題要件） | PL | [`wireframes/_index.md`](wireframes/_index.md) |
+| [`requirements/`](../../requirements) | **WHAT** — 要件文書 `REQ-{ストーリー番号}-{slug}.md` | `BM-2-901-63` | 継承 | BrSE / PL | [`requirements/_index.md`](../requirements/_index.md) |
+| [`specs/`](../../specs) | **HOW** — Screen Specification · Function Specifications · Technical Design を `specs/{feature}/` に、Database Design · API Design を `specs/system-design/` に、共通文書を `specs/_common/` に配置 | `BM-2-901-50` … `BM-2-901-54` | 継承 | PL (BrSE, Tech Lead, Dev) | [`specs/_index.md`](../specs/_index.md) |
+| [`architecture/`](../../architecture) | to-beアーキテクチャ: システム構成要素、主要なデータフロー、連携ポイント | 標準には含まれない | **新規**（課題要件） | PL (Tech Lead) | [`architecture/_index.md`](../architecture/_index.md) |
+| [`architecture/adr/`](../../architecture/adr) | ADR: 背景 · 決定 · 不採用案 · 影響 | 標準には含まれない | **新規**（課題要件） | PL (Tech Lead) | [`architecture/adr/_index.md`](../architecture/adr/_index.md) |
+| [`wireframes/`](../../wireframes) | 画面一覧 / 画面遷移（第1期70画面）、中核10画面 + 補足5画面のto-beワイヤーフレーム。Screen Specificationは **12画面** に完全版（代表10画面 + デリバリーの連結2画面 — PREMISE L4-D07） | 標準には含まれない | **新規**（課題要件） | PL | [`wireframes/_index.md`](../wireframes/_index.md) |
 | [`AI-report.md`](AI-report.md) | LAB-4におけるAIの使い方: スキル、プロンプト、レビュー方法、AIの誤りと修正方法、自己評価 | 標準規約どおりのFrontmatter + History | **新規**（課題要件） | PL | — |
-| [`prototype/`](../prototype) | LAB-2プロトタイプのコード (Next.js + Supabase)、デモ用README | — | LAB-2から存在 | PL | [`prototype/README.md`](../prototype/README.md) |
+| [`prototype/`](../../prototype) | LAB-2プロトタイプのコード (Next.js + Supabase)、デモ用README | — | LAB-2から存在 | PL | [`prototype/README.md`](../../prototype/README.md) |
 
 リポジトリ直下のその他のフォルダ（`.github/`、`webhook/`、`scripts/` 内の `*.sh`）はSun*のプロジェクト管理テンプレートの一部です。LAB-4設計一式のスクリプトは5節にあり、「GitHub Project Management Template」の節以降を参照してください。元のテンプレートには `docs/`（ステータス遷移仕様）と `scripts/bootstrap-project.sh` もありますが、本リポジトリのコピーには **含まれていません**。そのため、下記のテンプレートREADMEでこれらに言及している箇所は開けません（テンプレートの記述はそのまま残しています）。
 
@@ -31,7 +31,7 @@
 | QC-01 でプロジェクトが選ぶ点 | プロジェクトの選択 |
 |---|---|
 | バージョン・ブランチ名の形式（§2） | 講座の **マイルストーン / フェーズ** に従う: `ver/lab-4`、`ver/lab-5`、… — 製品版の形式とは混在させない |
-| `specs/{screen-or-feature}/` の分け方（§2 注記） | **feature**（業務のまとまり、英語のkebab-case）単位。`architecture/ARCHITECTURE.md` §2 のモジュール名と一致させる。featureの一覧と、Screen Specificationを持つ12画面（代表10画面 + SC-06-04、SC-06-05 — PREMISE L4-D07）のfeatureは [`specs/_index.md`](specs/_index.md) で確定済み（Gate 1 m-03） |
+| `specs/{screen-or-feature}/` の分け方（§2 注記） | **feature**（業務のまとまり、英語のkebab-case）単位。`architecture/ARCHITECTURE.md` §2 のモジュール名と一致させる。featureの一覧と、Screen Specificationを持つ12画面（代表10画面 + SC-06-04、SC-06-05 — PREMISE L4-D07）のfeatureは [`specs/_index.md`](../specs/_index.md) で確定済み（Gate 1 m-03） |
 | Screen ID | LAB-1の画面ID（`SC-xx-yy`）を維持し、LAB-1の画面一覧とLAB-2プロトタイプまで追跡できるようにする。ファイル名は `SC-xx-yy_SPEC.md`。*§4の規則（`{接頭辞}_{名称}` を大文字）から逸脱 — §3参照* |
 | `_templates/` の出典 | `spec-standards` の `main` ブランチ、コミット `72c1dda`（2026-11-05）。`_templates/` の2フォルダは同時にコピー |
 
@@ -131,7 +131,7 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 
 - **Screen Specificationを完全に持つ12画面**（項目、バリデーション、状態、役割別の権限、Event、API）: 10の業務群それぞれの代表10画面（PREMISE **L4-D02**: SC-01-02, 03-01, 03-05, 04-01, 05-02, 06-02, 07-02, 08-03, 09-04, 10-04）+ **SC-06-04、SC-06-05**。争いのある引渡しの確認は最終決定者が判断する事項（ルール3）であり、かつ2画面はdeliveryのFUNC / TECHを共有するため（**L4-D07**、DEC-056）。
 - **なぜ画面一覧の70画面すべてを作らないのか:** LAB-4の課題は「中核となる画面」を求めており、画面数は規定していない。受講者は LAB-4 冒頭で10画面を確定し（plan §0、L4-D02）、2026-11-25 のGate 2後に **これ以上拡張しないことを決定**（PREMISE **L4-D08**、DEC-058。L4-D07 での12画面への拡張はPLが有識者 G2-m05 に従って決定）。SC-03-02、SC-03-07、SC-04-05 はワイヤーフレームがあるが、Screen Specificationはまだない。
-- **残りの画面** は [`wireframes/SCREEN-LIST.md`](wireframes/SCREEN-LIST.md) の1行のみ。12画面が呼び出すがまだ仕様化されていないものは [`specs/_index.md`](specs/_index.md) の **DEP-01..17** に列挙（A. 直接呼び出し、B. 入力データの供給元。各行にテスト用のseed想定あり） — LAB-5でissueに分割するための入力。
+- **残りの画面** は [`wireframes/SCREEN-LIST.md`](../wireframes/SCREEN-LIST.md) の1行のみ。12画面が呼び出すがまだ仕様化されていないものは [`specs/_index.md`](../specs/_index.md) の **DEP-01..17** に列挙（A. 直接呼び出し、B. 入力データの供給元。各行にテスト用のseed想定あり） — LAB-5でissueに分割するための入力。
 
 ## 5. 設計一式のスクリプト
 
@@ -226,8 +226,8 @@ Sun Asterisk のエンジニアリングチーム向けの標準化されたプ�
 
 | Folder | Contains | Template | Index |
 |---|---|---|---|
-| [`requirements/`](../requirements) | **WHAT** — 要件文書、`REQ-{ストーリー番号}-{slug}.md` | `BM-2-901-63` | [`requirements/_index.md`](requirements/_index.md) |
-| [`specs/`](../specs) | **HOW** — Screen Specification · Function Specifications · Technical Design を `specs/{screen-or-feature}/` に、Database Design · API Design を `specs/system-design/` に、共有文書を `specs/_common/` に配置 | `BM-2-901-50` … `BM-2-901-54` | [`specs/_index.md`](specs/_index.md) |
+| [`requirements/`](../../requirements) | **WHAT** — 要件文書、`REQ-{ストーリー番号}-{slug}.md` | `BM-2-901-63` | [`requirements/_index.md`](../requirements/_index.md) |
+| [`specs/`](../../specs) | **HOW** — Screen Specification · Function Specifications · Technical Design を `specs/{screen-or-feature}/` に、Database Design · API Design を `specs/system-design/` に、共有文書を `specs/_common/` に配置 | `BM-2-901-50` … `BM-2-901-54` | [`specs/_index.md`](../specs/_index.md) |
 
 ### GitHub Actions ワークフロー
 
@@ -246,7 +246,7 @@ Sun Asterisk のエンジニアリングチーム向けの標準化されたプ�
 
 ステータス遷移は `docs/status-transition-spec/tracker-status.csv` で定義されています。
 
-詳細な設定手順は [`webhook/README.md`](../webhook/README.md) を参照してください。
+詳細な設定手順は [`webhook/README.md`](../../webhook/README.md) を参照してください。
 
 ---
 
@@ -322,7 +322,7 @@ Bootstrap は次の処理を行います:
 ### ステップ 3 — Webhook 自動化の有効化（任意）
 
 プロジェクトのステータス遷移をリアルタイムで有効にするには、新しいリポジトリ向けに n8n の webhook 連携を設定してください。
-手順は [`webhook/README.md`](../webhook/README.md) を参照してください。
+手順は [`webhook/README.md`](../../webhook/README.md) を参照してください。
 
 ---
 
@@ -395,4 +395,4 @@ Repository Settings → 「Template repository」にチェック
 
 ## 変更履歴
 
-バージョン履歴は [CHANGELOG.md](../CHANGELOG.md) を参照してください。
+バージョン履歴は [CHANGELOG.md](../../CHANGELOG.md) を参照してください。

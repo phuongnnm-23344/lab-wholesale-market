@@ -5,7 +5,7 @@ status: draft
 version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-25
-related: [PREMISE.md, L4-D02, L4-D03, PRM-121, DEC-031, PRM-126, PRM-127, PRM-129, PRM-130, TBL-ROLE-01, CAP-HUMAN-01]
+related: [lab-4/PREMISE.md, L4-D02, L4-D03, PRM-121, DEC-031, PRM-126, PRM-127, PRM-129, PRM-130, TBL-ROLE-01, CAP-HUMAN-01]
 ---
 
 # 画面一覧・画面遷移 — 第1期 (70 画面)

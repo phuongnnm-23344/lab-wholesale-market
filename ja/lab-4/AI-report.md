@@ -12,7 +12,7 @@ related: [PREMISE.md, README.md, AI-report-evidence/README.md]
 
 本リポジトリの設計一式（PREMISE、アーキテクチャ、ADR 10件、Database Design 10件、ワイヤーフレーム 15件、Screen Specification 12件、Function Specifications 7件、Technical Design 15件、API Design 42件、日本語版 `ja/`）は、ほぼ全体を AI が書いた。受講者は調整し、決定し、決裁した。
 
-本報告の数値は作業記録に基づき、写しは [`AI-report-evidence/`](../AI-report-evidence/README.md) にある: 有識者（Expert）のレビュー報告（[`expert-review/`](../AI-report-evidence/expert-review/)）、顧客（模擬）の意見（[`customer-feedback/`](../AI-report-evidence/customer-feedback/)）、フィードバック簿と決定ログ（[`logs/`](../AI-report-evidence/logs/)）、作業指示のブリーフ（[`briefs/`](../AI-report-evidence/briefs/)）。より詳しい 0.2.3 版（誤り14件、ツールの詳細）は [`logs/ai-report-0.2.3-full-before-condense.md`](../AI-report-evidence/logs/ai-report-0.2.3-full-before-condense.md)。
+本報告の数値は作業記録に基づき、写しは [`AI-report-evidence/`](../../AI-report-evidence/README.md) にある: 有識者（Expert）のレビュー報告（[`expert-review/`](../../AI-report-evidence/expert-review/)）、顧客（模擬）の意見（[`customer-feedback/`](../../AI-report-evidence/customer-feedback/)）、フィードバック簿と決定ログ（[`logs/`](../../AI-report-evidence/logs/)）、作業指示のブリーフ（[`briefs/`](../../AI-report-evidence/briefs/)）。より詳しい 0.2.3 版（誤り14件、ツールの詳細）は [`logs/ai-report-0.2.3-full-before-condense.md`](../../AI-report-evidence/logs/ai-report-0.2.3-full-before-condense.md)。
 
 ## 1. History of change
 
@@ -60,13 +60,13 @@ Skill は主に枠組みとチェックリストとして使った。成果物�
 | Gate 2 | Screen Specification 12件、Function 7件、Technical 15件、API Design 42件 | 条件付き RELEASE | Critical 0 · Major 4 · Minor 9 | すべて修正し、顧客の回答31件を反映 |
 | Gate 2 完了 + ワイヤーフレーム HTML | Gate 2 の修正部分; ワイヤーフレーム HTML 15件、PDF、spec の画像 | **RELEASE** / 条件付き RELEASE | Minor 1 + 7 | 7件を修正、1件は LAB-5 へ |
 | Gate 3 | 提出物全体 | 条件付き RELEASE → 差分確認: **RELEASE** | Critical 0 · Major 3 · Minor 10、その後注記 5 | Major 2 + Minor 9 + 注記 5 を修正; プロトタイプのデモ用パスワードは LAB-5 でリポジトリを公開する前に対応が必要 |
-| 日本語版 `ja/` | 翻訳した135ファイル | **RELEASE 不可** → 差分確認: 条件付き RELEASE | Critical 1 · Major 1 · Minor 8、その後 Minor 3 | すべて修正（[レビュー](../AI-report-evidence/expert-review/expert-review-lab4-ja-261126.md)） |
+| 日本語版 `ja/` | 翻訳した135ファイル | **RELEASE 不可** → 差分確認: 条件付き RELEASE | Critical 1 · Major 1 · Minor 8、その後 Minor 3 | すべて修正（[レビュー](../../AI-report-evidence/expert-review/expert-review-lab4-ja-261126.md)） |
 
 有識者は読むだけでなく機械でも検査した: 完納奨励金（期日どおり全額支払った場合の奨励金）の計算例11件の再計算、ワイヤーフレームの画像の番号と spec の表の照合、文書ひな形と会社標準のバイト単位の比較、ベトナム語版と日本語版の行ごとの突き合わせ。
 
 ### 3.2 受講者が決めたこと
 
-私はすべての行を読むことはせず、範囲・構成・方向を変える点だけを決めた; それ以外は PL が決めて記録し、有識者が確認した。誰がどの点を決めたかは PREMISE §5 と [決定ログ](../AI-report-evidence/logs/decision-lab4-excerpt.md) にある。
+私はすべての行を読むことはせず、範囲・構成・方向を変える点だけを決めた; それ以外は PL が決めて記録し、有識者が確認した。誰がどの点を決めたかは PREMISE §5 と [決定ログ](../../AI-report-evidence/logs/decision-lab4-excerpt.md) にある。
 
 - **LAB-4 の開始時:** 原本はベトナム語; spec を完全に作る画面は10（課題は「中核となる画面」のみを要求）; 文書の標準は一つ; 有識者の採点基準。
 - **前提:** to-be のアーキテクチャは AWS Tokyo、プロトタイプは試作にすぎない; 画面 SC-01-02 は 許可（仲卸の許可）と 承認（売買参加者の資格）の二つのブロックに分ける。

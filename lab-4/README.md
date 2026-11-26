@@ -1,4 +1,4 @@
- > **LAB-2 prototype (Product A — 桜水産市場, dữ liệu giả):** xem [`prototype/README.md`](prototype/README.md).
+ > **LAB-2 prototype (Product A — 桜水産市場, dữ liệu giả):** xem [`prototype/README.md`](../prototype/README.md).
 > App: https://lab-wholesale-market-fup2.vercel.app/ · tài khoản demo, mật khẩu, kịch bản demo đều ở README đó.
 > Ngay dưới là điều hướng bộ thiết kế LAB-4; từ mục "GitHub Project Management Template" trở xuống là README của template quản lý dự án Sun* mà repo được dựng từ đó.
 
@@ -16,13 +16,13 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 | Nhóm / file | Chứa gì | Template | Kế thừa / mới | Người viết | Bảng tra |
 |---|---|---|---|---|---|
 | [`PREMISE.md`](PREMISE.md) | Tiền đề của LAB-4: thêm/bỏ so với LAB-1, giả định mới, hướng đi đã chốt, cách xử lý chỗ prototype làm khác | Frontmatter + History theo quy ước chuẩn | **Mới** (yêu cầu đề) | PL | — |
-| [`requirements/`](requirements/) | **WHAT** — tài liệu yêu cầu `REQ-{số Story}-{slug}.md` | `BM-2-901-63` | Kế thừa | BrSE / PL | [`requirements/_index.md`](requirements/_index.md) |
-| [`specs/`](specs/) | **HOW** — Screen Specification · Function Specifications · Technical Design trong `specs/{feature}/`; Database Design · API Design trong `specs/system-design/`; tài liệu dùng chung trong `specs/_common/` | `BM-2-901-50` … `BM-2-901-54` | Kế thừa | PL (BrSE, Tech Lead, Dev) | [`specs/_index.md`](specs/_index.md) |
-| [`architecture/`](architecture/) | Kiến trúc to-be: thành phần hệ thống, luồng dữ liệu chính, điểm tích hợp | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/_index.md`](architecture/_index.md) |
-| [`architecture/adr/`](architecture/adr/) | ADR: bối cảnh · quyết định · phương án đã bỏ · hệ quả | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/adr/_index.md`](architecture/adr/_index.md) |
-| [`wireframes/`](wireframes/) | 画面一覧 / 画面遷移 (70 màn 第1期), wireframe to-be cho 10 màn cốt lõi + 5 màn bổ sung; Screen Specification đầy đủ cho **12 màn** (10 màn đại diện + 2 màn nối của delivery — PREMISE L4-D07) | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](wireframes/_index.md) |
+| [`requirements/`](../requirements/) | **WHAT** — tài liệu yêu cầu `REQ-{số Story}-{slug}.md` | `BM-2-901-63` | Kế thừa | BrSE / PL | [`requirements/_index.md`](../requirements/_index.md) |
+| [`specs/`](../specs/) | **HOW** — Screen Specification · Function Specifications · Technical Design trong `specs/{feature}/`; Database Design · API Design trong `specs/system-design/`; tài liệu dùng chung trong `specs/_common/` | `BM-2-901-50` … `BM-2-901-54` | Kế thừa | PL (BrSE, Tech Lead, Dev) | [`specs/_index.md`](../specs/_index.md) |
+| [`architecture/`](../architecture/) | Kiến trúc to-be: thành phần hệ thống, luồng dữ liệu chính, điểm tích hợp | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/_index.md`](../architecture/_index.md) |
+| [`architecture/adr/`](../architecture/adr/) | ADR: bối cảnh · quyết định · phương án đã bỏ · hệ quả | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL (Tech Lead) | [`architecture/adr/_index.md`](../architecture/adr/_index.md) |
+| [`wireframes/`](../wireframes/) | 画面一覧 / 画面遷移 (70 màn 第1期), wireframe to-be cho 10 màn cốt lõi + 5 màn bổ sung; Screen Specification đầy đủ cho **12 màn** (10 màn đại diện + 2 màn nối của delivery — PREMISE L4-D07) | Không có trong chuẩn | **Mới** (yêu cầu đề) | PL | [`wireframes/_index.md`](../wireframes/_index.md) |
 | [`AI-report.md`](AI-report.md) | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa, tự đánh giá | Frontmatter + History theo quy ước chuẩn | **Mới** (yêu cầu đề) | PL | — |
-| [`prototype/`](prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](prototype/README.md) |
+| [`prototype/`](../prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](../prototype/README.md) |
 
 Nhóm thư mục mức repo khác (`.github/`, `webhook/`, các script `*.sh` trong `scripts/`) là phần của template quản lý dự án Sun*; script của bộ thiết kế LAB-4 ở mục 5 — xem từ mục "GitHub Project Management Template" trở xuống. Template gốc còn có `docs/` (đặc tả chuyển trạng thái) và `scripts/bootstrap-project.sh`; bản copy trong repo này **không kèm** hai thứ đó, nên các chỗ nhắc tới chúng ở phần README template bên dưới không mở được (giữ nguyên chữ của template).
 
@@ -31,7 +31,7 @@ Nhóm thư mục mức repo khác (`.github/`, `webhook/`, các script `*.sh` tr
 | Điểm QC-01 để dự án chọn | Dự án chọn |
 |---|---|
 | Kiểu tên nhánh version (§2) | Theo **milestone / phase** của khóa học: `ver/lab-4`, `ver/lab-5`, … — không trộn kiểu version sản phẩm |
-| Chia `specs/{screen-or-feature}/` (§2 ghi chú) | Theo **feature** (cụm nghiệp vụ, kebab-case tiếng Anh), trùng tên module ở `architecture/ARCHITECTURE.md` §2. Danh sách feature và feature của 12 màn có Screen Specification (10 màn đại diện + SC-06-04, SC-06-05 — PREMISE L4-D07) đã chốt ở [`specs/_index.md`](specs/_index.md) (Gate 1 m-03) |
+| Chia `specs/{screen-or-feature}/` (§2 ghi chú) | Theo **feature** (cụm nghiệp vụ, kebab-case tiếng Anh), trùng tên module ở `architecture/ARCHITECTURE.md` §2. Danh sách feature và feature của 12 màn có Screen Specification (10 màn đại diện + SC-06-04, SC-06-05 — PREMISE L4-D07) đã chốt ở [`specs/_index.md`](../specs/_index.md) (Gate 1 m-03) |
 | Screen ID | Giữ ID màn hình của LAB-1 (`SC-xx-yy`) để truy được về 画面一覧 LAB-1 và prototype LAB-2; tên file `SC-xx-yy_SPEC.md`. *Lệch quy tắc §4 (`{tiền tố}_{TÊN}` viết HOA) — xem §3* |
 | Nguồn khuôn `_templates/` | `spec-standards` nhánh `main`, commit `72c1dda` (2026-11-05). Hai thư mục `_templates/` copy cùng một lượt |
 
@@ -131,7 +131,7 @@ Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specificatio
 
 - **12 màn có Screen Specification đầy đủ** (field, validation, trạng thái, phân quyền theo vai, Event, API): 10 màn đại diện của 10 cụm nghiệp vụ (PREMISE **L4-D02**: SC-01-02, 03-01, 03-05, 04-01, 05-02, 06-02, 07-02, 08-03, 09-04, 10-04) + **SC-06-04, SC-06-05** vì xác nhận giao có tranh chấp là điểm người quyết cuối (luật 3) và hai màn dùng chung FUNC / TECH của delivery (**L4-D07**, DEC-056).
 - **Vì sao không làm đủ 70 màn của 画面一覧:** đề LAB-4 yêu cầu "các màn hình cốt lõi", không quy định số màn; người dùng chốt 10 màn ở đầu LAB-4 (plan §0, L4-D02) và **quyết không mở rộng thêm** ngày 2026-11-25 sau Gate 2 (PREMISE **L4-D08**, DEC-058; mở rộng 12 màn ở L4-D07 là PL quyết theo Expert G2-m05). Ba màn SC-03-02, SC-03-07, SC-04-05 có wireframe nhưng chưa có Screen Specification.
-- **Các màn còn lại** chỉ ở mức dòng trong [`wireframes/SCREEN-LIST.md`](wireframes/SCREEN-LIST.md); phần 12 màn gọi tới mà chưa đặc tả được liệt kê là **DEP-01..17** ở [`specs/_index.md`](specs/_index.md) (A. gọi trực tiếp, B. nguồn dữ liệu đầu vào, mỗi dòng có giả định seed cho test) — input để LAB-5 tách issue.
+- **Các màn còn lại** chỉ ở mức dòng trong [`wireframes/SCREEN-LIST.md`](../wireframes/SCREEN-LIST.md); phần 12 màn gọi tới mà chưa đặc tả được liệt kê là **DEP-01..17** ở [`specs/_index.md`](../specs/_index.md) (A. gọi trực tiếp, B. nguồn dữ liệu đầu vào, mỗi dòng có giả định seed cho test) — input để LAB-5 tách issue.
 
 ## 5. Script của bộ thiết kế
 
@@ -226,8 +226,8 @@ Folder structure follows **QC-01 — Quy chuẩn Cấu trúc Thư mục Spec tr�
 
 | Folder | Contains | Template | Index |
 |---|---|---|---|
-| [`requirements/`](requirements/) | **WHAT** — requirement documents, `REQ-{Story number}-{slug}.md` | `BM-2-901-63` | [`requirements/_index.md`](requirements/_index.md) |
-| [`specs/`](specs/) | **HOW** — Screen Specification · Function Specifications · Technical Design in `specs/{screen-or-feature}/`; Database Design · API Design in `specs/system-design/`; shared docs in `specs/_common/` | `BM-2-901-50` … `BM-2-901-54` | [`specs/_index.md`](specs/_index.md) |
+| [`requirements/`](../requirements/) | **WHAT** — requirement documents, `REQ-{Story number}-{slug}.md` | `BM-2-901-63` | [`requirements/_index.md`](../requirements/_index.md) |
+| [`specs/`](../specs/) | **HOW** — Screen Specification · Function Specifications · Technical Design in `specs/{screen-or-feature}/`; Database Design · API Design in `specs/system-design/`; shared docs in `specs/_common/` | `BM-2-901-50` … `BM-2-901-54` | [`specs/_index.md`](../specs/_index.md) |
 
 ### GitHub Actions Workflows
 
@@ -246,7 +246,7 @@ The `webhook/` folder contains n8n Code Node scripts that automatically update G
 
 Status transitions are defined in `docs/status-transition-spec/tracker-status.csv`.
 
-See [`webhook/README.md`](webhook/README.md) for full setup details.
+See [`webhook/README.md`](../webhook/README.md) for full setup details.
 
 ---
 
@@ -322,7 +322,7 @@ Bootstrap will:
 ### Step 3 — Enable webhook automation (optional)
 
 To enable real-time project status transitions, configure the n8n webhook integration for the new repository.
-See [`webhook/README.md`](webhook/README.md) for instructions.
+See [`webhook/README.md`](../webhook/README.md) for instructions.
 
 ---
 
@@ -395,4 +395,4 @@ This template is owned and maintained by the **PEC (Process Elevation Consultant
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+See [CHANGELOG.md](../CHANGELOG.md) for version history.

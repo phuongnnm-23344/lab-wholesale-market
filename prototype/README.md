@@ -14,8 +14,8 @@ Prototype chạy thật cho Product A (chợ bán buôn thủy sản 桜水産�
 
 ## Tài khoản demo (dùng được tới hết LAB-6)
 
-Mật khẩu chung cho cả 10 tài khoản: **`***REMOVED***`** — chỉ dùng cho tài khoản demo trên dữ liệu giả, không dùng lại ở hệ thống khác (DEC-030).
-PIN đổi người trên máy chung (màn 利用者切替, chỉ vai hiện trường): `***REMOVED***`.
+Mật khẩu chung cho cả 10 tài khoản: **gửi riêng cho người chấm** (không ghi trong repo) — chỉ dùng cho tài khoản demo trên dữ liệu giả, không dùng lại ở hệ thống khác (DEC-030).
+PIN đổi người trên máy chung (màn 利用者切替, chỉ vai hiện trường): **gửi riêng cùng mật khẩu**.
 
 | Email | Vai | Quyền thêm | Màn nên thử |
 |---|---|---|---|

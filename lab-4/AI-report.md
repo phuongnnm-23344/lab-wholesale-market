@@ -12,7 +12,7 @@ related: [PREMISE.md, README.md, AI-report-evidence/README.md]
 
 Bộ thiết kế trong repo này (PREMISE, kiến trúc, 10 ADR, 10 Database Design, 15 wireframe, 12 Screen Specification, 7 Function Specifications, 15 Technical Design, 42 API Design, bản tiếng Nhật `ja/`) do AI viết gần như toàn bộ. Người làm bài điều phối, ra quyết định và duyệt.
 
-Số liệu trong báo cáo lấy từ ghi chép làm việc, bản sao ở [`AI-report-evidence/`](AI-report-evidence/README.md): báo cáo review của Expert ([`expert-review/`](AI-report-evidence/expert-review/)), góp ý của khách giả lập ([`customer-feedback/`](AI-report-evidence/customer-feedback/)), sổ feedback và nhật ký quyết định ([`logs/`](AI-report-evidence/logs/)), brief giao việc ([`briefs/`](AI-report-evidence/briefs/)). Bản 0.2.3 đầy đủ hơn (14 lỗi, chi tiết công cụ) ở [`logs/ai-report-0.2.3-full-before-condense.md`](AI-report-evidence/logs/ai-report-0.2.3-full-before-condense.md).
+Số liệu trong báo cáo lấy từ ghi chép làm việc, bản sao ở [`AI-report-evidence/`](../AI-report-evidence/README.md): báo cáo review của Expert ([`expert-review/`](../AI-report-evidence/expert-review/)), góp ý của khách giả lập ([`customer-feedback/`](../AI-report-evidence/customer-feedback/)), sổ feedback và nhật ký quyết định ([`logs/`](../AI-report-evidence/logs/)), brief giao việc ([`briefs/`](../AI-report-evidence/briefs/)). Bản 0.2.3 đầy đủ hơn (14 lỗi, chi tiết công cụ) ở [`logs/ai-report-0.2.3-full-before-condense.md`](../AI-report-evidence/logs/ai-report-0.2.3-full-before-condense.md).
 
 ## 1. History of change
 
@@ -60,13 +60,13 @@ Skill chủ yếu dùng làm khung và checklist, vì đầu ra phải theo khu�
 | Gate 2 | 12 Screen Specification, 7 Function, 15 Technical, 42 API Design | RELEASE CÓ ĐIỀU KIỆN | 0 Critical · 4 Major · 9 Minor | Sửa hết, áp 31 câu trả lời của khách |
 | Gate 2 đóng + wireframe HTML | Phần sửa Gate 2; 15 wireframe HTML, PDF, ảnh spec | **RELEASE** / RELEASE CÓ ĐIỀU KIỆN | 1 + 7 Minor | Sửa 7, để 1 cho LAB-5 |
 | Gate 3 | Toàn bộ gói nộp | RELEASE CÓ ĐIỀU KIỆN → kiểm diff: **RELEASE** | 0 Critical · 3 Major · 10 Minor, rồi 5 ghi chú | Sửa 2 Major + 9 Minor + 5 ghi chú; mật khẩu demo của prototype phải xử lý trước khi public repo ở LAB-5 |
-| Bản tiếng Nhật `ja/` | 135 file dịch | **CHƯA RELEASE** → kiểm diff: RELEASE CÓ ĐIỀU KIỆN | 1 Critical · 1 Major · 8 Minor, rồi 3 Minor | Sửa hết ([review](AI-report-evidence/expert-review/expert-review-lab4-ja-261126.md)) |
+| Bản tiếng Nhật `ja/` | 135 file dịch | **CHƯA RELEASE** → kiểm diff: RELEASE CÓ ĐIỀU KIỆN | 1 Critical · 1 Major · 8 Minor, rồi 3 Minor | Sửa hết ([review](../AI-report-evidence/expert-review/expert-review-lab4-ja-261126.md)) |
 
 Expert không chỉ đọc mà còn kiểm bằng máy: tính lại 11 ví dụ tính 完納奨励金 (thưởng thanh toán đúng hạn), so số trên ảnh wireframe với bảng spec, so khuôn tài liệu từng byte với chuẩn công ty, ghép từng dòng bản Việt với bản Nhật.
 
 ### 3.2 Người làm bài quyết gì
 
-Tôi không đọc từng dòng, chỉ quyết ở những điểm đổi phạm vi, cấu trúc hoặc hướng đi; phần còn lại PL tự quyết và ghi lại để Expert soát. Ai quyết điểm nào ghi ở PREMISE §5 và [nhật ký quyết định](AI-report-evidence/logs/decision-lab4-excerpt.md).
+Tôi không đọc từng dòng, chỉ quyết ở những điểm đổi phạm vi, cấu trúc hoặc hướng đi; phần còn lại PL tự quyết và ghi lại để Expert soát. Ai quyết điểm nào ghi ở PREMISE §5 và [nhật ký quyết định](../AI-report-evidence/logs/decision-lab4-excerpt.md).
 
 - **Đầu LAB-4:** bản gốc tiếng Việt; 10 màn có spec đầy đủ (đề chỉ đòi "màn hình cốt lõi"); một chuẩn tài liệu duy nhất; tiêu chí chấm cho Expert.
 - **Tiền đề:** kiến trúc to-be trên AWS Tokyo, prototype chỉ là bản thử; màn SC-01-02 tách hai khối 許可 (giấy phép của 仲卸) và 承認 (tư cách của 売買参加者).
