@@ -33,8 +33,8 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 
 | Cấp | Trên GitHub | Trường / nhãn |
 |---|---|---|
-| Epic | Issue nhãn `epic`, tiêu đề `[FG-xx] {thuật ngữ JP} — {tiếng Việt}`; 18 epic = nhóm chức năng FG-01..FG-15 của LAB-1 + `EP-PLAT` (基盤) + `EP-TEST` (総合テスト・UAT) + `EP-CLAR` (要確認) | Priority, Sprint dự kiến ghi trong thân epic |
-| Issue | Sub-issue của epic (tính năng sub-issue của GitHub) | Status, Iteration, Milestone (đợt thiết kế / mốc S4), Assignee (giả định — text theo vai: `BE-1`, `FE-2`, `QA-1`, `BrSE-1`…), Point (SWP đã review), Hours, Priority |
+| Epic | Issue nhãn `epic`, tiêu đề GitHub `[FG-xx][EPIC] English title` (tiêu đề tiếng Việt `[FG-xx] {thuật ngữ JP} — {tiếng Việt}` giữ trong `backlog.yaml` và dòng đầu thân issue); 18 epic = nhóm chức năng FG-01..FG-15 của LAB-1 + `EP-PLAT` (基盤) + `EP-TEST` (総合テスト・UAT) + `EP-CLAR` (要確認) | Priority, Sprint dự kiến ghi trong thân epic |
+| Issue | Sub-issue của epic (tính năng sub-issue của GitHub); tiêu đề GitHub `[PREFIX][ID màn hoặc function][vai] English title` — PREFIX = FG-xx / PLAT / TEST / CLAR, ID màn `SC-xx-yy` hoặc tên function / API / khối tiếng Anh, vai FE / BE / QA / INFRA / BrSE; 許可 = permit, 承認 = approval (chỉ 売買参加者), 決裁 = sign-off (người dùng chốt 2026-11-26; `check-backlog.py` kiểm) | Status, Iteration, Milestone (đợt thiết kế / mốc S4), Assignee (giả định — text theo vai: `BE-1`, `FE-2`, `QA-1`, `BrSE-1`…), Point (SWP đã review), Hours, Priority |
 | Sub-issue | Sub-issue của issue | Như issue; issue cha cộng Point / Hours của con |
 | Nhãn | `fg:FG-xx`, `feature:*`, `kind:{dev,test,design,rough,clarify}`, `role:*`, `needs-spec` (issue thô), `constraint:完納奨励金` (FG-09 và câu hỏi liên quan), `rule:{aitai-main, permit-vs-approval, human-decision, no-overwrite, versioned-rule}` | — |
 
@@ -86,100 +86,100 @@ Mỗi tài liệu LAB-4 có ít nhất một issue hoặc một dòng ở cột 
 <!-- BEGIN GEN spec-issue -->
 | Spec (mã / file LAB-4) | Epic | Issue / sub-issue | Phần spec chưa thành issue và vì sao |
 |---|---|---|---|
-| `specs/delivery/function-specifications/DELIVERY_FUNC.md` | EP-FG06 | A-FG06-03, A-FG06-04 (2 sub), A-FG06-05, A-FG06-06 (2 sub), A-FG06-07 (2 sub) | — |
+| `specs/delivery/function-specifications/DELIVERY_FUNC.md` | EP-FG06 | #278 A-FG06-03, #279 A-FG06-04 (2 sub), A-FG06-05, A-FG06-06 (2 sub), A-FG06-07 (2 sub) | — |
 | `specs/delivery/screen-specification/SC-06-02_SPEC.md` | EP-FG06 | A-FG06-08 (2 sub) | — |
 | `specs/delivery/screen-specification/SC-06-04_SPEC.md` | EP-FG06 | A-FG06-09 (2 sub) | — |
 | `specs/delivery/screen-specification/SC-06-05_SPEC.md` | EP-FG06 | A-FG06-10 (2 sub) | — |
 | `specs/delivery/technical-design/DEL_EXCEPTION_DISPUTE_TECH.md` | EP-FG06 | A-FG06-06 (2 sub), A-FG06-07 (2 sub), A-FG06-12 | — |
-| `specs/delivery/technical-design/DEL_RECORD_TECH.md` | EP-FG03, EP-FG04, EP-FG06 | A-FG03-13.1, A-FG03-16, A-FG04-14.3, A-FG06-04 (2 sub), A-FG06-11 | — |
-| `specs/incentive/function-specifications/INC_FUNC.md` | EP-FG09 | B-FG09-03, B-FG09-04, B-FG09-05, B-FG09-06, B-FG09-07, B-FG09-08, B-FG09-09, B-FG09-10 (3 sub) | — |
-| `specs/incentive/screen-specification/SC-09-04_SPEC.md` | EP-FG09 | B-FG09-12, B-FG09-13 (3 sub), B-FG09-18 | — |
-| `specs/incentive/technical-design/INC_ENGINE_TECH.md` | EP-CLAR, EP-FG09, EP-FG10 | B-FG09-01, B-FG09-03, B-FG09-04, B-FG09-05, B-FG09-06, B-FG09-07, B-FG09-08, B-FG09-09, B-FG09-10 (3 sub), B-FG09-11, B-FG09-12, B-FG09-14, B-FG09-15, B-FG09-16, B-FG09-17, B-FG09-18, B-FG09-20 (2 sub), B-FG10-12 (4 sub), B-CLR-03, B-CLR-06, B-CLR-07, B-CLR-08, B-CLR-10, B-CLR-11, B-CLR-12, B-CLR-13, B-FG09-21 (4 sub), B-CLR-24 | — |
-| `specs/lot/function-specifications/LOT_FUNC.md` | EP-CLAR, EP-FG03 | A-FG03-03, A-FG03-04, A-FG03-07, A-FG03-11, A-FG03-14 (3 sub), A-CLR-13, A-CLR-14, A-CLR-15 | — |
-| `specs/lot/screen-specification/SC-03-01_SPEC.md` | EP-FG03 | A-FG03-08 (2 sub) | — |
-| `specs/lot/screen-specification/SC-03-05_SPEC.md` | EP-CLAR, EP-FG03 | A-FG03-09 (2 sub), A-CLR-12 | — |
-| `specs/lot/technical-design/LOT_INSPECTION_RECORD_TECH.md` | EP-FG03 | A-FG03-06 (2 sub), A-FG03-11, A-FG03-16 | — |
-| `specs/lot/technical-design/LOT_REGISTER_TECH.md` | EP-FG03 | A-FG03-05 (3 sub), A-FG03-10, A-FG03-12.2 | — |
-| `specs/party/function-specifications/PARTY_FUNC.md` | EP-FG01 | A-FG01-05, A-FG01-06, A-FG01-08.4, A-FG01-11, A-FG01-18 | — |
-| `specs/party/screen-specification/SC-01-02_SPEC.md` | EP-CLAR, EP-FG01 | A-FG01-09 (4 sub), A-CLR-19, A-CLR-20 | — |
-| `specs/party/technical-design/PTY_APPROVAL_LIFECYCLE_TECH.md` | EP-CLAR, EP-FG01 | A-FG01-04, A-FG01-06, A-FG01-08 (4 sub), A-FG01-11, A-CLR-21, A-FG01-18 | — |
-| `specs/party/technical-design/PTY_PERMIT_LIFECYCLE_TECH.md` | EP-FG01 | A-FG01-07 (3 sub), A-FG01-10 | — |
+| `specs/delivery/technical-design/DEL_RECORD_TECH.md` | EP-FG03, EP-FG04, EP-FG06 | #270 A-FG03-13.1, A-FG03-16, A-FG04-14.3, #279 A-FG06-04 (2 sub), A-FG06-11 | — |
+| `specs/incentive/function-specifications/INC_FUNC.md` | EP-FG09 | #177 B-FG09-03, #178 B-FG09-04, #238 B-FG09-05, #284 B-FG09-06, B-FG09-07, B-FG09-08, B-FG09-09, B-FG09-10 (3 sub) | — |
+| `specs/incentive/screen-specification/SC-09-04_SPEC.md` | EP-FG09 | #239 B-FG09-12, B-FG09-13 (3 sub), B-FG09-18 | — |
+| `specs/incentive/technical-design/INC_ENGINE_TECH.md` | EP-CLAR, EP-FG09, EP-FG10 | #106 B-FG09-01, #177 B-FG09-03, #178 B-FG09-04, #238 B-FG09-05, #284 B-FG09-06, B-FG09-07, B-FG09-08, B-FG09-09, B-FG09-10 (3 sub), #285 B-FG09-11, #239 B-FG09-12, B-FG09-14, B-FG09-15, B-FG09-16, #240 B-FG09-17, B-FG09-18, #180 B-FG09-20 (2 sub), #186 B-FG10-12 (4 sub), #38 B-CLR-03, #40 B-CLR-06, #41 B-CLR-07, #42 B-CLR-08, #43 B-CLR-10, #44 B-CLR-11, #45 B-CLR-12, #46 B-CLR-13, #121 B-FG09-21 (4 sub), #87 B-CLR-24 | — |
+| `specs/lot/function-specifications/LOT_FUNC.md` | EP-CLAR, EP-FG03 | #23 A-FG03-03, #230 A-FG03-04, #233 A-FG03-07, A-FG03-11, #96 A-FG03-14 (3 sub), #26 A-CLR-13, #27 A-CLR-14, #28 A-CLR-15 | — |
+| `specs/lot/screen-specification/SC-03-01_SPEC.md` | EP-FG03 | #268 A-FG03-08 (2 sub) | — |
+| `specs/lot/screen-specification/SC-03-05_SPEC.md` | EP-CLAR, EP-FG03 | #269 A-FG03-09 (2 sub), #25 A-CLR-12 | — |
+| `specs/lot/technical-design/LOT_INSPECTION_RECORD_TECH.md` | EP-FG03 | #232 A-FG03-06 (2 sub), A-FG03-11, A-FG03-16 | — |
+| `specs/lot/technical-design/LOT_REGISTER_TECH.md` | EP-FG03 | #231 A-FG03-05 (3 sub), A-FG03-10, #158 A-FG03-12.2 | — |
+| `specs/party/function-specifications/PARTY_FUNC.md` | EP-FG01 | #224 A-FG01-05, #90 A-FG01-06, #229 A-FG01-08.4, A-FG01-11, A-FG01-18 | — |
+| `specs/party/screen-specification/SC-01-02_SPEC.md` | EP-CLAR, EP-FG01 | #265 A-FG01-09 (4 sub), #31 A-CLR-19, #32 A-CLR-20 | — |
+| `specs/party/technical-design/PTY_APPROVAL_LIFECYCLE_TECH.md` | EP-CLAR, EP-FG01 | #151 A-FG01-04, #90 A-FG01-06, #153 A-FG01-08 (4 sub), A-FG01-11, #33 A-CLR-21, A-FG01-18 | — |
+| `specs/party/technical-design/PTY_PERMIT_LIFECYCLE_TECH.md` | EP-FG01 | #152 A-FG01-07 (3 sub), A-FG01-10 | — |
 | `specs/rule/function-specifications/RULE_FUNC.md` | EP-FG10 | B-FG10-02, B-FG10-03, B-FG10-04, B-FG10-05, B-FG10-06, B-FG10-07, B-FG10-08 | — |
 | `specs/rule/screen-specification/SC-10-04_SPEC.md` | EP-FG10 | B-FG10-08, B-FG10-09 (2 sub), B-FG10-10 | — |
-| `specs/rule/technical-design/RULE_VERSION_TECH.md` | EP-CLAR, EP-FG10 | B-FG10-02, B-FG10-03, B-FG10-04, B-FG10-05, B-FG10-06, B-FG10-07, B-FG10-08, B-FG10-10, B-CLR-01 | — |
-| `specs/settle/function-specifications/SETTLE_FUNC.md` | EP-FG07, EP-FG08 | B-FG07-02, B-FG07-03, B-FG07-04, B-FG08-02, B-FG08-03 | — |
+| `specs/rule/technical-design/RULE_VERSION_TECH.md` | EP-CLAR, EP-FG10 | B-FG10-02, B-FG10-03, B-FG10-04, B-FG10-05, B-FG10-06, B-FG10-07, B-FG10-08, B-FG10-10, #36 B-CLR-01 | — |
+| `specs/settle/function-specifications/SETTLE_FUNC.md` | EP-FG07, EP-FG08 | #280 B-FG07-02, B-FG07-03, B-FG07-04, #173 B-FG08-02, #237 B-FG08-03 | — |
 | `specs/settle/screen-specification/SC-07-02_SPEC.md` | EP-FG07 | B-FG07-05 (2 sub), B-FG07-06 | — |
-| `specs/settle/screen-specification/SC-08-03_SPEC.md` | EP-FG08 | B-FG08-06 (2 sub), B-FG08-07 | — |
-| `specs/settle/technical-design/STL_CORRECTION_DECIDE_TECH.md` | EP-FG08 | B-FG08-02, B-FG08-03, B-FG08-04, B-FG08-05, B-FG08-07 | — |
-| `specs/settle/technical-design/STL_DAY_CLOSE_TECH.md` | EP-FG07 | B-FG07-02, B-FG07-03, B-FG07-06 | — |
+| `specs/settle/screen-specification/SC-08-03_SPEC.md` | EP-FG08 | #283 B-FG08-06 (2 sub), B-FG08-07 | — |
+| `specs/settle/technical-design/STL_CORRECTION_DECIDE_TECH.md` | EP-FG08 | #173 B-FG08-02, #237 B-FG08-03, #281 B-FG08-04, #282 B-FG08-05, B-FG08-07 | — |
+| `specs/settle/technical-design/STL_DAY_CLOSE_TECH.md` | EP-FG07 | #280 B-FG07-02, B-FG07-03, B-FG07-06 | — |
 | `specs/settle/technical-design/STL_DEVICE_LOST_TECH.md` | EP-FG07 | B-FG07-04, B-FG07-06 | — |
-| `specs/trade/function-specifications/TRADE_FUNC.md` | EP-CLAR, EP-FG04, EP-FG05 | A-FG04-03 (2 sub), A-FG04-04, A-FG04-05 (3 sub), A-FG04-06, A-FG04-07, A-FG04-08 (2 sub), A-FG05-02, A-FG05-03 (3 sub), A-FG05-04, A-CLR-16, A-CLR-18, C-CLR-11 | — |
+| `specs/trade/function-specifications/TRADE_FUNC.md` | EP-CLAR, EP-FG04, EP-FG05 | #271 A-FG04-03 (2 sub), #272 A-FG04-04, A-FG04-05 (3 sub), #273 A-FG04-06, A-FG04-07, A-FG04-08 (2 sub), A-FG05-02, A-FG05-03 (3 sub), #275 A-FG05-04, #29 A-CLR-16, #30 A-CLR-18, #61 C-CLR-11 | — |
 | `specs/trade/screen-specification/SC-04-01_SPEC.md` | EP-FG04 | A-FG04-09 (3 sub) | — |
 | `specs/trade/screen-specification/SC-05-02_SPEC.md` | EP-FG05 | A-FG05-05 (2 sub) | — |
-| `specs/trade/technical-design/TRADE_AITAI_CONFIRM_TECH.md` | EP-FG04 | A-FG04-05 (3 sub), A-FG04-10, A-FG04-13.5 | — |
-| `specs/trade/technical-design/TRADE_QUALIFICATION_CHECK_TECH.md` | EP-FG01, EP-FG04 | A-FG01-12.4, A-FG04-02, A-FG04-03 (2 sub), A-FG04-11 | — |
+| `specs/trade/technical-design/TRADE_AITAI_CONFIRM_TECH.md` | EP-FG04 | A-FG04-05 (3 sub), A-FG04-10, #164 A-FG04-13.5 | — |
+| `specs/trade/technical-design/TRADE_QUALIFICATION_CHECK_TECH.md` | EP-FG01, EP-FG04 | #155 A-FG01-12.4, #234 A-FG04-02, #271 A-FG04-03 (2 sub), A-FG04-11 | — |
 | `specs/trade/technical-design/TRADE_SAME_DAY_FIX_TECH.md` | EP-FG04 | A-FG04-08 (2 sub), A-FG04-12 | — |
-| `specs/trade/technical-design/TRADE_SERI_CONFIRM_TECH.md` | EP-FG05 | A-FG05-03 (3 sub), A-FG05-04, A-FG05-06 | — |
-| API Design `delivery/` (API-DEL-001..006, 6 file) | EP-FG06 | A-FG06-03, A-FG06-04 (2 sub), A-FG06-06 (2 sub), A-FG06-07 (2 sub), A-FG06-13.1 | — |
-| API Design `incentive/` (API-INC-001..004, 4 file) | EP-FG09 | B-FG09-10.1, B-FG09-10.3, B-FG09-11, B-FG09-13.1, B-FG09-13.2 | — |
-| API Design `lot/` (API-LOT-001..006, 6 file) | EP-FG03, EP-FG04 | A-FG03-03, A-FG03-04, A-FG03-05 (3 sub), A-FG03-06 (2 sub), A-FG03-08.1, A-FG03-08.2, A-FG03-14.1, A-FG04-09.1 | — |
-| API Design `party/` (API-PTY-001..007, 7 file) | EP-FG01 | A-FG01-05, A-FG01-06, A-FG01-07.1, A-FG01-07.2, A-FG01-08.1, A-FG01-08.2, A-FG01-08.3, A-FG01-09.1, A-FG01-09.3, A-FG01-13 (4 sub), A-FG01-20 (2 sub) | — |
+| `specs/trade/technical-design/TRADE_SERI_CONFIRM_TECH.md` | EP-FG05 | A-FG05-03 (3 sub), #275 A-FG05-04, A-FG05-06 | — |
+| API Design `delivery/` (API-DEL-001..006, 6 file) | EP-FG06 | #278 A-FG06-03, #279 A-FG06-04 (2 sub), A-FG06-06 (2 sub), A-FG06-07 (2 sub), A-FG06-13.1 | — |
+| API Design `incentive/` (API-INC-001..004, 4 file) | EP-FG09 | B-FG09-10.1, B-FG09-10.3, #285 B-FG09-11, B-FG09-13.1, B-FG09-13.2 | — |
+| API Design `lot/` (API-LOT-001..006, 6 file) | EP-FG03, EP-FG04 | #23 A-FG03-03, #230 A-FG03-04, #231 A-FG03-05 (3 sub), #232 A-FG03-06 (2 sub), A-FG03-08.1, A-FG03-08.2, #159 A-FG03-14.1, A-FG04-09.1 | — |
+| API Design `party/` (API-PTY-001..007, 7 file) | EP-FG01 | #224 A-FG01-05, #90 A-FG01-06, #225 A-FG01-07.1, #263 A-FG01-07.2, #227 A-FG01-08.1, #228 A-FG01-08.2, #264 A-FG01-08.3, A-FG01-09.1, A-FG01-09.3, #92 A-FG01-13 (4 sub), A-FG01-20 (2 sub) | — |
 | API Design `rule/` (API-RULE-001..006, 6 file) | EP-FG10 | B-FG10-02, B-FG10-05, B-FG10-07, B-FG10-08, B-FG10-09.1 | — |
-| API Design `settle/` (API-STL-001..005, 5 file) | EP-FG07, EP-FG08 | B-FG07-02, B-FG07-03, B-FG07-04, B-FG07-05.1, B-FG08-02, B-FG08-03, B-FG08-06.1 | — |
-| API Design `trade/` (API-TRD-001..008, 8 file) | EP-FG04, EP-FG05 | A-FG04-04, A-FG04-05 (3 sub), A-FG04-06, A-FG04-07, A-FG04-08 (2 sub), A-FG04-09.1, A-FG04-09.3, A-FG04-13.1, A-FG04-13.2, A-FG04-13.4, A-FG05-02, A-FG05-03 (3 sub), A-FG05-04 | — |
-| Database Design `ADJUST_DB.md` | EP-CLAR, EP-FG08 | B-FG08-01, B-FG08-08 (3 sub), B-CLR-15 | — |
-| Database Design `BILLING_DB.md` | EP-CLAR, EP-FG09, EP-FG11 | B-FG09-02, B-FG09-04, B-FG09-10.2, B-FG09-19 (5 sub), B-CLR-03, C-FG11-08 | ADR-007 §6 Q-ARCH-12 (税区分 của 完納奨励金 ở IF-ACC-01), BILLING_DB 4.40–4.42, RPT-07, mẫu email FORM-INC-01 — Không thuộc engine 完納奨励金: Q-ARCH-12 → issue làm rõ C-CLR-17; bảng BILLING_DB 4.40–4.42 → C-FG11-08; RPT-07 → C-FG11-03.1; mẫu email FORM-INC-01 → B-FG09-20, C-FG12-04 |
-| Database Design `CLOSE_DB.md` | EP-CLAR, EP-FG07, EP-FG10 | B-FG07-01, B-FG10-12 (4 sub), B-CLR-06 | — |
-| Database Design `IAM_AUDIT_DB.md` | EP-CLAR, EP-FG02, EP-FG03, EP-FG12, EP-FG13 | A-FG03-13.1, C-FG02-01, C-FG02-02, C-FG02-03, C-FG02-04, C-FG02-06.1, C-FG02-07, C-FG02-08, C-FG02-09, C-FG02-10, C-FG02-11, C-FG02-15 (2 sub), C-FG02-17, C-FG13-01, C-FG13-02, C-FG13-03, C-FG13-09, C-FG12-01, C-CLR-05, A-FG03-17, C-FG02-23 | — |
-| Database Design `INCENTIVE_DB.md` | EP-CLAR, EP-FG09 | B-FG09-01, B-FG09-12, B-FG09-14, B-FG09-15, B-FG09-16, B-FG09-17, B-CLR-02, B-CLR-13, B-CLR-14, C-CLR-14, B-FG09-21 (4 sub) | — |
-| Database Design `LOT_DB.md` | EP-FG03 | A-FG03-01, A-FG03-02, A-FG03-12.2, A-FG03-14.2, A-FG03-15 | — |
-| Database Design `MKT_DB.md` | EP-CLAR, EP-FG01, EP-FG03, EP-FG04, EP-FG06, EP-FG07, EP-FG11, EP-PLAT | A-FG01-01, A-FG01-04, A-FG03-01, A-FG03-02, A-FG03-14 (3 sub), A-FG03-16, A-FG04-02, A-FG06-01, A-CLR-11, B-FG07-01, B-CLR-03, C-PLAT-05, C-FG11-02 (5 sub), C-CLR-05 | — |
-| Database Design `PARTY_DB.md` | EP-FG01 | A-FG01-01, A-FG01-02, A-FG01-03, A-FG01-14 | — |
-| Database Design `RULE_DB.md` | EP-CLAR, EP-FG09, EP-FG10 | B-FG09-06, B-FG10-01, B-FG10-13 (3 sub), C-CLR-14 | — |
-| Database Design `TRADE_DB.md` | EP-FG04, EP-FG05, EP-FG06 | A-FG04-01, A-FG04-14 (3 sub), A-FG05-01, A-FG05-07.2, A-FG06-01, A-FG06-02 | — |
-| `ARCHITECTURE` | EP-CLAR, EP-FG02, EP-FG03, EP-FG11, EP-FG12, EP-FG13, EP-FG14, EP-FG15, EP-PLAT, EP-TEST | B-CLR-03, C-PLAT-01 (4 sub), C-PLAT-02, C-PLAT-03, C-PLAT-04, C-FG02-05, C-FG02-12, C-FG13-04, C-FG12-01, C-FG12-02, C-FG12-03, C-FG12-06, C-FG11-04 (5 sub), C-FG11-05 (2 sub), C-FG11-06, C-FG11-07, C-FG14-01, C-FG14-05, C-FG14-07, C-FG15-01 (2 sub), C-TEST-02, C-TEST-04 (2 sub), C-TEST-05, C-CLR-03, C-CLR-04, C-CLR-08, C-CLR-10, C-CLR-11, C-CLR-14, A-FG03-17 | — |
-| `ADR-001` | EP-PLAT | C-PLAT-01 (4 sub), C-PLAT-02, C-PLAT-03, C-PLAT-04 | — |
-| `ADR-002` | EP-CLAR, EP-FG02, EP-FG09, EP-FG13, EP-PLAT, EP-TEST | B-FG09-10.3, C-PLAT-04, C-FG02-02, C-FG02-03, C-FG02-04, C-FG02-05, C-FG02-06 (3 sub), C-FG02-07, C-FG02-12, C-FG02-16, C-FG13-04, C-TEST-05, C-CLR-01, C-CLR-02, C-CLR-03, C-CLR-11, C-FG02-23 | — |
-| `ADR-003` | EP-CLAR, EP-FG01, EP-FG02, EP-TEST | A-FG01-02, A-CLR-11, C-FG02-08, C-FG02-09, C-FG02-15 (2 sub), C-FG02-17, C-TEST-03 (2 sub), C-TEST-05, C-CLR-05 | — |
-| `ADR-004` | EP-FG08 | B-FG08-04 | — |
-| `ADR-005` | EP-CLAR, EP-FG03, EP-FG04, EP-FG07, EP-FG08, EP-FG10 | A-FG03-15, A-FG04-14 (3 sub), B-FG07-02, B-FG08-05, B-FG10-12 (4 sub), B-CLR-15, B-CLR-22, A-FG03-21, A-FG04-16, B-FG10-16 (2 sub) | — |
-| `ADR-006` | EP-CLAR, EP-FG10 | A-CLR-12, B-FG10-04, B-FG10-06, B-FG10-11 (5 sub), B-CLR-01 | — |
-| `ADR-007` | EP-CLAR, EP-FG08, EP-FG09 | B-FG08-05, B-FG09-04, B-FG09-05, B-FG09-08, B-CLR-02, B-CLR-10, B-CLR-11, B-CLR-12, B-CLR-13, B-CLR-14, C-CLR-17 | — |
-| `ADR-008` | EP-CLAR, EP-FG02, EP-FG03, EP-FG04, EP-FG06 | A-FG03-13 (2 sub), A-FG04-13.5, A-FG06-05, C-FG02-05, C-CLR-04, C-CLR-11, A-FG03-17, A-FG03-19, A-CLR-22 | — |
-| `ADR-009` | EP-CLAR, EP-FG11, EP-FG13, EP-FG14, EP-PLAT, EP-TEST | C-PLAT-01 (4 sub), C-FG13-01, C-FG13-03, C-FG13-05 (2 sub), C-FG13-09, C-FG11-01 (3 sub), C-FG14-03, C-FG14-04, C-FG14-05, C-TEST-04 (2 sub), C-TEST-06, C-CLR-08, C-CLR-09 | — |
+| API Design `settle/` (API-STL-001..005, 5 file) | EP-FG07, EP-FG08 | #280 B-FG07-02, B-FG07-03, B-FG07-04, B-FG07-05.1, #173 B-FG08-02, #237 B-FG08-03, B-FG08-06.1 | — |
+| API Design `trade/` (API-TRD-001..008, 8 file) | EP-FG04, EP-FG05 | #272 A-FG04-04, A-FG04-05 (3 sub), #273 A-FG04-06, A-FG04-07, A-FG04-08 (2 sub), A-FG04-09.1, A-FG04-09.3, A-FG04-13.1, A-FG04-13.2, A-FG04-13.4, A-FG05-02, A-FG05-03 (3 sub), #275 A-FG05-04 | — |
+| Database Design `ADJUST_DB.md` | EP-CLAR, EP-FG08 | #104 B-FG08-01, #105 B-FG08-08 (3 sub), #48 B-CLR-15 | — |
+| Database Design `BILLING_DB.md` | EP-CLAR, EP-FG09, EP-FG11 | #107 B-FG09-02, #178 B-FG09-04, B-FG09-10.2, #179 B-FG09-19 (5 sub), #38 B-CLR-03, #262 C-FG11-08 | ADR-007 §6 Q-ARCH-12 (税区分 của 完納奨励金 ở IF-ACC-01), BILLING_DB 4.40–4.42, RPT-07, mẫu email FORM-INC-01 — Không thuộc engine 完納奨励金: Q-ARCH-12 → issue làm rõ C-CLR-17; bảng BILLING_DB 4.40–4.42 → C-FG11-08; RPT-07 → C-FG11-03.1; mẫu email FORM-INC-01 → B-FG09-20, C-FG12-04 |
+| Database Design `CLOSE_DB.md` | EP-CLAR, EP-FG07, EP-FG10 | #34 B-FG07-01, #186 B-FG10-12 (4 sub), #40 B-CLR-06 | — |
+| Database Design `IAM_AUDIT_DB.md` | EP-CLAR, EP-FG02, EP-FG03, EP-FG12, EP-FG13 | #270 A-FG03-13.1, #255 C-FG02-01, C-FG02-02, C-FG02-03, C-FG02-04, C-FG02-06.1, C-FG02-07, C-FG02-08, C-FG02-09, C-FG02-10, C-FG02-11, C-FG02-15 (2 sub), C-FG02-17, #256 C-FG13-01, C-FG13-02, C-FG13-03, C-FG13-09, C-FG12-01, #55 C-CLR-05, #120 A-FG03-17, C-FG02-23 | — |
+| Database Design `INCENTIVE_DB.md` | EP-CLAR, EP-FG09 | #106 B-FG09-01, #239 B-FG09-12, B-FG09-14, B-FG09-15, B-FG09-16, #240 B-FG09-17, #37 B-CLR-02, #46 B-CLR-13, #47 B-CLR-14, #63 C-CLR-14, #121 B-FG09-21 (4 sub) | — |
+| Database Design `LOT_DB.md` | EP-FG03 | #93 A-FG03-01, #156 A-FG03-02, #158 A-FG03-12.2, #160 A-FG03-14.2, #97 A-FG03-15 | — |
+| Database Design `MKT_DB.md` | EP-CLAR, EP-FG01, EP-FG03, EP-FG04, EP-FG06, EP-FG07, EP-FG11, EP-PLAT | #22 A-FG01-01, #151 A-FG01-04, #93 A-FG03-01, #156 A-FG03-02, #96 A-FG03-14 (3 sub), A-FG03-16, #234 A-FG04-02, #236 A-FG06-01, #24 A-CLR-11, #34 B-FG07-01, #38 B-CLR-03, #192 C-PLAT-05, C-FG11-02 (5 sub), #55 C-CLR-05 | — |
+| Database Design `PARTY_DB.md` | EP-FG01 | #22 A-FG01-01, #88 A-FG01-02, #89 A-FG01-03, A-FG01-14 | — |
+| Database Design `RULE_DB.md` | EP-CLAR, EP-FG09, EP-FG10 | #284 B-FG09-06, #35 B-FG10-01, #109 B-FG10-13 (3 sub), #63 C-CLR-14 | — |
+| Database Design `TRADE_DB.md` | EP-FG04, EP-FG05, EP-FG06 | #162 A-FG04-01, #99 A-FG04-14 (3 sub), #235 A-FG05-01, #276 A-FG05-07.2, #236 A-FG06-01, #277 A-FG06-02 | — |
+| `ARCHITECTURE` | EP-CLAR, EP-FG02, EP-FG03, EP-FG11, EP-FG12, EP-FG13, EP-FG14, EP-FG15, EP-PLAT, EP-TEST | #38 B-CLR-03, #2 C-PLAT-01 (4 sub), #253 C-PLAT-02, #3 C-PLAT-03, #111 C-PLAT-04, C-FG02-05, C-FG02-12, C-FG13-04, C-FG12-01, C-FG12-02, C-FG12-03, C-FG12-06, C-FG11-04 (5 sub), C-FG11-05 (2 sub), #115 C-FG11-06, #197 C-FG11-07, C-FG14-01, #258 C-FG14-05, C-FG14-07, #259 C-FG15-01 (2 sub), #116 C-TEST-02, #118 C-TEST-04 (2 sub), #119 C-TEST-05, #53 C-CLR-03, #54 C-CLR-04, #58 C-CLR-08, #60 C-CLR-10, #61 C-CLR-11, #63 C-CLR-14, #120 A-FG03-17 | — |
+| `ADR-001` | EP-PLAT | #2 C-PLAT-01 (4 sub), #253 C-PLAT-02, #3 C-PLAT-03, #111 C-PLAT-04 | — |
+| `ADR-002` | EP-CLAR, EP-FG02, EP-FG09, EP-FG13, EP-PLAT, EP-TEST | B-FG09-10.3, #111 C-PLAT-04, C-FG02-02, C-FG02-03, C-FG02-04, C-FG02-05, #114 C-FG02-06 (3 sub), C-FG02-07, C-FG02-12, C-FG02-16, C-FG13-04, #119 C-TEST-05, #51 C-CLR-01, #52 C-CLR-02, #53 C-CLR-03, #61 C-CLR-11, C-FG02-23 | — |
+| `ADR-003` | EP-CLAR, EP-FG01, EP-FG02, EP-TEST | #88 A-FG01-02, #24 A-CLR-11, C-FG02-08, C-FG02-09, C-FG02-15 (2 sub), C-FG02-17, #117 C-TEST-03 (2 sub), #119 C-TEST-05, #55 C-CLR-05 | — |
+| `ADR-004` | EP-FG08 | #281 B-FG08-04 | — |
+| `ADR-005` | EP-CLAR, EP-FG03, EP-FG04, EP-FG07, EP-FG08, EP-FG10 | #97 A-FG03-15, #99 A-FG04-14 (3 sub), #280 B-FG07-02, #282 B-FG08-05, #186 B-FG10-12 (4 sub), #48 B-CLR-15, #49 B-CLR-22, #71 A-FG03-21, #73 A-FG04-16, #140 B-FG10-16 (2 sub) | — |
+| `ADR-006` | EP-CLAR, EP-FG10 | #25 A-CLR-12, B-FG10-04, B-FG10-06, #108 B-FG10-11 (5 sub), #36 B-CLR-01 | — |
+| `ADR-007` | EP-CLAR, EP-FG08, EP-FG09 | #282 B-FG08-05, #178 B-FG09-04, #238 B-FG09-05, B-FG09-08, #37 B-CLR-02, #43 B-CLR-10, #44 B-CLR-11, #45 B-CLR-12, #46 B-CLR-13, #47 B-CLR-14, #85 C-CLR-17 | — |
+| `ADR-008` | EP-CLAR, EP-FG02, EP-FG03, EP-FG04, EP-FG06 | #95 A-FG03-13 (2 sub), #164 A-FG04-13.5, A-FG06-05, C-FG02-05, #54 C-CLR-04, #61 C-CLR-11, #120 A-FG03-17, #69 A-FG03-19, #86 A-CLR-22 | — |
+| `ADR-009` | EP-CLAR, EP-FG11, EP-FG13, EP-FG14, EP-PLAT, EP-TEST | #2 C-PLAT-01 (4 sub), #256 C-FG13-01, C-FG13-03, C-FG13-05 (2 sub), C-FG13-09, C-FG11-01 (3 sub), #257 C-FG14-03, C-FG14-04, #258 C-FG14-05, #118 C-TEST-04 (2 sub), C-TEST-06, #58 C-CLR-08, #59 C-CLR-09 | — |
 | `ADR-010` | — | — | Không có việc làm riêng: ADR-010 là ranh giới phạm vi (option tách riêng, người quyết cuối, không OCR / AI) — giữ bằng nhãn rule:human-decision, DoD chung mục 1.2 và việc không đưa option vào backlog 第1期 |
-| SCREEN-LIST C2: SC-01-01, SC-01-05, SC-01-06; batch SC-01-B1 (phần cảnh báo) | EP-FG01 | A-FG01-12 (2 sub), A-FG01-16 (2 sub) | chưa có Screen Specification / API Design (L4-D08) |
-| SCREEN-LIST C2: SC-01-03, SC-01-04 (DEP-15) | EP-FG01 | A-FG01-13 (4 sub), A-FG01-17 | API đã có, chưa có Screen Specification |
-| SCREEN-LIST C3: SC-03-02 (DEP-07) | EP-FG03 | A-FG03-12 (2 sub), A-FG03-18 | chỉ có wireframe (L4-D05), chưa có API Design / Screen Spec |
-| SCREEN-LIST C3: SC-03-07 + module sync (DEP-04) | EP-FG03 | A-FG03-13 (2 sub), A-FG03-19 | chưa có Technical Design / API Design sync, màn chỉ có wireframe |
-| SCREEN-LIST C3: SC-03-03, SC-03-04 (gộp SC-03-06); thao tác 販売公開 / 販売終了 | EP-FG03 | A-FG03-14 (3 sub), A-FG03-20 (2 sub) | màn mức List; thao tác đổi trạng thái chưa có spec (A-GAP-01) |
-| DEP-05 fn_lot_carry_over | EP-FG03 | A-FG03-15, A-FG03-21 | chưa có Function Spec |
-| SCREEN-LIST C4: SC-04-02, SC-04-03, SC-04-04, SC-04-05 (gộp SC-04-06), SC-04-07 | EP-FG04 | A-FG04-13 (5 sub), A-FG04-15 (3 sub) | chưa có Screen Specification (SC-04-05 có wireframe; SC-04-07 thiếu cả API Design) |
-| DEP-06 fn_trade_late_entry, fn_lot_late_entry, fn_delivery_record cờ late | EP-FG04 | A-FG04-14 (3 sub), A-FG04-16 | chưa có Function Spec |
-| SCREEN-LIST C4: SC-05-01 (DEP-10) | EP-FG05 | A-FG05-07 (2 sub), A-FG05-08 | chưa có API Design / Screen Spec |
-| SCREEN-LIST C5: SC-06-01, SC-06-06 | EP-FG06 | A-FG06-13 (2 sub), A-FG06-14 (2 sub) | màn mức List, chưa có Screen Specification / API in |
+| SCREEN-LIST C2: SC-01-01, SC-01-05, SC-01-06; batch SC-01-B1 (phần cảnh báo) | EP-FG01 | #91 A-FG01-12 (2 sub), #66 A-FG01-16 (2 sub) | chưa có Screen Specification / API Design (L4-D08) |
+| SCREEN-LIST C2: SC-01-03, SC-01-04 (DEP-15) | EP-FG01 | #92 A-FG01-13 (4 sub), #67 A-FG01-17 | API đã có, chưa có Screen Specification |
+| SCREEN-LIST C3: SC-03-02 (DEP-07) | EP-FG03 | #94 A-FG03-12 (2 sub), #68 A-FG03-18 | chỉ có wireframe (L4-D05), chưa có API Design / Screen Spec |
+| SCREEN-LIST C3: SC-03-07 + module sync (DEP-04) | EP-FG03 | #95 A-FG03-13 (2 sub), #69 A-FG03-19 | chưa có Technical Design / API Design sync, màn chỉ có wireframe |
+| SCREEN-LIST C3: SC-03-03, SC-03-04 (gộp SC-03-06); thao tác 販売公開 / 販売終了 | EP-FG03 | #96 A-FG03-14 (3 sub), #70 A-FG03-20 (2 sub) | màn mức List; thao tác đổi trạng thái chưa có spec (A-GAP-01) |
+| DEP-05 fn_lot_carry_over | EP-FG03 | #97 A-FG03-15, #71 A-FG03-21 | chưa có Function Spec |
+| SCREEN-LIST C4: SC-04-02, SC-04-03, SC-04-04, SC-04-05 (gộp SC-04-06), SC-04-07 | EP-FG04 | #98 A-FG04-13 (5 sub), #72 A-FG04-15 (3 sub) | chưa có Screen Specification (SC-04-05 có wireframe; SC-04-07 thiếu cả API Design) |
+| DEP-06 fn_trade_late_entry, fn_lot_late_entry, fn_delivery_record cờ late | EP-FG04 | #99 A-FG04-14 (3 sub), #73 A-FG04-16 | chưa có Function Spec |
+| SCREEN-LIST C4: SC-05-01 (DEP-10) | EP-FG05 | #100 A-FG05-07 (2 sub), #74 A-FG05-08 | chưa có API Design / Screen Spec |
+| SCREEN-LIST C5: SC-06-01, SC-06-06 | EP-FG06 | #101 A-FG06-13 (2 sub), #75 A-FG06-14 (2 sub) | màn mức List, chưa có Screen Specification / API in |
 | Q-LOT-02 ngưỡng tô vàng chênh SL 仮受付 / 本登録 | — | — | khách để sau (FB-CUS-287); không làm ở 第1期 trừ khi khách mở lại |
 | SC-01-07, SC-04-08, SC-06-03, SC-05-03 (SCREEN-LIST §3) | — | — | không tính ở 第1期: 第2期 / bỏ / gộp SC-04-04 (luật 6 với SC-01-07) |
-| ADR-008 §6 E-18 (PIN offline), E-21 (scan 受入証憑) | EP-CLAR | C-CLR-04, A-CLR-22 | E-18 (đổi người bằng PIN khi mất mạng) → issue làm rõ C-CLR-04; E-21 (scan 受入証憑) → issue làm rõ A-CLR-22 |
-| SCREEN-LIST C7: SC-09-01, SC-09-02, SC-09-03 (DEP-11) | EP-CLAR, EP-FG09 | B-FG09-19 (5 sub), B-FG09-22 (2 sub), B-CLR-03 | Chưa có Screen Specification / API Design (L4-D08); K2 phân bổ FIFO đã spec nên tách thành issue lá B-FG09-04, phần màn + import để thô |
-| SCREEN-LIST C7: SC-09-05, batch SC-09-B1 | EP-CLAR, EP-FG09 | B-FG09-20 (2 sub), B-CLR-05 | Chưa có Screen Specification (L4-D08) |
-| SCREEN-LIST C6: SC-07-01, SC-07-03, SC-07-04, batch SC-07-B2 | EP-FG07 | B-FG07-07 (3 sub), B-FG07-08 (3 sub), B-FG07-09 (3 sub) | Chưa có Screen Specification / Technical Design 精算 (L4-D08) |
-| SCREEN-LIST C6: SC-08-01, SC-08-02 (DEP-09) | EP-FG08 | B-FG08-08 (3 sub), B-FG08-09 (2 sub) | Chưa có Screen Specification / API Design POST /corrections (L4-D08) |
-| SCREEN-LIST C8: SC-10-01, SC-10-02, SC-10-03 (DEP-08) | EP-FG10 | B-FG10-11 (5 sub), B-FG10-15 (2 sub) | Chưa có Screen Specification / API Design phía maker (L4-D08) |
-| SCREEN-LIST C8: SC-10-05 + batch SC-07-B1 (DEP-12) | EP-FG10 | B-FG10-12 (4 sub), B-FG10-16 (2 sub) | Chưa có Function / Technical Design calendar, Screen Specification SC-10-05 |
-| SCREEN-LIST C8: SC-10-07 | EP-FG10 | B-FG10-13 (3 sub), B-FG10-17 | Chưa có Screen Specification (L4-D08) |
-| DEP-16 file cấu hình có nhật ký (SC-10-06 bị giản lược ⑥) | EP-FG10 | B-FG10-14, B-FG10-18 | Chưa có Technical Design cơ chế |
-| ADR-006 §3 phương án F / G | EP-CLAR | B-CLR-01 | L4-D06: chỉ là tư liệu workshop E-14, effort ~0,3–0,5 MM ngoài DEC-048 — không đưa vào backlog 第1期 |
-| ADR-007 §6 Q-ARCH-12 (税区分 của 完納奨励金 ở IF-ACC-01), BILLING_DB 4.40–4.42, RPT-07, mẫu email FORM-INC-01 | EP-CLAR, EP-FG09, EP-FG11, EP-FG12 | C-CLR-17, C-FG11-08, C-FG11-03.1, B-FG09-20 (2 sub), C-FG12-04 (2 sub) | Không thuộc engine 完納奨励金: Q-ARCH-12 → issue làm rõ C-CLR-17; bảng BILLING_DB 4.40–4.42 → C-FG11-08; RPT-07 → C-FG11-03.1; mẫu email FORM-INC-01 → B-FG09-20, C-FG12-04 |
-| SCREEN-LIST C1: SC-00-01, SC-00-02, SC-00-03 (gồm SC-00-04 gộp vào khung thông báo) | EP-CLAR, EP-FG02 | C-FG02-13, C-FG02-02, C-FG02-04, C-CLR-01 | chưa có Screen Specification (L4-D08); phần BE đã có quy tắc ở ADR-002 nên thành issue dev riêng |
-| SCREEN-LIST C1: SC-00-05 エラー・ロック済み案内 | EP-PLAT | C-PLAT-11 | không có Screen Specification riêng; mẫu trạng thái C-24 trong _common-layout.md đủ để làm dev |
-| SCREEN-LIST C2 (phần SC-02): SC-02-02, SC-02-03 + tab 代行者 (SC-02-05 gộp); API quản trị tài khoản / vai | EP-CLAR, EP-FG02 | C-FG02-14 (2 sub), C-FG02-15 (2 sub), C-FG02-10, C-CLR-06 | chưa có Screen Specification / API Design (L4-D08); API 代行 là DEP-14 nên làm dev |
-| SCREEN-LIST C9: SC-11-01..SC-11-16 (12 báo cáo, IF-ACC-01, 仕訳, データ出力) + batch SC-11-B1; DEP-17 | EP-CLAR, EP-FG11 | C-FG11-01 (3 sub), C-FG11-02 (5 sub), C-FG11-03 (6 sub), C-FG11-04 (5 sub), C-FG11-05 (2 sub), B-CLR-03 | chưa có Screen Specification / spec báo cáo; định dạng IF-ACC-01 chờ E-01 |
-| SCREEN-LIST C9: SC-12-02 + batch SC-12-B1; mẫu câu thông báo (DEP-13) | EP-CLAR, EP-FG12 | C-FG12-04 (2 sub), C-FG12-05 (2 sub), C-CLR-13 | chưa có Screen Specification / Technical Design worker + mẫu câu |
-| SCREEN-LIST C9: SC-13-01, SC-13-02, SC-13-03; FT-13-03 適用規則版の表示; xóa vật lý chứng từ (B.7) | EP-CLAR, EP-FG13 | C-FG13-05 (2 sub), C-FG13-06 (3 sub), C-FG13-07 (2 sub), C-FG13-08, C-CLR-08 | chưa có Screen Specification / API Design; quy trình xóa sau hạn chờ Q-ARCH-07 |
-| SCREEN-LIST C9: SC-14-01 + batch SC-14-B1 (thay FT-14-02), SC-14-B2 | EP-FG14 | C-FG14-06, C-FG14-02, C-FG14-03 | SC-14-01 chưa có Screen Specification; hai batch đã đủ rõ ở ADR-009 / ARCHITECTURE nên làm dev |
-| SCREEN-LIST C9: SC-15-02 + batch SC-15-B1; SC-15-01, SC-15-03 (đổi thành script + file, C-07) | EP-CLAR, EP-FG15 | C-FG15-01 (2 sub), C-FG15-02 (2 sub), C-FG15-03, C-FG15-04 (2 sub), C-CLR-14 | chưa có spec migrate nào; nguồn dữ liệu chưa có (E-03) |
-| FT-12-03 通知設定 / SC-10-06 運用パラメータ | EP-FG10 | B-FG10-14, B-FG10-18 | Không có màn ở 第1期 (PRM-126): file cấu hình có nhật ký → B-FG10-14 (thiết kế B-FG10-18) |
+| ADR-008 §6 E-18 (PIN offline), E-21 (scan 受入証憑) | EP-CLAR | #54 C-CLR-04, #86 A-CLR-22 | E-18 (đổi người bằng PIN khi mất mạng) → issue làm rõ C-CLR-04; E-21 (scan 受入証憑) → issue làm rõ A-CLR-22 |
+| SCREEN-LIST C7: SC-09-01, SC-09-02, SC-09-03 (DEP-11) | EP-CLAR, EP-FG09 | #179 B-FG09-19 (5 sub), #136 B-FG09-22 (2 sub), #38 B-CLR-03 | Chưa có Screen Specification / API Design (L4-D08); K2 phân bổ FIFO đã spec nên tách thành issue lá B-FG09-04, phần màn + import để thô |
+| SCREEN-LIST C7: SC-09-05, batch SC-09-B1 | EP-CLAR, EP-FG09 | #180 B-FG09-20 (2 sub), #39 B-CLR-05 | Chưa có Screen Specification (L4-D08) |
+| SCREEN-LIST C6: SC-07-01, SC-07-03, SC-07-04, batch SC-07-B2 | EP-FG07 | #102 B-FG07-07 (3 sub), #103 B-FG07-08 (3 sub), #76 B-FG07-09 (3 sub) | Chưa có Screen Specification / Technical Design 精算 (L4-D08) |
+| SCREEN-LIST C6: SC-08-01, SC-08-02 (DEP-09) | EP-FG08 | #105 B-FG08-08 (3 sub), #77 B-FG08-09 (2 sub) | Chưa có Screen Specification / API Design POST /corrections (L4-D08) |
+| SCREEN-LIST C8: SC-10-01, SC-10-02, SC-10-03 (DEP-08) | EP-FG10 | #108 B-FG10-11 (5 sub), #78 B-FG10-15 (2 sub) | Chưa có Screen Specification / API Design phía maker (L4-D08) |
+| SCREEN-LIST C8: SC-10-05 + batch SC-07-B1 (DEP-12) | EP-FG10 | #186 B-FG10-12 (4 sub), #140 B-FG10-16 (2 sub) | Chưa có Function / Technical Design calendar, Screen Specification SC-10-05 |
+| SCREEN-LIST C8: SC-10-07 | EP-FG10 | #109 B-FG10-13 (3 sub), #79 B-FG10-17 | Chưa có Screen Specification (L4-D08) |
+| DEP-16 file cấu hình có nhật ký (SC-10-06 bị giản lược ⑥) | EP-FG10 | #110 B-FG10-14, #80 B-FG10-18 | Chưa có Technical Design cơ chế |
+| ADR-006 §3 phương án F / G | EP-CLAR | #36 B-CLR-01 | L4-D06: chỉ là tư liệu workshop E-14, effort ~0,3–0,5 MM ngoài DEC-048 — không đưa vào backlog 第1期 |
+| ADR-007 §6 Q-ARCH-12 (税区分 của 完納奨励金 ở IF-ACC-01), BILLING_DB 4.40–4.42, RPT-07, mẫu email FORM-INC-01 | EP-CLAR, EP-FG09, EP-FG11, EP-FG12 | #85 C-CLR-17, #262 C-FG11-08, C-FG11-03.1, #180 B-FG09-20 (2 sub), C-FG12-04 (2 sub) | Không thuộc engine 完納奨励金: Q-ARCH-12 → issue làm rõ C-CLR-17; bảng BILLING_DB 4.40–4.42 → C-FG11-08; RPT-07 → C-FG11-03.1; mẫu email FORM-INC-01 → B-FG09-20, C-FG12-04 |
+| SCREEN-LIST C1: SC-00-01, SC-00-02, SC-00-03 (gồm SC-00-04 gộp vào khung thông báo) | EP-CLAR, EP-FG02 | C-FG02-13, C-FG02-02, C-FG02-04, #51 C-CLR-01 | chưa có Screen Specification (L4-D08); phần BE đã có quy tắc ở ADR-002 nên thành issue dev riêng |
+| SCREEN-LIST C1: SC-00-05 エラー・ロック済み案内 | EP-PLAT | #195 C-PLAT-11 | không có Screen Specification riêng; mẫu trạng thái C-24 trong _common-layout.md đủ để làm dev |
+| SCREEN-LIST C2 (phần SC-02): SC-02-02, SC-02-03 + tab 代行者 (SC-02-05 gộp); API quản trị tài khoản / vai | EP-CLAR, EP-FG02 | C-FG02-14 (2 sub), C-FG02-15 (2 sub), C-FG02-10, #56 C-CLR-06 | chưa có Screen Specification / API Design (L4-D08); API 代行 là DEP-14 nên làm dev |
+| SCREEN-LIST C9: SC-11-01..SC-11-16 (12 báo cáo, IF-ACC-01, 仕訳, データ出力) + batch SC-11-B1; DEP-17 | EP-CLAR, EP-FG11 | C-FG11-01 (3 sub), C-FG11-02 (5 sub), C-FG11-03 (6 sub), C-FG11-04 (5 sub), C-FG11-05 (2 sub), #38 B-CLR-03 | chưa có Screen Specification / spec báo cáo; định dạng IF-ACC-01 chờ E-01 |
+| SCREEN-LIST C9: SC-12-02 + batch SC-12-B1; mẫu câu thông báo (DEP-13) | EP-CLAR, EP-FG12 | C-FG12-04 (2 sub), C-FG12-05 (2 sub), #62 C-CLR-13 | chưa có Screen Specification / Technical Design worker + mẫu câu |
+| SCREEN-LIST C9: SC-13-01, SC-13-02, SC-13-03; FT-13-03 適用規則版の表示; xóa vật lý chứng từ (B.7) | EP-CLAR, EP-FG13 | C-FG13-05 (2 sub), C-FG13-06 (3 sub), C-FG13-07 (2 sub), #196 C-FG13-08, #58 C-CLR-08 | chưa có Screen Specification / API Design; quy trình xóa sau hạn chờ Q-ARCH-07 |
+| SCREEN-LIST C9: SC-14-01 + batch SC-14-B1 (thay FT-14-02), SC-14-B2 | EP-FG14 | C-FG14-06, C-FG14-02, #257 C-FG14-03 | SC-14-01 chưa có Screen Specification; hai batch đã đủ rõ ở ADR-009 / ARCHITECTURE nên làm dev |
+| SCREEN-LIST C9: SC-15-02 + batch SC-15-B1; SC-15-01, SC-15-03 (đổi thành script + file, C-07) | EP-CLAR, EP-FG15 | #259 C-FG15-01 (2 sub), C-FG15-02 (2 sub), C-FG15-03, C-FG15-04 (2 sub), #63 C-CLR-14 | chưa có spec migrate nào; nguồn dữ liệu chưa có (E-03) |
+| FT-12-03 通知設定 / SC-10-06 運用パラメータ | EP-FG10 | #110 B-FG10-14, #80 B-FG10-18 | Không có màn ở 第1期 (PRM-126): file cấu hình có nhật ký → B-FG10-14 (thiết kế B-FG10-18) |
 | FT-12-04 アプリ内通知一覧 (SC-00-04) | EP-FG02, EP-FG12 | C-FG12-01, C-FG02-13 | gộp vào khung thông báo trên SC-00-03 (PRM-130) |
 | FT-02-03 / SC-02-01 外部参加者ログイン（メールOTP）, SC-01-07 マイページ, ARCHITECTURE §10 (portal, giao dịch từ xa, AI, phân tích) | — | — | 第2期 / Option — tách riêng theo luật 6 (L4-A08, ADR-010); không vào backlog 第1期 |
 <!-- END GEN spec-issue -->
@@ -218,7 +218,7 @@ Cột "Xử lý" ghi một trong bốn: sửa thiết kế (trỏ PREMISE) · gi
 |---|---|---|---|---|
 | L5-G01 | LOT_FUNC 2.4, 2.9; TRADE_AITAI_CONFIRM_TECH §4.2; specs/_index.md DEP-01..17 | Đổi lô INSPECTED → PUBLISHED (販売公開) và 販売終了 (PRM-110) không có API / Function Spec, cũng không có dòng DEP; API-TRD-002 và fn_lot_lock_for_sale lại bắt lô PUBLISHED → luồng chính 相対 không chạy được với dữ liệu thật | sửa thiết kế — PREMISE.md L5-S04 (đã áp vào spec LAB-4, 2026-11-26) | A-GAP-01 |
 | L5-G02 | DEL_RECORD_TECH §5; LOT_INSPECTION_RECORD_TECH §4.3; MKT_DB §4.0 lot_status | Trạng thái lô DELIVERED có trong enum và được kiểm ở 目利き, nhưng không hàm nào ghi: delivery nói 「module lot đọc v_delivery_status」, LOT_FUNC không có hàm tương ứng | sửa thiết kế — PREMISE.md L5-S01 (đã áp vào spec LAB-4, 2026-11-26) | A-GAP-02 |
-| L5-G03 | SCREEN-LIST §4 SC-01-B1; PTY_*_LIFECYCLE_TECH §4.5/§4.6; TRADE_QUALIFICATION_CHECK_TECH §5 | Batch SC-01-B1 gồm cảnh báo sắp hết hạn (PRM-045) nhưng TECH party chỉ đặc tả job 失効; TRADE_QUALIFICATION đẩy sang 「module notify」 còn DEP-13 chỉ là worker gửi — không ai sinh cảnh báo | tạo issue làm rõ A-FG01-16 (issue thiết kế: viết spec, khách duyệt theo đợt thiết kế) | A-GAP-03 |
+| L5-G03 | SCREEN-LIST §4 SC-01-B1; PTY_*_LIFECYCLE_TECH §4.5/§4.6; TRADE_QUALIFICATION_CHECK_TECH §5 | Batch SC-01-B1 gồm cảnh báo sắp hết hạn (PRM-045) nhưng TECH party chỉ đặc tả job 失効; TRADE_QUALIFICATION đẩy sang 「module notify」 còn DEP-13 chỉ là worker gửi — không ai sinh cảnh báo | tạo issue làm rõ #66 A-FG01-16 (issue thiết kế: viết spec, khách duyệt theo đợt thiết kế) | A-GAP-03 |
 | L5-G04 | ADJUST_DB 4.32, 4.39; CLOSE_DB 4.57; TRADE_SAME_DAY_FIX_TECH §4.3; DEL_EXCEPTION_DISPUTE_TECH §4.3 | Hàm của nhóm FG-01, 03–06 (当日訂正, ngoại lệ giao, cấp lot_no / trade_no) ghi bảng thuộc cụm settle / close (trade_fixes, trade_adjustments, day_counters); không tài liệu nào nói ai tạo migration | giả định — PREMISE.md L5-A12 | A-GAP-04 |
 | L5-G05 | INCENTIVE_DB §4.52 Overview (0.3.2) vs INC_ENGINE_TECH §3.4, K1-4, K6-1 (0.1.1) | INCENTIVE_DB 4.52 còn ghi GD LATE_ENTRY (trades có trade_date thuộc kỳ khóa, created_at > locked_at) là đầu vào DELTA (recheck N-02); TECH 0.1.1 và ADR-007 0.3.2 đã bỏ theo Q-INC-02 (GD 後入力 chuyển sang kỳ đang mở, không DELTA). Dev đọc DB Design sẽ cài sai K1-4. | sửa thiết kế — PREMISE.md L5-S02 (đã áp vào spec LAB-4, 2026-11-26) | B-GAP-01 |
 | L5-G06 | INC_ENGINE_TECH §4.8 No 5 vs No 7; K7 Error | K8 ghi dòng CARRY sang P+1 ở No 5 nhưng tới No 7 mới bảo đảm P+1 tồn tại; K7 lại nói 'P+1 do K8 bảo đảm tồn tại trước khi ghi' → thứ tự mâu thuẫn, FK period_id có thể vỡ khi P+1 chưa được tạo (Q-INC-03 chưa chốt). | sửa thiết kế — PREMISE.md L5-S03 (đã áp vào spec LAB-4, 2026-11-26) | B-GAP-02 |
@@ -229,14 +229,14 @@ Cột "Xử lý" ghi một trong bốn: sửa thiết kế (trỏ PREMISE) · gi
 | L5-G11 | ADJUST_DB §4.32 trade_fixes; TRADE_SAME_DAY_FIX_TECH (nhóm FG-01, 03–06); STL_DAY_CLOSE checklist #5, #9 | trade_fixes nằm trong ADJUST_DB (nguồn B) nhưng logic ghi là 当日訂正 của nhóm FG-01, 03–06; checklist 日次締め (B) đọc nó. Chủ sở hữu migration không rõ. | giả định — PREMISE.md L5-A12 | B-GAP-07 |
 | L5-G12 | INC_ENGINE_TECH §4.2 (K2 chạy lúc nhập CSV / hủy batch / gán tay); BILLING_DB 4.48 | Phân bổ FIFO vào kỳ OPEN chốt theo B tại lúc nhập; sau đó 修正申請 / 当日訂正 làm B của kỳ đó giảm thì phân bổ thừa không được dời sang kỳ đang thiếu → người mua có thể mất 完納 ở kỳ khác. Spec không có quy tắc phân bổ lại (chỉ có cảnh báo OVERPAYMENT ở K9). | giả định — PREMISE.md L5-A04 | B-GAP-08 |
 | L5-G13 | SC-09-04_SPEC §6.2 câu ví dụ; API-INC-001 ví dụ response | Câu ví dụ nút mờ ghi 「支払期日（2027/09/10）」 trong khi [1] ví dụ kỳ 2027-09 hạn 2027/10/08; ví dụ API-INC-001 có lateEntries tradeDate 2027-07-30, trước go-live 2027-08-01 (L4-A09). | để mở — Chỉ là số minh họa, không đổi logic hay issue nào; PL sửa cùng lượt rà bản ja/ sau Gate A. | B-GAP-09 |
-| L5-G14 | log-convention §4 (cột 'Nơi chốt') | Ba dòng trỏ tới 'ADR về quan sát hệ thống (P2-A)' nhưng ADR-001..010 không có ADR này; định dạng / timezone / thời gian lưu log ứng dụng chưa chốt | tạo issue làm rõ C-CLR-15 | C-GAP-01 |
-| L5-G15 | specs/_index.md (bảng DEP) ↔ STL_DAY_CLOSE_TECH §4 bước 5 | SC-07-02 (màn cốt lõi) xếp hàng job tạo batch IF-ACC-01 nhưng bảng DEP-01..17 không có dòng nào cho batch này; BILLING_DB 4.40–4.42 có bảng, thiếu Technical Design (đóng băng, xuất lại, 端数調整) và định dạng (E-01) | tạo issue làm rõ B-CLR-03 | C-GAP-02 |
-| L5-G16 | function-list FG-12 (FT-12-02) / ARCHITECTURE §3 | Thông báo Critical ≤ 5 phút (FR-NOTIFY-02) không có danh sách sự kiện nào trong bộ LAB-4 — chỉ có ví dụ ở function-list | tạo issue làm rõ C-CLR-13 | C-GAP-03 |
+| L5-G14 | log-convention §4 (cột 'Nơi chốt') | Ba dòng trỏ tới 'ADR về quan sát hệ thống (P2-A)' nhưng ADR-001..010 không có ADR này; định dạng / timezone / thời gian lưu log ứng dụng chưa chốt | tạo issue làm rõ #64 C-CLR-15 | C-GAP-01 |
+| L5-G15 | specs/_index.md (bảng DEP) ↔ STL_DAY_CLOSE_TECH §4 bước 5 | SC-07-02 (màn cốt lõi) xếp hàng job tạo batch IF-ACC-01 nhưng bảng DEP-01..17 không có dòng nào cho batch này; BILLING_DB 4.40–4.42 có bảng, thiếu Technical Design (đóng băng, xuất lại, 端数調整) và định dạng (E-01) | tạo issue làm rõ #38 B-CLR-03 | C-GAP-02 |
+| L5-G16 | function-list FG-12 (FT-12-02) / ARCHITECTURE §3 | Thông báo Critical ≤ 5 phút (FR-NOTIFY-02) không có danh sách sự kiện nào trong bộ LAB-4 — chỉ có ví dụ ở function-list | tạo issue làm rõ #62 C-CLR-13 | C-GAP-03 |
 | L5-G17 | ADR-002 §2.1-3, IAM_AUDIT_DB 4.6 | 'Đăng nhập thiết bị một lần đầu ca bằng tài khoản có quyền' — không nói vai nào được đăng nhập thiết bị, phiên thiết bị kéo dài bao lâu | giả định — PREMISE.md L5-A06 | C-GAP-04 |
-| L5-G18 | ADR-009 §2.2-7 | Tách / bỏ partition audit_logs cũ hơn 7 năm 'theo quy trình có duyệt' nhưng không nêu người duyệt, có MFA không, có purpose MFA không (api-conventions §4 chưa có) | tạo issue làm rõ C-CLR-08 | C-GAP-05 |
+| L5-G18 | ADR-009 §2.2-7 | Tách / bỏ partition audit_logs cũ hơn 7 năm 'theo quy trình có duyệt' nhưng không nêu người duyệt, có MFA không, có purpose MFA không (api-conventions §4 chưa có) | tạo issue làm rõ #58 C-CLR-08 | C-GAP-05 |
 | L5-G19 | ADR-003 §2-5, IAM_AUDIT_DB 4.8; SCREEN-LIST §0 cột Vai | Ma trận đọc ở DB theo 'vai × nhóm dữ liệu', còn SCREEN-LIST nói quyền đọc 'ghi ở spec từng màn' — 58 màn chưa spec thì không có quyền đọc mức item | giả định — PREMISE.md L5-A07 | C-GAP-06 |
 | L5-G20 | ADR-002 §2.2-8..10 / specs/_index.md DEP-01 | DEP-01 chỉ nêu API xác thực mã; đăng ký / thu hồi phương thức MFA và mã dự phòng (điều kiện để MFA chạy được) không có trong bảng DEP, không có API Design | giả định — PREMISE.md L5-A08 | C-GAP-07 |
 | L5-G21 | IAM_AUDIT_DB 4.55 offline_sync_records ↔ specs/_index.md DEP-04 (sync) | Bảng hàng đợi offline nằm trong file DB của nhóm FG-02, 11–15 nhưng API / Technical Design sync thuộc DEP-04 của nhóm FG-01, 03–06 — dễ hai nơi cùng tạo migration | giả định — PREMISE.md L5-A16 | C-GAP-08 |
-| L5-G22 | SCREEN-LIST C1 SC-00-02; C2 SC-01-06 ↔ điều kiện dùng thử S1 (customer-feedback-lab5-priority-261126 câu 2) | Hai điều kiện dùng thử S1 (tra tư cách bằng bàn phím, đổi người bằng PIN) cần màn SC-01-06 và SC-00-02, cả hai chưa có Screen Specification (L4-D08); SC-00-01..03 không có issue làm rõ nào | tạo issue làm rõ C-FG02-19 (issue thiết kế: viết spec, khách duyệt theo đợt thiết kế) | PL-GAP-01 |
+| L5-G22 | SCREEN-LIST C1 SC-00-02; C2 SC-01-06 ↔ điều kiện dùng thử S1 (customer-feedback-lab5-priority-261126 câu 2) | Hai điều kiện dùng thử S1 (tra tư cách bằng bàn phím, đổi người bằng PIN) cần màn SC-01-06 và SC-00-02, cả hai chưa có Screen Specification (L4-D08); SC-00-01..03 không có issue làm rõ nào | tạo issue làm rõ #82 C-FG02-19 (issue thiết kế: viết spec, khách duyệt theo đợt thiết kế) | PL-GAP-01 |
 | L5-G23 | specs/_index.md DEP-01..17; ADR-008 | Khung PWA / offline dùng chung (service worker, hàng đợi IndexedDB) không có chủ: nhóm FG-02, 11–15 cho là của sync (nhóm FG-01, 03–06), nhóm FG-01, 03–06 chỉ có hàng đợi riêng cho 引渡し | giả định — PREMISE.md L5-A17 | PL-GAP-02 |
 <!-- END GEN gaps -->

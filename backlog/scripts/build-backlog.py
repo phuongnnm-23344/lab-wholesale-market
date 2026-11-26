@@ -21,12 +21,17 @@ def mod(name):
     return m
 
 
-FIELDS = ["id", "epic", "parent", "kind", "priority", "iteration", "milestone", "acceptance", "title", "role", "assignee",
+FIELDS = ["id", "epic", "parent", "kind", "priority", "iteration", "milestone", "acceptance", "title", "title_en", "role", "assignee",
           "labels", "spec_refs", "rfp_refs", "depends_on", "depends_on_spec", "hours_hint", "stream", "description", "dod"]
 
 doc = mod("merge-stream-backlogs").merge()
 mod("apply-gate-a-decisions").apply(doc)
 res = mod("plan-priority-and-iteration").plan(doc)
+# Tiêu đề issue trên GitHub: tiếng Anh theo dạng [PREFIX][màn / function][vai] (người dùng chốt 2026-11-26); `title` tiếng Việt giữ cho tài liệu
+TEN = os.path.join(HERE, "issue-titles-en.yaml")
+EN = yaml.safe_load(open(TEN, encoding="utf-8")) if os.path.exists(TEN) else {}
+for x in doc["issues"] + doc["epics"]:
+    x["title_en"] = EN.get(x["id"])
 out = dict(
     meta=dict(generated_by="backlog/scripts/build-backlog.py",
               sources=["backlog/p1-streams/{a,b,c}-backlog.yaml", "backlog/scripts/p1-merge-decisions.yaml",

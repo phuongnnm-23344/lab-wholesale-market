@@ -94,6 +94,23 @@ for i in iss:
     elif not HOURS[i["kind"]][0] <= h <= HOURS[i["kind"]][1]:
         E("giờ lá ngoài khoảng", x, i["kind"], h)
 
+# tiêu đề GitHub tiếng Anh: [PREFIX][màn / function][vai] English title (người dùng chốt 2026-11-26)
+pre_of = lambda ep: "CLAR" if ep == "EP-CLAR" else ("FG-" + ep[5:] if ep.startswith("EP-FG") else ep[3:])
+if any(i.get("title_en") for i in iss):
+    seen = collections.Counter()
+    for x in iss + d["epics"]:
+        t, is_ep = x.get("title_en"), x["id"].startswith("EP-")
+        p_ = pre_of(x["id"] if is_ep else x["epic"])
+        rx = rf"^\[{re.escape(p_)}\]\[EPIC\] \S" if is_ep else rf"^\[{re.escape(p_)}\]\[[A-Za-z0-9.+_-]+\]\[{x['role']}\] \S"
+        if not t or not re.match(rx, t) or len(t) > 100 or re.search(r"[^\x20-\x7e–—]", t):
+            E("title_en sai dạng / không phải tiếng Anh", x["id"], t)
+        seen[t] += 1
+        if not is_ep and "決裁" in (x["title"] or "") and "承認" not in (x["title"] or "") and "approval" in (t or "").lower():
+            E("決裁 dịch thành approval (luật 2)", x["id"])
+    dup = [t for t, n in seen.items() if n > 1]
+    if dup:
+        E("title_en trùng", dup[:5])
+
 # chu trình phụ thuộc
 state = {}
 def visit(n, path):

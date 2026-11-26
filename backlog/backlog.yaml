@@ -123,6 +123,7 @@ epics:
     PARTY_DB.'
   priority: P1
   planned_sprint: S1
+  title_en: '[FG-01][EPIC] Participants and qualifications: permit (wholesaler) / approval (trading participant)'
 - id: EP-FG03
   title: '[FG-03] ロット受付・評価記録 — tiếp nhận lô, 目利き (gồm offline / sync SC-03-07)'
   labels:
@@ -141,6 +142,7 @@ epics:
   summary: '仮受付 → 本登録 → 目利き (người ghi, không AI / OCR) → 公開, sổ SL chỉ thêm; offline / sync SC-03-07. Nguồn: SC-03-01, SC-03-05, LOT_FUNC, LOT_REGISTER_TECH, LOT_INSPECTION_RECORD_TECH, LOT_DB.'
   priority: P2
   planned_sprint: S2
+  title_en: '[FG-03][EPIC] Lot intake and inspection records — intake, quality inspection, offline / sync'
 - id: EP-FG04
   title: '[FG-04] 相対取引 — giao dịch thỏa thuận (luồng chính)'
   labels:
@@ -158,6 +160,7 @@ epics:
     TRADE_SAME_DAY_FIX_TECH, TRADE_DB.'
   priority: P1
   planned_sprint: S3
+  title_en: '[FG-04][EPIC] Negotiated (aitai) trades — main flow'
 - id: EP-FG05
   title: '[FG-05] せり結果記録 — ghi kết quả せり (luồng phụ)'
   labels:
@@ -174,6 +177,7 @@ epics:
   summary: 'Chỉ ghi kết quả cuối và 確認者 xác nhận theo phiên (người quyết), 差し戻し / 取消 dòng 失効; không đấu giá trực tuyến. Nguồn: SC-05-02, TRADE_SERI_CONFIRM_TECH, TRADE_DB 4.29.'
   priority: P4
   planned_sprint: S4
+  title_en: '[FG-05][EPIC] Auction result recording — secondary flow'
 - id: EP-FG06
   title: '[FG-06] 引渡し管理 — giao hàng, ngoại lệ, tranh chấp'
   labels:
@@ -194,6 +198,7 @@ epics:
     DEL_RECORD_TECH, DEL_EXCEPTION_DISPUTE_TECH.'
   priority: P3
   planned_sprint: S4–S5
+  title_en: '[FG-06][EPIC] Delivery management — deliveries, exceptions, disputes'
 - id: EP-FG07
   title: '[FG-07] 照合・日次締め — đối soát, khóa ngày, tranh chấp / SLA'
   labels:
@@ -210,6 +215,7 @@ epics:
     chưa spec → rough.'
   priority: P2
   planned_sprint: S5
+  title_en: '[FG-07][EPIC] Reconciliation and daily close — reconciliation, day lock, disputes / SLA'
 - id: EP-FG08
   title: '[FG-08] 修正申請・決裁 — điều chỉnh sau chốt (REVERSE / DELTA)'
   labels:
@@ -226,6 +232,7 @@ epics:
     Màn lập / danh sách 修正申請 chưa spec (DEP-09).'
   priority: P3
   planned_sprint: S6
+  title_en: '[FG-08][EPIC] Correction requests and sign-off — post-confirmation adjustments (REVERSE / DELTA)'
 - id: EP-FG09
   title: '[FG-09] 完納奨励金 — tiền thưởng thanh toán đúng hạn'
   labels:
@@ -242,6 +249,7 @@ epics:
     chưa spec (DEP-11) → rough.
   priority: P2
   planned_sprint: S4 (試算表) · S6–S7
+  title_en: '[FG-09][EPIC] On-time full-payment incentive'
 - id: EP-FG10
   title: '[FG-10] 規則版・交付率・マスタ・カレンダー — quy chế có version, master, lịch'
   labels:
@@ -259,6 +267,7 @@ epics:
     master SC-10-07, file cấu hình chưa spec → rough.
   priority: P4
   planned_sprint: S2
+  title_en: '[FG-10][EPIC] Rule versions, incentive rates, masters, calendar'
 - id: EP-FG02
   title: '[FG-02] アカウント・認証・権限 — tài khoản, MFA, 代行, PIN'
   labels:
@@ -277,6 +286,7 @@ epics:
     api-conventions §4. Không có Screen Specification (L4-D08) → màn là issue thô.'
   priority: P3
   planned_sprint: S1
+  title_en: '[FG-02][EPIC] Accounts, authentication, authorization — accounts, MFA, proxy, PIN'
 - id: EP-FG11
   title: '[FG-11] 帳票・データ出力 — 12 báo cáo, CSV kế toán'
   labels:
@@ -294,6 +304,7 @@ epics:
     + BILLING_DB 4.40–4.42 → phần lớn là issue thô.
   priority: P3
   planned_sprint: S8
+  title_en: '[FG-11][EPIC] Reports and data export — 12 reports, accounting CSV'
 - id: EP-FG12
   title: '[FG-12] 通知 — thông báo in-app + email'
   labels:
@@ -310,6 +321,7 @@ epics:
     4.53, L4-A08 (DEP-13).'
   priority: P4
   planned_sprint: S7
+  title_en: '[FG-12][EPIC] Notifications — in-app + email'
 - id: EP-FG13
   title: '[FG-13] 監査・セキュリティ — 監査ログ, bảo mật, lưu 7 năm'
   labels:
@@ -328,6 +340,7 @@ epics:
   summary: '監査ログ chỉ thêm (chia theo năm TC), đính kèm chung trên S3 theo loại chứng từ, sự kiện bảo mật, lưu 7 năm / lưu lạnh, APPI giản lược. Nguồn: ADR-009, IAM_AUDIT_DB 4.53–4.56, log-convention.'
   priority: P2
   planned_sprint: S1 (ghi audit) · S8
+  title_en: '[FG-13][EPIC] Audit and security — audit log, security, 7-year retention'
 - id: EP-FG14
   title: '[FG-14] 運用監視・可用性 — giám sát, backup RTO/RPO'
   labels:
@@ -345,6 +358,7 @@ epics:
     §3, §11.'
   priority: P3
   planned_sprint: S8
+  title_en: '[FG-14][EPIC] Operations monitoring and availability — monitoring, backup, RTO / RPO'
 - id: EP-FG15
   title: '[FG-15] データ移行 — chuyển đổi dữ liệu'
   labels:
@@ -362,6 +376,7 @@ epics:
     → toàn bộ là issue thô.
   priority: P3
   planned_sprint: S8 + W5
+  title_en: '[FG-15][EPIC] Data migration'
 - id: EP-PLAT
   title: '[PLAT] 基盤 — nền tảng AWS, CI/CD, khung app, quy ước chung'
   labels:
@@ -376,6 +391,7 @@ epics:
     công cụ seed fixture.'
   priority: P1
   planned_sprint: S0
+  title_en: '[PLAT][EPIC] Platform — AWS foundation, CI/CD, app skeleton, shared conventions'
 - id: EP-TEST
   title: '[TEST] 総合テスト・UAT・リリース'
   labels:
@@ -392,6 +408,7 @@ epics:
   summary: 'Kế hoạch W4–W6 của wbs-schedule-ja.md: test tổng (kịch bản nghiệp vụ, phân quyền 462 tổ hợp, tải, bảo mật, diễn tập DR), hỗ trợ UAT, cutover / go-no-go / rollback, bàn giao vận hành.'
   priority: P2
   planned_sprint: sau S8
+  title_en: '[TEST][EPIC] System testing, UAT and release'
 - id: EP-CLAR
   title: '[CLAR] 要確認 — các điểm cần làm rõ với khách / nội bộ'
   labels:
@@ -401,6 +418,7 @@ epics:
   summary: 'Khung epic chứa mọi issue kind:clarify của 3 luồng (DEP-xx, OPEN-*, E-xx, Q-*, ADR §6 Điểm mở). Luồng C khai báo; luồng A, B chỉ trỏ epic: EP-CLAR.'
   priority: P3
   planned_sprint: trước G1 (2027-01-15)
+  title_en: '[CLAR][EPIC] To clarify — open points with the customer / internal'
 issues:
 - id: A-FG01-01
   epic: EP-FG01
@@ -411,6 +429,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 参加者マスタ — migration participants / contacts / 保証金履歴'
+  title_en: '[FG-01][ParticipantMaster][BE] Participant master — migrate participants, contacts, deposit history'
   role: BE
   assignee: BE-3
   labels:
@@ -444,6 +463,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 許可（仲卸）— migration permits / events / requests'
+  title_en: '[FG-01][PermitTables][BE] Permit (wholesaler) — migration for permits / events / requests'
   role: BE
   assignee: BE-6
   labels:
@@ -479,6 +499,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 承認（売買参加者）— migration approvals / events / requests'
+  title_en: '[FG-01][ApprovalTables][BE] Approval (trading participant) — migration approvals / events / requests'
   role: BE
   assignee: BE-6
   labels:
@@ -514,6 +535,7 @@ issues:
   acceptance:
   - AC-S1-3
   title: '[FG-01] v_qualification_current — view tư cách hiện hành (許可 / 承認)'
+  title_en: '[FG-01][QualificationView][BE] `v_qualification_current` — current qualification (permit / approval)'
   role: BE
   assignee: BE-2
   labels:
@@ -548,6 +570,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 参加者詳細 API — API-PTY-001 lấy chi tiết + API-PTY-002 lưu cơ bản'
+  title_en: '[FG-01][ParticipantApi][BE] Participant detail API — API-PTY-001 get + API-PTY-002 save basic info'
   role: BE
   assignee: BE-2
   labels:
@@ -579,6 +602,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 保証金変更 — API-PTY-003 đổi 保証金 (照合部門長, MFA, thêm dòng)'
+  title_en: '[FG-01][API-PTY-003][BE] Deposit change — change deposit (reconciliation head, MFA, append row)'
   role: BE
   assignee: BE-1
   labels:
@@ -616,6 +640,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 許可ライフサイクル — vòng đời 許可 仲卸 (cấp mới / gia hạn / đình chỉ)'
+  title_en: '[FG-01][PermitLifecycle][BE] Permit lifecycle — wholesaler permit (new / renewal / suspension)'
   role: BE
   assignee: BE-1
   labels:
@@ -649,6 +674,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] 許可申請作成 — fn_permit_request_create + API-PTY-004'
+  title_en: '[FG-01][API-PTY-004][BE] Permit request creation — `fn_permit_request_create` + API-PTY-004'
   role: BE
   assignee: BE-3
   labels:
@@ -679,6 +705,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] 許可 起案・決裁・却下 — fn_permit_request_propose / decide / reject + API-PTY-005'
+  title_en: '[FG-01][API-PTY-005][BE] Permit propose / sign-off / reject — `fn_permit_request_*` + API-PTY-005'
   role: BE
   assignee: BE-1
   labels:
@@ -713,6 +740,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 許可 失効ジョブ — fn_permit_expire_due khi mở 業務日'
+  title_en: '[FG-01][PermitExpiryJob][BE] Permit expiry job — `fn_permit_expire_due` on business day open'
   role: BE
   assignee: BE-1
   labels:
@@ -747,6 +775,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 承認ライフサイクル — vòng đời 承認 売買参加者 + 参加上限'
+  title_en: '[FG-01][ApprovalLifecycle][BE] Approval lifecycle — participant approval + participation limit'
   role: BE
   assignee: BE-2
   labels:
@@ -780,6 +809,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] 承認申請作成 — fn_approval_request_create + API-PTY-006 (NEW/RENEW/SUSPEND)'
+  title_en: '[FG-01][API-PTY-006][BE] Approval request creation — `fn_approval_request_create` + API-PTY-006'
   role: BE
   assignee: BE-3
   labels:
@@ -809,6 +839,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 参加上限変更 — fn_approval_limit_change một bước (照合部門長 + MFA)'
+  title_en: '[FG-01][ParticipationLimit][BE] Participation limit change — one-step (reconciliation head + MFA)'
   role: BE
   assignee: BE-2
   labels:
@@ -843,6 +874,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] 承認 確認・却下 — fn_approval_request_decide / reject + API-PTY-007'
+  title_en: '[FG-01][API-PTY-007][BE] Approval confirm / reject — `fn_approval_request_decide` / reject'
   role: BE
   assignee: BE-6
   labels:
@@ -877,6 +909,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 承認 失効ジョブ — fn_approval_expire_due khi mở 業務日'
+  title_en: '[FG-01][ApprovalExpiryJob][BE] Approval expiry job — `fn_approval_expire_due` on business day open'
   role: BE
   assignee: BE-2
   labels:
@@ -910,6 +943,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-02 参加者詳細・編集 — màn hai khối 許可 / 承認'
+  title_en: '[FG-01][SC-01-02][FE] Participant detail / edit — screen with two blocks: permit / approval'
   role: FE
   assignee: FE-1
   labels:
@@ -942,6 +976,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-02 基本情報・保証金 — thông tin cơ bản + lịch sử 保証金'
+  title_en: '[FG-01][SC-01-02][FE] Basic info and deposit — basic information + deposit history'
   role: FE
   assignee: FE-1
   labels:
@@ -974,6 +1009,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-02 許可ブロック — khối 許可 (chỉ 仲卸) + lịch sử + nút thủ tục'
+  title_en: '[FG-01][SC-01-02][FE] Permit block — permit (wholesalers only) + history + procedure buttons'
   role: FE
   assignee: FE-1
   labels:
@@ -1003,6 +1039,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-02 承認ブロック — khối 承認 + lịch sử + nút thủ tục'
+  title_en: '[FG-01][SC-01-02][FE] Approval block — approval + history + procedure buttons'
   role: FE
   assignee: FE-1
   labels:
@@ -1036,6 +1073,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-02 承認ブロック — 参加上限 + đổi hạn mức'
+  title_en: '[FG-01][SC-01-02][FE] Approval block — participation limit + limit change'
   role: FE
   assignee: FE-1
   labels:
@@ -1068,6 +1106,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] テスト 許可 — vòng đời 許可 (申請 / 決裁 / 一時停止)'
+  title_en: '[FG-01][PermitLifecycle][QA] Test permit — permit lifecycle (request / sign-off / suspension)'
   role: QA
   assignee: QA-1
   labels:
@@ -1103,6 +1142,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] テスト 承認 — vòng đời 承認 (申請 / 確認 / 一時停止)'
+  title_en: '[FG-01][ApprovalLifecycle][QA] Test approval lifecycle (request / confirmation / suspension)'
   role: QA
   assignee: QA-1
   labels:
@@ -1139,6 +1179,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01][概算] 参加者 画面群 — SC-01-01, SC-01-05, SC-01-06 + cảnh báo hết hạn'
+  title_en: '[FG-01][SC-01-01+05+06][FE] Participant screens SC-01-01, -05, -06 + expiry warning (placeholder)'
   role: FE
   assignee: FE-1
   labels:
@@ -1173,6 +1214,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01][概算] SC-01-01 参加者一覧・検索 (chưa spec)'
+  title_en: '[FG-01][SC-01-01][FE] Participant list / search (not yet specified) (placeholder)'
   role: FE
   assignee: FE-1
   labels:
@@ -1202,6 +1244,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01][概算] 失効予告 — job cảnh báo 許可 / 承認 sắp hết hạn (chưa spec)'
+  title_en: '[FG-01][ExpiryNotice][BE] Expiry notice — warning job for expiring permits / approvals (placeholder)'
   role: BE
   assignee: BE-1
   labels:
@@ -1234,6 +1277,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] 許可・承認 登録画面 — SC-01-03, SC-01-04 (DEP-15)'
+  title_en: '[FG-01][SC-01-03+04][FE] Permit / approval registration screens — SC-01-03, SC-01-04 (DEP-15)'
   role: FE
   assignee: FE-1
   labels:
@@ -1267,6 +1311,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] SC-01-03 許可登録 (S1 tối thiểu) — nhập 許可 仲卸, 有効日 / 失効日'
+  title_en: '[FG-01][SC-01-03][FE] Permit registration (S1 minimal): wholesaler permit, valid-from / expiry dates'
   role: FE
   assignee: FE-4
   labels:
@@ -1303,6 +1348,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] SC-01-04 承認登録 (S1 tối thiểu) — nhập 承認 売買参加者, 有効日 / 失効日'
+  title_en: '[FG-01][SC-01-04][FE] Approval registration (S1 minimal): participant approval, valid-from / expiry'
   role: FE
   assignee: FE-4
   labels:
@@ -1338,6 +1384,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-03 許可 — gia hạn / cập nhật, kiểm lỗi đầy đủ'
+  title_en: '[FG-01][SC-01-03][FE] Permit — renewal / update, full validation'
   role: FE
   assignee: FE-1
   labels:
@@ -1368,6 +1415,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-04 承認 — gia hạn / cập nhật, 参加上限 ban đầu, kiểm lỗi'
+  title_en: '[FG-01][SC-01-04][FE] Approval — renewal / update, initial participation limit, validation'
   role: FE
   assignee: FE-2
   labels:
@@ -1400,6 +1448,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] ロット — migration lots / lot_status_history'
+  title_en: '[FG-03][LotTables][BE] Lots — migration for lots / lot_status_history'
   role: BE
   assignee: BE-2
   labels:
@@ -1436,6 +1485,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] 数量台帳・目利き — migration lot_inspections / ledger + view SL'
+  title_en: '[FG-03][LotLedger][BE] Quantity ledger / inspection — migration lot_inspections, ledger + qty view'
   role: BE
   assignee: BE-2
   labels:
@@ -1469,6 +1519,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] フォーム選択肢 — API-LOT-005 tra 出荷者 + API-LOT-006 giá trị form'
+  title_en: '[FG-03][FormOptions][BE] Form options — API-LOT-005 shipper lookup + API-LOT-006 form values'
   role: BE
   assignee: BE-2
   labels:
@@ -1501,6 +1552,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] ロット検索 — API-LOT-001 仮受付 chờ 本登録 + API-LOT-003 tìm lô'
+  title_en: '[FG-03][LotSearch][BE] Lot search — API-LOT-001 intakes awaiting registration + API-LOT-003 search'
   role: BE
   assignee: BE-2
   labels:
@@ -1532,6 +1584,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] ロット本登録 — 本登録 lô + dòng sổ 受入 (LOT_REGISTER)'
+  title_en: '[FG-03][LotRegister][BE] Lot full registration — register lot + receiving ledger row (LOT_REGISTER)'
   role: BE
   assignee: BE-2
   labels:
@@ -1563,6 +1616,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] 本登録 検証 — kiểm request, 業務日 theo giờ nhận lô, master'
+  title_en: '[FG-03][LotRegister][BE] Full registration validation — request, business day by receipt, masters'
   role: BE
   assignee: BE-2
   labels:
@@ -1593,6 +1647,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] 本登録 排他・重複 — khóa lô 仮受付 + kiểm nghi trùng'
+  title_en: '[FG-03][LotRegister][BE] Full registration locking — lock provisional lot + duplicate check'
   role: BE
   assignee: BE-2
   labels:
@@ -1621,6 +1676,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] 本登録 記録 — ghi lô, lịch sử, sổ RECEIVE + API-LOT-002'
+  title_en: '[FG-03][API-LOT-002][BE] Full registration recording — write lot, history, RECEIVE ledger row'
   role: BE
   assignee: BE-2
   labels:
@@ -1654,6 +1710,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] 目利き記録 — ghi kết quả 目利き・下見 do người quyết'
+  title_en: '[FG-03][LotInspection][BE] Quality inspection record — inspection / preview results decided by staff'
   role: BE
   assignee: BE-3
   labels:
@@ -1687,6 +1744,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] 目利き 検証 — kiểm request, hạng, người xác nhận thứ hai'
+  title_en: '[FG-03][LotInspection][BE] Inspection validation — check request, grade, second confirmer'
   role: BE
   assignee: BE-3
   labels:
@@ -1718,6 +1776,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] 目利き 記録 — ghi từng lô theo batch + API-LOT-004'
+  title_en: '[FG-03][API-LOT-004][BE] Inspection recording — write each lot in a batch + API-LOT-004'
   role: BE
   assignee: BE-3
   labels:
@@ -1749,6 +1808,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] ロット引当 — fn_lot_lock_for_sale + fn_lot_book_quantity (public cho trade)'
+  title_en: '[FG-03][LotAllocation][BE] Lot allocation — `fn_lot_lock_for_sale` + `fn_lot_book_quantity` (public)'
   role: BE
   assignee: BE-3
   labels:
@@ -1780,6 +1840,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] SC-03-01 ロット本登録 — màn 本登録 ở bàn tiếp nhận PC'
+  title_en: '[FG-03][SC-03-01][FE] Lot full registration — full registration screen at the intake desk PC'
   role: FE
   assignee: FE-2
   labels:
@@ -1811,6 +1872,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] SC-03-01 仮受付一覧 — danh sách chờ 本登録 + tìm 仮番号'
+  title_en: '[FG-03][SC-03-01][FE] Provisional intake list — awaiting full registration + provisional no. search'
   role: FE
   assignee: FE-2
   labels:
@@ -1840,6 +1902,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] SC-03-01 登録フォーム — form 本登録, nghi trùng, mã lô'
+  title_en: '[FG-03][SC-03-01][FE] Registration form — full registration form, suspected duplicates, lot code'
   role: FE
   assignee: FE-2
   labels:
@@ -1872,6 +1935,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] SC-03-05 目利き・下見結果入力 — màn người đánh giá ghi hạng'
+  title_en: '[FG-03][SC-03-05][FE] Quality inspection / preview result entry — inspector records grades'
   role: FE
   assignee: FE-2
   labels:
@@ -1903,6 +1967,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] SC-03-05 一括記録 — chọn lô + bấm hạng + ghi cả lượt'
+  title_en: '[FG-03][SC-03-05][FE] Batch recording — select lots + tap grade + record the whole round'
   role: FE
   assignee: FE-2
   labels:
@@ -1931,6 +1996,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] SC-03-05 再記録・確認者 — ghi lại lô đã GD + người thứ hai + mất mạng'
+  title_en: '[FG-03][SC-03-05][FE] Re-record / confirmer — re-record traded lots + second person + network loss'
   role: FE
   assignee: FE-2
   labels:
@@ -1963,6 +2029,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] テスト ロット本登録 — test LOT_REGISTER DoD (a)–(h)'
+  title_en: '[FG-03][LotRegister][QA] Test lot full registration — LOT_REGISTER DoD (a)–(h)'
   role: QA
   assignee: QA-1
   labels:
@@ -1994,6 +2061,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] テスト 目利き・引当 — test LOT_INSPECTION DoD + sổ SL'
+  title_en: '[FG-03][LotInspection][QA] Test inspection / allocation — LOT_INSPECTION DoD + quantity ledger'
   role: QA
   assignee: QA-1
   labels:
@@ -2030,6 +2098,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] ロット仮受付 — SC-03-02 + API ghi / hủy 仮受付 (DEP-07)'
+  title_en: '[FG-03][SC-03-02][FE] Provisional intake — SC-03-02 + record / cancel API (DEP-07) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -2062,6 +2131,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] SC-03-02 仮受付（埠頭タブレット）— FE (chưa spec)'
+  title_en: '[FG-03][SC-03-02][FE] Provisional intake (dock tablet) — FE (not yet specified) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -2094,6 +2164,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] 仮受付 API — ghi 仮受付 online + hủy → CANCELLED (chưa spec)'
+  title_en: '[FG-03][IntakeApi][BE] Provisional intake API — record online + cancel to CANCELLED (placeholder)'
   role: BE
   assignee: BE-2
   labels:
@@ -2126,6 +2197,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] オフライン同期 — API hàng đợi sync + SC-03-07 đối chiếu (DEP-04)'
+  title_en: '[FG-03][OfflineSync][BE] Offline sync — sync queue API + SC-03-07 reconciliation (placeholder)'
   role: BE
   assignee: BE-1
   labels:
@@ -2162,6 +2234,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] 同期API — nhận hàng đợi offline, idempotent, HELD (chưa spec)'
+  title_en: '[FG-03][SyncApi][BE] Sync API — receive offline queue, idempotent, HELD (placeholder)'
   role: BE
   assignee: BE-1
   labels:
@@ -2197,6 +2270,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] SC-03-07 オフライン同期・照合 — FE (chưa spec)'
+  title_en: '[FG-03][SC-03-07][FE] Offline sync / reconciliation — FE (not yet specified) (placeholder)'
   role: FE
   assignee: FE-1
   labels:
@@ -2230,6 +2304,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] ロット一覧・詳細 — SC-03-03, SC-03-04 + 販売公開 / 販売終了'
+  title_en: '[FG-03][SC-03-03+04][FE] Lot list / detail + publish for sale / end of sale (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -2266,6 +2341,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] SC-03-03 ロット一覧 + 一括販売公開 / 販売終了 (chưa spec)'
+  title_en: '[FG-03][SC-03-03][FE] Lot list + bulk publish for sale / end of sale (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -2297,6 +2373,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] 販売公開 API — đổi PUBLISHED / 販売終了 + lịch sử (chưa spec)'
+  title_en: '[FG-03][SalePublishApi][BE] Sale publish API — set PUBLISHED / end of sale + history (placeholder)'
   role: BE
   assignee: BE-2
   labels:
@@ -2330,6 +2407,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] SC-03-04 ロット詳細 + sửa thuộc tính ATTR_FIX (chưa spec)'
+  title_en: '[FG-03][SC-03-04][FE] Lot detail + ATTR_FIX attribute correction (not yet specified) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -2361,6 +2439,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03][概算] 持ち越し — hàm fn_lot_carry_over khi 日次締め (DEP-05)'
+  title_en: '[FG-03][LotCarryOver][BE] Carry-over — `fn_lot_carry_over` at daily close (DEP-05) (placeholder)'
   role: BE
   assignee: BE-2
   labels:
@@ -2396,6 +2475,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] 引渡し完了 — chuyển lô CLOSED → DELIVERED theo v_delivery_status'
+  title_en: '[FG-03][DeliveryComplete][BE] Delivery completion — lot CLOSED to DELIVERED per `v_delivery_status`'
   role: BE
   assignee: BE-2
   labels:
@@ -2433,6 +2513,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 取引 — migration trades / trade_status_history / print_logs'
+  title_en: '[FG-04][TradeTables][BE] Trades — migration for trades / trade_status_history / print_logs'
   role: BE
   assignee: BE-3
   labels:
@@ -2469,6 +2550,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 公開ビュー — v_buyer_period_usage + v_trade_effective'
+  title_en: '[FG-04][PublicViews][BE] Public views — `v_buyer_period_usage` + `v_trade_effective`'
   role: BE
   assignee: BE-3
   labels:
@@ -2506,6 +2588,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 資格確認 — fn_check_buyer_qualification tại thời điểm chốt'
+  title_en: '[FG-04][QualificationCheck][BE] Qualification check — `fn_check_buyer_qualification` at confirmation'
   role: BE
   assignee: BE-3
   labels:
@@ -2538,6 +2621,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 資格確認 許可/承認 — nhánh 仲卸 E-TRD-005 / 売買参加者 E-TRD-006'
+  title_en: '[FG-04][QualCheck][BE] Permit / approval check — E-TRD-005 wholesaler, E-TRD-006 trading participant'
   role: BE
   assignee: BE-3
   labels:
@@ -2566,6 +2650,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 参加上限 — kiểm hạn mức theo kỳ (税込), lý do vượt'
+  title_en: '[FG-04][ParticipationLimit][BE] Participation limit — per-period check (tax incl.), overrun reason'
   role: BE
   assignee: BE-3
   labels:
@@ -2599,6 +2684,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 買受人検索 — API-TRD-001 tìm người mua + tư cách + 参加上限'
+  title_en: '[FG-04][API-TRD-001][BE] Buyer search — find buyer + qualification + participation limit'
   role: BE
   assignee: BE-3
   labels:
@@ -2630,6 +2716,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 相対取引確定 — chốt GD 相対 (luồng chính) + FIG-012 + trừ SL'
+  title_en: '[FG-04][AitaiConfirm][BE] Negotiated (aitai) trade confirmation — main flow, FIG-012, qty deduction'
   role: BE
   assignee: BE-3
   labels:
@@ -2667,6 +2754,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 相対確定 検証 — kiểm request, giờ chốt, khóa lô, SL / số lẻ'
+  title_en: '[FG-04][AitaiConfirm][BE] Aitai confirm validation — request, cut-off, lot lock, quantity, fractions'
   role: BE
   assignee: BE-3
   labels:
@@ -2696,6 +2784,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 相対確定 記録 — ghi trades + 3 sự kiện FIG-012 (fn_record_trade_event)'
+  title_en: '[FG-04][AitaiConfirm][BE] Aitai confirm recording — trades + 3 FIG-012 trade events'
   role: BE
   assignee: BE-3
   labels:
@@ -2730,6 +2819,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 相対確定 数量 — trừ SL lô + API-TRD-002 response / in'
+  title_en: '[FG-04][API-TRD-002][BE] Aitai confirm quantity — deduct lot quantity + API response / print'
   role: BE
   assignee: BE-3
   labels:
@@ -2762,6 +2852,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 取引一覧 API — API-TRD-003 danh sách GD (mặc định 相対)'
+  title_en: '[FG-04][API-TRD-003][BE] Trade list API — trade list (aitai by default)'
   role: BE
   assignee: BE-3
   labels:
@@ -2792,6 +2883,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 取引確認票 — API-TRD-004 in thẳng / 再発行 PDF + print_logs'
+  title_en: '[FG-04][API-TRD-004][BE] Trade confirmation slip — direct print / PDF reissue + print_logs'
   role: BE
   assignee: BE-1
   labels:
@@ -2823,6 +2915,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 当日訂正・取消 — sửa / hủy GD ngày chưa khóa bằng REVERSE / DELTA'
+  title_en: '[FG-04][SameDayFix][BE] Same-day correction / cancellation of unlocked-day trades (REVERSE / DELTA)'
   role: BE
   assignee: BE-1
   labels:
@@ -2856,6 +2949,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 当日訂正 検証 — kiểm GD gốc, nội dung mới, tư cách người mua mới'
+  title_en: '[FG-04][SameDayFix][BE] Same-day correction validation — original trade, new data, buyer eligibility'
   role: BE
   assignee: BE-1
   labels:
@@ -2886,6 +2980,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] 当日訂正 記録 — trade_fixes + REVERSE / DELTA + sổ lô + trạng thái'
+  title_en: '[FG-04][SameDayFix][BE] Same-day correction recording — trade_fixes, REVERSE / DELTA, lot ledger'
   role: BE
   assignee: BE-1
   labels:
@@ -2917,6 +3012,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] SC-04-01 相対取引入力・確定 — màn chính (dùng nhiều nhất)'
+  title_en: '[FG-04][SC-04-01][FE] Negotiated (aitai) trade entry / confirmation — main screen (most used)'
   role: FE
   assignee: FE-1
   labels:
@@ -2950,6 +3046,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] SC-04-01 入力 — chọn lô, người mua (tư cách, hạn mức) bằng số'
+  title_en: '[FG-04][SC-04-01][FE] Entry — select lot, buyer (qualification, limit) by number'
   role: FE
   assignee: FE-1
   labels:
@@ -2982,6 +3079,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] SC-04-01 確定 — SL, đơn giá, 読み合わせ, chốt 1 phím, lỗi E-TRD'
+  title_en: '[FG-04][SC-04-01][FE] Confirm — quantity, unit price, read-back, one-key confirm, E-TRD errors'
   role: FE
   assignee: FE-1
   labels:
@@ -3012,6 +3110,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] SC-04-01 印刷・一覧 — in thẳng phiếu + GD vừa chốt + 423 sang 修正申請'
+  title_en: '[FG-04][SC-04-01][FE] Print / list — direct slip print, just-confirmed trades, 423 to correction'
   role: FE
   assignee: FE-1
   labels:
@@ -3045,6 +3144,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] テスト 相対確定 — test TRADE_AITAI DoD (a)–(f) + song song'
+  title_en: '[FG-04][AitaiConfirm][QA] Test aitai confirmation — TRADE_AITAI DoD (a)–(f) + concurrency'
   role: QA
   assignee: QA-1
   labels:
@@ -3078,6 +3178,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] テスト 資格・参加上限 — test TRADE_QUALIFICATION DoD (a)–(f)'
+  title_en: '[FG-04][QualificationCheck][QA] Test qualification / participation limit — DoD (a)–(f)'
   role: QA
   assignee: QA-1
   labels:
@@ -3108,6 +3209,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04] テスト 当日訂正 — test TRADE_SAME_DAY_FIX DoD (a)–(g)'
+  title_en: '[FG-04][SameDayFix][QA] Test same-day correction — TRADE_SAME_DAY_FIX DoD (a)–(g)'
   role: QA
   assignee: QA-1
   labels:
@@ -3137,6 +3239,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] 取引 画面群 — SC-04-02, 04-03, 04-04, 04-05, 04-07'
+  title_en: '[FG-04][SC-04-02..07][FE] Trade screens — SC-04-02, 04-03, 04-04, 04-05, 04-07 (placeholder)'
   role: FE
   assignee: FE-1
   labels:
@@ -3170,6 +3273,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] SC-04-02 取引確認票 再発行 (chưa spec)'
+  title_en: '[FG-04][SC-04-02][FE] Trade confirmation slip reissue (not yet specified) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -3201,6 +3305,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] SC-04-03 取引一覧・検索 (chưa spec)'
+  title_en: '[FG-04][SC-04-03][FE] Trade list / search (not yet specified) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -3233,6 +3338,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] SC-04-04 取引詳細・訂正履歴 (chưa spec)'
+  title_en: '[FG-04][SC-04-04][FE] Trade detail / correction history (not yet specified) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -3263,6 +3369,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] SC-04-05 当日訂正・取消 — FE (WF có, chưa spec)'
+  title_en: '[FG-04][SC-04-05][FE] Same-day correction / cancellation — FE (wireframe only) (placeholder)'
   role: FE
   assignee: FE-1
   labels:
@@ -3297,6 +3404,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] SC-04-07 紙伝票後入力 — lưới nhập + PAPER_LATE (chưa spec)'
+  title_en: '[FG-04][SC-04-07][FE] Paper slip late entry — entry grid + PAPER_LATE (placeholder)'
   role: FE
   assignee: FE-1
   labels:
@@ -3331,6 +3439,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] 後入力関数 — fn_*_late_entry cho trade / lot / delivery (DEP-06)'
+  title_en: '[FG-04][LateEntry][BE] Late entry functions `fn_*_late_entry` (trade / lot / delivery) (placeholder)'
   role: BE
   assignee: BE-3
   labels:
@@ -3367,6 +3476,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] fn_trade_late_entry (chưa spec)'
+  title_en: '[FG-04][LateEntry][BE] `fn_trade_late_entry` (not yet specified) (placeholder)'
   role: BE
   assignee: BE-3
   labels:
@@ -3398,6 +3508,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] fn_lot_late_entry (chưa spec)'
+  title_en: '[FG-04][LateEntry][BE] `fn_lot_late_entry` (not yet specified) (placeholder)'
   role: BE
   assignee: BE-2
   labels:
@@ -3429,6 +3540,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-04][概算] fn_delivery_record cờ late (chưa spec)'
+  title_en: '[FG-04][LateEntry][BE] `fn_delivery_record` late flag (not yet specified) (placeholder)'
   role: BE
   assignee: BE-1
   labels:
@@ -3461,6 +3573,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] せり回 — migration seri_sessions + enum seri_status'
+  title_en: '[FG-05][SeriSessions][BE] Auction sessions — migration seri_sessions + enum seri_status'
   role: BE
   assignee: BE-2
   labels:
@@ -3490,6 +3603,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] せり結果取得 — API-TRD-005 phiên + đánh giá trước từng dòng'
+  title_en: '[FG-05][API-TRD-005][BE] Auction result retrieval — session + prior evaluation per line'
   role: BE
   assignee: BE-2
   labels:
@@ -3522,6 +3636,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] せり結果確定 — 確認者 xác nhận phiên (người quyết)'
+  title_en: '[FG-05][SeriConfirm][BE] Auction result confirmation — confirmer confirms session (human decision)'
   role: BE
   assignee: BE-2
   labels:
@@ -3557,6 +3672,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] せり確定 検証 — kiểm phiên, 確認者 ≠ 入力者 (hoặc lý do)'
+  title_en: '[FG-05][SeriConfirm][BE] Auction confirm validation — session, confirmer is not entrant (or reason)'
   role: BE
   assignee: BE-2
   labels:
@@ -3586,6 +3702,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] せり確定 明細 — khóa lô, duyệt từng dòng, cancelTradeIds, ghi kết quả'
+  title_en: '[FG-05][SeriConfirm][BE] Auction confirm lines — lock lots, review lines, cancelTradeIds, results'
   role: BE
   assignee: BE-2
   labels:
@@ -3619,6 +3736,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] せり確定 回 — cập nhật phiên + commit + API-TRD-006'
+  title_en: '[FG-05][API-TRD-006][BE] Auction confirmation session — update session + commit + API-TRD-006'
   role: BE
   assignee: BE-2
   labels:
@@ -3648,6 +3766,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] せり差し戻し — fn_send_back_seri_results + API-TRD-007'
+  title_en: '[FG-05][API-TRD-007][BE] Auction send-back — `fn_send_back_seri_results` + API-TRD-007'
   role: BE
   assignee: BE-2
   labels:
@@ -3681,6 +3800,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] SC-05-02 せり結果確認 — màn 確認者 xác nhận theo phiên'
+  title_en: '[FG-05][SC-05-02][FE] Auction result confirmation — confirmer confirms per session'
   role: FE
   assignee: FE-1
   labels:
@@ -3713,6 +3833,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] SC-05-02 明細 — bảng dòng + đánh giá trước + chọn 差し戻し / 取消'
+  title_en: '[FG-05][SC-05-02][FE] Lines — line table + prior evaluation + choose send-back / cancel'
   role: FE
   assignee: FE-1
   labels:
@@ -3743,6 +3864,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] SC-05-02 確定 — hộp C-31, lý do vượt hạn mức chỉ 売買参加者, lỗi'
+  title_en: '[FG-05][SC-05-02][FE] Confirm — C-31 dialog, overrun reason (trading participants only), errors'
   role: FE
   assignee: FE-1
   labels:
@@ -3773,6 +3895,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05] テスト せり確定 — test TRADE_SERI DoD (a)–(f)'
+  title_en: '[FG-05][SeriConfirm][QA] Test auction confirmation — TRADE_SERI DoD (a)–(f)'
   role: QA
   assignee: QA-1
   labels:
@@ -3806,6 +3929,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05][概算] せり結果入力 — SC-05-01 + API ghi / sửa dòng (DEP-10)'
+  title_en: '[FG-05][SC-05-01][FE] Auction result entry — SC-05-01 + record / edit lines API (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -3838,6 +3962,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05][概算] SC-05-01 せり結果入力 — FE (chưa spec)'
+  title_en: '[FG-05][SC-05-01][FE] Auction result entry — FE (not yet specified) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -3868,6 +3993,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-05][概算] せり入力API — ghi dòng PENDING / sửa sau 差し戻し (chưa spec)'
+  title_en: '[FG-05][SeriEntryApi][BE] Auction entry API — PENDING lines / edit after send-back (placeholder)'
   role: BE
   assignee: BE-2
   labels:
@@ -3900,6 +4026,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 引渡し — migration deliveries + view v_delivery_status'
+  title_en: '[FG-06][DeliveryTables][BE] Deliveries — migration deliveries + view `v_delivery_status`'
   role: BE
   assignee: BE-1
   labels:
@@ -3932,6 +4059,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 引渡し例外 — migration delivery_exceptions / dispute_confirmations'
+  title_en: '[FG-06][ExceptionTables][BE] Delivery exception / dispute confirmation tables — migration'
   role: BE
   assignee: BE-1
   labels:
@@ -3966,6 +4094,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 引渡し対象 — API-DEL-001 GD chờ giao + API-DEL-002 snapshot offline'
+  title_en: '[FG-06][DeliveryTargets][BE] Delivery targets — API-DEL-001 pending trades, API-DEL-002 offline data'
   role: BE
   assignee: BE-1
   labels:
@@ -3997,6 +4126,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 引渡し記録 — ghi giao nhiều lần, idempotent (API-DEL-003)'
+  title_en: '[FG-06][DeliveryRecord][BE] Delivery record — multiple deliveries, idempotent (API-DEL-003)'
   role: BE
   assignee: BE-1
   labels:
@@ -4032,6 +4162,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 引渡し 検証・冪等 — validate + idempotent theo clientRecordId'
+  title_en: '[FG-06][DeliveryRecord][BE] Delivery validation / idempotency — idempotent by clientRecordId'
   role: BE
   assignee: BE-1
   labels:
@@ -4059,6 +4190,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 引渡し 記録 — kiểm GD / 残 / ngày mở, ghi lần giao, trạng thái'
+  title_en: '[FG-06][API-DEL-003][BE] Delivery recording — check trade / remaining / open day, write, status'
   role: BE
   assignee: BE-1
   labels:
@@ -4090,6 +4222,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] オフライン引渡し — PWA hàng đợi IndexedDB + 残 cục bộ'
+  title_en: '[FG-06][DeliveryOffline][FE] Offline delivery — PWA IndexedDB queue + local remaining quantity'
   role: FE
   assignee: FE-2
   labels:
@@ -4123,6 +4256,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 引渡し例外 — ghi ngoại lệ / nhập bù phiếu giấy (API-DEL-004)'
+  title_en: '[FG-06][API-DEL-004][BE] Delivery exception — record exception / paper slip back-entry'
   role: BE
   assignee: BE-1
   labels:
@@ -4157,6 +4291,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 例外 検証 — loại, SL so 残 / 引渡済, phiếu giấy (số, scan, người ký)'
+  title_en: '[FG-06][DeliveryException][BE] Exception validation — type, qty vs remaining / delivered, paper slip'
   role: BE
   assignee: BE-1
   labels:
@@ -4187,6 +4322,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 例外 記録 — ghi ngoại lệ + trade_fixes REVERSE / DELTA khi ngày mở'
+  title_en: '[FG-06][DeliveryException][BE] Exception recording — exception + REVERSE / DELTA if day is open'
   role: BE
   assignee: BE-1
   labels:
@@ -4220,6 +4356,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 争い確認 — 配送部門責任者 xác nhận tranh chấp (API-DEL-005/006)'
+  title_en: '[FG-06][DisputeConfirm][BE] Dispute confirmation by delivery dept. manager (API-DEL-005/006)'
   role: BE
   assignee: BE-1
   labels:
@@ -4256,6 +4393,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 争い一覧 — API-DEL-005 danh sách chờ xác nhận'
+  title_en: '[FG-06][API-DEL-005][BE] Dispute list — list awaiting confirmation'
   role: BE
   assignee: BE-1
   labels:
@@ -4285,6 +4423,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] 争い確認 記録 — fn_dispute_confirm (cấm tự xác nhận, MFA, 継続協議)'
+  title_en: '[FG-06][API-DEL-006][BE] Dispute confirm recording — no self-confirm, MFA, ongoing talks'
   role: BE
   assignee: BE-1
   labels:
@@ -4319,6 +4458,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-02 引渡し記録（タブレット）— màn giao ở bến'
+  title_en: '[FG-06][SC-06-02][FE] Delivery record (tablet) — dock delivery screen'
   role: FE
   assignee: FE-2
   labels:
@@ -4351,6 +4491,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-02 記録 — tìm người mua, danh sách GD, テンキー, 残り全部'
+  title_en: '[FG-06][SC-06-02][FE] Record — buyer search, trade list, numeric keypad, deliver all remaining'
   role: FE
   assignee: FE-2
   labels:
@@ -4379,6 +4520,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-02 オフライン — banner 未同期 n件, 本人 / 代理, giờ dữ liệu'
+  title_en: '[FG-06][SC-06-02][FE] Offline — unsynced-count banner, in person / by agent, data timestamp'
   role: FE
   assignee: FE-2
   labels:
@@ -4409,6 +4551,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-04 引渡し例外登録 — màn ghi ngoại lệ giao'
+  title_en: '[FG-06][SC-06-04][FE] Delivery exception registration — screen to record delivery exceptions'
   role: FE
   assignee: FE-2
   labels:
@@ -4439,6 +4582,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-04 例外入力 — loại, SL thực giao, lý do, ảnh (PC)'
+  title_en: '[FG-06][SC-06-04][FE] Exception entry — type, actual delivered quantity, reason, photo (PC)'
   role: FE
   assignee: FE-2
   labels:
@@ -4467,6 +4611,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-04 紙伝票後入力 — nhập bù phiếu giấy (số phiếu, scan, người ký)'
+  title_en: '[FG-06][SC-06-04][FE] Paper slip late entry — back-enter paper slip (slip no., scan, signer)'
   role: FE
   assignee: FE-2
   labels:
@@ -4497,6 +4642,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-05 争いのある引渡し完了確認 — màn người quyết (MFA)'
+  title_en: '[FG-06][SC-06-05][FE] Disputed delivery completion confirmation — decision-maker screen (MFA)'
   role: FE
   assignee: FE-1
   labels:
@@ -4528,6 +4674,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-05 一覧・詳細 — danh sách tranh chấp + chi tiết + lịch sử họp'
+  title_en: '[FG-06][SC-06-05][FE] List / detail — dispute list + detail + meeting history'
   role: FE
   assignee: FE-1
   labels:
@@ -4556,6 +4703,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] SC-06-05 確認 — kết luận / 継続協議 + MFA C-30, phiếu giấy có lý do'
+  title_en: '[FG-06][SC-06-05][FE] Confirm — conclusion / continue talks + MFA C-30, paper slip with reason'
   role: FE
   assignee: FE-1
   labels:
@@ -4587,6 +4735,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] テスト 引渡し記録 — test DEL_RECORD DoD #1–#11 + offline'
+  title_en: '[FG-06][DeliveryRecord][QA] Test delivery record — DEL_RECORD DoD #1–#11 + offline'
   role: QA
   assignee: QA-1
   labels:
@@ -4620,6 +4769,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06] テスト 例外・争い — test DEL_EXCEPTION_DISPUTE DoD #1–#13'
+  title_en: '[FG-06][DeliveryException][QA] Test exceptions / disputes — DEL_EXCEPTION_DISPUTE DoD #1–#13'
   role: QA
   assignee: QA-1
   labels:
@@ -4655,6 +4805,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06][概算] 引渡し 画面群 — SC-06-01 対象一覧, SC-06-06 引渡票'
+  title_en: '[FG-06][SC-06-01+06][FE] Delivery screens — SC-06-01 target list, SC-06-06 slip (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -4686,6 +4837,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06][概算] SC-06-01 引渡し対象一覧 (PC + tablet chỉ đọc) (chưa spec)'
+  title_en: '[FG-06][SC-06-01][FE] Delivery target list (PC + read-only tablet) (not yet specified) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -4717,6 +4869,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-06][概算] SC-06-06 引渡票 印刷・再発行 (chưa spec)'
+  title_en: '[FG-06][SC-06-06][FE] Delivery slip print / reissue (not yet specified) (placeholder)'
   role: FE
   assignee: FE-2
   labels:
@@ -4746,6 +4899,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] OPEN-DB-09 — thủ tục cấp mới / đình chỉ / thu hồi 許可 vs 承認'
+  title_en: '[CLAR][OPEN-DB-09][BrSE] Clarify: procedures for new / suspension / revocation of permit vs approval'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -4777,6 +4931,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] OPEN-L4-03 / E-12・E-13 — bán lô trước 下見済, có làm đổi tiền không'
+  title_en: '[CLAR][OPEN-L4-03][BrSE] Clarify: E-12 / E-13 — selling lots before preview, does it change amounts?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -4815,6 +4970,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-LOT-03 — danh mục 等級 thật của chợ'
+  title_en: '[CLAR][Q-LOT-03][BrSE] Clarify: the market''s actual grade list'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -4844,6 +5000,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-LOT-04 — ghi lại 目利き lô đã GD có cần báo người chốt / 照合'
+  title_en: '[CLAR][Q-LOT-04][BrSE] Clarify: re-inspecting a traded lot — notify confirmer / reconciliation?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -4872,6 +5029,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-LOT-05 — lô CLOSED được trả SL có tự mở bán lại không'
+  title_en: '[CLAR][Q-LOT-05][BrSE] Clarify: does a CLOSED lot with returned qty reopen for sale automatically?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -4900,6 +5058,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-TRD-01 — định dạng số GD đọc cho người mua'
+  title_en: '[CLAR][Q-TRD-01][BrSE] Clarify: trade number format read out to buyers'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -4927,6 +5086,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-TRD-04 — một phiên せり xác nhận nhiều lượt khi có 差し戻し'
+  title_en: '[CLAR][Q-TRD-04][BrSE] Clarify: one auction session confirmed in multiple rounds after send-back'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -4955,6 +5115,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-PTY-02 — 保証金 có ghi hồi tố được không'
+  title_en: '[CLAR][Q-PTY-02][BrSE] Clarify: can deposits be recorded retroactively?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -4983,6 +5144,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-PTY-03 — 通知メール bắt buộc với 仲卸 / 売買参加者?'
+  title_en: '[CLAR][Q-PTY-03][BrSE] Clarify: is notification email mandatory for wholesalers / participants?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -5011,6 +5173,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] 保証金 — có phải khớp sổ 経理部 hằng kỳ không'
+  title_en: '[CLAR][DepositLedger][BrSE] Clarify: must deposits match the accounting dept. ledger every period?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -5038,6 +5201,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07] 業務日・期 テーブル — migration CLOSE_DB + trigger ngày mở'
+  title_en: '[FG-07][CloseTables][BE] Business day / period tables — migration CLOSE_DB + open-day trigger'
   role: BE
   assignee: BE-5
   labels:
@@ -5077,6 +5241,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07] 締めチェックリスト — fn_day_close_checklist + API-STL-001'
+  title_en: '[FG-07][API-STL-001][BE] Close checklist — `fn_day_close_checklist` + API-STL-001'
   role: BE
   assignee: BE-4
   labels:
@@ -5120,6 +5285,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07] 日次締め — fn_day_close + API-STL-002 (MFA một lần, mở ngày kế)'
+  title_en: '[FG-07][API-STL-002][BE] Daily close — `fn_day_close` + API-STL-002 (single MFA, opens next day)'
   role: BE
   assignee: BE-4
   labels:
@@ -5165,6 +5331,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07] 端末回収不能 — API-STL-003 loại máy khỏi checklist'
+  title_en: '[FG-07][API-STL-003][BE] Unrecoverable device — exclude device from checklist'
   role: BE
   assignee: BE-5
   labels:
@@ -5202,6 +5369,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07] SC-07-02 日次締め — màn checklist + khóa ngày (FE)'
+  title_en: '[FG-07][SC-07-02][FE] Daily close — checklist + day lock screen (FE)'
   role: FE
   assignee: FE-3
   labels:
@@ -5237,6 +5405,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07] SC-07-02 — hiển thị checklist 12 mục, tick #8 / #12, liên kết'
+  title_en: '[FG-07][SC-07-02][FE] Show 12-item checklist, tick #8 / #12, links'
   role: FE
   assignee: FE-3
   labels:
@@ -5267,6 +5436,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07] SC-07-02 — 締め実行: gõ lại ngày, MFA, 端末回収不能, lỗi'
+  title_en: '[FG-07][SC-07-02][FE] Run close: retype date, MFA, unrecoverable device, errors'
   role: FE
   assignee: FE-3
   labels:
@@ -5302,6 +5472,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07] 日次締め テスト — kịch bản DoD STL_DAY_CLOSE #1–13, DEVICE_LOST #1–8'
+  title_en: '[FG-07][DayClose][QA] Daily close test — DoD scenarios STL_DAY_CLOSE #1–13, DEVICE_LOST #1–8'
   role: QA
   assignee: QA-2
   labels:
@@ -5337,6 +5508,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07][概算] 日次照合表・日次精算 — SC-07-01 + SC-07-B2 (chưa spec)'
+  title_en: '[FG-07][SC-07-01+B2][BE] Daily reconciliation sheet / daily settlement (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -5374,6 +5546,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07][概算] SC-07-01 日次照合表 — màn đối soát ngày'
+  title_en: '[FG-07][SC-07-01][FE] Daily reconciliation sheet — daily reconciliation screen (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -5405,6 +5578,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07][概算] 日次照合表 API — tách 相対 / せり / 訂正 + 確認済'
+  title_en: '[FG-07][DailyReconApi][BE] Daily reconciliation API — aitai / auction / corrections (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -5436,6 +5610,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07][概算] SC-07-B2 日次精算バッチ — 精算 theo người × thuế'
+  title_en: '[FG-07][SC-07-B2][BE] Daily settlement batch — settlement by party and tax rate (placeholder)'
   role: BE
   assignee: BE-5
   labels:
@@ -5467,6 +5642,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07][概算] 紛争一覧・詳細 + SLA — SC-07-03, SC-07-04 (chưa spec)'
+  title_en: '[FG-07][SC-07-03+04][FE] Dispute list / detail + SLA — SC-07-03, SC-07-04 (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -5503,6 +5679,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07][概算] SC-07-03 紛争一覧 — danh sách + SLA còn lại'
+  title_en: '[FG-07][SC-07-03][FE] Dispute list — list + remaining SLA (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -5534,6 +5711,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07][概算] SC-07-04 紛争詳細・処理'
+  title_en: '[FG-07][SC-07-04][FE] Dispute detail / handling (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -5565,6 +5743,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-07][概算] 紛争・SLA API — mở / cập nhật / đóng + SLA'
+  title_en: '[FG-07][DisputeSlaApi][BE] Dispute / SLA API — open / update / close + SLA (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -5596,6 +5775,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] 修正申請テーブル — migration ADJUST_DB (4.32, 4.37–4.39)'
+  title_en: '[FG-08][AdjustTables][BE] Correction request tables — migration ADJUST_DB (4.32, 4.37–4.39)'
   role: BE
   assignee: BE-5
   labels:
@@ -5631,6 +5811,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] 修正申請詳細 — fn_correction_preview + API-STL-004'
+  title_en: '[FG-08][API-STL-004][BE] Correction request detail — `fn_correction_preview` + API-STL-004'
   role: BE
   assignee: BE-4
   labels:
@@ -5664,6 +5845,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] 決裁・却下 — xác thực, khóa yêu cầu, chuyển cấp (API-STL-005)'
+  title_en: '[FG-08][API-STL-005][BE] Sign-off / rejection — authentication, request lock, level escalation'
   role: BE
   assignee: BE-4
   labels:
@@ -5702,6 +5884,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] 反映 TRADE — sinh REVERSE / DELTA hai trục, sổ SL lô'
+  title_en: '[FG-08][CorrectionApply][BE] Apply to TRADE — generate two-axis REVERSE / DELTA, lot quantity ledger'
   role: BE
   assignee: BE-5
   labels:
@@ -5739,6 +5922,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] 反映 LATE_ENTRY / KANNO / INCENTIVE + audit, thông báo'
+  title_en: '[FG-08][CorrectionApply][BE] Apply LATE_ENTRY / KANNO / INCENTIVE + audit, notification'
   role: BE
   assignee: BE-5
   labels:
@@ -5779,6 +5963,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] SC-08-03 修正申請決裁・却下 — màn (FE)'
+  title_en: '[FG-08][SC-08-03][FE] Correction request sign-off / rejection — screen (FE)'
   role: FE
   assignee: FE-3
   labels:
@@ -5812,6 +5997,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] SC-08-03 — chi tiết yêu cầu, xem trước REVERSE / DELTA, chứng từ'
+  title_en: '[FG-08][SC-08-03][FE] Request detail, REVERSE / DELTA preview, evidence documents'
   role: FE
   assignee: FE-3
   labels:
@@ -5843,6 +6029,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] SC-08-03 — 決裁 / 却下, MFA, 次の決裁待ちへ, lỗi'
+  title_en: '[FG-08][SC-08-03][FE] Sign-off / reject, MFA, go to next pending sign-off, errors'
   role: FE
   assignee: FE-3
   labels:
@@ -5877,6 +6064,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08] 修正申請決裁 テスト — kịch bản DoD STL_CORRECTION_DECIDE #1–14'
+  title_en: '[FG-08][CorrectionDecide][QA] Correction sign-off test — DoD scenarios STL_CORRECTION_DECIDE #1–14'
   role: QA
   assignee: QA-2
   labels:
@@ -5915,6 +6103,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08][概算] 修正申請作成・一覧 — SC-08-01, SC-08-02, POST /corrections'
+  title_en: '[FG-08][SC-08-01+02][BE] Correction request creation / list + POST /corrections (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -5954,6 +6143,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08][概算] 修正申請 API — POST /corrections, xem trước'
+  title_en: '[FG-08][CorrectionCreateApi][BE] Correction request API — POST /corrections, preview (placeholder)'
   role: BE
   assignee: BE-5
   labels:
@@ -5988,6 +6178,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08][概算] SC-08-01 修正申請作成'
+  title_en: '[FG-08][SC-08-01][FE] Correction request creation (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -6022,6 +6213,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-08][概算] SC-08-02 修正申請一覧 — 自分の決裁待ち'
+  title_en: '[FG-08][SC-08-02][FE] Correction request list — my pending sign-offs (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -6056,6 +6248,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] 奨励金テーブル — migration INCENTIVE_DB + quyền EXECUTE'
+  title_en: '[FG-09][IncentiveTables][BE] Incentive tables — migration INCENTIVE_DB + EXECUTE privileges'
   role: BE
   assignee: BE-4
   labels:
@@ -6098,6 +6291,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] 入金・期のお支払額テーブル — migration BILLING_DB 4.44–4.50'
+  title_en: '[FG-09][BillingTables][BE] Payment receipt / period payment tables — migration BILLING_DB 4.44–4.50'
   role: BE
   assignee: BE-5
   labels:
@@ -6133,6 +6327,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K1 入力収集 — incentive_collect_inputs + input_hash'
+  title_en: '[FG-09][K1][BE] K1 input collection — `incentive_collect_inputs` + input_hash'
   role: BE
   assignee: BE-4
   labels:
@@ -6177,6 +6372,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K2 入金充当 — allocate_payment_fifo (FIFO, 過入金, 取消, 手動)'
+  title_en: '[FG-09][K2][BE] K2 payment allocation — `allocate_payment_fifo` (FIFO, overpay, cancel, manual)'
   role: BE
   assignee: BE-5
   labels:
@@ -6220,6 +6416,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K3 完納判定 — 期のお支払額, 完納 / 要確認 (手数料差引の疑い)'
+  title_en: '[FG-09][K3][BE] K3 full-payment judgment — period amount, full / needs check (fee deduction?)'
   role: BE
   assignee: BE-4
   labels:
@@ -6263,6 +6460,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K4 段階判定 — rate_tier_for (version của kỳ, 以上 / 未満)'
+  title_en: '[FG-09][K4][BE] K4 tier judgment — `rate_tier_for` (period''s version, at-or-above / below)'
   role: BE
   assignee: BE-4
   labels:
@@ -6304,6 +6502,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K5 奨励金額 — incentive_amount số nguyên, floor ×110/1.000.000'
+  title_en: '[FG-09][K5][BE] K5 incentive amount — integer `incentive_amount`, floor x110/1,000,000'
   role: BE
   assignee: BE-4
   labels:
@@ -6338,6 +6537,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K6 次期差分 — compute_delta_rows (mọi kỳ đã khóa, tách dòng)'
+  title_en: '[FG-09][K6][BE] K6 next-period delta — `compute_delta_rows` (all locked periods, separate rows)'
   role: BE
   assignee: BE-5
   labels:
@@ -6386,6 +6586,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K7 繰越 — compute_carry_rows (CARRY, CARRY_EXPIRED cuối năm TC)'
+  title_en: '[FG-09][K7][BE] K7 carry-over — `compute_carry_rows` (CARRY, CARRY_EXPIRED at fiscal year end)'
   role: BE
   assignee: BE-5
   labels:
@@ -6422,6 +6623,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K8 試算・期ロック — engine chế độ PREVIEW / LOCK + API'
+  title_en: '[FG-09][K8][BE] K8 trial calculation / period lock — engine PREVIEW / LOCK modes + API'
   role: BE
   assignee: BE-4
   labels:
@@ -6465,6 +6667,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K8 試算 — compute_period_incentives, preview_incentives, API-INC-002'
+  title_en: '[FG-09][K8][BE] K8 trial calculation — compute_period_incentives, preview_incentives, API-INC-002'
   role: BE
   assignee: BE-4
   labels:
@@ -6505,6 +6708,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K8 期ロック — lock_period một transaction (khóa, ghi, 端数調整)'
+  title_en: '[FG-09][K8][BE] K8 period lock — `lock_period` in one transaction (lock, write, rounding adjustment)'
   role: BE
   assignee: BE-4
   labels:
@@ -6550,6 +6754,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K8 lockPeriodRoute — API-INC-003, token MFA PERIOD_LOCK, 代行'
+  title_en: '[FG-09][API-INC-003][BE] K8 lockPeriodRoute — API-INC-003, MFA token PERIOD_LOCK, proxy'
   role: BE
   assignee: BE-5
   labels:
@@ -6590,6 +6795,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K9 読み出し — lock-view, kết quả chính thức (API-INC-001, -004)'
+  title_en: '[FG-09][K9][BE] K9 read-out — lock-view, official results (API-INC-001, -004)'
   role: BE
   assignee: BE-5
   labels:
@@ -6629,6 +6835,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] K2 請求番号充当 — nhánh INVOICE_NO (chỉ làm khi E-02 = có)'
+  title_en: '[FG-09][K2][BE] K2 invoice-number allocation — INVOICE_NO branch (only if E-02 = yes)'
   role: BE
   assignee: BE-5
   labels:
@@ -6664,6 +6871,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] SC-09-04 奨励金計算・期ロック — màn (FE)'
+  title_en: '[FG-09][SC-09-04][FE] Incentive calculation / period lock — screen (FE)'
   role: FE
   assignee: FE-3
   labels:
@@ -6699,6 +6907,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] SC-09-04 ① 入金の割当・要確認 — [1]–[6], [14], [15], [17], [18]'
+  title_en: '[FG-09][SC-09-04][FE] (1) Payment allocation / needs check — [1]–[6], [14], [15], [17], [18]'
   role: FE
   assignee: FE-3
   labels:
@@ -6731,6 +6940,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] SC-09-04 試算 / 確定結果 — [7]–[11], [16], tab 交付率表'
+  title_en: '[FG-09][SC-09-04][FE] Trial / final results — [7]–[11], [16], incentive rate table tab'
   role: FE
   assignee: FE-3
   labels:
@@ -6764,6 +6974,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] SC-09-04 期ロック — C-31, C-30 MFA, điều kiện bật [13], lỗi'
+  title_en: '[FG-09][SC-09-04][FE] Period lock — C-31, C-30 MFA, enable conditions for [13], errors'
   role: FE
   assignee: FE-3
   labels:
@@ -6802,6 +7013,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] 完納・入金充当 テスト — TV-01, TV-05, TV-06, TV-10'
+  title_en: '[FG-09][K2-K3][QA] Full payment / payment allocation test — TV-01, TV-05, TV-06, TV-10'
   role: QA
   assignee: QA-2
   labels:
@@ -6840,6 +7052,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] 段階・端数・版 テスト — TV-11, TV-12 + biên K5'
+  title_en: '[FG-09][K4-K5][QA] Tier / rounding / version test — TV-11, TV-12 + K5 boundaries'
   role: QA
   assignee: QA-2
   labels:
@@ -6877,6 +7090,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] 差分・繰越・後入力 テスト — TV-02, 03, 04, 07, 13, 14, 15'
+  title_en: '[FG-09][K6-K7][QA] Delta / carry-over / late entry test — TV-02, 03, 04, 07, 13, 14, 15'
   role: QA
   assignee: QA-2
   labels:
@@ -6918,6 +7132,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] 支払期日・業務日 前提テスト — TV-08, TV-09'
+  title_en: '[FG-09][K1][QA] Payment due date / business day premise test — TV-08, TV-09'
   role: QA
   assignee: QA-2
   labels:
@@ -6953,6 +7168,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09] 期ロック 結合テスト — DoD K8 (a)–(e) + E2E SC-09-04'
+  title_en: '[FG-09][K8][QA] Period lock integration test — DoD K8 (a)–(e) + E2E SC-09-04'
   role: QA
   assignee: QA-2
   labels:
@@ -6990,6 +7206,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] 入金CSV取込・コード対応・期別入金状況 — SC-09-01..03'
+  title_en: '[FG-09][SC-09-01..03][BE] Payment CSV import, code mapping, payment status by period (placeholder)'
   role: BE
   assignee: BE-5
   labels:
@@ -7030,6 +7247,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] 入金CSV取込 API — import, chống trùng, hủy batch'
+  title_en: '[FG-09][PaymentImportApi][BE] Payment CSV import API — import, dedup, batch cancel (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -7064,6 +7282,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] 取引先コード対応 API — ánh xạ mã có lịch sử'
+  title_en: '[FG-09][CodeMappingApi][BE] Partner code mapping API — code mapping with history (placeholder)'
   role: BE
   assignee: BE-5
   labels:
@@ -7098,6 +7317,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] SC-09-01 入金CSV取込'
+  title_en: '[FG-09][SC-09-01][FE] Payment CSV import (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7132,6 +7352,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] SC-09-02 取引先コード対応'
+  title_en: '[FG-09][SC-09-02][FE] Partner code mapping (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7166,6 +7387,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] SC-09-03 期別入金状況・手動割当'
+  title_en: '[FG-09][SC-09-03][FE] Payment status by period / manual allocation (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7200,6 +7422,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] 奨励金明細 + 期のお支払額通知 — SC-09-05, SC-09-B1'
+  title_en: '[FG-09][SC-09-05+B1][FE] Incentive detail + period payment amount notice (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7238,6 +7461,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] SC-09-05 奨励金明細'
+  title_en: '[FG-09][SC-09-05][FE] Incentive detail (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7271,6 +7495,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-09][概算] SC-09-B1 期のお支払額通知バッチ'
+  title_en: '[FG-09][SC-09-B1][BE] Period payment amount notice batch (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -7304,6 +7529,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] 規則版・マスタテーブル — migration RULE_DB 4.16–4.23'
+  title_en: '[FG-10][RuleTables][BE] Rule version / master tables — migration RULE_DB 4.16–4.23'
   role: BE
   assignee: BE-5
   labels:
@@ -7339,6 +7565,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] R1 規則版確認画面データ — rule_version_review + API-RULE-001'
+  title_en: '[FG-10][R1][BE] R1 rule version review screen data — `rule_version_review` + API-RULE-001'
   role: BE
   assignee: BE-4
   labels:
@@ -7375,6 +7602,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] R2・R3 発効日・クォータ — kiểm nội dung + đếm 4 lần / năm TC'
+  title_en: '[FG-10][R2-R3][BE] R2 / R3 effective date / quota — content check + count 4 per fiscal year'
   role: BE
   assignee: BE-4
   labels:
@@ -7412,6 +7640,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] R4 E-14 方針 — can_approve_rule_version (build N1)'
+  title_en: '[FG-10][R4][BE] R4 E-14 policy — `can_approve_rule_version` (build N1)'
   role: BE
   assignee: BE-4
   labels:
@@ -7448,6 +7677,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] R5 確認 — API-RULE-002, ghi trạng thái, audit, thông báo maker'
+  title_en: '[FG-10][R5][BE] R5 confirmation — API-RULE-002, write status, audit, notify maker'
   role: BE
   assignee: BE-5
   labels:
@@ -7486,6 +7716,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] R6 発効 — activate_due_rule_versions + rule_at'
+  title_en: '[FG-10][R6][BE] R6 activation — `activate_due_rule_versions` + `rule_at`'
   role: BE
   assignee: BE-5
   labels:
@@ -7521,6 +7752,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] R7 差し戻し・取消 — API-RULE-004, -005, -006'
+  title_en: '[FG-10][R7][BE] R7 send-back / cancellation — API-RULE-004, -005, -006'
   role: BE
   assignee: BE-5
   labels:
@@ -7558,6 +7790,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] N2 運用部門長決裁 — API-RULE-003 (chỉ làm khi E-14 = N2)'
+  title_en: '[FG-10][API-RULE-003][BE] N2 operations dept. head sign-off — API-RULE-003 (only if E-14 = N2)'
   role: BE
   assignee: BE-4
   labels:
@@ -7595,6 +7828,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] SC-10-04 規則版確認・ロールバック — màn (FE)'
+  title_en: '[FG-10][SC-10-04][FE] Rule version confirmation / rollback — screen (FE)'
   role: FE
   assignee: FE-3
   labels:
@@ -7629,6 +7863,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] SC-10-04 — so sánh version, quota 「今年度 n/4 回」, ví dụ tính'
+  title_en: '[FG-10][SC-10-04][FE] Version comparison, quota (n/4 this fiscal year), calculation example'
   role: FE
   assignee: FE-3
   labels:
@@ -7661,6 +7896,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] SC-10-04 — 確認 / 差し戻し / 取消, MFA ★, lỗi'
+  title_en: '[FG-10][SC-10-04][FE] Confirm / send back / cancel, MFA, errors'
   role: FE
   assignee: FE-3
   labels:
@@ -7697,6 +7933,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10] 規則版 テスト — RV-01..18 (quota, E-14 N1, hiệu lực, hủy)'
+  title_en: '[FG-10][RuleVersion][QA] Rule version test — RV-01..18 (quota, E-14 N1, effectiveness, cancellation)'
   role: QA
   assignee: QA-2
   labels:
@@ -7735,6 +7972,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 規則版作成・交付率表編集 (maker) — SC-10-01..03'
+  title_en: '[FG-10][SC-10-01..03][FE] Rule version creation / incentive rate table editing (maker) (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7776,6 +8014,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 規則版 API (maker) — tạo / sửa DRAFT, quota'
+  title_en: '[FG-10][RuleVersionMakerApi][BE] Rule version API (maker) — create / edit DRAFT, quota (placeholder)'
   role: BE
   assignee: BE-5
   labels:
@@ -7812,6 +8051,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 交付率表 API + submit — kiểm 5 bậc liền'
+  title_en: '[FG-10][RateTableApi][BE] Incentive rate table API + submit — check 5 contiguous tiers (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -7848,6 +8088,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] SC-10-01 規則版一覧 + bộ đếm quota'
+  title_en: '[FG-10][SC-10-01][FE] Rule version list + quota counter (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7884,6 +8125,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] SC-10-02 規則版作成・編集'
+  title_en: '[FG-10][SC-10-02][FE] Rule version creation / editing (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7920,6 +8162,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] SC-10-03 交付率テーブル編集'
+  title_en: '[FG-10][SC-10-03][FE] Incentive rate table editing (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -7956,6 +8199,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 市場・銀行カレンダー・業務日開始・期作成 — SC-10-05, SC-07-B1'
+  title_en: '[FG-10][Calendar][BE] Market / bank calendar, business day start, period creation (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -7997,6 +8241,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] カレンダー API — lịch chợ / ngân hàng 2 cờ'
+  title_en: '[FG-10][CalendarApi][BE] Calendar API — market / bank calendar with 2 flags (placeholder)'
   role: BE
   assignee: BE-5
   labels:
@@ -8032,6 +8277,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 業務日開始 — hàm mở ngày + job 01:00 dự phòng'
+  title_en: '[FG-10][SC-07-B1][BE] Business day start — day-open function + 01:00 fallback job (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -8067,6 +8313,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 期作成・支払期日 — tạo kỳ ở lần mở ngày đầu tháng'
+  title_en: '[FG-10][PeriodCreation][BE] Period creation / due date — at first day-open of month (placeholder)'
   role: BE
   assignee: BE-5
   labels:
@@ -8102,6 +8349,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] SC-10-05 市場・銀行カレンダー'
+  title_en: '[FG-10][SC-10-05][FE] Market / bank calendar (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -8137,6 +8385,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] マスタ管理（税率・品目・単位・出荷者） — SC-10-07'
+  title_en: '[FG-10][SC-10-07][FE] Master management (tax rate, item, unit, shipper) — SC-10-07 (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -8172,6 +8421,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 税率マスタ — thuế suất có ngày hiệu lực'
+  title_en: '[FG-10][TaxRateMaster][BE] Tax rate master — tax rates with effective dates (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -8204,6 +8454,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 品目・単位・出荷者マスタ API'
+  title_en: '[FG-10][MasterApi][BE] Item / unit / shipper master API (placeholder)'
   role: BE
   assignee: BE-5
   labels:
@@ -8236,6 +8487,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] SC-10-07 マスタ管理'
+  title_en: '[FG-10][SC-10-07][FE] Master management (placeholder)'
   role: FE
   assignee: FE-3
   labels:
@@ -8268,6 +8520,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-10][概算] 設定ファイル（履歴付き） — cơ chế đọc / ghi nhật ký (DEP-16)'
+  title_en: '[FG-10][ConfigFile][BE] Config files (with history) — read / write log mechanism (placeholder)'
   role: BE
   assignee: BE-4
   labels:
@@ -8304,6 +8557,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-14 — rollback quy chế khi đã đủ 4 lần / năm TC: chặn hay cho?'
+  title_en: '[CLAR][E-14][BrSE] Clarify: rule rollback after 4 changes in the fiscal year — block or allow?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8337,6 +8591,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-02 — 入金CSV có 請求番号 / 対象年月 không? (FIFO làm mất 完納)'
+  title_en: '[CLAR][E-02][BrSE] Clarify: payment CSV has invoice no. / target month? (FIFO loses full payment)'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8370,6 +8625,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-01 / OPEN-DB-01 — định dạng 入金CSV + file kế toán IF-ACC-01'
+  title_en: '[CLAR][E-01][BrSE] Clarify: E-01 / OPEN-DB-01 — payment CSV format + accounting file IF-ACC-01'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8411,6 +8667,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] SC-09-05 / SC-09-B1 — nội dung chi tiết thưởng và thông báo 期のお支払額'
+  title_en: '[CLAR][SC-09-05+B1][BrSE] Clarify: content of incentive detail and period payment amount notice'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8442,6 +8699,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-INC-03 — tạo kỳ mới ở lần mở 業務日 đầu tháng?'
+  title_en: '[CLAR][Q-INC-03][BrSE] Clarify: create a new period at the first business day open of the month?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8473,6 +8731,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-INC-01 (còn) — CSV ngân hàng về lúc nào sau 入金日?'
+  title_en: '[CLAR][Q-INC-01][BrSE] Clarify: (still open) when does the bank CSV arrive after the payment date?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8503,6 +8762,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-INC-02 (còn) — ghi GD 後入力 trên 請求 kỳ P* thế nào?'
+  title_en: '[CLAR][Q-INC-02][BrSE] Clarify: (still open) how to record late-entry trades on period P* billing?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8535,6 +8795,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-06 — 請求 kế toán tính thuế giống hệ thống (cách A) không?'
+  title_en: '[CLAR][E-06][BrSE] Clarify: does accounting billing compute tax like the system (method A)?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8567,6 +8828,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-08 — thu phần âm còn lại cuối năm TC (CARRY_EXPIRED) thế nào?'
+  title_en: '[CLAR][Q-ARCH-08][BrSE] Clarify: collecting negative balance left at fiscal year end (CARRY_EXPIRED)'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8600,6 +8862,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] OPEN-DB-08 — chênh lệch của kỳ đã khóa người mua trả thế nào?'
+  title_en: '[CLAR][OPEN-DB-08][BrSE] Clarify: how does the buyer pay differences for locked periods?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8632,6 +8895,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] 手数料差引 — ngưỡng KANNO_FEE_SUSPECT_MAX_JPY và ai chịu phí chuyển khoản'
+  title_en: '[CLAR][FeeDeduction][BrSE] Clarify: KANNO_FEE_SUSPECT_MAX_JPY threshold, who bears transfer fees'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8666,6 +8930,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-11 — 支払期日 rơi ngày ngân hàng nghỉ lùi về ngày nào?'
+  title_en: '[CLAR][Q-ARCH-11][BrSE] Clarify: payment due date on a bank holiday — shift to which day?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8697,6 +8962,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-08 — ngưỡng 修正申請 2 cấp (tạm 100.000 JPY)'
+  title_en: '[CLAR][E-08][BrSE] Clarify: two-level correction request threshold (tentatively 100,000 JPY)'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8729,6 +8995,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-02 — có cần mở lại 業務日 khi khóa nhầm không?'
+  title_en: '[CLAR][Q-ARCH-02][BrSE] Clarify: is reopening a business day closed by mistake needed?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -8759,6 +9026,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] AWS基盤 IaC — CDK dựng dev / stg / prod trên Tokyo'
+  title_en: '[PLAT][AwsIac][INFRA] AWS foundation IaC — CDK for dev / stg / prod in Tokyo'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -8793,6 +9061,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] ネットワーク・RDS — VPC, RDS PostgreSQL Multi-AZ, PITR, KMS'
+  title_en: '[PLAT][NetworkRds][INFRA] Network / RDS — VPC, RDS PostgreSQL Multi-AZ, PITR, KMS'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -8828,6 +9097,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] アプリ実行環境 — ECS Fargate ≥ 2 task, ALB, CloudFront + WAF'
+  title_en: '[PLAT][AppRuntime][INFRA] App runtime — ECS Fargate (2+ tasks), ALB, CloudFront + WAF'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -8863,6 +9133,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] ジョブ基盤 — ECS task theo lịch + EventBridge Scheduler (Asia/Tokyo)'
+  title_en: '[PLAT][JobPlatform][INFRA] Job platform — scheduled ECS tasks + EventBridge Scheduler (Asia/Tokyo)'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -8895,6 +9166,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] S3・SES・Secrets — lưu file theo loại chứng từ, email, secret'
+  title_en: '[PLAT][S3SesSecrets][INFRA] S3 / SES / Secrets — file storage by document type, email, secrets'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -8932,6 +9204,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] CI/CD — build, test, quét secret, deploy rolling, chặn giờ chợ'
+  title_en: '[PLAT][CiCd][INFRA] CI/CD — build, test, secret scan, rolling deploy, blocked during market hours'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -8966,6 +9239,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] アプリ骨格 — Next.js modular monolith 13 module + quy tắc phụ thuộc'
+  title_en: '[PLAT][AppSkeleton][BE] App skeleton — Next.js modular monolith with 13 modules + dependency rules'
   role: BE
   assignee: BE-6
   labels:
@@ -8998,6 +9272,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] DB呼出層 — client SQL có kiểu, DB role chỉ EXECUTE, set_config ngữ cảnh'
+  title_en: '[PLAT][DbCallLayer][BE] DB call layer — typed SQL client, EXECUTE-only DB role, set_config context'
   role: BE
   assignee: BE-6
   labels:
@@ -9032,6 +9307,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] マイグレーション基盤 — công cụ migration + quy ước chung MKT_DB §4.0'
+  title_en: '[PLAT][MigrationTooling][BE] Migration foundation — migration tool + shared conventions (MKT_DB 4.0)'
   role: BE
   assignee: BE-6
   labels:
@@ -9066,6 +9342,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] API共通 — route handler, zod, body lỗi E-CMN-001..008, traceId'
+  title_en: '[PLAT][ApiCommon][BE] API common — route handler, zod, error body E-CMN-001..008, traceId'
   role: BE
   assignee: BE-6
   labels:
@@ -9100,6 +9377,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] アプリログ — log JSON một dòng theo log-convention, cấm ghi bí mật'
+  title_en: '[PLAT][AppLogging][BE] App logging — single-line JSON logs per log-convention, no secrets logged'
   role: BE
   assignee: BE-6
   labels:
@@ -9133,6 +9411,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] シード — công cụ nạp fixture giả cho dev / stg (không có ở prod)'
+  title_en: '[PLAT][SeedTool][BE] Seed — fake fixture loader for dev / stg (not in prod)'
   role: BE
   assignee: BE-6
   labels:
@@ -9166,6 +9445,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] 画面枠（PC） — header 業務日, người đang dùng, menu theo quyền'
+  title_en: '[PLAT][PcLayout][FE] Screen frame (PC) — header with business day, current user, role-based menu'
   role: FE
   assignee: FE-4
   labels:
@@ -9199,6 +9479,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] 画面枠（タブレット） — khung tablet + ホーム lưới nút theo vai (C-13, C-14)'
+  title_en: '[PLAT][TabletLayout][FE] Screen frame (tablet) — tablet frame + role-based home button grid'
   role: FE
   assignee: FE-4
   labels:
@@ -9232,6 +9513,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[PLAT] 共通状態表示 — trạng thái dùng chung C-20..C-29, C-31 (gồm SC-00-05)'
+  title_en: '[PLAT][CommonStates][FE] Common state display — shared states C-20..C-29, C-31 (incl. SC-00-05)'
   role: FE
   assignee: FE-4
   labels:
@@ -9270,6 +9552,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] iamテーブル — migration IAM_AUDIT_DB 4.1–4.8, 4.58'
+  title_en: '[FG-02][IamTables][BE] IAM tables — migration IAM_AUDIT_DB 4.1–4.8, 4.58'
   role: BE
   assignee: BE-1
   labels:
@@ -9304,6 +9587,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] 社内ログイン — đăng nhập mật khẩu, phiên server-side, đăng xuất'
+  title_en: '[FG-02][InternalLogin][BE] Internal login — password login, server-side session, logout'
   role: BE
   assignee: BE-1
   labels:
@@ -9344,6 +9628,7 @@ issues:
   acceptance:
   - AC-S1-4
   title: '[FG-02] 端末登録 — đăng ký thiết bị dùng chung + đăng nhập thiết bị đầu ca'
+  title_en: '[FG-02][DeviceRegistration][BE] Device registration — shared devices + device login at shift start'
   role: BE
   assignee: BE-6
   labels:
@@ -9381,6 +9666,7 @@ issues:
   acceptance:
   - AC-S1-4
   title: '[FG-02] 利用者切替（PIN） — đổi người bằng 社員番号 + PIN 4 số, khóa theo người + máy'
+  title_en: '[FG-02][UserSwitchPin][BE] User switch (PIN) — employee number + 4-digit PIN, lock per user + device'
   role: BE
   assignee: BE-2
   labels:
@@ -9418,6 +9704,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] オフラインPIN — đổi người khi mất mạng bằng PIN gắn thiết bị, có hạn N giờ'
+  title_en: '[FG-02][OfflinePin][BE] Offline PIN — offline user switch via device-bound PIN, valid for N hours'
   role: BE
   assignee: BE-6
   labels:
@@ -9457,6 +9744,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] MFA step-up — xác thực mã, hiệu lực 10 phút, token một lần (DEP-01)'
+  title_en: '[FG-02][MfaStepUp][BE] MFA step-up — code verification, 10-minute validity, one-time token (DEP-01)'
   role: BE
   assignee: BE-6
   labels:
@@ -9494,6 +9782,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] MFA検証API — POST /auth/mfa/verify, step-up theo phiên, khóa sau 5 lần sai'
+  title_en: '[FG-02][MfaVerifyApi][BE] MFA verify API — POST /auth/mfa/verify, step-up, lock after 5 failures'
   role: BE
   assignee: BE-6
   labels:
@@ -9531,6 +9820,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] MFAトークン — token một lần theo purpose + middleware kiểm cho API nghiệp vụ'
+  title_en: '[FG-02][MfaToken][BE] MFA token — one-time token per purpose + middleware check for business APIs'
   role: BE
   assignee: BE-6
   labels:
@@ -9567,6 +9857,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] MFAダイアログ（C-30） — hộp nhập mã 6 số dùng chung'
+  title_en: '[FG-02][C-30][FE] MFA dialog (C-30) — shared 6-digit code entry dialog'
   role: FE
   assignee: FE-4
   labels:
@@ -9601,6 +9892,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] MFA手段登録 — đăng ký / thu hồi TOTP app, token phần cứng, mã dự phòng'
+  title_en: '[FG-02][MfaEnrollment][BE] MFA method registration — TOTP app, hardware token, backup codes'
   role: BE
   assignee: BE-6
   labels:
@@ -9637,6 +9929,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] 権限確認 — assert_caller trong DB + requireRole ở app + ràng buộc SoD'
+  title_en: '[FG-02][AuthzCheck][BE] Authorization check — assert_caller in DB + requireRole in app + SoD'
   role: BE
   assignee: BE-6
   labels:
@@ -9676,6 +9969,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] 閲覧権限 — RLS theo role_read_matrix + API menu đọc cùng bảng'
+  title_en: '[FG-02][ReadPermission][BE] Read permission — RLS by role_read_matrix + menu API on same table'
   role: BE
   assignee: BE-6
   labels:
@@ -9713,6 +10007,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] 代行者指定API — tạo / kết thúc 代行 có hạn, ghi 「thay cho ai」 (DEP-14)'
+  title_en: '[FG-02][DelegationApi][BE] Proxy assignment API — create / end time-limited proxy, on-behalf-of'
   role: BE
   assignee: BE-6
   labels:
@@ -9753,6 +10048,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] 社員番号照会API — tra tên theo 社員番号, chỉ tài khoản ACTIVE (DEP-02)'
+  title_en: '[FG-02][EmployeeLookupApi][BE] Employee number lookup API — name lookup, ACTIVE accounts only'
   role: BE
   assignee: BE-6
   labels:
@@ -9793,6 +10089,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] セッション管理 — timeout theo loại máy, mở khóa / đặt lại PIN ban đêm có MFA'
+  title_en: '[FG-02][SessionMgmt][BE] Session management — timeout by device type, night PIN unlock / reset + MFA'
   role: BE
   assignee: BE-6
   labels:
@@ -9832,6 +10129,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02][概算] SC-00-03 ホーム — trang chủ theo vai (chưa spec)'
+  title_en: '[FG-02][SC-00-03][FE] Home — role-based home page (not yet specified) (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -9871,6 +10169,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02][概算] MFA登録・アカウント管理画面 — SC-02-02, SC-02-03 + tab 代行者 (chưa spec)'
+  title_en: '[FG-02][SC-02-02+03][FE] MFA registration / account management screens + proxy tab (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -9909,6 +10208,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02][概算] SC-02-02 MFA登録・再設定'
+  title_en: '[FG-02][SC-02-02][FE] MFA registration / reset (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -9940,6 +10240,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02][概算] SC-02-03 アカウント管理 + tab 代行者'
+  title_en: '[FG-02][SC-02-03][FE] Account management + proxy tab (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -9971,6 +10272,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02][概算] アカウント・ロール管理API — cấp / dừng / mở lại / thu hồi, gán vai (chưa spec)'
+  title_en: '[FG-02][AccountRoleApi][BE] Account / role management API — lifecycle, role assignment (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10009,6 +10311,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02][概算] アカウント API — phát hành / dừng / mở lại / thu hồi'
+  title_en: '[FG-02][AccountApi][BE] Account API — issue / suspend / reactivate / revoke (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10041,6 +10344,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02][概算] ロール・決裁権限付与 API'
+  title_en: '[FG-02][RoleGrantApi][BE] Role / sign-off authority grant API (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10073,6 +10377,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] 認証テスト — kịch bản đăng nhập, PIN, MFA step-up, token một lần'
+  title_en: '[FG-02][Authentication][QA] Authentication test — login, PIN, MFA step-up, one-time token scenarios'
   role: QA
   assignee: QA-3
   labels:
@@ -10113,6 +10418,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] 認可テスト — vai, quyền duyệt, 代行, SoD, ma trận đọc'
+  title_en: '[FG-02][Authorization][QA] Authorization test — roles, sign-off authority, proxy, SoD, read matrix'
   role: QA
   assignee: QA-3
   labels:
@@ -10151,6 +10457,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13] 横断テーブル — migration IAM_AUDIT_DB 4.53–4.56 (audit chia năm TC)'
+  title_en: '[FG-13][CommonTables][BE] Cross-cutting tables — migration IAM_AUDIT_DB 4.53–4.56 (audit by FY)'
   role: BE
   assignee: BE-2
   labels:
@@ -10189,6 +10496,7 @@ issues:
   acceptance:
   - AC-S1-4
   title: '[FG-13] 監査ログ記録 — hàm ghi audit dùng chung: ai, khi, lý do, 代行, trước / sau'
+  title_en: '[FG-13][AuditLog][BE] Audit log recording — shared function: who, when, reason, proxy, before/after'
   role: BE
   assignee: BE-3
   labels:
@@ -10227,6 +10535,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13] 添付ファイル共通API — upload / tải chứng từ, loại chứng từ, hạn lưu (DEP-03)'
+  title_en: '[FG-13][AttachmentApi][BE] Common attachment API — upload / download, document type, retention'
   role: BE
   assignee: BE-6
   labels:
@@ -10269,6 +10578,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13] 異常行動ログ — sự kiện bảo mật: đăng nhập sai, ngoài giờ, xuất hàng loạt'
+  title_en: '[FG-13][SecurityEvents][BE] Anomaly log — security events: failed logins, off-hours, bulk export'
   role: BE
   assignee: BE-6
   labels:
@@ -10304,6 +10614,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] 保管期限・物理削除決裁 — xóa sau hạn có 決裁, tách partition audit'
+  title_en: '[FG-13][Retention][BE] Retention / physical deletion sign-off, audit partition split (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10344,6 +10655,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] 保管期限ジョブ — danh sách chứng từ hết hạn'
+  title_en: '[FG-13][RetentionJob][BE] Retention job — list of expired documents (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10378,6 +10690,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] 物理削除決裁 + tách partition audit'
+  title_en: '[FG-13][PhysicalDeletion][BE] Physical deletion sign-off + audit partition split (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10412,6 +10725,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] 監査ログ検索・詳細 — SC-13-01, SC-13-02 + xuất CSV có MFA (chưa spec)'
+  title_en: '[FG-13][SC-13-01+02][FE] Audit log search / detail + CSV export with MFA (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -10449,6 +10763,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] 監査ログ検索 API + xuất CSV (MFA)'
+  title_en: '[FG-13][AuditSearchApi][BE] Audit log search API + CSV export (MFA) (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10480,6 +10795,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] SC-13-01 監査ログ検索'
+  title_en: '[FG-13][SC-13-01][FE] Audit log search (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -10511,6 +10827,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] SC-13-02 監査ログ詳細'
+  title_en: '[FG-13][SC-13-02][FE] Audit log detail (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -10542,6 +10859,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] 個人情報請求対応 — SC-13-03 (giản lược C-06, chưa spec)'
+  title_en: '[FG-13][SC-13-03][FE] Personal data request handling — SC-13-03 (simplified C-06) (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -10578,6 +10896,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] 匿名化・利用停止 API'
+  title_en: '[FG-13][AnonymizationApi][BE] Anonymization / usage suspension API (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10608,6 +10927,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] SC-13-03 個人情報請求対応'
+  title_en: '[FG-13][SC-13-03][FE] Personal data request handling (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -10638,6 +10958,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13][概算] 適用規則版の表示 — hiện version quy chế đã áp cho 精算 / thưởng (chưa spec)'
+  title_en: '[FG-13][AppliedRuleVersion][BE] Show rule version applied to settlement / incentive (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10675,6 +10996,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-13] 監査・添付テスト — audit chỉ thêm, đủ trường 代行, đính kèm theo loại chứng từ'
+  title_en: '[FG-13][AuditAttachment][QA] Audit / attachment test — append-only, proxy fields, by document type'
   role: QA
   assignee: QA-3
   labels:
@@ -10713,6 +11035,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12] 通知キュー登録 — hàm ghi outbox trong transaction + API khung thông báo in-app'
+  title_en: '[FG-12][NotifyOutbox][BE] Notification queue — outbox write in transaction + in-app panel API'
   role: BE
   assignee: BE-6
   labels:
@@ -10750,6 +11073,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12] 通知ワーカー — gửi SES, gửi lại ≤ 3, lỗi hẳn → danh sách in + 未送信 (DEP-13)'
+  title_en: '[FG-12][NotifyWorker][BE] Notification worker — SES, up to 3 retries, failures to print / unsent'
   role: BE
   assignee: BE-6
   labels:
@@ -10788,6 +11112,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12] 重大通知 — đường ưu tiên Critical ≤ 5 phút, lỗi → hàng đợi cảnh báo'
+  title_en: '[FG-12][CriticalNotify][BE] Critical notifications — priority path within 5 min, else alert queue'
   role: BE
   assignee: BE-6
   labels:
@@ -10822,6 +11147,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12][概算] 通知事象・文面 — sự kiện baseline, email 支払義務・奨励金結果 (chưa spec)'
+  title_en: '[FG-12][NotifyEvents][BE] Notification events / wording — baseline events and emails (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10861,6 +11187,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12][概算] 通知事象 — sự kiện baseline + người nhận'
+  title_en: '[FG-12][NotifyEvents][BE] Notification events — baseline events + recipients (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10892,6 +11219,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12][概算] メール文面 — mẫu câu tiếng Nhật'
+  title_en: '[FG-12][EmailTemplates][BE] Email wording — Japanese templates (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -10923,6 +11251,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12][概算] 通知送信ログ — SC-12-02, gửi lại tay, danh sách in (chưa spec)'
+  title_en: '[FG-12][SC-12-02][FE] Notification send log — SC-12-02, manual resend, print list (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -10959,6 +11288,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12][概算] SC-12-02 通知送信ログ'
+  title_en: '[FG-12][SC-12-02][FE] Notification send log (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -10989,6 +11319,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12][概算] 再送・印刷リスト — gửi lại tay, danh sách in'
+  title_en: '[FG-12][ResendPrintList][BE] Resend / print list — manual resend, print list (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11019,6 +11350,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-12] 通知テスト — outbox theo transaction, gửi lại ≤ 3, Critical ≤ 5 phút'
+  title_en: '[FG-12][Notification][QA] Notification test — transactional outbox, 3 retries, Critical within 5 min'
   role: QA
   assignee: QA-3
   labels:
@@ -11055,6 +11387,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] 帳票基盤・帳票メニュー — SC-11-01, batch trước 11:00 (chưa spec)'
+  title_en: '[FG-11][SC-11-01+B1][BE] Report platform / report menu — SC-11-01, batch before 11:00 (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11094,6 +11427,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] 帳票共通基盤 — lọc, CSV, PDF, metadata xuất'
+  title_en: '[FG-11][ReportCommon][BE] Report common platform — filters, CSV, PDF, export metadata (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11126,6 +11460,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] SC-11-01 帳票メニュー theo vai'
+  title_en: '[FG-11][SC-11-01][FE] Role-based report menu (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -11158,6 +11493,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] SC-11-B1 帳票バッチ — xong trước 11:00'
+  title_en: '[FG-11][SC-11-B1][BE] Report batch — finished before 11:00 (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11190,6 +11526,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] 日次帳票 RPT-01..05 — SC-11-02..06, gồm lọc 継続協議 RPT-04 (chưa spec)'
+  title_en: '[FG-11][RPT-01..05][BE] Daily reports RPT-01..05, ongoing-talks filter on RPT-04 (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11235,6 +11572,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-01 (SC-11-02) GD ngày 相対 / せり'
+  title_en: '[FG-11][RPT-01][BE] RPT-01 (SC-11-02) daily aitai / auction trades (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11272,6 +11610,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-02 (SC-11-03) lịch sử lô + trạng thái GD'
+  title_en: '[FG-11][RPT-02][BE] RPT-02 (SC-11-03) lot history + trade status (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11309,6 +11648,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-03 (SC-11-04) bản in quầy 受付'
+  title_en: '[FG-11][RPT-03][BE] RPT-03 (SC-11-04) intake counter printout (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11346,6 +11686,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-04 (SC-11-05) 滞留引渡し・例外 + 継続協議'
+  title_en: '[FG-11][RPT-04][BE] RPT-04 (SC-11-05) pending deliveries / exceptions + ongoing talks (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11383,6 +11724,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-05 (SC-11-06) 精算 ngày'
+  title_en: '[FG-11][RPT-05][BE] RPT-05 (SC-11-06) daily settlement (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11420,6 +11762,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] 期別・月次帳票 RPT-07..12 — SC-11-08..13 (chưa spec)'
+  title_en: '[FG-11][RPT-07..12][BE] Period / monthly reports RPT-07..12 — SC-11-08..13 (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11471,6 +11814,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-07 (SC-11-08) kết quả 完納奨励金 theo kỳ'
+  title_en: '[FG-11][RPT-07][BE] RPT-07 (SC-11-08) on-time full-payment incentive results by period (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11511,6 +11855,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-08 (SC-11-09) điều chỉnh sau khóa'
+  title_en: '[FG-11][RPT-08][BE] RPT-08 (SC-11-09) post-lock adjustments (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11551,6 +11896,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-09 (SC-11-10) tranh chấp + SLA'
+  title_en: '[FG-11][RPT-09][BE] RPT-09 (SC-11-10) disputes + SLA (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11591,6 +11937,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-10 (SC-11-11) tháng theo người tham gia'
+  title_en: '[FG-11][RPT-10][BE] RPT-10 (SC-11-11) monthly by participant (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11631,6 +11978,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-11 (SC-11-12) tháng 相対 / せり'
+  title_en: '[FG-11][RPT-11][BE] RPT-11 (SC-11-12) monthly aitai / auction (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11671,6 +12019,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] RPT-12 (SC-11-13) thay đổi quy chế + version'
+  title_en: '[FG-11][RPT-12][BE] RPT-12 (SC-11-13) rule changes + versions (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11711,6 +12060,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] 会計連携CSV・RPT-06・仕訳マッピング — SC-11-14, SC-11-15 (chưa spec)'
+  title_en: '[FG-11][IF-ACC-01][BE] Accounting CSV, RPT-06, journal mapping — SC-11-14, SC-11-15 (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11755,6 +12105,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] 会計連携CSV バッチ — tạo sau 日次締め, đóng băng, xuất lại'
+  title_en: '[FG-11][IF-ACC-01][BE] Accounting CSV batch — after daily close, frozen, re-export (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11791,6 +12142,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] 仕訳マッピング — 勘定科目 / 税区分 có lịch sử'
+  title_en: '[FG-11][JournalMapping][BE] Journal mapping — account titles / tax categories, history (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11826,6 +12178,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] 会計CSV — nhặt dòng 端数調整 + MFA khi xuất'
+  title_en: '[FG-11][IF-ACC-01][BE] Accounting CSV — rounding adjustment rows + MFA on export (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11861,6 +12214,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] SC-11-14 RPT-06・会計連携CSV'
+  title_en: '[FG-11][SC-11-14][FE] RPT-06 / accounting CSV (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -11895,6 +12249,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] SC-11-15 仕訳マッピング'
+  title_en: '[FG-11][SC-11-15][FE] Journal mapping (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -11929,6 +12284,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] データ出力 — SC-11-16, 3 loại CSV cấu trúc cố định có MFA (chưa spec)'
+  title_en: '[FG-11][SC-11-16][BE] Data export — SC-11-16, 3 fixed-structure CSV types with MFA (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11965,6 +12321,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] データ出力 API — 3 loại CSV cố định, MFA'
+  title_en: '[FG-11][DataExportApi][BE] Data export API — 3 fixed CSV types, MFA (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -11995,6 +12352,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11][概算] SC-11-16 データ出力'
+  title_en: '[FG-11][SC-11-16][FE] Data export (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -12025,6 +12383,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11] PDF帳票基盤 — sinh PDF ở server theo mẫu FORM, PC in thẳng'
+  title_en: '[FG-11][PdfReports][BE] PDF report platform — server-side PDF from FORM templates, PC direct print'
   role: BE
   assignee: BE-6
   labels:
@@ -12059,6 +12418,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11] 帳票テスト — số liệu khớp nguồn, batch trước 11:00, IF-ACC-01 đóng băng'
+  title_en: '[FG-11][Reports][QA] Report test — figures match source, batch before 11:00, IF-ACC-01 frozen'
   role: QA
   assignee: QA-3
   labels:
@@ -12095,6 +12455,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-14] 運用監視 — alarm health, batch, xuất / nhập, email, sự kiện bảo mật'
+  title_en: '[FG-14][Monitoring][INFRA] Ops monitoring — alarms: health, batch, import / export, email, security'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -12130,6 +12491,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-14] 開場前チェック代替 — alarm trước 01:45 thay kiểm tra tự động (SC-14-B1)'
+  title_en: '[FG-14][SC-14-B1][INFRA] Pre-opening check substitute — alarm before 01:45 instead of auto check'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -12165,6 +12527,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-14] バックアップ — PITR, AWS Backup, bản sao sang Osaka (SC-14-B2)'
+  title_en: '[FG-14][SC-14-B2][INFRA] Backup — PITR, AWS Backup, copy to Osaka'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -12201,6 +12564,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-14] 復旧ランブック — 3 tình huống: hỏng dữ liệu, mất AZ, mất region'
+  title_en: '[FG-14][RecoveryRunbook][INFRA] Recovery runbook — data corruption, AZ loss, region loss'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -12234,6 +12598,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-14] 性能基盤 — helper truy vấn bắt buộc khoảng 業務日 + phân trang, quy ước index'
+  title_en: '[FG-14][QueryPerf][BE] Performance foundation — business-day-range query helper, paging, indexes'
   role: BE
   assignee: BE-6
   labels:
@@ -12269,6 +12634,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-14][概算] 運用ダッシュボード — SC-14-01 rút gọn: 1 trang trạng thái + email (chưa spec)'
+  title_en: '[FG-14][SC-14-01][FE] Operations dashboard — reduced SC-14-01: 1 status page + email (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -12304,6 +12670,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-14] 監視テスト — bắn lỗi thử cho từng alarm, đo thời gian tới người nhận'
+  title_en: '[FG-14][Monitoring][QA] Monitoring test — inject faults per alarm, measure time to recipient'
   role: QA
   assignee: QA-3
   labels:
@@ -12338,6 +12705,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] 移行データ取込・変換 — ≤ 5 nguồn Excel/CSV → bảng tạm → nạp (chưa spec)'
+  title_en: '[FG-15][MigrationImport][BE] Migration import / conversion — up to 5 Excel/CSV sources (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12376,6 +12744,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] 移行取込 — master + khoản còn mở'
+  title_en: '[FG-15][MigrationImport][BE] Migration import — masters + open balances (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12408,6 +12777,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] 移行取込 — chi tiết GD + 2 kỳ thưởng'
+  title_en: '[FG-15][MigrationImport][BE] Migration import — trade details + 2 incentive periods (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12440,6 +12810,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] クレンジング・要判断データ対応 — SC-15-02, người quyết từng dòng (chưa spec)'
+  title_en: '[FG-15][SC-15-02][BE] Cleansing / needs-decision data — a person decides each row (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12477,6 +12848,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] クレンジング — quy tắc 3 loại dữ liệu bẩn'
+  title_en: '[FG-15][Cleansing][BE] Cleansing — rules for 3 kinds of dirty data (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12508,6 +12880,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] SC-15-02 要判断データ — hàng đợi quyết từng dòng'
+  title_en: '[FG-15][SC-15-02][FE] Needs-decision data — row-by-row decision queue (placeholder)'
   role: FE
   assignee: FE-4
   labels:
@@ -12539,6 +12912,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] 移行照合 — đối chiếu 100% số bản ghi + tổng tiền, file để ký (chưa spec)'
+  title_en: '[FG-15][MigrationRecon][BE] Migration reconciliation — 100% counts + amounts, sign-off (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12575,6 +12949,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] リハーサル・ロールバック — ≥ 2 lần rehearsal, rollback (chưa spec)'
+  title_en: '[FG-15][MigrationRehearsal][BE] Rehearsal / rollback — at least 2 rehearsals, rollback (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12613,6 +12988,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] リハーサル — script chạy lại + đo giờ'
+  title_en: '[FG-15][MigrationRehearsal][BE] Rehearsal — rerunnable script + timing (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12644,6 +13020,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15][概算] ロールバック — tiêu chí + thủ tục'
+  title_en: '[FG-15][MigrationRollback][BE] Rollback — criteria + procedure (placeholder)'
   role: BE
   assignee: BE-6
   labels:
@@ -12675,6 +13052,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-15] 移行テスト — kịch bản rehearsal + bộ dữ liệu bẩn 3 loại DS-DIRTY-01'
+  title_en: '[FG-15][Migration][QA] Migration test — rehearsal scenarios + 3-kind dirty dataset DS-DIRTY-01'
   role: QA
   assignee: QA-3
   labels:
@@ -12708,6 +13086,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 総合テスト計画 — phạm vi W4, tiêu chí vào / ra, truy vết ACC-02 / ACC-03'
+  title_en: '[TEST][SystemTestPlan][QA] System test plan — W4 scope, entry / exit criteria, ACC-02 / ACC-03 trace'
   role: QA
   assignee: QA-3
   labels:
@@ -12740,6 +13119,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 業務シナリオ — một ngày chợ và một kỳ xuyên module, 相対 là luồng chính'
+  title_en: '[TEST][BusinessScenario][QA] Business scenarios — a market day and a period end-to-end, aitai first'
   role: QA
   assignee: QA-3
   labels:
@@ -12774,6 +13154,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 権限テスト — 462 tổ hợp vai × màn × thao tác'
+  title_en: '[TEST][PermissionTest][QA] Permission test — 462 combinations of role x screen x operation'
   role: QA
   assignee: QA-3
   labels:
@@ -12809,6 +13190,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 権限テスト（更新・決裁） — tổ hợp ghi / duyệt / MFA'
+  title_en: '[TEST][PermissionTest][QA] Permission test (update / sign-off) — write / sign-off / MFA combinations'
   role: QA
   assignee: QA-3
   labels:
@@ -12841,6 +13223,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 権限テスト（閲覧） — tổ hợp chỉ đọc theo cột 閲 của role-list'
+  title_en: '[TEST][PermissionTest][QA] Permission test (read) — read-only combinations per role-list read column'
   role: QA
   assignee: QA-3
   labels:
@@ -12871,6 +13254,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 性能・負荷テスト — dữ liệu 7 năm, burst × 2 vào 02:15–05:00'
+  title_en: '[TEST][LoadTest][QA] Performance / load test — 7 years of data, 2x burst 02:15–05:00'
   role: QA
   assignee: QA-3
   labels:
@@ -12902,6 +13286,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 負荷データ — sinh dữ liệu giả lập 7 năm theo FIG-LOAD-01'
+  title_en: '[TEST][LoadData][BE] Load data — generate 7 years of simulated data per FIG-LOAD-01'
   role: BE
   assignee: BE-6
   labels:
@@ -12931,6 +13316,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 負荷テスト実施 — kịch bản tải, đo p95, báo cáo'
+  title_en: '[TEST][LoadTest][QA] Load test execution — load scenarios, p95 measurement, report'
   role: QA
   assignee: QA-3
   labels:
@@ -12963,6 +13349,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] セキュリティ診断 — OWASP, cấu hình AWS, quét phụ thuộc'
+  title_en: '[TEST][SecurityAssessment][QA] Security assessment — OWASP, AWS configuration, dependency scan'
   role: QA
   assignee: QA-3
   labels:
@@ -12998,6 +13385,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] リストア訓練 — diễn tập khôi phục, đo RTO / RPO thật, biên bản'
+  title_en: '[TEST][RestoreDrill][INFRA] Restore drill — recovery exercise, measure real RTO / RPO, minutes'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -13028,6 +13416,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] UAT支援 — kịch bản UAT, dữ liệu mẫu đã che, ghi / phân loại / test lại lỗi'
+  title_en: '[TEST][UatSupport][QA] UAT support — scenarios, masked sample data, log / triage / retest defects'
   role: QA
   assignee: QA-3
   labels:
@@ -13060,6 +13449,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 切替計画 — cutover 7/31 → 8/1, tiêu chí go / no-go, quy trình rollback'
+  title_en: '[TEST][Cutover][INFRA] Cutover plan — cutover 7/31 to 8/1, go / no-go criteria, rollback procedure'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -13092,6 +13482,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[TEST] 運用移管 — runbook, danh sách alarm, sổ tay vận hành, walkthrough'
+  title_en: '[TEST][OpsHandover][INFRA] Operations handover — runbook, alarm list, operations manual, walkthrough'
   role: INFRA
   assignee: INFRA-1
   labels:
@@ -13123,6 +13514,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-15 — step-up MFA có được IT / kiểm toán chấp nhận? ルール管理者 có là 管理者?'
+  title_en: '[CLAR][E-15][BrSE] Clarify: is step-up MFA accepted by IT / audit? Is rule admin an administrator?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13155,6 +13547,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-03 — số người cần token phần cứng, ai mua, ai giữ runbook token'
+  title_en: '[CLAR][Q-ARCH-03][BrSE] Clarify: hardware-token user count, who buys them, who owns the runbook'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13184,6 +13577,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-10 — khách có IdP doanh nghiệp muốn dùng cho PC văn phòng không?'
+  title_en: '[CLAR][Q-ARCH-10][BrSE] Clarify: does the customer have an enterprise IdP to use for office PCs?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13214,6 +13608,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-18 / Q-ARCH-04 — chấp nhận đổi người offline bằng PIN gắn máy? N giờ?'
+  title_en: '[CLAR][E-18][BrSE] Clarify: Q-ARCH-04 — accept offline user switch via device-bound PIN? N hours?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13247,6 +13642,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] OPEN-DB-10 — một người giữ nhiều vai trên một tài khoản được không?'
+  title_en: '[CLAR][OPEN-DB-10][BrSE] Clarify: can one person hold multiple roles on one account?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13280,6 +13676,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] DEP-14 — người 代行 thật cho 照合部門長, phạm vi 代行 từng thao tác'
+  title_en: '[CLAR][DEP-14][BrSE] Clarify: actual proxy for the reconciliation head, proxy scope per operation'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13312,6 +13709,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] DEP-03 — giới hạn loại / cỡ file đính kèm và quy tắc mã lỗi E-ATT'
+  title_en: '[CLAR][DEP-03][BrSE] Clarify: attachment file type / size limits and E-ATT error code rules'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13342,6 +13740,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-07 — hạn lưu chứng từ, xóa sau hạn, tách partition audit > 7 năm'
+  title_en: '[CLAR][Q-ARCH-07][BrSE] Clarify: document retention, post-expiry deletion, audit split after 7 years'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13376,6 +13775,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-01 — RTO 4h / RPO 15 phút có áp cho sự cố cả region Tokyo?'
+  title_en: '[CLAR][Q-ARCH-01][BrSE] Clarify: do RTO 4h / RPO 15 min apply to a full Tokyo region outage?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13405,6 +13805,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-06 — giới hạn màn quản trị theo IP mạng chợ qua WAF được không?'
+  title_en: '[CLAR][Q-ARCH-06][BrSE] Clarify: can admin screens be limited to market network IPs via WAF?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13434,6 +13835,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-05 / Q-ARCH-05 / Q-TRD-03 — tablet, máy in hiện trường, kiosk hay agent'
+  title_en: '[CLAR][E-05][BrSE] Clarify: E-05 / Q-ARCH-05 / Q-TRD-03 — tablets, field printers, kiosk or agent'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13473,6 +13875,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] DEP-13 — mẫu câu email tối thiểu + danh sách sự kiện Critical'
+  title_en: '[CLAR][DEP-13][BrSE] Clarify: minimum email templates + list of Critical events'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13509,6 +13912,7 @@ issues:
   acceptance:
   - AC-S1-1
   title: '[要確認] MIG-01 / E-03 — nguồn migrate, fixture Appendix C, bảng 交付率 thật'
+  title_en: '[CLAR][MIG-01][BrSE] Clarify: E-03 — migration sources, Appendix C fixtures, real incentive rates'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13551,6 +13955,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] log-convention §3 — timezone, category, cấm ghi, nơi / thời gian lưu log'
+  title_en: '[CLAR][LogConvention][BrSE] Clarify: log timezone, category, forbidden data, storage / retention'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13582,6 +13987,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-03] オフライン基盤 — PWA khung: service worker, hàng đợi IndexedDB, trạng thái mạng'
+  title_en: '[FG-03][OfflineFoundation][FE] Offline foundation — PWA service worker, IndexedDB queue, network'
   role: FE
   assignee: FE-2
   labels:
@@ -13617,6 +14023,7 @@ issues:
   acceptance:
   - AC-S1-1
   title: '[FG-01] S1デモ用参加者データ投入 — nạp actors.csv đã che (đợt 1) qua công cụ seed'
+  title_en: '[FG-01][S1DemoSeed][BE] S1 demo participant data — load masked actors.csv (batch 1) via seed tool'
   role: BE
   assignee: BE-6
   labels:
@@ -13652,6 +14059,7 @@ issues:
   milestone: S4 (2027-03-15 → 03-26)
   acceptance: []
   title: '[FG-09] 試算表チェックポイント (S4末) — kiểm quy tắc bằng bảng tính trước khi code engine'
+  title_en: '[FG-09][TrialSheet][QA] Trial calculation sheet checkpoint (end of S4) — verify rules before engine'
   role: QA
   assignee: QA-2
   labels:
@@ -13693,6 +14101,7 @@ issues:
   milestone: S4 (2027-03-15 → 03-26)
   acceptance: []
   title: '[FG-09] 試算表 — bảng tính K1–K8 cho TV-01..15 + 3 ca C.3 (INC-EDGE-01..03)'
+  title_en: '[FG-09][TrialSheet][BE] Trial calculation sheet — K1–K8 for TV-01..15 + INC-EDGE-01..03'
   role: BE
   assignee: BE-4
   labels:
@@ -13725,6 +14134,7 @@ issues:
   milestone: S4 (2027-03-15 → 03-26)
   acceptance: []
   title: '[FG-09] 試算表 — ca biên L4-A09, FIFO, 後入力, phân bổ lại (B-CLR-24)'
+  title_en: '[FG-09][TrialSheet][BE] Trial calculation sheet — edge cases L4-A09, FIFO, late entry, reallocation'
   role: BE
   assignee: BE-5
   labels:
@@ -13757,6 +14167,7 @@ issues:
   milestone: S4 (2027-03-15 → 03-26)
   acceptance: []
   title: '[FG-09] 試算表 — đối chiếu với bảng tính tay của 照合事務局 + biên bản ký'
+  title_en: '[FG-09][TrialSheet][QA] Trial calculation sheet — match reconciliation office sheet + signed minutes'
   role: QA
   assignee: QA-2
   labels:
@@ -13791,6 +14202,7 @@ issues:
   milestone: S4 (2027-03-15 → 03-26)
   acceptance: []
   title: '[FG-09] 試算表 — buổi kiểm với 照合事務局 / 経理部 / ルール管理者'
+  title_en: '[FG-09][TrialSheet][BrSE] Trial calculation sheet — review with reconciliation, accounting, rules'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -13824,6 +14236,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-11] 会計連携テーブル — migration BILLING_DB 4.40–4.42 (batch_id cho phép NULL)'
+  title_en: '[FG-11][AccountingTables][BE] Accounting tables — migration BILLING_DB 4.40–4.42, nullable batch_id'
   role: BE
   assignee: BE-6
   labels:
@@ -13856,6 +14269,7 @@ issues:
   acceptance:
   - AC-S1-3
   title: '[FG-01][設計] Screen Spec SC-01-06 資格照会'
+  title_en: '[FG-01][SC-01-06][FE] Design: Screen Spec SC-01-06 qualification inquiry'
   role: FE
   assignee: FE-1
   labels:
@@ -13887,6 +14301,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01][設計] Screen Spec SC-01-01 / SC-01-05 + Technical Design 失効予告'
+  title_en: '[FG-01][SC-01-01+05][FE] Design: Screen Spec SC-01-01 / SC-01-05 + Technical Design expiry notice'
   role: FE
   assignee: FE-2
   labels:
@@ -13918,6 +14333,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-01][設計] Screen Spec SC-01-01 参加者一覧 + SC-01-05 資格状態変更'
+  title_en: '[FG-01][SC-01-01+05][FE] Design: Screen Spec participant list + qualification status change'
   role: FE
   assignee: FE-1
   labels:
@@ -13946,6 +14362,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-01][設計] Technical Design 失効予告 — job cảnh báo sắp hết hạn'
+  title_en: '[FG-01][ExpiryNotice][BE] Design: Technical Design for expiry notice — warning job before expiry'
   role: BE
   assignee: BE-1
   labels:
@@ -13975,6 +14392,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01][設計] Screen Spec SC-01-03 許可登録 + SC-01-04 承認登録'
+  title_en: '[FG-01][SC-01-03+04][FE] Design: Screen Spec SC-01-03 permit / SC-01-04 approval registration'
   role: FE
   assignee: FE-2
   labels:
@@ -14005,6 +14423,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-03][設計] Screen Spec SC-03-02 仮受付 + API Design ghi / hủy 仮受付'
+  title_en: '[FG-03][SC-03-02][FE] Design: Screen Spec provisional intake + API Design to record / cancel intake'
   role: FE
   assignee: FE-1
   labels:
@@ -14035,6 +14454,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-03][設計] Technical / API Design 同期 (DEP-04) + Screen Spec SC-03-07'
+  title_en: '[FG-03][DEP-04][BE] Design: sync Technical / API Design (DEP-04) + Screen Spec SC-03-07'
   role: BE
   assignee: BE-2
   labels:
@@ -14065,6 +14485,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-03][設計] 販売公開・販売終了 (DEP-18) + Screen Spec SC-03-03 / SC-03-04'
+  title_en: '[FG-03][DEP-18][BE] Design: publish for sale / end of sale + Screen Spec SC-03-03 / SC-03-04'
   role: BE
   assignee: BE-3
   labels:
@@ -14096,6 +14517,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-03][設計] Function / API Design 販売公開・販売終了 (DEP-18)'
+  title_en: '[FG-03][DEP-18][BE] Design: Function / API Design for publish for sale / end of sale (DEP-18)'
   role: BE
   assignee: BE-1
   labels:
@@ -14124,6 +14546,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-03][設計] Screen Spec SC-03-03 ロット一覧 + SC-03-04 ロット詳細'
+  title_en: '[FG-03][SC-03-03+04][FE] Design: Screen Spec SC-03-03 lot list + SC-03-04 lot detail'
   role: FE
   assignee: FE-2
   labels:
@@ -14152,6 +14575,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-03][設計] Function Spec fn_lot_carry_over (DEP-05)'
+  title_en: '[FG-03][DEP-05][BE] Design: Function Spec `fn_lot_carry_over` (DEP-05)'
   role: BE
   assignee: BE-2
   labels:
@@ -14183,6 +14607,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-04][設計] Screen Spec SC-04-02..05, SC-04-07 + API Design 紙伝票後入力'
+  title_en: '[FG-04][SC-04-02..07][FE] Design: Screen Spec SC-04-02..05, -07 + API Design paper slip late entry'
   role: FE
   assignee: FE-1
   labels:
@@ -14213,6 +14638,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-04][設計] Screen Spec SC-04-02 + SC-04-03'
+  title_en: '[FG-04][SC-04-02+03][FE] Design: Screen Spec SC-04-02 + SC-04-03'
   role: FE
   assignee: FE-2
   labels:
@@ -14240,6 +14666,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-04][設計] Screen Spec SC-04-04 + SC-04-05 当日訂正・取消'
+  title_en: '[FG-04][SC-04-04+05][FE] Design: Screen Spec SC-04-04 + SC-04-05 same-day correction / cancellation'
   role: FE
   assignee: FE-1
   labels:
@@ -14267,6 +14694,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-04][設計] Screen Spec SC-04-07 紙伝票後入力 + API Design PAPER_LATE'
+  title_en: '[FG-04][SC-04-07][FE] Design: Screen Spec SC-04-07 paper slip late entry + API Design PAPER_LATE'
   role: FE
   assignee: FE-2
   labels:
@@ -14294,6 +14722,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-04][設計] Function Spec 後入力 fn_*_late_entry (DEP-06)'
+  title_en: '[FG-04][DEP-06][BE] Design: Function Spec for late entry `fn_*_late_entry` (DEP-06)'
   role: BE
   assignee: BE-3
   labels:
@@ -14324,6 +14753,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-05][設計] Screen Spec SC-05-01 せり結果入力 + API Design ghi / sửa dòng せり'
+  title_en: '[FG-05][SC-05-01][FE] Design: Screen Spec auction result entry + API Design to record / edit lines'
   role: FE
   assignee: FE-1
   labels:
@@ -14354,6 +14784,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-06][設計] Screen Spec SC-06-01 / SC-06-06 + API Design in 引渡票'
+  title_en: '[FG-06][SC-06-01+06][FE] Design: Screen Spec SC-06-01 / SC-06-06 + API Design delivery slip print'
   role: FE
   assignee: FE-2
   labels:
@@ -14383,6 +14814,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-06][設計] Screen Spec SC-06-01 引渡し対象一覧 + SC-06-06 引渡票'
+  title_en: '[FG-06][SC-06-01+06][FE] Design: Screen Spec SC-06-01 delivery target list + SC-06-06 delivery slip'
   role: FE
   assignee: FE-1
   labels:
@@ -14410,6 +14842,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-06][設計] API Design in 引渡票 / 再発行'
+  title_en: '[FG-06][DeliverySlipApi][BE] Design: API Design for delivery slip print / reissue'
   role: BE
   assignee: BE-1
   labels:
@@ -14437,6 +14870,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-07][設計] Screen Spec SC-07-01 / 03 / 04 + Technical Design 日次精算'
+  title_en: '[FG-07][SC-07-01+03+04][FE] Design: Screen Spec SC-07-01 / 03 / 04 + Tech Design daily settlement'
   role: FE
   assignee: FE-3
   labels:
@@ -14467,6 +14901,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-07][設計] Screen Spec SC-07-01 日次照合表 + API Design 照合'
+  title_en: '[FG-07][SC-07-01][FE] Design: Screen Spec daily reconciliation sheet + API Design reconciliation'
   role: FE
   assignee: FE-3
   labels:
@@ -14494,6 +14929,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-07][設計] Screen Spec SC-07-03 紛争一覧 + SC-07-04 紛争詳細'
+  title_en: '[FG-07][SC-07-03+04][FE] Design: Screen Spec SC-07-03 dispute list + SC-07-04 dispute detail'
   role: FE
   assignee: FE-3
   labels:
@@ -14521,6 +14957,7 @@ issues:
   milestone: 設計第3波 (khách duyệt 2027-02-19)
   acceptance: []
   title: '[FG-07][設計] Technical Design 日次精算バッチ SC-07-B2 + API 紛争・SLA'
+  title_en: '[FG-07][SC-07-B2][BE] Design: Technical Design daily settlement batch SC-07-B2 + dispute / SLA API'
   role: BE
   assignee: BE-4
   labels:
@@ -14548,6 +14985,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-08][設計] Screen Spec SC-08-01 / 02 + API Design POST /corrections'
+  title_en: '[FG-08][DEP-09][FE] Design: Screen Spec SC-08-01 / 02 + API Design POST /corrections'
   role: FE
   assignee: FE-3
   labels:
@@ -14578,6 +15016,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-08][設計] Screen Spec SC-08-01 修正申請作成 + SC-08-02 修正申請一覧'
+  title_en: '[FG-08][SC-08-01+02][FE] Design: Screen Spec correction request creation + request list'
   role: FE
   assignee: FE-3
   labels:
@@ -14605,6 +15044,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-08][設計] API Design POST /corrections + xem trước tiền, số cấp'
+  title_en: '[FG-08][CorrectionApi][BE] Design: API Design POST /corrections + amount preview, level count'
   role: BE
   assignee: BE-5
   labels:
@@ -14632,6 +15072,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-09][設計] Screen Spec SC-09-01..03 + API Design 入金取込・コード対応'
+  title_en: '[FG-09][DEP-11][FE] Design: Screen Spec SC-09-01..03 + API Design for payment import / code mapping'
   role: FE
   assignee: FE-3
   labels:
@@ -14663,6 +15104,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-09][設計] Screen Spec SC-09-01 入金CSV取込 + SC-09-02 コード対応'
+  title_en: '[FG-09][SC-09-01+02][FE] Design: Screen Spec SC-09-01 payment CSV import + SC-09-02 code mapping'
   role: FE
   assignee: FE-3
   labels:
@@ -14691,6 +15133,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-09][設計] Screen Spec SC-09-03 + API Design import / ánh xạ mã'
+  title_en: '[FG-09][SC-09-03][FE] Design: Screen Spec SC-09-03 + API Design for import / code mapping'
   role: FE
   assignee: FE-3
   labels:
@@ -14719,6 +15162,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-09][設計] Screen Spec SC-09-05 奨励金明細 + Technical Design SC-09-B1 通知'
+  title_en: '[FG-09][SC-09-05+B1][FE] Design: Screen Spec incentive detail + Technical Design SC-09-B1 notice'
   role: FE
   assignee: FE-3
   labels:
@@ -14751,6 +15195,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-10][設計] Screen Spec SC-10-01..03 + API Design 規則版 (maker)'
+  title_en: '[FG-10][DEP-08][FE] Design: Screen Spec SC-10-01..03 + API Design for rule versions (maker)'
   role: FE
   assignee: FE-3
   labels:
@@ -14780,6 +15225,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-10][設計] Screen Spec SC-10-01 規則版一覧 + SC-10-02 作成・編集'
+  title_en: '[FG-10][SC-10-01+02][FE] Design: Screen Spec SC-10-01 rule version list + SC-10-02 create / edit'
   role: FE
   assignee: FE-3
   labels:
@@ -14807,6 +15253,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-10][設計] Screen Spec SC-10-03 交付率テーブル + API Design maker'
+  title_en: '[FG-10][SC-10-03][FE] Design: Screen Spec SC-10-03 incentive rate table + API Design (maker)'
   role: FE
   assignee: FE-3
   labels:
@@ -14834,6 +15281,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-10][設計] Technical Design カレンダー・業務日・期作成 + Screen Spec SC-10-05'
+  title_en: '[FG-10][DEP-12][BE] Design: Technical Design calendar / business day / periods + Screen Spec'
   role: BE
   assignee: BE-4
   labels:
@@ -14866,6 +15314,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-10][設計] Technical Design カレンダー・業務日開始・期作成 (DEP-12)'
+  title_en: '[FG-10][DEP-12][BE] Design: Technical Design calendar, business day start, period creation (DEP-12)'
   role: BE
   assignee: BE-5
   labels:
@@ -14894,6 +15343,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-10][設計] Screen Spec SC-10-05 市場・銀行カレンダー'
+  title_en: '[FG-10][SC-10-05][FE] Design: Screen Spec SC-10-05 market / bank calendar'
   role: FE
   assignee: FE-3
   labels:
@@ -14922,6 +15372,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-10][設計] Screen Spec SC-10-07 マスタ管理 + API Design マスタ'
+  title_en: '[FG-10][SC-10-07][FE] Design: Screen Spec SC-10-07 master management + API Design for masters'
   role: FE
   assignee: FE-3
   labels:
@@ -14951,6 +15402,7 @@ issues:
   milestone: 設計第2波 (khách duyệt 2027-02-05)
   acceptance: []
   title: '[FG-10][設計] Technical Design 設定ファイル（履歴付き）(DEP-16)'
+  title_en: '[FG-10][DEP-16][BE] Design: Technical Design config files (with history) (DEP-16)'
   role: BE
   assignee: BE-4
   labels:
@@ -14981,6 +15433,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-02][設計] API Design iam — 認証・利用者切替・認可 (DEP-01 / 02 / 14)'
+  title_en: '[FG-02][IamApi][BE] Design: IAM API Design — authentication, user switch, authorization'
   role: BE
   assignee: BE-6
   labels:
@@ -15010,6 +15463,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-02][設計] API Design 認証 — phiên, đổi người bằng PIN, MFA verify (DEP-01)'
+  title_en: '[FG-02][DEP-01][BE] Design: authentication API Design — session, PIN user switch, MFA verify'
   role: BE
   assignee: BE-6
   labels:
@@ -15037,6 +15491,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-02][設計] API Design 認可 — kiểm quyền, 社員番号照会 (DEP-02), 代行 (DEP-14)'
+  title_en: '[FG-02][AuthzApi][BE] Design: authorization API Design — permission check, employee lookup, proxy'
   role: BE
   assignee: BE-6
   labels:
@@ -15065,6 +15520,7 @@ issues:
   acceptance:
   - AC-S1-4
   title: '[FG-02][設計] Screen Spec SC-00-01..03 ログイン・利用者切替・ホーム'
+  title_en: '[FG-02][SC-00-01..03][FE] Design: Screen Spec SC-00-01..03 login, user switch, home'
   role: FE
   assignee: FE-4
   labels:
@@ -15097,6 +15553,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-02][設計] Screen Spec SC-00-01 社内ログイン + SC-00-02 利用者切替'
+  title_en: '[FG-02][SC-00-01+02][FE] Design: Screen Spec SC-00-01 internal login + SC-00-02 user switch'
   role: FE
   assignee: FE-4
   labels:
@@ -15124,6 +15581,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-02][設計] Screen Spec SC-00-03 ホーム'
+  title_en: '[FG-02][SC-00-03][FE] Design: Screen Spec SC-00-03 home'
   role: FE
   assignee: FE-4
   labels:
@@ -15151,6 +15609,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-02][設計] Screen Spec SC-02-02 / 03 + API Design アカウント・ロール管理'
+  title_en: '[FG-02][SC-02-02+03][FE] Design: Screen Spec SC-02-02 / 03 + API Design account / role management'
   role: FE
   assignee: FE-4
   labels:
@@ -15182,6 +15641,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-02][設計] Screen Spec SC-02-02 MFA登録 + SC-02-03 アカウント管理'
+  title_en: '[FG-02][SC-02-02+03][FE] Design: Screen Spec SC-02-02 MFA registration + SC-02-03 account management'
   role: FE
   assignee: FE-4
   labels:
@@ -15209,6 +15669,7 @@ issues:
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
   title: '[FG-02][設計] API Design アカウント・ロール管理'
+  title_en: '[FG-02][AccountRoleApi][BE] Design: API Design for account / role management'
   role: BE
   assignee: BE-6
   labels:
@@ -15236,6 +15697,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-01..16 + Technical Design 帳票・IF-ACC-01'
+  title_en: '[FG-11][SC-11-01..16][FE] Design: Screen Spec SC-11-01..16 + Technical Design reports / IF-ACC-01'
   role: FE
   assignee: FE-4
   labels:
@@ -15283,6 +15745,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-01 帳票メニュー + SC-11-02 (RPT-01)'
+  title_en: '[FG-11][SC-11-01+02][FE] Design: Screen Spec SC-11-01 report menu + SC-11-02 (RPT-01)'
   role: FE
   assignee: FE-4
   labels:
@@ -15310,6 +15773,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-03 (RPT-02) + SC-11-04 (RPT-03)'
+  title_en: '[FG-11][SC-11-03+04][FE] Design: Screen Spec SC-11-03 (RPT-02) + SC-11-04 (RPT-03)'
   role: FE
   assignee: FE-4
   labels:
@@ -15337,6 +15801,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-05 (RPT-04) + SC-11-06 (RPT-05)'
+  title_en: '[FG-11][SC-11-05+06][FE] Design: Screen Spec SC-11-05 (RPT-04) + SC-11-06 (RPT-05)'
   role: FE
   assignee: FE-4
   labels:
@@ -15364,6 +15829,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-08 (RPT-07) + SC-11-09 (RPT-08)'
+  title_en: '[FG-11][SC-11-08+09][FE] Design: Screen Spec SC-11-08 (RPT-07) + SC-11-09 (RPT-08)'
   role: FE
   assignee: FE-4
   labels:
@@ -15391,6 +15857,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-10 (RPT-09) + SC-11-11 (RPT-10)'
+  title_en: '[FG-11][SC-11-10+11][FE] Design: Screen Spec SC-11-10 (RPT-09) + SC-11-11 (RPT-10)'
   role: FE
   assignee: FE-4
   labels:
@@ -15418,6 +15885,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-12 (RPT-11) + SC-11-13 (RPT-12)'
+  title_en: '[FG-11][SC-11-12+13][FE] Design: Screen Spec SC-11-12 (RPT-11) + SC-11-13 (RPT-12)'
   role: FE
   assignee: FE-4
   labels:
@@ -15445,6 +15913,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-14 (RPT-06・会計CSV) + SC-11-15 (仕訳)'
+  title_en: '[FG-11][SC-11-14+15][FE] Design: Screen Spec SC-11-14 (RPT-06, accounting CSV) + SC-11-15 (journal)'
   role: FE
   assignee: FE-4
   labels:
@@ -15472,6 +15941,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Screen Spec SC-11-16 データ出力'
+  title_en: '[FG-11][SC-11-16][FE] Design: Screen Spec SC-11-16 data export'
   role: FE
   assignee: FE-4
   labels:
@@ -15499,6 +15969,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Technical Design 帳票共通基盤 + バッチ trước 11:00'
+  title_en: '[FG-11][ReportCommon][BE] Design: Technical Design report common platform + batch before 11:00'
   role: BE
   assignee: BE-6
   labels:
@@ -15526,6 +15997,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Technical Design 会計連携CSV IF-ACC-01 — đóng băng, xuất lại'
+  title_en: '[FG-11][IF-ACC-01][BE] Design: Technical Design accounting CSV IF-ACC-01 — freeze, re-export'
   role: BE
   assignee: BE-6
   labels:
@@ -15553,6 +16025,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-11][設計] Technical Design 仕訳マッピング + データ出力'
+  title_en: '[FG-11][JournalMapping][BE] Design: Technical Design journal mapping + data export'
   role: BE
   assignee: BE-6
   labels:
@@ -15580,6 +16053,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-12][設計] Technical Design 通知 worker + Screen Spec SC-12-02'
+  title_en: '[FG-12][NotifyWorker][BE] Design: Technical Design notification worker + Screen Spec SC-12-02'
   role: BE
   assignee: BE-6
   labels:
@@ -15611,6 +16085,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-13][設計] Screen Spec SC-13-01..03 + Technical Design 保管期限・匿名化'
+  title_en: '[FG-13][SC-13-01..03][FE] Design: Screen Spec SC-13-01..03 + Tech Design retention / anonymization'
   role: FE
   assignee: FE-4
   labels:
@@ -15646,6 +16121,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-13][設計] Screen Spec SC-13-01 監査ログ検索 + SC-13-02 詳細'
+  title_en: '[FG-13][SC-13-01+02][FE] Design: Screen Spec SC-13-01 audit log search + SC-13-02 detail'
   role: FE
   assignee: FE-4
   labels:
@@ -15673,6 +16149,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-13][設計] Screen Spec SC-13-03 + Technical Design 匿名化'
+  title_en: '[FG-13][SC-13-03][FE] Design: Screen Spec SC-13-03 + Technical Design anonymization'
   role: FE
   assignee: FE-4
   labels:
@@ -15700,6 +16177,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-13][設計] Technical Design 保管期限・物理削除 + 適用規則版の表示'
+  title_en: '[FG-13][Retention][BE] Design: Technical Design retention / physical deletion + applied rule version'
   role: BE
   assignee: BE-6
   labels:
@@ -15727,6 +16205,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-14][設計] Screen Spec SC-14-01 運用ダッシュボード (rút gọn)'
+  title_en: '[FG-14][SC-14-01][FE] Design: Screen Spec SC-14-01 operations dashboard (reduced)'
   role: FE
   assignee: FE-4
   labels:
@@ -15757,6 +16236,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-15][設計] Screen Spec SC-15-02 + Technical Design 移行'
+  title_en: '[FG-15][SC-15-02][FE] Design: Screen Spec SC-15-02 + Technical Design for migration'
   role: FE
   assignee: FE-4
   labels:
@@ -15792,6 +16272,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-15][設計] Screen Spec SC-15-02 要判断データ + Technical Design クレンジング'
+  title_en: '[FG-15][SC-15-02][FE] Design: Screen Spec SC-15-02 needs-decision data + Technical Design cleansing'
   role: FE
   assignee: FE-4
   labels:
@@ -15819,6 +16300,7 @@ issues:
   milestone: 設計第4波 = G2 (khách duyệt 2027-03-05)
   acceptance: []
   title: '[FG-15][設計] Technical Design 移行取込・照合・リハーサル (script)'
+  title_en: '[FG-15][MigrationScripts][BE] Design: Technical Design migration import, reconciliation, rehearsal'
   role: BE
   assignee: BE-6
   labels:
@@ -15846,6 +16328,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-06 資格照会 — tra tư cách người mua bằng bàn phím'
+  title_en: '[FG-01][SC-01-06][FE] Qualification inquiry — look up buyer qualification by keyboard'
   role: FE
   assignee: FE-2
   labels:
@@ -15882,6 +16365,7 @@ issues:
   acceptance:
   - AC-S1-3
   title: '[FG-01] SC-01-06 資格照会 — nhập mã người mua, hiện 許可 / 承認 + hạn'
+  title_en: '[FG-01][SC-01-06][FE] Qualification inquiry — enter buyer code, show permit / approval + expiry'
   role: FE
   assignee: FE-1
   labels:
@@ -15912,6 +16396,7 @@ issues:
   acceptance:
   - AC-S1-3
   title: '[FG-01] SC-01-06 資格照会 — chỉ bàn phím, trạng thái 失効 / 一時停止 / không có'
+  title_en: '[FG-01][SC-01-06][FE] Qualification inquiry — keyboard only, expired / suspended / none states'
   role: FE
   assignee: FE-4
   labels:
@@ -15941,6 +16426,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] SC-00-01 社内ログイン — màn đăng nhập PC / タブレット'
+  title_en: '[FG-02][SC-00-01][FE] Internal login — PC / tablet login screen'
   role: FE
   assignee: FE-4
   labels:
@@ -15972,6 +16458,7 @@ issues:
   acceptance:
   - AC-S1-4
   title: '[FG-02] SC-00-01 社内ログイン — form đăng nhập PC / タブレット'
+  title_en: '[FG-02][SC-00-01][FE] Internal login — PC / tablet login form'
   role: FE
   assignee: FE-1
   labels:
@@ -15999,6 +16486,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] SC-00-01 社内ログイン — lỗi, khóa tài khoản, hết phiên'
+  title_en: '[FG-02][SC-00-01][FE] Internal login — errors, account lock, session expiry'
   role: FE
   assignee: FE-4
   labels:
@@ -16026,6 +16514,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] SC-00-02 利用者切替 — đổi người bằng PIN trên máy dùng chung'
+  title_en: '[FG-02][SC-00-02][FE] User switch — switch user by PIN on a shared device'
   role: FE
   assignee: FE-4
   labels:
@@ -16059,6 +16548,7 @@ issues:
   acceptance:
   - AC-S1-4
   title: '[FG-02] SC-00-02 利用者切替 — chọn người + bàn số PIN (社員番号 + PIN)'
+  title_en: '[FG-02][SC-00-02][FE] User switch — select user + PIN keypad (employee number + PIN)'
   role: FE
   assignee: FE-1
   labels:
@@ -16087,6 +16577,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-02] SC-00-02 利用者切替 — khóa sau 5 lần sai, hiện người đang dùng'
+  title_en: '[FG-02][SC-00-02][FE] User switch — lock after 5 failures, show current user'
   role: FE
   assignee: FE-4
   labels:
@@ -16115,6 +16606,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] テスト 保証金・参加上限 — đổi 保証金, hạn mức, cảnh báo vượt'
+  title_en: '[FG-01][DepositLimit][QA] Test deposit / participation limit — change, limit, overrun warning'
   role: QA
   assignee: QA-1
   labels:
@@ -16148,6 +16640,7 @@ issues:
   acceptance:
   - AC-S1-4
   title: '[FG-02] テスト 利用者切替 (S1) — đổi người bằng PIN trên PC dùng chung + nhật ký'
+  title_en: '[FG-02][UserSwitchPin][QA] Test user switch (S1) — PIN user switch on a shared PC + log'
   role: QA
   assignee: QA-1
   labels:
@@ -16180,6 +16673,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-05 資格状態変更 — 一時停止 / 再審査 / 期限前更新'
+  title_en: '[FG-01][SC-01-05][FE] Qualification status change — suspension / re-review / early renewal'
   role: FE
   assignee: FE-2
   labels:
@@ -16218,6 +16712,7 @@ issues:
   acceptance:
   - AC-S1-2
   title: '[FG-01] SC-01-05 一時停止 (S1 tối thiểu) — chọn 許可 / 承認, lý do, giờ phút, 起案 → 決裁'
+  title_en: '[FG-01][SC-01-05][FE] Suspension (S1 minimal) — permit / approval, reason, time, propose to sign-off'
   role: FE
   assignee: FE-4
   labels:
@@ -16251,6 +16746,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[FG-01] SC-01-05 再審査 / 期限前更新 / phục hồi'
+  title_en: '[FG-01][SC-01-05][FE] Re-review / early renewal / reinstatement'
   role: FE
   assignee: FE-2
   labels:
@@ -16282,6 +16778,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Q-ARCH-12 — 税区分 của 完納奨励金 khi xuất IF-ACC-01 (経理部)'
+  title_en: '[CLAR][Q-ARCH-12][BrSE] Clarify: tax category of on-time full-payment incentive in IF-ACC-01 export'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -16311,6 +16808,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] E-21 — scan 受入証憑 ở máy đa năng + PC hay chụp trên tablet (運用部門)'
+  title_en: '[CLAR][E-21][BrSE] Clarify: scan receiving vouchers on MFP + PC, or photograph on tablet?'
   role: BrSE
   assignee: BrSE-1
   labels:
@@ -16338,6 +16836,7 @@ issues:
   milestone: null
   acceptance: []
   title: '[要確認] Phân bổ lại 入金 khi 期のお支払額 kỳ OPEN giảm — tự động hay 照合 dời tay'
+  title_en: '[CLAR][PaymentRealloc][BrSE] Clarify: auto or manual reallocation when OPEN period amount drops?'
   role: BrSE
   assignee: BrSE-1
   labels:

@@ -1,0 +1,128 @@
+{
+  "project_id": "PVT_kwHODKgYY84BtUBY",
+  "project_number": 1,
+  "project_url": "https://github.com/users/phuongnnm-23344/projects/1",
+  "fields": {
+    "Title": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFQ4",
+      "options": {},
+      "iterations": {}
+    },
+    "Assignees": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFQ8",
+      "options": {},
+      "iterations": {}
+    },
+    "Status": {
+      "id": "PVTSSF_lAHODKgYY84BtUBYzhreFRA",
+      "options": {
+        "Todo": "0973cc53",
+        "In Progress": "7ab4128b",
+        "In Review": "7d46a029",
+        "Blocked": "f7337b1b",
+        "Done": "226f1b7c"
+      },
+      "iterations": {}
+    },
+    "Labels": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRE",
+      "options": {},
+      "iterations": {}
+    },
+    "Linked pull requests": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRI",
+      "options": {},
+      "iterations": {}
+    },
+    "Milestone": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRM",
+      "options": {},
+      "iterations": {}
+    },
+    "Repository": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRU",
+      "options": {},
+      "iterations": {}
+    },
+    "Reviewers": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRg",
+      "options": {},
+      "iterations": {}
+    },
+    "Parent issue": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRk",
+      "options": {},
+      "iterations": {}
+    },
+    "Sub-issues progress": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRo",
+      "options": {},
+      "iterations": {}
+    },
+    "Created": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRs",
+      "options": {},
+      "iterations": {}
+    },
+    "Updated": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFRw",
+      "options": {},
+      "iterations": {}
+    },
+    "Closed": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFR0",
+      "options": {},
+      "iterations": {}
+    },
+    "Priority": {
+      "id": "PVTSSF_lAHODKgYY84BtUBYzhreFSg",
+      "options": {
+        "P1": "48118a05",
+        "P2": "5620f80e",
+        "P3": "446448dc",
+        "P4": "312bc0b2"
+      },
+      "iterations": {}
+    },
+    "Đợt / mốc": {
+      "id": "PVTSSF_lAHODKgYY84BtUBYzhreFTA",
+      "options": {
+        "S4 (2027-03-15 → 03-26)": "9c95d170",
+        "設計第1波 (khách duyệt 2027-01-22)": "d0903c1f",
+        "設計第2波 (khách duyệt 2027-02-05)": "ea6c1781",
+        "設計第3波 (khách duyệt 2027-02-19)": "a63e6e34",
+        "設計第4波 = G2 (khách duyệt 2027-03-05)": "9d4b2687"
+      },
+      "iterations": {}
+    },
+    "Point": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFUw",
+      "options": {},
+      "iterations": {}
+    },
+    "Hours": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFVo",
+      "options": {},
+      "iterations": {}
+    },
+    "Người phụ trách (giả định)": {
+      "id": "PVTF_lAHODKgYY84BtUBYzhreFVw",
+      "options": {},
+      "iterations": {}
+    },
+    "Iteration": {
+      "id": "PVTIF_lAHODKgYY84BtUBYzhreFYI",
+      "options": {},
+      "iterations": {
+        "Iteration 1": "0b53fc0d",
+        "Iteration 2": "de657b1f",
+        "Iteration 3": "d38d852b",
+        "Iteration 4": "348094ac",
+        "Iteration 5": "a1ffab13",
+        "Iteration 6": "13e23006",
+        "Iteration 7": "cf65a91d",
+        "Iteration 8": "0b19c02c"
+      }
+    }
+  }
+}

@@ -4,6 +4,7 @@ Bảng sinh: spec-issue (mục 2), gaps (mục 4), epic-counts (mục 1). Mục 
 Chạy từ gốc repo:  python backlog/scripts/render-task-breakdown-tables.py
 """
 import collections
+import csv
 import glob
 import os
 import re
@@ -18,6 +19,9 @@ for i in iss:
     if i["parent"]:
         kids[i["parent"]].append(i["id"])
 cell = lambda s: str(s).replace("|", "\\|").replace("\n", " ")
+MAP_CSV = os.path.join(ROOT, "backlog", "issue-map.csv")
+NUM = {r["id"]: r["number"] for r in csv.DictReader(open(MAP_CSV, encoding="utf-8"))} if os.path.exists(MAP_CSV) else {}
+tag = lambda x: f"#{NUM[x]} {x}" if NUM.get(x) else x  # số issue GitHub (P2) + ID backlog
 
 
 def text_of(i):
@@ -32,7 +36,7 @@ def compress(ids):
         p = by[x]["parent"]
         if p and p in s:
             continue
-        out.append(f"{x} ({len(kids[x])} sub)" if kids.get(x) else x)
+        out.append(f"{tag(x)} ({len(kids[x])} sub)" if kids.get(x) else tag(x))
     return ", ".join(out)
 
 
@@ -90,7 +94,7 @@ H = {"fix-design": "sửa thiết kế — PREMISE.md {r} (đã áp vào spec LA
 KIND_NOTE = {"design": " (issue thiết kế: viết spec, khách duyệt theo đợt thiết kế)"}
 gap_tbl = ["| # | Spec | Chỗ hở / mâu thuẫn | Xử lý | Nguồn |", "|---|---|---|---|---|"]
 for g in d["gaps"]:
-    x = H[g["handling"]].format(r=g.get("ref"), o=g.get("open_reason"))
+    x = H[g["handling"]].format(r=tag(g["ref"]) if g["handling"] == "clarify" else g.get("ref"), o=g.get("open_reason"))
     if g["handling"] == "clarify":
         x += KIND_NOTE.get(by[g["ref"]]["kind"], "")
     gap_tbl.append(f"| {g['id']} | {cell(g['spec'])} | {cell(g['problem'])} | {cell(x)} | {g['source_id']} |")
