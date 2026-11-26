@@ -25,6 +25,7 @@ related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFI
 | 2 | 0.1.1 | Update | Khách Q-TRD-05: hai nút 5.1 「差し戻し（番号誤り）」 / 5.2 「取消（資格なし・不成立）」; Q-TRD-02 | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-05-02.html` (WF 0.2.3); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.1.3 | Update | Expert Gate 3 G3-m05: thêm §6.1 Trạng thái màn (tổng hợp từ §5 Event), ghi chú cũ thành §6.2 | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.1.4 | Update | Expert Gate 3 kiểm diff D3-n03: §6.1 tách dòng 「Xung đột」 thành 409 (`E-TRD-013` / `018`: C-23 + nạp lại) và 422 (`E-TRD-015`: tô dòng chưa xử lý, không nạp lại; `E-TRD-016` theo §5) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -129,7 +130,6 @@ related: [WF-SC-05-02, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_SERI_CONFI
 | 4 | - | 422 `E-TRD-007` / `E-TRD-008` | Viền đỏ các dòng trong `detail.tradeNos` | |
 | 7 | - | 422 `E-TRD-014` | C-22 dưới [7] | |
 | 9 | Người khác vừa xác nhận phiên | 409 `E-TRD-013` | C-23 + nạp lại (chỉ đọc) | |
-| 10 | 0.1.4 | Update | Expert Gate 3 kiểm diff D3-n03: §6.1 tách dòng 「Xung đột」 thành 409 (`E-TRD-013` / `018`: C-23 + nạp lại) và 422 (`E-TRD-015`: tô dòng chưa xử lý, không nạp lại; `E-TRD-016` theo §5) | 2026-11-26 | phuongnnm-23344 |  |
 | 3, 5 | - | 422 `E-TRD-015` / `E-TRD-016` | C-23; `E-TRD-015` → tô các dòng chưa xử lý (bỏ chọn chưa 差し戻し, [5] chưa chọn 5.1 / 5.2) | |
 | 5.2 | Dòng 取消予定 vừa có tư cách hợp lệ (vd gia hạn xong) | 409 `E-TRD-018` (`NOW_CONFIRMABLE`) | C-23 + nạp lại; dòng thành dòng thường, 確認者 chọn lại | |
 | - | Ngày đã khóa | 423 `E-CMN-003` | C-24 → SC-08-01 (`LATE_ENTRY`) | ADR-005 |

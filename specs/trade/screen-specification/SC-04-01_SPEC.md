@@ -25,6 +25,7 @@ related: [WF-SC-04-01, WF-COMMON-001, SPEC-TRADE_FUNC-001, SPEC-TRADE_AITAI_CONF
 | 2 | 0.1.1 | Update | Khách Q-TRD-02: hiện 使用額 税込 / 税抜; G2-m07: nhãn [PL] mục tiêu hiệu năng | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-04-01.html` (WF 0.2.2); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 | 4 | 0.1.3 | Update | Expert Gate 3 G3-m05: thêm §6.1 Trạng thái màn (tổng hợp từ §5 Event), ghi chú cũ thành §6.2 | 2026-11-25 | phuongnnm-23344 | |
+| 5 | 0.1.4 | Update | Expert Gate 3 kiểm diff D3-n02: §6.1 dòng 「Vượt 参加上限」 thêm 422 `E-TRD-007` của server; dòng 「Lỗi nhập」 thêm lỗi client `E-TRD-009`..`011` (§4.2) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -139,7 +140,6 @@ Client kiểm ngay ở ô; server (API-TRD-002) kiểm lại **tất cả** lúc
 | 8 | Trước giờ chốt | 409 `E-TRD-012` | C-23 | |
 | 8 | 業務日 bị khóa | 423 `E-CMN-003` | C-24, giữ nội dung (hiếm: màn chỉ ghi ngày mở) | |
 | 8 | - | 403 / 5xx / timeout 10 s | C-25 / C-26 (giữ nội dung). Timeout: **không** tự gửi lại — gọi API-TRD-003 kiểm GD đã có chưa rồi mới cho bấm lại | Tránh chốt đôi |
-| 9 | 0.1.4 | Update | Expert Gate 3 kiểm diff D3-n02: §6.1 dòng 「Vượt 参加上限」 thêm 422 `E-TRD-007` của server; dòng 「Lỗi nhập」 thêm lỗi client `E-TRD-009`..`011` (§4.2) | 2026-11-26 | phuongnnm-23344 |  |
 | - | - | Mất mạng | C-28: form khóa, banner 「通信が回復するまで確定できません。紙伝票で継続してください」; có mạng lại → C-29 kèm kết quả lần bấm cuối 「確定済」/「未確定」 (kiểm qua API-TRD-003) | L4-A05, ADR-008 |
 
 ---

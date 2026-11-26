@@ -24,6 +24,7 @@ related: [WF-SC-03-05, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_INSPECTION_REC
 | 1 | 0.1.0 | Add New | Khởi tạo từ wireframe WF-SC-03-05 0.2.0 (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | LAB-4: ảnh annotated thay bằng biến thể A của wireframe HTML `wireframes/html/SC-03-05.html` (WF 0.2.1); ghi badge không có trên ảnh; link HTML / PNG / PDF | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.1.2 | Update | Expert Gate 3 G3-m05: thêm §6.1 Trạng thái màn (tổng hợp từ §5 Event), ghi chú cũ thành §6.2 | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.1.3 | Update | Expert Gate 3 kiểm diff D3-n01: §6.1 dòng 「Ngày đã khóa」 ghi rõ không hiện nút 修正申請 của C-24 chung (khớp §5) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 
@@ -119,7 +120,6 @@ related: [WF-SC-03-05, WF-COMMON-001, SPEC-LOT_FUNC-001, SPEC-LOT_INSPECTION_REC
 | **Error Handling（エラー制御）** | | | | |
 | 6–9 | - | Bấm [10] khi có ô sai | C-22 dưới ô sai (mã ở 4.2) | |
 | 4 | Lô vừa đổi trạng thái / có GD sau khi tải | API trả 409 `E-LOT-013` hoặc 422 `E-LOT-011` | C-23 nêu mã lô; nạp lại [4], giữ hạng + 所見; không lô nào được ghi (cả lượt rollback) | Tất cả hoặc không |
-| 5 | 0.1.3 | Update | Expert Gate 3 kiểm diff D3-n01: §6.1 dòng 「Ngày đã khóa」 ghi rõ không hiện nút 修正申請 của C-24 chung (khớp §5) | 2026-11-26 | phuongnnm-23344 |  |
 | - | Ngày đã khóa | 423 `E-CMN-003` | C-24; nội dung giữ, chỉ đọc. Ghi 目利き cho ngày đã khóa không có đường 修正申請 (目利き không đổi tiền) → ghi lại ở ngày mở nếu lô 持ち越し | ADR-005 |
 | - | - | 403 / 5xx | C-25 / C-26 | |
 | - | Đang chọn lô, đã bấm hạng | Mất mạng | C-28: **giữ** lô đã chọn và hạng; [10] mờ 「通信が回復するまで記録できません」; ghi giấy như hiện nay. Có mạng lại → C-29, [10] mở lại, bấm là lưu ngay | Q-SC0305-01 [Customer giả lập, 2026-11-25] |

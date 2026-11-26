@@ -25,6 +25,7 @@ Mọi con số dưới đây lấy từ ghi chép làm việc; bản sao nằm t
 |---|---|---|---|---|---|---|---|
 | 1 | 0.1.0 | Add new | — | Bản đầu (LAB-4 P4) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Đầu bài, 3.1, 3.2 | Expert Gate 3: nguồn số liệu trỏ vào `AI-report-evidence/` trong gói nộp (G3-M02); §3.2 tách điểm người dùng quyết / PL quyết cho khớp PREMISE §5 và nhật ký quyết định, thêm L4-D08 (G3-M01); §3.1 thêm dòng Gate 3 | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.2.1 | Update | 3.1, 3.2 | Expert Gate 3 kiểm diff: §3.1 thêm dòng "Gate 3 kiểm diff → RELEASE (2026-11-26)" (D3-n05); §3.2 PL quyết thêm DEC-048 (giữ giá R1, phần thêm trong buffer — D3-n04), DEC-055, DEC-057; người dùng quyết thêm L4-D09 (trạng thái ADR) và giữ `AI-report-evidence/` trong gói | 2026-11-26 | phuongnnm-23344 | |
 
 ## 2. Cách tổ chức AI và viết prompt
 
@@ -114,7 +115,6 @@ Người làm bài không review từng dòng. Tôi giữ quyền quyết ở nh
 | 12 | **Trùng ID feedback** với phiên LAB-3 chạy song song trên cùng sổ (`FB-EXP-217..239` bị LAB-4 dùng trước) | PL phiên LAB-3 | Luôn đọc ID lớn nhất ngay trước khi ghi; LAB-3 đánh tiếp từ 240 |
 | 13 | Commit nhóm lỡ **kèm file xóa đã stage từ trước** | PL tự kiểm | Reset mềm, commit lại theo nhóm; trước mỗi commit xem `git diff --cached --stat` |
 | 14 | Lượt P4: script đổi ví dụ SC-09-04 **mở file để ghi trước khi đọc** → file HTML (chưa commit) bị rỗng | PL thấy ngay khi kiểm | Dựng lại từ lịch sử thao tác của phiên (lần ghi file + các lệnh sửa sau đó), render lại và so ảnh từng pixel với PNG cũ: trùng khít, rồi mới áp sửa. Bài học: file chưa commit không có lưới an toàn — sửa bằng script thì đọc vào biến trước, hoặc commit trước khi sửa hàng loạt |
-| 15 | 0.2.1 | Update | ('3.1, 3.2', 'Expert Gate 3 kiểm diff: §3.1 thêm dòng "Gate 3 kiểm diff → RELEASE (2026-11-26)" (D3-n05); §3.2 PL quyết thêm DEC-048 (giữ giá R1, phần thêm trong buffer — D3-n04), DEC-055, DEC-057; người dùng quyết thêm L4-D09 (trạng thái ADR) và giữ `AI-report-evidence/` trong gói') | 2026-11-26 | phuongnnm-23344 |  |
 
 ## 4. Điểm đặc biệt và tự đánh giá
 
