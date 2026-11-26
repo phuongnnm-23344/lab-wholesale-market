@@ -2,7 +2,7 @@
 id: DOC-AI-REPORT-001
 title: Báo cáo cách dùng AI trong LAB-4
 type: report
-version: "0.2.1"
+version: "0.2.2"
 updated_by: phuongnnm-23344
 updated: 2026-11-26
 related: [PREMISE.md, README.md, AI-report-evidence/README.md]
@@ -26,6 +26,7 @@ Mọi con số dưới đây lấy từ ghi chép làm việc; bản sao nằm t
 | 1 | 0.1.0 | Add new | — | Bản đầu (LAB-4 P4) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Đầu bài, 3.1, 3.2 | Expert Gate 3: nguồn số liệu trỏ vào `AI-report-evidence/` trong gói nộp (G3-M02); §3.2 tách điểm người dùng quyết / PL quyết cho khớp PREMISE §5 và nhật ký quyết định, thêm L4-D08 (G3-M01); §3.1 thêm dòng Gate 3 | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | 3.1, 3.2 | Expert Gate 3 kiểm diff: §3.1 thêm dòng "Gate 3 kiểm diff → RELEASE (2026-11-26)" (D3-n05); §3.2 PL quyết thêm DEC-048 (giữ giá R1, phần thêm trong buffer — D3-n04), DEC-055, DEC-057; người dùng quyết thêm L4-D09 (trạng thái ADR) và giữ `AI-report-evidence/` trong gói | 2026-11-26 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | 4.2 | Thêm bản tiếng Nhật `ja/` (sinh từ bản tiếng Việt, commit `9367490`); sửa dòng "Bản tiếng Nhật chưa làm" | 2026-11-26 | phuongnnm-23344 |  |
 
 ## 2. Cách tổ chức AI và viết prompt
 
@@ -134,5 +135,5 @@ Người làm bài không review từng dòng. Tôi giữ quyền quyết ở nh
 - **Phần do luồng song song viết chủ yếu chỉ được PL kiểm bằng grep / script** (mã lỗi, khóa JSON, badge, link). Đúng cú pháp và nhất quán chéo thì kiểm được; đúng nghiệp vụ thì chỉ Expert đọc mẫu. Spec 12 màn dài, Expert không đọc hết từng dòng.
 - **Customer là AI đóng vai.** Câu trả lời hợp lý nhưng không thay được 経理部 / 経営陣 thật; vài câu (cách ghi 請求 cho GD nhập muộn, nhân sự 代行, E-14) vẫn mở. Bộ thiết kế đúng tới mức giả định đúng.
 - **Không chạy pipeline skill tự động** nên mất các cổng kiểm có sẵn; bù bằng gate Expert nhưng gate là thủ công và tốn token.
-- **Giới hạn thời gian / token**: chỉ 12 / 70 màn có Screen Specification; ba màn có wireframe nhưng chưa có spec; phụ thuộc DEP-01..17 mới ở mức danh sách. Bản tiếng Nhật chưa làm.
+- **Giới hạn thời gian / token**: chỉ 12 / 70 màn có Screen Specification; ba màn có wireframe nhưng chưa có spec; phụ thuộc DEP-01..17 mới ở mức danh sách. Bản tiếng Nhật `ja/` do AI dịch (10 luồng song song) rồi hậu kỳ bằng script (số dòng, số `|`, khối code, nhãn, số, link) — chưa có người đọc tiếng Nhật rà nội dung nghiệp vụ.
 - **Thao tác file hàng loạt bằng script trên file chưa commit** từng làm mất một file (lỗi 14). Dựng lại được nhờ lịch sử phiên, nhưng đó là may. Làm thật: commit nhỏ, thường xuyên, script sửa luôn đọc trước ghi sau.

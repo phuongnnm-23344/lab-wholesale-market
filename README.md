@@ -91,10 +91,13 @@ specs/
   {feature}/technical-design/     {DESIGN_ID}_TECH.md (15) + assets/{DESIGN_ID}_sequence.png
   system-design/database-design/  _index + MKT_DB (file tổng) + 9 file theo cụm — 60 bảng
   system-design/api-design/       _index + {feature}/API-xxx-nnn_API.md (42)
-scripts/                          render-wireframes.py · export-mermaid-png.py · check-api-spec-consistency.py
+scripts/                          render-wireframes.py · export-mermaid-png.py · check-api-spec-consistency.py · check-markdown-links.py
+ja/                               bản tiếng Nhật: cùng cây thư mục, sinh từ bản tiếng Việt (ghi chú dưới cây)
 ```
 
 Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specification + 7 Function Specifications + 15 Technical Design) · 10 Database Design · 42 API Design · 1 kiến trúc + 10 ADR · 17 wireframe / 画面一覧 · PREMISE · AI-report.
+
+**Bản tiếng Nhật `ja/`:** sinh từ bản tiếng Việt tại commit `9367490` (cùng đường dẫn, cùng số dòng mỗi file; README và AI-report sửa cùng lúc thêm `ja/` cũng đã khớp). **Bản tiếng Việt là bản chuẩn** — sửa ở bản tiếng Việt rồi sinh lại, không sửa tay `ja/`. Mermaid, wireframe ASCII và ảnh PNG (sequence, annotated) giữ nhãn tiếng Việt; link tới ảnh, HTML, PDF, `_templates/`, `AI-report-evidence/`, `prototype/` trỏ về file gốc ngoài `ja/`. Kiểm link: `python scripts/check-markdown-links.py ja`.
 
 ### 4.2 Kế thừa từ spec-standards và tạo mới
 
