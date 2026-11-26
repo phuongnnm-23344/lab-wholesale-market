@@ -97,7 +97,7 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 
 Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specification + 7 Function Specifications + 15 Technical Design) · 10 Database Design · 42 API Design · 1 kiến trúc + 10 ADR · 17 wireframe / 画面一覧 · PREMISE · AI-report.
 
-**Bản tiếng Nhật `ja/`:** sinh lần đầu từ bản tiếng Việt tại commit `9367490` (cùng đường dẫn, cùng số dòng mỗi file); mỗi lần sửa bản tiếng Việt sau đó thì sửa đúng các dòng tương ứng ở `ja/` trong cùng commit. **Bản tiếng Việt là bản chuẩn** — sửa ở bản tiếng Việt rồi sinh lại, không sửa tay `ja/`. Mọi khối code (Mermaid, wireframe ASCII, cây thư mục, SQL, JSON mẫu) và ảnh PNG (sequence, annotated) giữ nguyên tiếng Việt; link tới ảnh, HTML, PDF, `_templates/`, `AI-report-evidence/`, `prototype/` trỏ về file gốc ngoài `ja/`. Kiểm link: `python scripts/check-markdown-links.py ja`.
+**Bản tiếng Nhật `ja/`:** sinh lần đầu từ bản tiếng Việt tại commit `9367490` (cùng đường dẫn, cùng số dòng mỗi file). **Bản tiếng Việt là bản chuẩn:** sửa bản tiếng Việt thì sửa các dòng tương ứng ở `ja/` trong cùng commit; lỗi chỉ có ở bản dịch thì sửa thẳng `ja/`, không đổi version bản tiếng Việt. Mọi khối code (Mermaid, wireframe ASCII, cây thư mục, SQL, JSON mẫu) và ảnh PNG (sequence, annotated) giữ nguyên tiếng Việt; link tới ảnh, HTML, PDF, `_templates/`, `AI-report-evidence/`, `prototype/` trỏ về file gốc ngoài `ja/`. Kiểm link: `python scripts/check-markdown-links.py ja`.
 
 ### 4.2 Kế thừa từ spec-standards và tạo mới
 

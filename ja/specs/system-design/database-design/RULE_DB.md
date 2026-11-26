@@ -46,7 +46,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 18 | app | master | 共通コード表 | [`code_values`](#418-code_values) | 荷目、選択用の理由、配送例外の種類、目利きの等級 | 新規 | Decision (provisional) |
 | 19 | app | master | 税率 | [`tax_rates`](#419-tax_rates) | 10% / 8%、適用開始日あり | 新規 | Decision (provisional) |
 | 21 | app | master | 規程の版 | [`rule_versions`](#421-rule_versions) | 適用開始日は毎月1日、maker-checker、ロールバック、TC年ごとに年4回の上限 | プロトタイプ: `rule_versions` | Decision (provisional) |
-| 22 | app | master | 交付率の等級 | [`incentive_rate_rows`](#422-incentive_rate_rows) | **2テーブル（仲卸 / 売買参加者）× 5等級**、適格金額（税抜）による | プロトタイプ: `incentive_rate_rows` | Decision (provisional) |
+| 22 | app | master | 交付率のランク | [`incentive_rate_rows`](#422-incentive_rate_rows) | **2テーブル（仲卸 / 売買参加者）× 5ランク**、適格金額（税抜）による | プロトタイプ: `incentive_rate_rows` | Decision (provisional) |
 | 23 | app | master | 規程パラメータ | [`rule_parameters`](#423-rule_parameters) | 同一版内の金額・業務日に関わるパラメータ（PREMISE §3.1） | 新規 | Decision (provisional) |
 
 ---
@@ -248,9 +248,9 @@ erDiagram
 
 | | | | |
 |---|---|---|---|
-| テーブル名（論理） | 交付率の等級 | 作成者 / 作成日 | phuongnnm-23344 / 2026-11-25 |
+| テーブル名（論理） | 交付率のランク | 作成者 / 作成日 | phuongnnm-23344 / 2026-11-25 |
 | テーブル名（物理） | `incentive_rate_rows` | 更新者 / 更新日 | — |
-| Overview | **交付率表2つ** — 仲卸 と 売買参加者 — それぞれ **5等級、最も低い等級は 0%** を含む（PRM-041）。等級は **適格金額（税抜）**（完納者の期内の買受代金の合計・税抜）で判定、下限は「以上」（D01、D02 を修正）。`DRAFT` の版でのみ変更可（トリガー 0005 を維持）。 | Note | 等級の実際の値は `incentive-rate-table.csv` の回答待ち（E-03, L4-A02） |
+| Overview | **交付率表2つ** — 仲卸 と 売買参加者 — それぞれ **5ランク、最も低いランクは 0%** を含む（PRM-041）。ランクは **適格金額（税抜）**（完納者の期内の買受代金の合計・税抜）で判定、下限は「以上」（D01、D02 を修正）。`DRAFT` の版でのみ変更可（トリガー 0005 を維持）。 | Note | ランクの実際の値は `incentive-rate-table.csv` の回答待ち（E-03, L4-A02） |
 
 **列定義**
 
@@ -259,12 +259,12 @@ erDiagram
 | 1 | PRI | ID | `id` | UUID | N/A | Yes | `gen_random_uuid()` | |
 | 2 | FK | 版 | `rule_version_id` | UUID | N/A | Yes | | |
 | 3 | | 種別ごとの表 | `participant_class` | `participant_kind` | N/A | Yes | | CHECK ∈ (`NAKAOROSHI`, `BAIBAI`) |
-| 4 | | 等級 | `tier_no` | SMALLINT | N/A | Yes | | CHECK 1..5 |
-| 5 | | 下限（以上） | `min_eligible_jpy` | BIGINT | N/A | Yes | | 税抜。等級 1：`0` |
-| 6 | | 上限（未満） | `max_eligible_jpy` | BIGINT | N/A | No | | 等級 5 では NULL。CHECK > `min_eligible_jpy` |
-| 7 | | 交付率 | `rate_bp` | INT | N/A | Yes | | CHECK 0..10000；等級 1 = 0 |
+| 4 | | ランク | `tier_no` | SMALLINT | N/A | Yes | | CHECK 1..5 |
+| 5 | | 下限（以上） | `min_eligible_jpy` | BIGINT | N/A | Yes | | 税抜。ランク 1：`0` |
+| 6 | | 上限（未満） | `max_eligible_jpy` | BIGINT | N/A | No | | ランク 5 では NULL。CHECK > `min_eligible_jpy` |
+| 7 | | 交付率 | `rate_bp` | INT | N/A | Yes | | CHECK 0..10000；ランク 1 = 0 |
 
-関数 `submit_rule_version` は次を検査：各 `participant_class` が5等級そろっていること、連続していること（等級 n の上限 = 等級 n+1 の下限）、等級 1 は 0 から始まり `rate_bp = 0` であること。
+関数 `submit_rule_version` は次を検査：各 `participant_class` が5ランクそろっていること、連続していること（ランク n の上限 = ランク n+1 の下限）、ランク 1 は 0 から始まり `rate_bp = 0` であること。
 
 **Index** — `incentive_rate_rows_pkey`; `uq_rate_rows_version_class_tier` (`rule_version_id`, `participant_class`, `tier_no`) unique.
 

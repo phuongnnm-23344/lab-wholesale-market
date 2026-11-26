@@ -97,7 +97,7 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 
 文書数: `specs/_index.md` の38件（4 `_common` + 12 Screen Specification + 7 Function Specifications + 15 Technical Design）· 10 Database Design · 42 API Design · アーキテクチャ1件 + ADR 10件 · ワイヤーフレーム / 画面一覧 17件 · PREMISE · AI-report.
 
-**日本語版 `ja/`：** 初回は commit `9367490` 時点のベトナム語版から生成（パス・各ファイルの行数は同一）。その後ベトナム語版を修正した場合は、同じ commit で `ja/` の対応する行も修正する。**正本はベトナム語版** — 修正はベトナム語版で行い、生成し直す。`ja/` を手で直さない。すべてのコードブロック（Mermaid、ワイヤーフレームの ASCII、フォルダツリー、SQL、JSON の例）と PNG 画像（sequence、annotated）はベトナム語のまま。画像・HTML・PDF・`_templates/`・`AI-report-evidence/`・`prototype/` へのリンクは `ja/` 外の元ファイルを指す。リンク検査: `python scripts/check-markdown-links.py ja`。
+**日本語版 `ja/`：** 初回は commit `9367490` 時点のベトナム語版から生成（パス・各ファイルの行数は同一）。**正本はベトナム語版：** ベトナム語版を修正したら、同じ commit で `ja/` の対応する行も修正する。翻訳にだけある誤りは `ja/` を直接修正し、ベトナム語版の版は変えない。すべてのコードブロック（Mermaid、ワイヤーフレームの ASCII、フォルダツリー、SQL、JSON の例）と PNG 画像（sequence、annotated）はベトナム語のまま。画像・HTML・PDF・`_templates/`・`AI-report-evidence/`・`prototype/` へのリンクは `ja/` 外の元ファイルを指す。リンク検査: `python scripts/check-markdown-links.py ja`。
 
 ### 4.2 spec-standardsからの継承と新規作成
 

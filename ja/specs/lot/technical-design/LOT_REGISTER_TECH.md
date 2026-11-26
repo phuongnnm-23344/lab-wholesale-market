@@ -27,7 +27,7 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, AD
 | 1 | 0.1.0 | Add new | — | 初期作成（LAB-4 P3） | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | 顧客（模擬）Q-LOT-01: DoD (g), (h) を追加 — 正式番号は再利用しない、仮受付の取消ロットは番号を保持 | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: 画像 PNG `./assets/LOT_REGISTER_sequence.png` を Mermaid ブロックから出力して埋め込み（`scripts/export-mermaid-png.py`）; Mermaid が引き続きソース | 2026-11-25 | phuongnnm-23344 |  |
-| 4 | 0.1.3 | Update | §4.4 | ステップ3: 表のセルが余分に分かれないよう `PROVISIONAL \| NULL` の `|` をエスケープ（有識者 JA レビュー m-06） | 2026-11-26 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.4 | ステップ3: 表のセルが余分に分かれないよう `PROVISIONAL \| NULL` の縦棒をエスケープ（有識者 JA レビュー m-06） | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 

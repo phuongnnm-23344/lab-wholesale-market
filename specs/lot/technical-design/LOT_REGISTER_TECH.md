@@ -27,7 +27,7 @@ related: [SPEC-SC-03-01-001, SPEC-LOT_FUNC-001, API-LOT-002, SPEC-LOT_DB-001, AD
 | 1 | 0.1.0 | Add new | — | Khởi tạo (LAB-4 P3) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.1.1 | Update | — | Khách Q-LOT-01: thêm DoD (g), (h) — mã chính thức không dùng lại, lô 仮受付 hủy giữ số | 2026-11-25 | phuongnnm-23344 |  |
 | 3 | 0.1.2 | Update | §2 | FB-EXP-236: nhúng ảnh PNG `./assets/LOT_REGISTER_sequence.png` xuất từ khối Mermaid (`scripts/export-mermaid-png.py`); Mermaid vẫn là nguồn | 2026-11-25 | phuongnnm-23344 |  |
-| 4 | 0.1.3 | Update | §4.4 | Bước 3: escape dấu `|` trong `PROVISIONAL \| NULL` để bảng không tách thêm ô (Expert review JA m-06) | 2026-11-26 | phuongnnm-23344 |  |
+| 4 | 0.1.3 | Update | §4.4 | Bước 3: escape dấu gạch đứng trong `PROVISIONAL \| NULL` để bảng không tách thêm ô (Expert review JA m-06) | 2026-11-26 | phuongnnm-23344 |  |
 
 ---
 

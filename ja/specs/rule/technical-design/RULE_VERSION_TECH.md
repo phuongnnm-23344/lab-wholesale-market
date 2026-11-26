@@ -83,10 +83,10 @@ sequenceDiagram
 
 ## 3. 説明
 
-規程の版のライフサイクルを **checker** 側（SC-10-04）から管理し、日付による **発効** を扱うサービス。maker の作成 / 修正 / 提出は SC-10-02、SC-10-03 で行う（本ファイルの対象外; 関数 `submit_rule_version` は 5 等級の連続した交付率表を検査 — RULE_DB 4.22）。
+規程の版のライフサイクルを **checker** 側（SC-10-04）から管理し、日付による **発効** を扱うサービス。maker の作成 / 修正 / 提出は SC-10-02、SC-10-03 で行う（本ファイルの対象外; 関数 `submit_rule_version` は 5 ランクの連続した交付率表を検査 — RULE_DB 4.22）。
 
 ルール 5 / GOV-RULE-01 は次のように適用する:
-- 版 1 件 = 交付率表 2 件（仲卸 / 売買参加者、5 等級）+ 規程パラメータ（`rule_parameters`）の**まとめ**。発効は**将来の月の 1 日**から（PRM-042, ADR-006 §2.1）。
+- 版 1 件 = 交付率表 2 件（仲卸 / 売買参加者、5 ランク）+ 規程パラメータ（`rule_parameters`）の**まとめ**。発効は**将来の月の 1 日**から（PRM-042, ADR-006 §2.1）。
 - **Maker ≠ checker**; checker 照合部門長は MFA を持つ。版が `PENDING` になったら内容はロックする。
 - **回数上限 TC 年度あたり 4 回**。審査中の版の **発効日の TC 年度** で数える; `APPROVED` / `ACTIVE` / `SUPERSEDED` の `CHANGE` + `ROLLBACK` を数え、`BASELINE`（go-live の値一式）と `CANCELLED` は**数えない**。市場カレンダー・銀行休業日（`market_calendar`, SC-10-05）はマスタであり**版ではない**ため、回数上限には決して入らない（PRM-054）。
 - **ロールバック** = 旧版の内容を複写した新しい版（`rollback_of_id`）、同じライフサイクルと回数上限に従う; 旧版を「再有効化」はしない。
@@ -172,10 +172,10 @@ N2: stage = CHECKER → ALLOW (needs_second = true, reason bắt buộc)
 | No | 処理内容 |
 |---|---|
 | 1 | `effective_from` は 1 日（テーブルの CHECK）、かつ **> d_bd** でなければならない — 発効日当日の確認もブロックする。今日始まる期の version が途中で変わらないようにするため（PRM-042, FR-INC-02）。 |
-| 2 | 内容を再検査（想定外に変更されたデータへの対策）: 各 `participant_class` は 0 から始まる連続した 5 等級を持つ、等級 1 = 0 bp、等級 5 は上限なし; 必須の `param_key` をすべて正しい型で備える（RULE_DB 4.23）。 |
+| 2 | 内容を再検査（想定外に変更されたデータへの対策）: 各 `participant_class` は 0 から始まる連続した 5 ランクを持つ、ランク 1 = 0 bp、ランク 5 は上限なし; 必須の `param_key` をすべて正しい型で備える（RULE_DB 4.23）。 |
 | 3 | ROLLBACK: `rollback_of_id` は過去に発効した version（`ACTIVE` / `SUPERSEDED`）を指し、内容が正しく複写されていること（二つの version の内容ハッシュを比較）。 |
 
-**DoD R2:** RV-03（d_bd 2027-10-01 のとき `effective_from` 2027-10-01 → `E-RULE-004`）; RV-15（発効日の重複 → `E-RULE-005`）; 等級を手で不連続に変更 → `E-RULE-013`。
+**DoD R2:** RV-03（d_bd 2027-10-01 のとき `effective_from` 2027-10-01 → `E-RULE-004`）; RV-15（発効日の重複 → `E-RULE-005`）; ランクを手で不連続に変更 → `E-RULE-013`。
 
 ### 4.3. R3 — TC 年度のロックと回数の計数
 

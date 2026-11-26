@@ -81,7 +81,7 @@ Category: `master` = 基礎データ、変更は少なく、管理者がいる �
 | 19 | app | master | 税率 | [`tax_rates`](RULE_DB.md#419-tax_rates) | 10% / 8%、適用開始日あり | ファイル: [RULE_DB.md](RULE_DB.md)。新規 | Decision (provisional) |
 | 20 | app | master | 市場・銀行カレンダー | [`market_calendar`](CLOSE_DB.md#420-market_calendar) | 1テーブル、フラグ2つ；臨時休市 / 臨時開市 は決裁が必要 | ファイル: [CLOSE_DB.md](CLOSE_DB.md)。新規 | Decision (provisional) |
 | 21 | app | master | 規程の版 | [`rule_versions`](RULE_DB.md#421-rule_versions) | 適用開始日は毎月1日、メーカー・チェッカー、ロールバック、TC年ごとに年4回の上限 | ファイル: [RULE_DB.md](RULE_DB.md)。プロトタイプ: `rule_versions` | Decision (provisional) |
-| 22 | app | master | 交付率の等級 | [`incentive_rate_rows`](RULE_DB.md#422-incentive_rate_rows) | **2テーブル（仲卸 / 売買参加者）× 5等級**、適格金額（税抜）による | ファイル: [RULE_DB.md](RULE_DB.md)。プロトタイプ: `incentive_rate_rows` | Decision (provisional) |
+| 22 | app | master | 交付率のランク | [`incentive_rate_rows`](RULE_DB.md#422-incentive_rate_rows) | **2テーブル（仲卸 / 売買参加者）× 5ランク**、適格金額（税抜）による | ファイル: [RULE_DB.md](RULE_DB.md)。プロトタイプ: `incentive_rate_rows` | Decision (provisional) |
 | 23 | app | master | 規程パラメータ | [`rule_parameters`](RULE_DB.md#423-rule_parameters) | 同一版内の金額・業務日に関わるパラメータ（PREMISE §3.1） | ファイル: [RULE_DB.md](RULE_DB.md)。新規 | Decision (provisional) |
 | 24 | app | transaction | 業務日 | [`business_days`](CLOSE_DB.md#424-business_days) | カレンダーに従って開く（日の始まり = ロット受付時刻 01:00）、照合部門長が締める | ファイル: [CLOSE_DB.md](CLOSE_DB.md)。プロトタイプ: `business_days` | Decision (provisional) |
 | 25 | app | transaction | ロット | [`lots`](LOT_DB.md#425-lots) | 仮受付 → 本登録 → 下見済 → 公開 → 確定 → 引渡し完了 | ファイル: [LOT_DB.md](LOT_DB.md)。プロトタイプ: `lots` | Decision (provisional) |
@@ -267,8 +267,8 @@ erDiagram
 
 | # | テーブル / カラム | Prototype (migration) | To-be（4節） | 差異の種類 | レベル | トレース |
 |---|---|---|---|---|---|---|
-| D01 | `incentive_rate_rows` | 参加者全員で1つの交付率表、列 `min_paid_jpy`、`max_paid_jpy`、`rate_permille`；参加者種別がなく、等級数もない（0003） | `participant_class`（仲卸 / 売買参加者）ごとに2テーブル、5等級 `tier_no`、等級1 = 0%、提出時に等級の連続性を検査（4.22） | 誤り | 高 | PRM-041, BR-INC-01, TBL-RATE-01, ADR-006 |
-| D02 | `incentive_results`, 関数 `compute_incentive_rows` / `incentive_for` | 等級の判定と料率の乗算を **税込の支払額** `floor(tiền × 110/100)` に対して行う：奨励金 = floor(payable × rate / 1000)（0023） | 等級は **適格金額（税抜）** で判定；奨励金 = floor(適格金額 × 交付率 × 110/100)；`eligible_excl_jpy`、`tier_no`、`rate_bp` を保存（4.52） | 誤り | 高 | PRM-041, BR-INC-01, ADR-007, M08 |
+| D01 | `incentive_rate_rows` | 参加者全員で1つの交付率表、列 `min_paid_jpy`、`max_paid_jpy`、`rate_permille`；参加者種別がなく、ランク数もない（0003） | `participant_class`（仲卸 / 売買参加者）ごとに2テーブル、5ランク `tier_no`、ランク1 = 0%、提出時にランクの連続性を検査（4.22） | 誤り | 高 | PRM-041, BR-INC-01, TBL-RATE-01, ADR-006 |
+| D02 | `incentive_results`, 関数 `compute_incentive_rows` / `incentive_for` | ランクの判定と料率の乗算を **税込の支払額** `floor(tiền × 110/100)` に対して行う：奨励金 = floor(payable × rate / 1000)（0023） | ランクは **適格金額（税抜）** で判定；奨励金 = floor(適格金額 × 交付率 × 110/100)；`eligible_excl_jpy`、`tier_no`、`rate_bp` を保存（4.52） | 誤り | 高 | PRM-041, BR-INC-01, ADR-007, M08 |
 | D03 | `payments` → 期 | 配分テーブルなし；`period_payables` は 入金 を、`paid_on` ∈ (`end_date`, `end_date` + 1か月] の範囲で期に割り当てる（0024）。LAB-2 のモック一覧は「FIFO」と記すが、コードは FIFO ではない | append-only の `payment_allocations` テーブル、未払いの最も古い期から FIFO で配分、E-02 のとき `INVOICE_NO`、バッチ取消時に取り消す（4.48） | 誤り | 高 | ADR-007 §2.7, L4-A04 (2), OPEN-L4-02, E-02, M07, M21 |
 | D04 | `trades`, `period_payables` | 税率なし；合計に対して固定の `floor(amount × 110/100)`（0023, 0024）；端数調整の行なし | `tax_rates` + `trades.tax_rate_id`；`period_billings` / `period_billing_tax_lines` が税率ごとに1回税額を計算；`accounting_export_lines` の `ROUNDING` 行（4.19, 4.49, 4.50, 4.42） | 意図的な簡略化 | 高 | PRM-053, FT-09-10, M08 |
 | D05 | `payment_periods.due_date` | `lock_period` は次の期を作成し、`due_date` は翌月10日に固定（0023） | 版の `PAYMENT_DUE_RULE` と `market_calendar` から計算し、直前の銀行営業日へ前倒し；期は `rule_version_id` を保存（4.43, 4.23）；期は月初の最初の業務日を開く時に作成し、前の期のロックを待たない（CLOSE_DB 0.2.1、前提 Q-INC-03） | 意図的な簡略化 | 高 | PRM-054, ADR-005, M10 |
