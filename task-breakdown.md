@@ -55,28 +55,30 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 
 ### 1.4 Số lượng theo epic
 
+"Giờ sơ bộ" là giờ ước khi break (P1), dùng để kiểm độ hạt. Hai cột cuối là số ghi lên Project ở P3: Point = SWP đã chốt, Hours = SWP × k (k = 2,0 — cách chốt ở [`estimate.md`](estimate.md) §2).
+
 <!-- BEGIN GEN epic-counts -->
-| Epic | Tên | Ưu tiên (gốc) | Sprint (WBS LAB-1) | Issue cấp 1 | Sub-issue | Lá | Giờ sơ bộ (lá) |
-|---|---|---|---|---|---|---|---|
-| EP-FG01 | [FG-01] 参加者・資格管理 — người tham gia, 許可 / 承認 | P1 | S1 | 20 | 23 | 35 | 327 |
-| EP-FG03 | [FG-03] ロット受付・評価記録 — tiếp nhận lô, 目利き (gồm offline / sync SC-03-07) | P2 | S2 | 21 | 18 | 31 | 365 |
-| EP-FG04 | [FG-04] 相対取引 — giao dịch thỏa thuận (luồng chính) | P1 | S3 | 16 | 21 | 30 | 346 |
-| EP-FG05 | [FG-05] せり結果記録 — ghi kết quả せり (luồng phụ) | P4 | S4 | 8 | 7 | 12 | 127 |
-| EP-FG06 | [FG-06] 引渡し管理 — giao hàng, ngoại lệ, tranh chấp | P3 | S4–S5 | 14 | 16 | 22 | 225 |
-| EP-FG07 | [FG-07] 照合・日次締め — đối soát, khóa ngày, tranh chấp / SLA | P2 | S5 | 9 | 11 | 16 | 292 |
-| EP-FG08 | [FG-08] 修正申請・決裁 — điều chỉnh sau chốt (REVERSE / DELTA) | P3 | S6 | 9 | 7 | 13 | 184 |
-| EP-FG09 | [FG-09] 完納奨励金 — tiền thưởng thanh toán đúng hạn | P2 | S4 (試算表) · S6–S7 | 23 | 19 | 36 | 441 |
-| EP-FG10 | [FG-10] 規則版・交付率・マスタ・カレンダー — quy chế có version, master, lịch | P4 | S2 | 18 | 18 | 30 | 467 |
-| EP-FG02 | [FG-02] アカウント・認証・権限 — tài khoản, MFA, 代行, PIN | P3 | S1 | 23 | 17 | 32 | 377 |
-| EP-FG11 | [FG-11] 帳票・データ出力 — 12 báo cáo, CSV kế toán | P3 | S8 | 9 | 32 | 35 | 656 |
-| EP-FG12 | [FG-12] 通知 — thông báo in-app + email | P4 | S7 | 7 | 4 | 9 | 108 |
-| EP-FG13 | [FG-13] 監査・セキュリティ — 監査ログ, bảo mật, lưu 7 năm | P2 | S1 (ghi audit) · S8 | 10 | 10 | 16 | 225 |
-| EP-FG14 | [FG-14] 運用監視・可用性 — giám sát, backup RTO/RPO | P3 | S8 | 8 | 0 | 8 | 82 |
-| EP-FG15 | [FG-15] データ移行 — chuyển đổi dữ liệu | P3 | S8 + W5 | 6 | 8 | 10 | 187 |
-| EP-PLAT | [PLAT] 基盤 — nền tảng AWS, CI/CD, khung app, quy ước chung | P1 | S0 | 11 | 4 | 14 | 142 |
-| EP-TEST | [TEST] 総合テスト・UAT・リリース | P2 | sau S8 | 9 | 4 | 11 | 140 |
-| EP-CLAR | [CLAR] 要確認 — các điểm cần làm rõ với khách / nội bộ | P3 | trước G1 (2027-01-15) | 41 | 0 | 41 | 60 |
-| **Tổng** | 18 epic | | | **262** | **219** | **401** | **4751** |
+| Epic | Tên | Ưu tiên (gốc) | Sprint (WBS LAB-1) | Issue cấp 1 | Sub-issue | Lá | Giờ sơ bộ (lá) | SWP chốt (P3) | Giờ = SWP × k (P3) |
+|---|---|---|---|---|---|---|---|---|---|
+| EP-FG01 | [FG-01] 参加者・資格管理 — người tham gia, 許可 / 承認 | P1 | S1 | 20 | 23 | 35 | 327 | 141 | 282 |
+| EP-FG03 | [FG-03] ロット受付・評価記録 — tiếp nhận lô, 目利き (gồm offline / sync SC-03-07) | P2 | S2 | 21 | 18 | 31 | 365 | 123 | 246 |
+| EP-FG04 | [FG-04] 相対取引 — giao dịch thỏa thuận (luồng chính) | P1 | S3 | 16 | 21 | 30 | 346 | 118 | 236 |
+| EP-FG05 | [FG-05] せり結果記録 — ghi kết quả せり (luồng phụ) | P4 | S4 | 8 | 7 | 12 | 127 | 40 | 80 |
+| EP-FG06 | [FG-06] 引渡し管理 — giao hàng, ngoại lệ, tranh chấp | P3 | S4–S5 | 14 | 16 | 22 | 225 | 94 | 188 |
+| EP-FG07 | [FG-07] 照合・日次締め — đối soát, khóa ngày, tranh chấp / SLA | P2 | S5 | 9 | 11 | 16 | 292 | 81 | 162 |
+| EP-FG08 | [FG-08] 修正申請・決裁 — điều chỉnh sau chốt (REVERSE / DELTA) | P3 | S6 | 9 | 7 | 13 | 184 | 72 | 144 |
+| EP-FG09 | [FG-09] 完納奨励金 — tiền thưởng thanh toán đúng hạn | P2 | S4 (試算表) · S6–S7 | 23 | 19 | 36 | 441 | 184 | 368 |
+| EP-FG10 | [FG-10] 規則版・交付率・マスタ・カレンダー — quy chế có version, master, lịch | P4 | S2 | 18 | 18 | 30 | 467 | 125 | 250 |
+| EP-FG02 | [FG-02] アカウント・認証・権限 — tài khoản, MFA, 代行, PIN | P3 | S1 | 23 | 17 | 32 | 377 | 130 | 260 |
+| EP-FG11 | [FG-11] 帳票・データ出力 — 12 báo cáo, CSV kế toán | P3 | S8 | 9 | 32 | 35 | 656 | 138 | 276 |
+| EP-FG12 | [FG-12] 通知 — thông báo in-app + email | P4 | S7 | 7 | 4 | 9 | 108 | 37 | 74 |
+| EP-FG13 | [FG-13] 監査・セキュリティ — 監査ログ, bảo mật, lưu 7 năm | P2 | S1 (ghi audit) · S8 | 10 | 10 | 16 | 225 | 66 | 132 |
+| EP-FG14 | [FG-14] 運用監視・可用性 — giám sát, backup RTO/RPO | P3 | S8 | 8 | 0 | 8 | 82 | 48 | 96 |
+| EP-FG15 | [FG-15] データ移行 — chuyển đổi dữ liệu | P3 | S8 + W5 | 6 | 8 | 10 | 187 | 66 | 132 |
+| EP-PLAT | [PLAT] 基盤 — nền tảng AWS, CI/CD, khung app, quy ước chung | P1 | S0 | 11 | 4 | 14 | 142 | 82 | 164 |
+| EP-TEST | [TEST] 総合テスト・UAT・リリース | P2 | sau S8 | 9 | 4 | 11 | 140 | 101 | 202 |
+| EP-CLAR | [CLAR] 要確認 — các điểm cần làm rõ với khách / nội bộ | P3 | trước G1 (2027-01-15) | 41 | 0 | 41 | 60 | 55 | 110 |
+| **Tổng** | 18 epic | | | **262** | **219** | **401** | **4751** | **1701** | **3402** |
 <!-- END GEN epic-counts -->
 
 ## 2. Spec → issue

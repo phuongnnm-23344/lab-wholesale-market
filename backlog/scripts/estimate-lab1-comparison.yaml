@@ -1,0 +1,93 @@
+# So LAB-5 với estimate LAB-1 (estimate.md §5). Số LAB-1 = 人日 ở 概算見積書 LAB-1 §4.2 (bảng 機能グループ別・工程別) × 8 giờ
+# (PRM-001: 1 人日 = 8 giờ). LAB-5 = lá trong backlog/estimate-swp-hours.csv theo bộ lọc `lab5`.
+# render-estimate-tables.py tính cột LAB-5 / Chênh; cột "Vì sao" lấy từ `why`.
+rows:
+- part: FG-01 参加者・資格管理
+  lab1_days: 66.8
+  lab5: {epics: [EP-FG01], exclude_kinds: [design]}
+  why: Spec LAB-4 đủ (PARTY), dev tách sát spec; QA LAB-1 tính 30–50% công FE + BE (124 giờ), LAB-5 chỉ có 3 issue test (38 giờ) — chạy case theo DoD 4 của từng issue không có giờ riêng
+- part: FG-02 アカウント・認証・権限
+  lab1_days: 53.2
+  lab5: {epics: [EP-FG02], exclude_kinds: [design]}
+  why: Thiết kế API iam + màn SC-00-01..03 chuyển sang dòng thiết kế (PREMISE L5-D05); 5 lá thô giữ 96 giờ LAB-1 nhưng SWP chỉ quy ra 34 giờ (L5-A01)
+- part: FG-03 ロット受付・評価記録
+  lab1_days: 58.2
+  lab5: {epics: [EP-FG03], exclude_kinds: [design]}
+  why: Thêm khung PWA / offline dùng chung A-FG03-17 (+16 giờ sơ bộ, PREMISE L5-A17); 8 lá thô 141 → 66 giờ (L5-A01)
+- part: FG-04 相対取引
+  lab1_days: 64.0
+  lab5: {epics: [EP-FG04], exclude_kinds: [design]}
+  why: Luồng chính có spec LAB-4 (3 TECH), dev / test sát spec; 8 lá thô 119 → 50 giờ (L5-A01); QA LAB-1 50% (giao dịch tiền) không có dòng tương ứng
+- part: FG-05 せり結果記録
+  lab1_days: 17.7
+  lab5: {epics: [EP-FG05], exclude_kinds: [design]}
+  why: Luồng phụ, phạm vi nhỏ; 2 lá thô 42 → 16 giờ (L5-A01)
+- part: FG-06 引渡し管理
+  lab1_days: 57.9
+  lab5: {epics: [EP-FG06], exclude_kinds: [design]}
+  why: Dev / test theo 2 TECH LAB-4; LAB-1 nhân FE × 1,3 cho màn có 2 bố cục PC / tablet, LAB-5 không có hệ số này; 2 lá thô 31 → 14 giờ
+- part: FG-07 照合・日次締め
+  lab1_days: 54.0
+  lab5: {epics: [EP-FG07], exclude_kinds: [design]}
+  why: 6 lá thô giữ 176 giờ LAB-1 → 42 giờ — lệch lớn nhất trong FG (L5-A01); migration CLOSE_DB đặt ở đây nhưng không đổi giờ (L5-A12)
+- part: FG-08 修正申請・決裁
+  lab1_days: 39.2
+  lab5: {epics: [EP-FG08], exclude_kinds: [design]}
+  why: Migration ADJUST_DB / trade_fixes đặt ở đây (L5-A12, không đổi giờ); 3 lá thô 80 → 18 giờ (L5-A01)
+- part: FG-09 完納奨励金
+  lab1_days: 81.8
+  lab5: {epics: [EP-FG09], exclude_kinds: [design]}
+  why: Tách theo khối K1–K9 + TV-01..15, test nặng nhất (108 giờ); BILLING_DB / IF-ACC-01 chuyển sang FG-11 (PREMISE L5-A14); 7 lá thô 136 → 50 giờ
+- part: FG-10 規則版・交付率・マスタ・カレンダー
+  lab1_days: 62.0
+  lab5: {epics: [EP-FG10], exclude_kinds: [design]}
+  why: 13 lá thô giữ 292 giờ → 88 giờ (L5-A01); thêm file cấu hình có nhật ký B-FG10-14 (L5-A15); nhánh rollback E-14 chờ khách (L5-D02)
+- part: FG-11 帳票・データ出力
+  lab1_days: 76.0
+  lab5: {epics: [EP-FG11], exclude_kinds: [design]}
+  why: 15 chức năng / 16 màn chưa spec — 21 lá thô theo nhóm báo cáo (L5-D06) giữ 468 giờ → 140 giờ; nhận thêm BILLING_DB C-FG11-08 (+6 giờ sơ bộ, L5-A14)
+- part: FG-12 通知
+  lab1_days: 30.6
+  lab5: {epics: [EP-FG12], exclude_kinds: [design]}
+  why: 4 lá thô 56 → 20 giờ (L5-A01)
+- part: FG-13 監査・セキュリティ
+  lab1_days: 39.2
+  lab5: {epics: [EP-FG13], exclude_kinds: [design]}
+  why: 4 bảng xuyên suốt IAM_AUDIT_DB làm một lần ở C-FG13-01 (L5-D07, L5-A16); 8 lá thô 132 → 54 giờ
+- part: FG-14 運用監視・可用性
+  lab1_days: 14.1
+  lab5: {epics: [EP-FG14], exclude_kinds: [design]}
+  why: Gần LAB-1 nhất — giám sát / sao lưu đã rõ ở ADR LAB-4, dev tách cụ thể; thay kiểm tra tự động 01:45 bằng cảnh báo (L5-A10)
+- part: FG-15 データ移行 + MG 移行作業
+  lab1_days: 66.9
+  lab1_note: FG-15 23,9 + MG 43,0 人日
+  lab5: {epics: [EP-FG15], exclude_kinds: [design]}
+  why: LAB-5 gộp chuyển đổi / làm sạch / diễn tập vào FG-15; 7 lá thô 148 → 86 giờ; phần BrSE của MG (9 人日, làm việc với khách về dữ liệu) không thành issue
+- part: Thiết kế (基本設計, phần còn lại sau LAB-4)
+  lab1_days: 75.76
+  lab1_note: BD 132,1 人日 (1.057 giờ) − phần LAB-4 đã làm ≈ 451 giờ = 606 giờ; trừ thêm ~6 giờ デザイン của 3 màn đã có wireframe (SC-03-02, SC-03-07, SC-04-05) → ≈ 600 giờ
+  lab5: {kinds: [design]}
+  why: 'FB-EXP-344 / N-04: so riêng, không cộng vào FG. Phần còn lại theo cách tính LAB-1: 58 màn × 8 giờ = 464 giờ + thiết kế logic 15% công BE của FG chưa có FUNC / TECH (FG-02, 11–15: 118,4 人日) = 142 giờ. Giờ sơ bộ 653 giờ (+8%: thêm API Design iam, sync DEP-04 — L5-D05) nhưng SWP × 2 chỉ 426 giờ: SWP chấm tài liệu thấp hơn cách tính 8 giờ / màn (giờ sơ bộ / SWP = 3,1). Tải 設計第4波 311 giờ sơ bộ (02-19 → 03-05) song song S2–S3 → rủi ro trễ ở progress-report'
+- part: Thiết kế đã làm ở LAB-4 (phần 基本設計 không còn trong backlog)
+  lab1_days: 56.34
+  lab1_note: BD 132,1 − 75,76 人日
+  lab5: null
+  why: 'Bộ thiết kế LAB-4 (nộp 2026-11-26) — 12 Screen Specification, kiến trúc + ADR, 10 Database Design, 42 API, 7 FUNC, 15 TECH; không có issue LAB-5 (FB-EXP-344: không thiết kế lại phần đã có)'
+- part: 共通基盤 + インフラ + バッチ定義 (CC + IN + BJ)
+  lab1_days: 100.0
+  lab1_note: CC 55,0 + IN 30,0 + BJ 15,0 人日
+  lab5: {epics: [EP-PLAT]}
+  why: LAB-5 chỉ có 14 lá nền tảng (IaC, runtime, khung app, khung màn); LAB-1 còn design system 8 人日, component FE dùng chung 22 人日, định nghĩa 10 batch — chưa có issue riêng (batch nằm trong lá dev của FG). Rủi ro thiếu việc → xem §4.1
+- part: 総合テスト・UAT (QT)
+  lab1_days: 110.0
+  lab5: {epics: [EP-TEST]}
+  why: LAB-5 có kế hoạch test, kịch bản nghiệp vụ, 462 tổ hợp quyền, tải, bảo mật, diễn tập khôi phục, hỗ trợ UAT, cutover, bàn giao (11 lá); LAB-1 QT gồm cả sửa lỗi FE / BE 61 人日 — LAB-5 chưa có chỗ giữ giờ sửa lỗi
+- part: 要件定義 (RQ) ↔ làm rõ
+  lab1_days: 30.0
+  lab5: {epics: [EP-CLAR]}
+  why: RQ của LAB-1 là workshop + 要件定義書 + 受入基準 (W1); LAB-5 chỉ còn 41 câu hỏi khách / nội bộ (1–4 giờ / câu), phần workshop coi như đã làm trước sprint
+- part: Không có trong backlog — dịch vụ SV-01..09, 会計ソフト連携試験, quản lý PM / BrSE
+  lab1_days: 332.6
+  lab1_note: SV 94,0 + AC 7,0 + MN 231,6 人日
+  lab5: null
+  why: Không phải issue sản phẩm — PM, BrSE cầu nối, đào tạo, hỗ trợ vận hành; sprint không đốt các giờ này (một phần SV như hỗ trợ UAT, cutover, bàn giao đã nằm ở EP-TEST)
