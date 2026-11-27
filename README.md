@@ -3,7 +3,7 @@
 | Mục | Nội dung |
 |---|---|
 | Tên dự án | Hệ thống hỗ trợ vận hành chợ bán buôn thủy sản 株式会社 桜水産市場 (Product A) |
-| Mã học viên | `<mã học viên>` |
+| Mã học viên | phuongnnm-23344 |
 | Đề | **Product A** |
 
 Khách hàng, số liệu và dữ liệu trong repo đều hư cấu (bài luyện tập). Mọi câu trả lời "của khách" do một agent AI đóng vai, gắn nhãn `[Customer giả lập]` / `[Giả lập]`.
@@ -53,11 +53,11 @@ Khách hàng, số liệu và dữ liệu trong repo đều hư cấu (bài luy�
 | [`requirements/`](requirements/_index.md) | Chỗ cho tài liệu yêu cầu theo chuẩn công ty; LAB-4 / LAB-5 chưa dùng (bản public đã gỡ file khuôn) |
 | [`ja/`](ja/progress-report.md) | Bản tiếng Nhật: bộ thiết kế LAB-4 (cùng cây thư mục với bản tiếng Việt), README / PREMISE / AI-report LAB-4 (`ja/lab-4/`), progress-report LAB-5 |
 | [`prototype/`](prototype/README.md) | Prototype chạy thật LAB-2 (Next.js + Supabase, dữ liệu giả); không sửa ở LAB-5 ngoài việc gỡ mật khẩu demo khỏi README |
-| [`scripts/`](scripts/) | Script của bộ thiết kế LAB-4 (kiểm link Markdown, kiểm API Design, render wireframe, xuất ảnh Mermaid) và 3 script `*.sh` của template quản lý dự án (nhãn, wiki) |
+| [`scripts/`](scripts/) | Script của bộ thiết kế LAB-4: kiểm link Markdown, kiểm API Design, render wireframe, xuất ảnh Mermaid |
 | `.github/` | Issue form, PR template và 2 workflow của template quản lý dự án Sun* mà repo được dựng từ đó (workflow gắn nhãn được tắt khi đẩy backlog hàng loạt, đã bật lại) |
 | `.gitignore` | Bỏ qua `node_modules`, `.env*`, file build, `__pycache__` |
 
-Bản public đã gỡ khỏi cây thư mục các phần không phải nội dung tự viết: `wiki-template/`, `images/`, `webhook/`, `.bot-test/`, `CHANGELOG.md` (của template quản lý dự án), `specs/_templates/`, `requirements/_templates/` (file khuôn của chuẩn nội bộ), và phần README của template trong `lab-4/README.md`.
+Bản public đã gỡ khỏi cây thư mục các phần không phải nội dung tự viết: `wiki-template/`, `images/`, `webhook/`, `.bot-test/`, `CHANGELOG.md`, 3 script `*.sh` trong `scripts/` (của template quản lý dự án), `specs/_templates/`, `requirements/_templates/` (file khuôn của chuẩn nội bộ), và phần README của template trong `lab-4/README.md`. Quy ước log `specs/_common/log-convention.md` mục 1–3 được viết lại thành bản tóm tắt của dự án, không chép nguyên văn chuẩn nội bộ.
 
 ## 4. Spec → epic
 

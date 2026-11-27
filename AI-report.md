@@ -68,7 +68,7 @@ Danh sách đầy đủ ở plan (§0, 20 dòng) và các dòng `L5-D…` của 
 | Khoảng thời gian LAB-5 | 2026-11-26 16:22 → 2026-11-27 17:45 JST | |
 | Thời gian AI chạy thực (wall-clock) | khoảng 8,8 giờ | Chưa tính phần lớn thời gian chờ script ghi GitHub chạy nền (giãn 7,5–15 giây / lần, có lúc kéo vài giờ): log không có hoạt động trong lúc đó nên bị loại |
 | Tổng thời gian chạy của agent | khoảng 22,1 agent-giờ, 18 subagent | Lớn hơn wall-clock vì chạy song song: 3 luồng break, 5 worker chấm SWP, 2 PL cùng lúc ở P3 / P4 |
-| Thời gian người review | `<giờ review của người dùng>` | Chốt điểm mẫu, quyết định ở Gate A / B và P4 |
+| Thời gian người review | khoảng 2 giờ | Người làm bài tự báo: chốt điểm mẫu, quyết định ở Gate A / B và P4 |
 
 ## 3. Tự đánh giá
 
@@ -76,7 +76,7 @@ Danh sách đầy đủ ở plan (§0, 20 dòng) và các dòng `L5-D…` của 
 
 - **Một nguồn, nhiều đầu ra, đều kiểm bằng máy.** `backlog.yaml` sinh issue, bảng trong task-breakdown / estimate và Project; payload trong HTML sinh Point / Hours; nhật ký CSV sinh burndown và Status. Số trong file nộp và trên Project không lệch nhau (đọc lại 510 / 510).
 - **Expert chặn trước khi đẩy.** 7 Major của Gate A đều đổi cấu trúc item; sửa trong yaml rẻ hơn nhiều so với sửa 500 issue trên GitHub.
-- **Người chỉ chốt chỗ cần người:** điểm mẫu SWP, độ hạt, phạm vi sprint, ngoại lệ. Phần đọc và đếm lại do Expert làm.
+- **Người chỉ chốt chỗ cần người:** điểm mẫu SWP, độ hạt, phạm vi sprint, ngoại lệ — khoảng 2 giờ người cho khoảng 8,8 giờ AI chạy. Phần đọc và đếm lại do Expert làm.
 - **Script chạy lại được** nên chịu được máy tắt giữa chừng và giới hạn tốc độ của GitHub (đẩy 499 issue qua hai ngày, không trùng issue nào).
 - **Che giờ khi chấm** làm SWP độc lập với giờ sơ bộ, nên so SWP × k với giờ sơ bộ / LAB-1 mới có nghĩa.
 

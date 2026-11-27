@@ -24,7 +24,7 @@
 | [`AI-report.md`](AI-report.md) | LAB-4におけるAIの使い方: スキル、プロンプト、レビュー方法、AIの誤りと修正方法、自己評価 | 標準規約どおりのFrontmatter + History | **新規**（課題要件） | PL | — |
 | [`prototype/`](../../prototype) | LAB-2プロトタイプのコード (Next.js + Supabase)、デモ用README | — | LAB-2から存在 | PL | [`prototype/README.md`](../../prototype/README.md) |
 
-リポジトリ直下のその他のフォルダ（`.github/`、`scripts/` 内の `*.sh`）はSun*のプロジェクト管理テンプレートの一部です（LAB-5 公開版では `webhook/`、`wiki-template/`、`images/`、`.bot-test/`、`CHANGELOG.md` とテンプレートの README 部分を削除済み）。LAB-4設計一式のスクリプトは5節にあり、「GitHub Project Management Template」の節以降を参照してください。元のテンプレートには `docs/`（ステータス遷移仕様）と `scripts/bootstrap-project.sh` もありますが、本リポジトリのコピーには **含まれていません**。そのため、下記のテンプレートREADMEでこれらに言及している箇所は開けません（テンプレートの記述はそのまま残しています）。
+リポジトリ直下のその他のフォルダ（`.github/`）はSun*のプロジェクト管理テンプレートの一部です（LAB-5 公開版では `scripts/` 内の `*.sh` 3本、`webhook/`、`wiki-template/`、`images/`、`.bot-test/`、`CHANGELOG.md` とテンプレートの README 部分を削除済み）。LAB-4設計一式のスクリプトは5節にあり、「GitHub Project Management Template」の節以降を参照してください。元のテンプレートには `docs/`（ステータス遷移仕様）と `scripts/bootstrap-project.sh` もありますが、本リポジトリのコピーには **含まれていません**。そのため、下記のテンプレートREADMEでこれらに言及している箇所は開けません（テンプレートの記述はそのまま残しています）。
 
 ## 2. QC-01に対するプロジェクトの取り決め
 
@@ -123,7 +123,7 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 | `PREMISE.md` | ルート | **課題に沿って新規作成** | 標準規約どおりのFrontmatter + History |
 | `architecture/ARCHITECTURE.md`, `architecture/adr/ADR-001..010` | `architecture/` | **課題に沿って新規作成** | 標準はQC-01から `architecture-overview` を削除済み（2026-09-10）; ADRは 背景 · 決定 · 不採用案 · 影響 · 追跡 の形式 |
 | `wireframes/`（画面一覧、`_common-layout.md`、ワイヤーフレームMD 15件、`html/` + `_shared/`、`png/`、`pdf/wireframes-all.pdf`、`assets/`） | `wireframes/` | **課題に沿って新規作成** | 標準は `screen-map` を削除済み; HTMLのスタイルは受講者が提示したPDFの見本に倣う（別の課題のもの。スタイルのみ採用） |
-| `render-wireframes.py`, `export-mermaid-png.py`, `check-api-spec-consistency.py` | `scripts/` | **新規作成** | 5節。同じフォルダの `*.sh` スクリプトはプロジェクト管理テンプレートのもの |
+| `render-wireframes.py`, `export-mermaid-png.py`, `check-api-spec-consistency.py` | `scripts/` | **新規作成** | 5節。同じフォルダの `*.sh` スクリプトはプロジェクト管理テンプレートのもの（LAB-5 公開版では削除済み） |
 | `AI-report.md` | ルート | **課題に沿って新規作成** | |
 | `AI-report-evidence/` | ルート | **新規作成** | AI-reportの数値の証跡の写し（有識者（Expert） G3-M02）; 各ファイルの出典は `AI-report-evidence/README.md`。このフォルダをLAB-4の提出物に含めるかは受講者が決定。LAB-5でリポジトリを公開する際に残すかどうかはLAB-5で決定 |
 

@@ -3,9 +3,9 @@ id: SPEC-LOG-001
 title: Quy ước ghi log
 type: system
 subtype: log-convention
-version: "0.2.0"
+version: "0.3.0"
 updated_by: phuongnnm-23344
-updated: 2026-11-25
+updated: 2026-11-27
 design_id: LOG
 feature: _common
 related: ["BM-2-901-53"]
@@ -13,69 +13,58 @@ related: ["BM-2-901-53"]
 
 # Quy ước ghi log
 
-> **Nội dung giữ nguyên từ sheet `Logs` của biểu mẫu ISO BM-2-901-53 v01.** Tách ra thành file dùng chung vì quy ước log áp cho **cả dự án**, không thuộc riêng một function — template BM-2-901-53 (theo chuẩn nội bộ spec-standards, không công khai) vì thế không còn mục `Log`.
+> Quy ước log dùng chung cho cả dự án, nên đặt ở `_common/` thay vì trong từng Technical Design. Khung mục theo chuẩn nội bộ spec-standards (không công khai); nội dung dưới đây là bản tóm tắt dự án tự viết, chỉ giữ phần Product A thực sự dùng.
 >
-> **Chưa dùng làm chuẩn được.** File đang chờ confirm với chuyên gia — xem [mục 3](#3-cần-confirm-với-chuyên-gia). Biểu mẫu gốc có ít nhất một lỗi nội dung đã kiểm chứng được (mục 2).
+> Còn một số điểm chưa chốt — xem [mục 3](#3-điểm-còn-mở); cách dự án xử lý tạm ở mục 4.
 
 ---
 
-## 1. Format
+## 1. Định dạng
 
-| Date time | Log type | Category Name | Message |
-|---|---|---|---|
-| `[yyyy-mm-ddTHH:MM:SS.000]` | `[INFO]` | `[default]` | ***REMOVED*** |
-
-- Mỗi trường bọc trong dấu ngoặc vuông `[...]`, trừ `Message`.
-- Biểu mẫu gốc **không quy định** dấu phân tách giữa các trường, timezone, hay nguồn giá trị của `Category Name` (ví dụ dùng `default`).
-
----
-
-## 2. Log type
-
-Nguyên văn biểu mẫu gốc, **giữ nguyên cả chỗ sai** để đối chiếu khi confirm:
-
-| Log type | Mô tả (nguyên văn biểu mẫu) | Ghi chú |
-|---|---|---|
-| TRACE | ***REMOVED*** | **Sai** — đây là mô tả của `INFO` theo log4j; `TRACE` phải là *"***REMOVED***"* |
-| DEBUG | ***REMOVED*** | Đúng |
-| INFO | ***REMOVED*** | **Sai** — trùng nguyên văn với `ERROR` |
-| WARN | ***REMOVED*** | Đúng |
-| ERROR | ***REMOVED*** | Đúng |
-| FATAL | ***REMOVED*** | Đúng |
-
-Cách dùng đề xuất (theo log4j, **chưa được duyệt**):
-
-| Log type | Dùng khi |
+| Trường | Dự án dùng |
 |---|---|
-| `TRACE` | Sự kiện chi tiết hơn cả `DEBUG` — chỉ bật khi truy vết sâu |
-| `DEBUG` | Sự kiện chi tiết hữu ích khi debug |
-| `INFO` | Mốc tiến triển của ứng dụng ở mức thô (vào/ra một xử lý) |
-| `WARN` | Tình huống có nguy cơ, chưa lỗi |
-| `ERROR` | Lỗi đã xảy ra nhưng ứng dụng còn chạy tiếp được |
-| `FATAL` | Lỗi rất nặng, ứng dụng sẽ phải dừng |
+| Thời điểm | ISO 8601, lưu UTC, hiển thị JST |
+| Mức log | Một trong 6 mức ở mục 2 |
+| Category | Tên module nghiệp vụ (vd. `trade`, `lot`, `settlement`) |
+| Nội dung | Câu ngắn + `traceId` của request |
+
+- Mỗi bản ghi là một dòng JSON để gom và lọc được giữa các service.
 
 ---
 
-## 3. Cần confirm với chuyên gia
+## 2. Mức log
 
-| # | Câu hỏi | Vì sao phải hỏi | Trả lời |
+| Mức | Dùng khi |
+|---|---|
+| `TRACE` | Truy vết rất chi tiết, chỉ bật khi điều tra sâu |
+| `DEBUG` | Thông tin giúp gỡ lỗi khi phát triển |
+| `INFO` | Mốc chính của một xử lý (bắt đầu, kết thúc, kết quả) |
+| `WARN` | Có dấu hiệu bất thường nhưng xử lý vẫn đúng |
+| `ERROR` | Một xử lý lỗi, hệ thống vẫn chạy tiếp (vd. trả `E-CMN-004` kèm `traceId`) |
+| `FATAL` | Lỗi buộc tiến trình phải dừng |
+
+---
+
+## 3. Điểm còn mở
+
+| # | Điểm | Vì sao cần chốt | Trả lời |
 |---|---|---|---|
-| 1 | Mô tả `TRACE` và `INFO` trong biểu mẫu ISO gốc sai — có sửa biểu mẫu không, hay dự án tự ghi đè? | Sửa biểu mẫu đóng dấu ISO phải qua bộ phận quản lý tài liệu; để nguyên thì mỗi dự án tự hiểu một kiểu | |
-| 2 | Dấu phân tách giữa các trường, timezone dùng gì (UTC hay giờ địa phương)? | Không thống nhất thì log của các service không gộp/so được theo thời gian | |
-| 3 | `Category Name` lấy từ đâu — tên module, tên class, hay danh mục cố định? | Ví dụ duy nhất trong biểu mẫu là `default`, không suy ra được quy tắc | |
-| 4 | Những gì **cấm** ghi vào log (mật khẩu, token/JWT nguyên bản, số thẻ, PII)? | Biểu mẫu không nói; đây là rủi ro lộ dữ liệu, cần một câu cấm rõ ràng | |
-| 5 | Nơi ghi log, thời gian lưu, ai xem? | Không có thì không kiểm chứng được lúc vận hành | |
-| 6 | Quy ước log thuộc **bộ spec** hay thuộc **coding convention** của dự án? | Quyết định file này ở lại `03-specs/_common/` hay chuyển sang tài liệu kỹ thuật — xem `ISS-35` | |
+| 1 | Bảng mô tả mức log của biểu mẫu chuẩn có chỗ sai — dự án tự dùng bảng mục 2 có ổn không? | Mỗi dự án tự sửa thì cách hiểu mức log không thống nhất | |
+| 2 | Định dạng một dòng và timezone | Log nhiều service phải gom và so theo thời gian được | |
+| 3 | Category lấy từ đâu | Không có quy tắc thì lọc log theo nghiệp vụ không được | |
+| 4 | Dữ liệu cấm ghi vào log | Tránh lộ bí mật và dữ liệu cá nhân | |
+| 5 | Nơi lưu, thời gian lưu, ai xem | Cần để vận hành và kiểm chứng | |
+| 6 | Quy ước log thuộc bộ spec hay coding convention | Quyết định nơi đặt file này | |
 
 ---
 
 ## 4. Áp dụng cho Product A (LAB-4)
 
-> Bản copy từ `sun-asterisk-internal/spec-standards` nhánh `main` (commit `72c1dda`, 2026-11-05). Mục 1–3 giữ nguyên văn bản chuẩn; mục này ghi cách dự án áp dụng.
+> Mục 1–3 là bản tóm tắt dự án tự viết (từ 0.3.0); mục này ghi cách dự án xử lý từng điểm còn mở.
 
 | # | Câu hỏi ở mục 3 | Cách xử lý trong dự án | Nơi chốt |
 |---|---|---|---|
-| 1 | Mô tả `TRACE` / `INFO` sai | Dự án dùng bảng "Cách dùng đề xuất" ở mục 2, không dùng nguyên văn biểu mẫu | ADR về quan sát hệ thống (P2-A) |
+| 1 | Mô tả `TRACE` / `INFO` sai | Dự án dùng bảng mức log ở mục 2, không dùng mô tả của biểu mẫu | ADR về quan sát hệ thống (P2-A) |
 | 2 | Dấu phân tách, timezone | Chưa chốt. Giả định PL: lưu UTC, hiển thị JST; định dạng JSON một dòng | ADR (P2-A) |
 | 3 | `Category Name` | Chưa chốt. Giả định PL: tên module nghiệp vụ (vd. `trade`, `lot`, `settlement`) | ADR (P2-A) |
 | 4 | Cấm ghi gì | Không ghi mật khẩu, PIN, token, nội dung CSV 入金, dữ liệu cá nhân của người tham gia (APPI, 09-06) | ADR (P2-A) |
@@ -88,5 +77,6 @@ Cách dùng đề xuất (theo log4j, **chưa được duyệt**):
 
 | No | Version | Action | Nội dung thay đổi | Ngày | Người sửa | Approve |
 |---|---|---|---|---|---|---|
-| 1 | 0.1.0 | Add new | Tách nội dung sheet `Logs` của BM-2-901-53 ra file dùng chung; ghi các điểm cần confirm với chuyên gia | 2026-09-10 | ***REMOVED*** | |
+| 1 | 0.1.0 | Add new | Tách quy ước log khỏi khuôn Technical Design thành file dùng chung (bản của chuẩn nội bộ) | 2026-09-10 | (chuẩn nội bộ) | |
 | 2 | 0.2.0 | Update | Copy về dự án Product A (spec-standards `72c1dda`); sửa link khuôn BM-2-901-53 về `../_templates/`; thêm mục 4 cách áp dụng cho dự án | 2026-11-25 | phuongnnm-23344 | |
+| 3 | 0.3.0 | Update | Bản public: viết lại mục 1–3 thành bản tóm tắt của dự án, chỉ giữ quy ước Product A dùng, không chép nguyên văn chuẩn nội bộ; mục 4 sửa câu dẫn | 2026-11-27 | phuongnnm-23344 | |

@@ -38,7 +38,7 @@ Feature = module ở [`architecture/ARCHITECTURE.md`](../architecture/ARCHITECTU
 | SPEC-API_CONV-001 | Quy ước chung của API (Common Conventions · Status code · Appendix) | — (`_common`) | _common | 0.1.1 | phuongnnm-23344 | 2026-11-25 | [_common/api-conventions.md](_common/api-conventions.md) |
 | SPEC-API_LIST-001 | Danh mục API (API List) | — (`_common`) | _common | 0.1.1 | phuongnnm-23344 | 2026-11-25 | [_common/api-list.md](_common/api-list.md) |
 | SPEC-ERROR_CODES-001 | Danh mục mã lỗi (mã chung E-CMN + bảng tổng theo feature) | — (`_common`) | _common | 0.1.1 | phuongnnm-23344 | 2026-11-25 | [_common/error-codes.md](_common/error-codes.md) |
-| SPEC-LOG-001 | Quy ước ghi log | — (`_common`) | _common | 0.2.0 | phuongnnm-23344 | 2026-11-25 | [_common/log-convention.md](_common/log-convention.md) |
+| SPEC-LOG-001 | Quy ước ghi log | — (`_common`) | _common | 0.3.0 | phuongnnm-23344 | 2026-11-27 | [_common/log-convention.md](_common/log-convention.md) |
 | SPEC-SC-01-02-001 | SC-01-02 参加者詳細・編集 — 許可 (仲卸) / 承認 (売買参加者) hai khối | SPEC | party | 0.1.3 | phuongnnm-23344 | 2026-11-26 | [party/screen-specification/SC-01-02_SPEC.md](party/screen-specification/SC-01-02_SPEC.md) |
 | SPEC-PARTY_FUNC-001 | Function Specifications — module party (người tham gia, 許可 / 承認) | FUNC | party | 0.1.1 | phuongnnm-23344 | 2026-11-25 | [party/function-specifications/PARTY_FUNC.md](party/function-specifications/PARTY_FUNC.md) |
 | SPEC-PTY_APPROVAL_LIFECYCLE-001 | 承認 (売買参加者) — cấp mới / gia hạn / đổi 参加上限 có lịch sử / đình chỉ / 失効 tự động | TECH | party | 0.1.2 | phuongnnm-23344 | 2026-11-25 | [party/technical-design/PTY_APPROVAL_LIFECYCLE_TECH.md](party/technical-design/PTY_APPROVAL_LIFECYCLE_TECH.md) |

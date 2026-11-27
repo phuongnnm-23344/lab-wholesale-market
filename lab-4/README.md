@@ -24,7 +24,7 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 | [`AI-report.md`](AI-report.md) | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa, tự đánh giá | Frontmatter + History theo quy ước chuẩn | **Mới** (yêu cầu đề) | PL | — |
 | [`prototype/`](../prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](../prototype/README.md) |
 
-Nhóm thư mục mức repo khác (`.github/`, các script `*.sh` trong `scripts/`) là phần của template quản lý dự án Sun* (bản public LAB-5 đã gỡ `webhook/`, `wiki-template/`, `images/`, `.bot-test/`, `CHANGELOG.md` và phần README của template); script của bộ thiết kế LAB-4 ở mục 5 — xem từ mục "GitHub Project Management Template" trở xuống. Template gốc còn có `docs/` (đặc tả chuyển trạng thái) và `scripts/bootstrap-project.sh`; bản copy trong repo này **không kèm** hai thứ đó, nên các chỗ nhắc tới chúng ở phần README template bên dưới không mở được (giữ nguyên chữ của template).
+Nhóm thư mục mức repo khác (`.github/`) là phần của template quản lý dự án Sun* (bản public LAB-5 đã gỡ 3 script `*.sh` trong `scripts/`, `webhook/`, `wiki-template/`, `images/`, `.bot-test/`, `CHANGELOG.md` và phần README của template); script của bộ thiết kế LAB-4 ở mục 5 — xem từ mục "GitHub Project Management Template" trở xuống. Template gốc còn có `docs/` (đặc tả chuyển trạng thái) và `scripts/bootstrap-project.sh`; bản copy trong repo này **không kèm** hai thứ đó, nên các chỗ nhắc tới chúng ở phần README template bên dưới không mở được (giữ nguyên chữ của template).
 
 ## 2. Quy ước của dự án theo QC-01
 
@@ -123,7 +123,7 @@ Số tài liệu: 38 ở `specs/_index.md` (4 `_common` + 12 Screen Specificatio
 | `PREMISE.md` | gốc | **Tạo mới theo đề** | Frontmatter + History theo quy ước chuẩn |
 | `architecture/ARCHITECTURE.md`, `architecture/adr/ADR-001..010` | `architecture/` | **Tạo mới theo đề** | Chuẩn đã bỏ `architecture-overview` khỏi QC-01 (2026-09-10); ADR theo dạng bối cảnh · quyết định · phương án bỏ · hệ quả · truy vết |
 | `wireframes/` (画面一覧, `_common-layout.md`, 15 wireframe MD, `html/` + `_shared/`, `png/`, `pdf/wireframes-all.pdf`, `assets/`) | `wireframes/` | **Tạo mới theo đề** | Chuẩn đã bỏ `screen-map`; phong cách HTML theo mẫu PDF người dùng đưa (đề khác, chỉ lấy phong cách) |
-| `render-wireframes.py`, `export-mermaid-png.py`, `check-api-spec-consistency.py` | `scripts/` | **Tạo mới** | Mục 5. Script `*.sh` cùng thư mục là của template quản lý dự án |
+| `render-wireframes.py`, `export-mermaid-png.py`, `check-api-spec-consistency.py` | `scripts/` | **Tạo mới** | Mục 5. Script `*.sh` cùng thư mục là của template quản lý dự án (đã gỡ khỏi bản public LAB-5) |
 | `AI-report.md` | gốc | **Tạo mới theo đề** | |
 | `AI-report-evidence/` | gốc | **Tạo mới** | Bản sao bằng chứng cho số liệu của AI-report (Expert G3-M02); nguồn gốc từng file ở `AI-report-evidence/README.md`. Người dùng quyết giữ thư mục này trong gói nộp LAB-4; có giữ khi public repo ở LAB-5 hay không: quyết ở LAB-5 |
 
