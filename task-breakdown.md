@@ -18,7 +18,7 @@ Backlog break từ bộ thiết kế LAB-4 (tag `lab-4`, commit `0c19b61`, nộp
 | Issue làm rõ | Một câu hỏi / một điểm mở (DEP-xx, OPEN-L4-xx, E-xx, Q-…, §6 Điểm mở của ADR). Câu hỏi trùng giữa các luồng gộp thành một issue (L5-D09). Ưu tiên = ưu tiên cao nhất của issue nó chặn |
 | Test | Mỗi epic chức năng có ≥ 1 issue `kind: test`; test vector có sẵn trong spec (TV-…, RV-…, DoD Kx) phải được ghi tên trong issue test |
 
-Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong trong 2 ngày, sprint 2 tuần thấy được tiến độ theo ngày (burndown). Vì sao issue thô không chia nhỏ hơn đơn vị tự nhiên: chia một màn chưa có spec thành "nửa hiển thị / nửa thao tác" chỉ là chính xác giả — giờ chia đều, không ai đốt được theo DoD, và phải đóng hết khi có spec. Hệ quả: backlog có **491 issue (264 cấp 1 + 227 sub-issue) + 18 epic, 408 lá**; 99 lá thô (≈ 2.660 giờ, gồm 2 chỗ giữ giờ thêm sau Gate B: design system #500 216 giờ, sửa lỗi sau 総合テスト #501 489 giờ — PREMISE L5-D12) chờ 54 lá thiết kế (≈ 650 giờ). Thiết kế xong thì issue thô được tách ngay, vd. SC-01-03 / 04 / 05 (thiết kế 第1波) đã thành 6 lá dev trước S1. Việc làm được ngay (dev / test / thiết kế / làm rõ) đều ≤ 16 giờ theo giờ sơ bộ (PREMISE L5-D08, người dùng xác nhận 2026-11-26). Sau khi chấm SWP (P3), 22 lá đã có spec ra > 16 giờ: 4 lá 完納奨励金 tách ngay (#381, #486, #489, #494 → #502–#509), #486 sau khi thu hẹp vẫn 18 giờ nên tách tiếp ngay (#486 + #510, người dùng quyết 2026-11-27); 18 lá còn lại mang nhãn `needs-split`, không lá nào thuộc Iteration 1 (ngoại lệ L5-D08, người dùng xác nhận 2026-11-27).
+Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong trong 2 ngày, sprint 2 tuần thấy được tiến độ theo ngày (burndown). Vì sao issue thô không chia nhỏ hơn đơn vị tự nhiên: chia một màn chưa có spec thành "nửa hiển thị / nửa thao tác" chỉ là chính xác giả — giờ chia đều, không ai đốt được theo DoD, và phải đóng hết khi có spec. Hệ quả: backlog có **492 issue (264 cấp 1 + 228 sub-issue) + 18 epic, 409 lá**; 99 lá thô (≈ 2.660 giờ, gồm 2 chỗ giữ giờ thêm sau Gate B: design system #500 216 giờ, sửa lỗi sau 総合テスト #501 489 giờ — PREMISE L5-D12) chờ 54 lá thiết kế (≈ 650 giờ). Thiết kế xong thì issue thô được tách ngay, vd. SC-01-03 / 04 / 05 (thiết kế 第1波) đã thành 6 lá dev trước S1. Việc làm được ngay (dev / test / thiết kế / làm rõ) đều ≤ 16 giờ theo giờ sơ bộ (PREMISE L5-D08, người dùng xác nhận 2026-11-26). Sau khi chấm SWP (P3), 22 lá đã có spec ra > 16 giờ: 4 lá 完納奨励金 tách ngay (#381, #486, #489, #494 → #502–#509), #486 sau khi thu hẹp vẫn 18 giờ nên tách tiếp ngay (#486 + #510, người dùng quyết 2026-11-27); 18 lá còn lại mang nhãn `needs-split`, không lá nào thuộc Iteration 1 (ngoại lệ L5-D08, người dùng xác nhận 2026-11-27).
 
 ### 1.2 Định nghĩa xong (DoD chung — mỗi issue chỉ ghi thêm DoD riêng)
 
@@ -68,7 +68,7 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 | EP-FG06 | [FG-06] 引渡し管理 — giao hàng, ngoại lệ, tranh chấp | P3 | S4–S5 | 14 | 16 | 22 | 225 | 94 | 188 |
 | EP-FG07 | [FG-07] 照合・日次締め — đối soát, khóa ngày, tranh chấp / SLA | P2 | S5 | 9 | 11 | 16 | 292 | 81 | 162 |
 | EP-FG08 | [FG-08] 修正申請・決裁 — điều chỉnh sau chốt (REVERSE / DELTA) | P3 | S6 | 9 | 7 | 13 | 184 | 72 | 144 |
-| EP-FG09 | [FG-09] 完納奨励金 — tiền thưởng thanh toán đúng hạn | P2 | S4 (試算表) · S6–S7 | 23 | 28 | 42 | 469 | 197 | 394 |
+| EP-FG09 | [FG-09] 完納奨励金 — tiền thưởng thanh toán đúng hạn | P2 | S4 (試算表) · S6–S7 | 23 | 28 | 42 | 469 | 199 | 398 |
 | EP-FG10 | [FG-10] 規則版・交付率・マスタ・カレンダー — quy chế có version, master, lịch | P4 | S2 | 18 | 18 | 30 | 467 | 125 | 250 |
 | EP-FG02 | [FG-02] アカウント・認証・権限 — tài khoản, MFA, 代行, PIN | P3 | S1 | 23 | 17 | 32 | 377 | 130 | 260 |
 | EP-FG11 | [FG-11] 帳票・データ出力 — 12 báo cáo, CSV kế toán | P3 | S8 | 9 | 32 | 35 | 656 | 138 | 276 |
@@ -79,7 +79,7 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 | EP-PLAT | [PLAT] 基盤 — nền tảng AWS, CI/CD, khung app, quy ước chung | P1 | S0 | 12 | 4 | 15 | 358 | 92 | 184 |
 | EP-TEST | [TEST] 総合テスト・UAT・リリース | P2 | sau S8 | 10 | 4 | 12 | 629 | 114 | 228 |
 | EP-CLAR | [CLAR] 要確認 — các điểm cần làm rõ với khách / nội bộ | P3 | trước G1 (2027-01-15) | 41 | 0 | 41 | 60 | 55 | 110 |
-| **Tổng** | 18 epic | | | **264** | **228** | **409** | **5484** | **1737** | **3474** |
+| **Tổng** | 18 epic | | | **264** | **228** | **409** | **5484** | **1739** | **3478** |
 <!-- END GEN epic-counts -->
 
 ## 2. Spec → issue

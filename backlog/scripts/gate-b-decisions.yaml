@@ -13,10 +13,12 @@ needs_split: [C-PLAT-01.1, C-TEST-02, C-TEST-05, C-PLAT-01.2, C-TEST-07, C-FG15-
 rescore_pending: []
 
 # Báo cáo chấm lại trong reports/, theo thứ tự thời gian (lần sau thay lần trước cho cùng số issue):
-# 1) 11 lá sau Gate B; 2) #486 tách tiếp + #510 (người dùng quyết 2026-11-27, #486 9 SWP = 18 giờ > 16).
-rescore_reports: [sun-estimate-lab5-gate-b-rescore-20261127.html, sun-estimate-lab5-486-split-rescore-20261127.html]
+# 1) 11 lá sau Gate B (r2: hiệu chỉnh lại, #503 chỉ riêng issue — số không đổi); 2) #486 tách tiếp + #510 (người dùng quyết
+# 2026-11-27, #486 9 SWP = 18 giờ > 16); 3) #507 chấm chéo lần: quy tắc #116 của P3 áp cho #507 (Gate B R-01, người dùng quyết 2026-11-27).
+rescore_reports: [sun-estimate-lab5-gate-b-rescore-20261127-r2.html, sun-estimate-lab5-486-split-rescore-20261127.html,
+                  sun-estimate-lab5-507-cross-run-20261127.html]
 
-# Lần chấm lại thứ nhất (11 lá): báo cáo reports/sun-estimate-lab5-gate-b-rescore-20261127.html (2026-11-27).
+# Lần chấm lại thứ nhất (11 lá): báo cáo reports/sun-estimate-lab5-gate-b-rescore-20261127-r2.html (2026-11-27).
 # Issue cấp 1 thành cha: tách thành sub-issue (giữ người phụ trách, nhãn, spec của cha)
 split_children:
   B-FG09-08:

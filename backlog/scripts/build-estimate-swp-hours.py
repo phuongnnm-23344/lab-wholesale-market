@@ -1,6 +1,6 @@
 """SWP đã chốt (payload nhúng trong các báo cáo HTML của tkm:sun-estimate) → giờ = SWP × K → backlog/estimate-swp-hours.csv.
 
-Nguồn: báo cáo P3 `reports/sun-estimate-lab5-project1-*.html` + các báo cáo chấm lại `reports/sun-estimate-lab5-*-rescore-*.html`
+Nguồn: báo cáo P3 `reports/sun-estimate-lab5-project1-*.html` + mọi báo cáo `reports/sun-estimate-lab5-*.html` khác (chấm lại / chấm chéo lần)
 (Gate B: lá mới / lá đổi phạm vi), theo thứ tự `rescore_reports` của gate-b-decisions.yaml. Lần sau thay lần trước cho cùng số issue; lá P3 nay đã thành cha thì bỏ.
 Lá: Point = finalSWP, Hours = finalSWP × K (làm tròn 0,5 giờ). Cha / epic (theo cây trong backlog.yaml): Point = tổng SWP lá
 con cháu, Hours = tổng Hours con. Script kiểm: mọi lá trong backlog có đúng một điểm; cha không bị ảnh hưởng bởi lần chấm lại
@@ -45,7 +45,7 @@ def main():
     # thứ tự chấm lại ghi trong gate-b-decisions.yaml (generatedAt trong payload trùng ngày nên không dùng để sắp)
     G = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "gate-b-decisions.yaml"), encoding="utf-8"))
     rescores = [os.path.join(ROOT, "reports", f) for f in G["rescore_reports"]]
-    found = {os.path.basename(f) for f in glob.glob(os.path.join(ROOT, "reports", "sun-estimate-lab5-*-rescore-*.html"))}
+    found = {os.path.basename(f) for f in glob.glob(os.path.join(ROOT, "reports", "sun-estimate-lab5-*.html"))} - {os.path.basename(base[0])}
     if found != set(G["rescore_reports"]):
         sys.exit(f"rescore_reports lệch với reports/: {sorted(found ^ set(G['rescore_reports']))}")
     if len(base) != 1:
