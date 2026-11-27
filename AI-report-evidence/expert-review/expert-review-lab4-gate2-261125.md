@@ -1,6 +1,6 @@
 # Expert review — LAB-4 Gate 2 (spec chi tiết P3) — 2026-11-25
 
-Phạm vi review (theo chỉ định của người dùng): repo `lab-wholesale-market`, nhánh `ver/lab-4`, `git diff 5b0ef16..HEAD` (6 commit 6bb1bdb..20bea92):
+Phạm vi review (theo chỉ định của người dùng): repo `lab-wholesale-market`, nhánh `ver/lab-4`, `git diff 470cf2e..HEAD` (6 commit 02e7c61..f14418c):
 - `specs/{lot,trade,party,delivery,settle,incentive,rule}/` — thực tế **12** Screen Spec (BM-2-901-51) + 12 ảnh annotated, **7** FUNC (BM-54), **15** TECH (BM-53). Prompt giao việc ghi 15 / 19; số trong repo là 12 / 15 và khớp `specs/_index.md` (38 tài liệu).
 - `specs/system-design/api-design/**` — 42 API (BM-52); `specs/_common/` (api-conventions, api-list, error-codes, log-convention), `specs/_index.md`, `api-design/_index.md`.
 - Thay đổi DB / ADR / PREMISE / wireframe trong P3 (60 bảng; DEC-052..055); `scripts/render-annotated-screens.py` + `scripts/annotated_screens/`.

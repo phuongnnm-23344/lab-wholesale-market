@@ -21,7 +21,7 @@ Số liệu trong báo cáo lấy từ ghi chép làm việc, bản sao ở [`AI
 | 1 | 0.1.0 | Add new | — | Bản đầu (LAB-4 P4) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Đầu bài, 3.1, 3.2 | Expert Gate 3: nguồn số liệu trỏ vào `AI-report-evidence/` trong gói nộp (G3-M02); §3.2 tách điểm người dùng quyết / PL quyết cho khớp PREMISE §5 và nhật ký quyết định, thêm L4-D08 (G3-M01); §3.1 thêm dòng Gate 3 | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | 3.1, 3.2 | Expert Gate 3 kiểm diff: §3.1 thêm dòng "Gate 3 kiểm diff → RELEASE (2026-11-26)" (D3-n05); §3.2 PL quyết thêm DEC-048 (giữ giá R1, phần thêm trong buffer — D3-n04), DEC-055, DEC-057; người dùng quyết thêm L4-D09 (trạng thái ADR) và giữ `AI-report-evidence/` trong gói | 2026-11-26 | phuongnnm-23344 | |
-| 4 | 0.2.2 | Update | 4.2 | Thêm bản tiếng Nhật `ja/` (sinh từ bản tiếng Việt, commit `9367490`); sửa dòng "Bản tiếng Nhật chưa làm" | 2026-11-26 | phuongnnm-23344 |  |
+| 4 | 0.2.2 | Update | 4.2 | Thêm bản tiếng Nhật `ja/` (sinh từ bản tiếng Việt, commit `f0a2948`); sửa dòng "Bản tiếng Nhật chưa làm" | 2026-11-26 | phuongnnm-23344 |  |
 | 5 | 0.2.3 | Update | 3.4, 4.1 | Thêm §3.4 thời gian AI chạy (≈ 15,8 giờ wall-clock, ≈ 41,1 agent-giờ / 50 subagent) và thời gian người review (3 giờ, người làm lab báo); §4.1 thêm một ý | 2026-11-26 | phuongnnm-23344 |  |
 | 6 | 0.3.0 | Update | Toàn bộ | Viết lại gọn cho người chấm: giữ 3 vai, gate, quyết định của người, 7 lỗi chính, số đo thời gian, tự đánh giá; bỏ chuỗi ID, tên script / môi trường; thêm review bản `ja/`; bản 0.2.3 đầy đủ chép vào `AI-report-evidence/logs/` | 2026-11-26 | phuongnnm-23344 |  |
 

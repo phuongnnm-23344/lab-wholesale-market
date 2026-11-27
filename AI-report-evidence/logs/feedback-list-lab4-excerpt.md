@@ -119,7 +119,7 @@ Nguồn mọi dòng: [Customer giả lập, 2026-11-25]. Đường dẫn tính t
 
 ## Expert recheck LAB-4 Gate 1 (`expert-review-lab4-gate1-recheck-261125.md`, 2026-11-25) — RELEASE CÓ ĐIỀU KIỆN (22/23 Closed, m-08 Partially; mới 3 Major · 8 Minor)
 
-Sửa trong commit `5b0ef16` (`ver/lab-4`). Đường dẫn tính từ gốc repo `lab-wholesale-market`. FB-EXP-236 (m-08 render Mermaid) giữ Waiting — điều phối xử lý. (ID FB-EXP-240..252 đã được phiên LAB-3 dùng, nên lượt này bắt đầu từ 253.)
+Sửa trong commit `470cf2e` (`ver/lab-4`). Đường dẫn tính từ gốc repo `lab-wholesale-market`. FB-EXP-236 (m-08 render Mermaid) giữ Waiting — điều phối xử lý. (ID FB-EXP-240..252 đã được phiên LAB-3 dùng, nên lượt này bắt đầu từ 253.)
 
 | ID | Nguồn | File bị ảnh hưởng | Nội dung | Quyết định | Lý do / cách xử lý | Trạng thái | File đã đổi |
 |---|---|---|---|---|---|---|---|
@@ -137,9 +137,9 @@ Sửa trong commit `5b0ef16` (`ver/lab-4`). Đường dẫn tính từ gốc rep
 
 Quyết định người dùng 2026-11-25 (qua điều phối): **FB-CUS-281** (khách #22) → **Fixed**: thêm wireframe SC-03-02 仮受付 ở P3, chỉ wireframe (PREMISE L4-D05, DEC-049; `wireframes/SCREEN-LIST.md`). **E-14** để mở chờ workshop; F / G chỉ là tư liệu trong ADR-006, ước effort ~0,3–0,5 MM (PREMISE L4-D06, DEC-050); LAB-5 tách issue riêng.
 
-## Expert recheck LAB-4 Gate 1 — lỗi do diff `5b0ef16` (D-01..D-05, `expert-review-lab4-gate1-recheck-261125.md` mục Kiểm diff) — sửa ở P3, 2026-11-25
+## Expert recheck LAB-4 Gate 1 — lỗi do diff `470cf2e` (D-01..D-05, `expert-review-lab4-gate1-recheck-261125.md` mục Kiểm diff) — sửa ở P3, 2026-11-25
 
-Sửa trong lượt P3 (3 luồng viết spec + gộp), commit trên `ver/lab-4` sau `5b0ef16`. Đường dẫn tính từ gốc repo `lab-wholesale-market`.
+Sửa trong lượt P3 (3 luồng viết spec + gộp), commit trên `ver/lab-4` sau `470cf2e`. Đường dẫn tính từ gốc repo `lab-wholesale-market`.
 
 | ID | Nguồn | File bị ảnh hưởng | Nội dung | Quyết định | Lý do / cách xử lý | Trạng thái | File đã đổi |
 |---|---|---|---|---|---|---|---|
@@ -191,7 +191,7 @@ Gộp P3 cũng đóng các điều kiện còn lại của recheck (không chặ
 
 ## Expert review LAB-4 đóng Gate 2 + wireframe HTML (`expert-review-lab4-gate2-close-and-wireframes-261125.md`, 2026-11-25) — Phần 1 RELEASE (1 Minor mới), Phần 2 RELEASE CÓ ĐIỀU KIỆN (7 Minor) — sửa 2026-11-25
 
-Điều kiện release Phần 2 (commit phần wireframe HTML đang ở working tree): commit `9d5d031` (repo `lab-wholesale-market`, nhánh `ver/lab-4`); sửa Minor ở `e8288ea`.
+Điều kiện release Phần 2 (commit phần wireframe HTML đang ở working tree): commit `bbd8cea` (repo `lab-wholesale-market`, nhánh `ver/lab-4`); sửa Minor ở `c28d904`.
 
 | ID | Nguồn | File bị ảnh hưởng | Nội dung | Quyết định | Lý do / cách xử lý | Trạng thái | File đã đổi |
 |---|---|---|---|---|---|---|---|
@@ -206,7 +206,7 @@ Gộp P3 cũng đóng các điều kiện còn lại của recheck (không chặ
 
 ## Expert review LAB-4 Gate 3 — toàn bộ bộ nộp (`expert-review-lab4-gate3-261125.md`, 2026-11-25) — RELEASE CÓ ĐIỀU KIỆN (0 Critical · 3 Major · 10 Minor) — sửa 2026-11-25
 
-Repo `lab-wholesale-market`, nhánh `ver/lab-4`, sửa trên HEAD `f8042f2` (commit sửa: xem `progress-lab4.md` mục Gate 3).
+Repo `lab-wholesale-market`, nhánh `ver/lab-4`, sửa trên HEAD `d1dbf12` (commit sửa: xem `progress-lab4.md` mục Gate 3).
 
 | ID | Nguồn | File bị ảnh hưởng | Nội dung | Quyết định | Lý do / cách xử lý | Trạng thái | File đã đổi |
 |---|---|---|---|---|---|---|---|
@@ -224,9 +224,9 @@ Repo `lab-wholesale-market`, nhánh `ver/lab-4`, sửa trên HEAD `f8042f2` (com
 | FB-EXP-307 | G3-m09 Minor | README §4.2 | Thiếu dòng 7 `specs/{feature}/README.md` | Sửa | Thêm dòng "Kế thừa quy định QC-01 §3, nội dung mới" | Fixed | `README.md` |
 | FB-EXP-308 | G3-m10 Minor | PREMISE:8 | `related` thiếu DEC-046..058 | Sửa | Thêm DEC-046..051, DEC-056, DEC-058 (DEC-052..055, 057 không được PREMISE dẫn) | Fixed | `PREMISE.md` |
 
-## Expert review LAB-4 Gate 3 — kiểm diff `6594832` (`expert-review-lab4-gate3-261125.md` mục "Kiểm diff 6594832", 2026-11-26) — RELEASE (0 Critical · 0 Major · 0 Minor · 5 ghi chú) — sửa 2026-11-26
+## Expert review LAB-4 Gate 3 — kiểm diff `68bc277` (`expert-review-lab4-gate3-261125.md` mục "Kiểm diff 68bc277", 2026-11-26) — RELEASE (0 Critical · 0 Major · 0 Minor · 5 ghi chú) — sửa 2026-11-26
 
-Repo `lab-wholesale-market`, nhánh `ver/lab-4`, sửa trên HEAD `6594832` trước khi dịch JA.
+Repo `lab-wholesale-market`, nhánh `ver/lab-4`, sửa trên HEAD `68bc277` trước khi dịch JA.
 
 | ID | Nguồn | File bị ảnh hưởng | Nội dung | Quyết định | Lý do / cách xử lý | Trạng thái | File đã đổi |
 |---|---|---|---|---|---|---|---|

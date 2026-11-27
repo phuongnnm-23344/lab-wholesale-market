@@ -12,7 +12,7 @@ Khách hàng, số liệu và dữ liệu trong repo đều hư cấu (bài luy�
 
 | Mục | Nội dung |
 |---|---|
-| Break từ bản LAB-4 nào | Bộ thiết kế LAB-4 nộp **2026-11-26**: tag `lab-4` = commit `58b084f` (nhánh `ver/lab-4`; trước khi làm sạch lịch sử là `0c19b61` — xem [bảng hash](AI-report-evidence/lab-5/logs/git-history-rewrite-hash-map.md)). README / PREMISE / AI-report của LAB-4 chuyển vào [`lab-4/`](lab-4/README.md) (bản tiếng Nhật ở `ja/lab-4/`) |
+| Break từ bản LAB-4 nào | Bộ thiết kế LAB-4 nộp **2026-11-26**: tag `lab-4` = commit `58b084f` (nhánh `ver/lab-4`; hash sau khi làm sạch lịch sử — xem [bảng mốc](AI-report-evidence/lab-5/logs/git-history-rewrite-hash-map.md)). README / PREMISE / AI-report của LAB-4 chuyển vào [`lab-4/`](lab-4/README.md) (bản tiếng Nhật ở `ja/lab-4/`) |
 | PREMISE.md có thay đổi không | **Có.** [`PREMISE.md`](PREMISE.md): 4 chỗ sửa spec LAB-4 (L5-S01..S04, đã áp vào spec, mỗi file tăng version + dòng History), 18 giả định bổ sung (L5-A01..A18), 12 hướng đã chốt (L5-D01..D12) |
 | Số epic | **18** — 15 nhóm chức năng FG-01..FG-15 (theo function list LAB-1) + `PLAT` (nền tảng) + `TEST` (総合テスト / UAT) + `CLAR` (điểm cần làm rõ) |
 | Quy mô backlog | 510 item trên Project = 18 epic + 492 issue (264 issue cấp 1 + 228 sub-issue); 409 lá được chấm |
@@ -59,7 +59,7 @@ Khách hàng, số liệu và dữ liệu trong repo đều hư cấu (bài luy�
 
 Bản public đã gỡ khỏi cây thư mục các phần không phải nội dung tự viết: `wiki-template/`, `images/`, `webhook/`, `.bot-test/`, `CHANGELOG.md`, 3 script `*.sh` trong `scripts/` (của template quản lý dự án), `specs/_templates/`, `requirements/_templates/` (file khuôn của chuẩn nội bộ), và phần README của template trong `lab-4/README.md`. Quy ước log `specs/_common/log-convention.md` mục 1–3 được viết lại thành bản tóm tắt của dự án, không chép nguyên văn chuẩn nội bộ.
 
-**Lịch sử git đã làm sạch** (2026-11-27, `git filter-repo --replace-text`): handle tác giả chuẩn nội bộ, nguyên văn biểu mẫu log nội bộ, URL cổng nội bộ và mật khẩu / PIN demo cũ được thay bằng `***REMOVED***` trong mọi commit; vì vậy mọi hash commit đổi. Hash cũ nhắc trong tài liệu tra ở [`AI-report-evidence/lab-5/logs/git-history-rewrite-hash-map.md`](AI-report-evidence/lab-5/logs/git-history-rewrite-hash-map.md).
+**Lịch sử git đã làm sạch** (2026-11-27, `git filter-repo --replace-text`): handle tác giả chuẩn nội bộ, nguyên văn biểu mẫu log nội bộ, URL cổng nội bộ và mật khẩu / PIN demo cũ được thay bằng `***REMOVED***` trong mọi commit; vì vậy mọi hash commit đổi. Hash cũ không được công bố vì chúng trỏ tới nội dung đã gỡ; mọi hash nhắc trong tài liệu đã đổi sang hash mới — bảng mốc ở [`AI-report-evidence/lab-5/logs/git-history-rewrite-hash-map.md`](AI-report-evidence/lab-5/logs/git-history-rewrite-hash-map.md). Repo nội bộ của chuẩn spec chỉ còn được nhắc tên trong lịch sử cũ (người làm bài chấp nhận).
 
 ## 4. Spec → epic
 

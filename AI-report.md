@@ -46,6 +46,7 @@ Danh sách đầy đủ ở plan (§0, 20 dòng) và các dòng `L5-D…` của 
 - **Chốt SWP:** 3 lượt chốt mẫu — 5 issue (lần chấm chính), 5 issue (chấm lại sau Gate B), 2 issue (#486 tách tiếp) — cộng 1 issue chấm chéo (#507).
 - **Gate B:** ngoại lệ có tên cho lá > 16 giờ, tách 4 lá 完納奨励金; tách tiếp #486; áp quy tắc hiệu chỉnh sang lần chấm khác.
 - **Sprint:** ghi rủi ro nghỉ Tết (mùng 1 Tết 2027 rơi giữa Iteration 1, WBS LAB-1 chưa trừ) nhưng giữ số giả lập.
+- **Gate C (trước public):** giữ 21 issue Done đã bị workflow Auto-close đóng, sửa tài liệu cho đúng; làm sạch toàn bộ lịch sử git bằng `git filter-repo` (mọi hash đổi, kể cả mốc đã nộp); không công bố hash cũ, gửi GitHub Support xin xóa bản cache của commit cũ và public không chờ kết quả; chấp nhận tên repo nội bộ của chuẩn spec còn trong lịch sử cũ.
 
 ### 2.3 Lỗi đáng học của AI và cách xử lý
 
@@ -65,7 +66,7 @@ Danh sách đầy đủ ở plan (§0, 20 dòng) và các dòng `L5-D…` của 
 
 | Hạng mục | Số đo | Ghi chú |
 |---|---|---|
-| Khoảng thời gian LAB-5 | 2026-11-26 16:22 → 2026-11-27 17:45 JST | Đo tới lúc viết AI-report ở P5; chưa gồm lượt sửa P5 (`94a1448`), Gate C và lượt sửa theo Gate C |
+| Khoảng thời gian LAB-5 | 2026-11-26 16:22 → 2026-11-27 17:45 JST | Đo tới lúc viết AI-report ở P5; chưa gồm lượt sửa P5 (`4ee9639`), Gate C và lượt sửa theo Gate C |
 | Thời gian AI chạy thực (wall-clock) | khoảng 8,8 giờ | Chưa tính phần lớn thời gian chờ script ghi GitHub chạy nền (giãn 7,5–15 giây / lần, có lúc kéo vài giờ): log không có hoạt động trong lúc đó nên bị loại |
 | Tổng thời gian chạy của agent | khoảng 22,1 agent-giờ, 18 subagent | Lớn hơn wall-clock vì chạy song song: 3 luồng break, 5 worker chấm SWP, 2 PL cùng lúc ở P3 / P4 |
 | Thời gian người review | khoảng 2 giờ | Người làm bài tự báo: chốt điểm mẫu, quyết định ở Gate A / B và P4 |

@@ -7,7 +7,7 @@ updated_by: phuongnnm-23344
 updated: 2026-11-26
 related: [PREMISE.md, README.md, AI-report-evidence/README.md]
 ---
-<!-- Bản sao AI-report.md 0.2.3 (commit 020bcce) trước khi rút gọn ở 0.3.0; chỉ sửa đường dẫn link cho đúng vị trí mới. -->
+<!-- Bản sao AI-report.md 0.2.3 (commit b20dfdf) trước khi rút gọn ở 0.3.0; chỉ sửa đường dẫn link cho đúng vị trí mới. -->
 
 # Báo cáo cách dùng AI trong LAB-4
 
@@ -27,7 +27,7 @@ Mọi con số dưới đây lấy từ ghi chép làm việc; bản sao nằm t
 | 1 | 0.1.0 | Add new | — | Bản đầu (LAB-4 P4) | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Đầu bài, 3.1, 3.2 | Expert Gate 3: nguồn số liệu trỏ vào `AI-report-evidence/` trong gói nộp (G3-M02); §3.2 tách điểm người dùng quyết / PL quyết cho khớp PREMISE §5 và nhật ký quyết định, thêm L4-D08 (G3-M01); §3.1 thêm dòng Gate 3 | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | 3.1, 3.2 | Expert Gate 3 kiểm diff: §3.1 thêm dòng "Gate 3 kiểm diff → RELEASE (2026-11-26)" (D3-n05); §3.2 PL quyết thêm DEC-048 (giữ giá R1, phần thêm trong buffer — D3-n04), DEC-055, DEC-057; người dùng quyết thêm L4-D09 (trạng thái ADR) và giữ `AI-report-evidence/` trong gói | 2026-11-26 | phuongnnm-23344 | |
-| 4 | 0.2.2 | Update | 4.2 | Thêm bản tiếng Nhật `ja/` (sinh từ bản tiếng Việt, commit `9367490`); sửa dòng "Bản tiếng Nhật chưa làm" | 2026-11-26 | phuongnnm-23344 |  |
+| 4 | 0.2.2 | Update | 4.2 | Thêm bản tiếng Nhật `ja/` (sinh từ bản tiếng Việt, commit `f0a2948`); sửa dòng "Bản tiếng Nhật chưa làm" | 2026-11-26 | phuongnnm-23344 |  |
 | 5 | 0.2.3 | Update | 3.4, 4.1 | Thêm §3.4 thời gian AI chạy (≈ 15,8 giờ wall-clock, ≈ 41,1 agent-giờ / 50 subagent) và thời gian người review (3 giờ, người làm lab báo); §4.1 thêm một ý | 2026-11-26 | phuongnnm-23344 |  |
 
 ## 2. Cách tổ chức AI và viết prompt
@@ -78,7 +78,7 @@ Mỗi lượt PL bắt đầu bằng việc đọc `CLAUDE.md` (7 luật bất d
 | Gate 2 | 12 Screen Spec, 7 FUNC, 15 TECH, 42 API, `_common/` | RELEASE CÓ ĐIỀU KIỆN | 0 Critical · 4 Major · 9 Minor | Sửa hết + áp 31 câu trả lời của khách (FB-EXP-275..287, FB-CUS-297..309) |
 | Gate 2 đóng + wireframe HTML | Diff sửa Gate 2; 15 wireframe HTML, PDF, ảnh spec | Phần 1 **RELEASE**; Phần 2 RELEASE CÓ ĐIỀU KIỆN | 1 + 7 Minor | Sửa 7, để 1 cho LAB-5 (FB-EXP-288..295) |
 | Gate 3 | Toàn bộ bộ nộp: README §4, PREMISE, AI-report, toàn bộ thiết kế (kiểm bằng máy: khuôn so byte với chuẩn, version index ↔ file, link, chuỗi chép nguyên văn RFP) | RELEASE CÓ ĐIỀU KIỆN | 0 Critical · 3 Major · 10 Minor | Sửa 2 Major (dòng quyết định phạm vi, bằng chứng vào gói) + 9 Minor; G3-m07 (trạng thái ADR) chờ người dùng; G3-M03 (mật khẩu demo của prototype) phải xong trước khi public repo ở LAB-5 (FB-EXP-296..308) |
-| Gate 3 kiểm diff | Diff sửa Gate 3 (`f8042f2..6594832`): §6.1 Trạng thái màn ở 4 SPEC so với §5 Event + mã lỗi, §3.2 báo cáo này so với PREMISE §5 / nhật ký quyết định, `AI-report-evidence/` (so byte, quét bí mật), link | **RELEASE** (2026-11-26, cho dịch JA) | 0 Critical · 0 Major · 0 Minor · 5 ghi chú | Sửa cả 5 ghi chú D3-n01..n05 trước khi dịch (FB-EXP-309..313); G3-m07 người dùng quyết (L4-D09) |
+| Gate 3 kiểm diff | Diff sửa Gate 3 (`d1dbf12..68bc277`): §6.1 Trạng thái màn ở 4 SPEC so với §5 Event + mã lỗi, §3.2 báo cáo này so với PREMISE §5 / nhật ký quyết định, `AI-report-evidence/` (so byte, quét bí mật), link | **RELEASE** (2026-11-26, cho dịch JA) | 0 Critical · 0 Major · 0 Minor · 5 ghi chú | Sửa cả 5 ghi chú D3-n01..n05 trước khi dịch (FB-EXP-309..313); G3-m07 người dùng quyết (L4-D09) |
 
 Expert không chỉ đọc: Gate 2 đóng có kiểm bằng máy (quét badge của cả 15 HTML so với cột ID của 12 SPEC, chạy lại bộ kiểm API, tính lại số thuế 8% và số ngày 失効まで). Gate 1 recheck tính lại cả 11 test vector 完納奨励金.
 

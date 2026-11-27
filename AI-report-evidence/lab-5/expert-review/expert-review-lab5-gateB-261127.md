@@ -1,6 +1,6 @@
 # Expert review — LAB-5 Gate B (SWP + quy ra giờ + so LAB-1) — 2026-11-27
 
-Phạm vi review (theo chỉ định của người dùng qua điều phối): repo `lab-wholesale-market`, nhánh `ver/lab-5`, commit `8f44f43` (diff so `9aa112a`): `estimate.md`, `reports/sun-estimate-lab5-project1-20261127-0216.html`, `backlog/estimate-swp-hours.csv`, `task-breakdown.md` §1.4, `backlog/scripts/{build-estimate-swp-hours,write-point-hours-to-project,render-estimate-tables}.py` (+ `estimate-lab1-comparison.yaml`); GitHub Project 1 (chỉ đọc bằng `gh project item-list`, không mutation); trung gian `plans/lab/Lab 5/p3-sun-estimate/`.
+Phạm vi review (theo chỉ định của người dùng qua điều phối): repo `lab-wholesale-market`, nhánh `ver/lab-5`, commit `2a4e446` (diff so `602a68e`): `estimate.md`, `reports/sun-estimate-lab5-project1-20261127-0216.html`, `backlog/estimate-swp-hours.csv`, `task-breakdown.md` §1.4, `backlog/scripts/{build-estimate-swp-hours,write-point-hours-to-project,render-estimate-tables}.py` (+ `estimate-lab1-comparison.yaml`); GitHub Project 1 (chỉ đọc bằng `gh project item-list`, không mutation); trung gian `plans/lab/Lab 5/p3-sun-estimate/`.
 
 Tiêu chí: mục tiêu học LAB-5 + `Requirement.txt` / `Output.txt` + RFP + 7 luật CLAUDE.md; 7 điểm soi kỹ do người dùng giao (estimate.md 5 phần; k = 2,0 và lệch theo loại; so LAB-1 và −71%; Project ≥ 10 item; quy trình chấm SWP; 22 lá > 16 giờ; dữ liệu nhạy cảm trong HTML).
 
@@ -79,7 +79,7 @@ Luật CLAUDE.md: không thấy vi phạm. Epic ghi 相対 là "main flow", せ�
 
 ---
 
-## Kiểm diff `8f44f43..488ee8c` (4 commit: 03b7f27, 93f8d68, d698959, 488ee8c) — 2026-11-27
+## Kiểm diff `2a4e446..6963b08` (4 commit: 785bf0a, 9780f85, 775de13, 6963b08) — 2026-11-27
 
 Quyết định người dùng 2026-11-27 (qua điều phối): M-01 = ngoại lệ có tên + tách ngay 4 lá 完納 (#486 tách thêm lần hai thành #486 / #510); M-02 = thêm issue thô #500, #501; QA theo DoD 4 = rủi ro + giữ 30% năng lực QA. Chấm lại bằng `tkm:sun-estimate` hai lần, người dùng chốt issue mẫu.
 

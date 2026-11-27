@@ -1,6 +1,6 @@
 # Expert review — LAB-5 Gate A (backlog đã break, trước khi đẩy GitHub Project) — 2026-11-26
 
-Phạm vi review (người dùng chỉ định): repo `lab-wholesale-market`, nhánh `ver/lab-5`, commit `2168feb` — `task-breakdown.md`, `PREMISE.md`, `backlog/backlog.yaml`, `backlog/scripts/check-backlog.py`. Đối chiếu: `plans/lab/Lab 5/plan-lab5.md`, `p1-shared-brief.md`, `Requirement.txt`, `Output.txt`; `project/07_feedbacks/customer-feedback-lab5-priority-261126.md`; bộ LAB-4 trong repo (`specs/`, `architecture/`, `lab-4/PREMISE.md`); WBS LAB-1 `project/06_estimate/wbs-schedule-ja.md`.
+Phạm vi review (người dùng chỉ định): repo `lab-wholesale-market`, nhánh `ver/lab-5`, commit `af68e90` — `task-breakdown.md`, `PREMISE.md`, `backlog/backlog.yaml`, `backlog/scripts/check-backlog.py`. Đối chiếu: `plans/lab/Lab 5/plan-lab5.md`, `p1-shared-brief.md`, `Requirement.txt`, `Output.txt`; `project/07_feedbacks/customer-feedback-lab5-priority-261126.md`; bộ LAB-4 trong repo (`specs/`, `architecture/`, `lab-4/PREMISE.md`); WBS LAB-1 `project/06_estimate/wbs-schedule-ja.md`.
 
 Tiêu chí: mục tiêu học LAB-5 + đề (task-breakdown 4 phần, PREMISE 3 phần, đúng thứ tự, đủ cột tối thiểu) + RFP + 7 luật CLAUDE.md; soi 7 điểm người dùng nêu (độ hạt / L5-D08, tách 完納奨励金, spec → issue, bảng chỗ hở, PREMISE / L5-D05 / L5-D10, 7 luật, ưu tiên khớp khách).
 
@@ -58,9 +58,9 @@ Kiểm chạy lại: `check-backlog.py --counts` → 0 lỗi, 1 cảnh báo (A-F
 
 ---
 
-## Kiểm diff `2168feb..a586464` — PL sửa FB-EXP-327..340 (2026-11-26)
+## Kiểm diff `af68e90..5dd580f` — PL sửa FB-EXP-327..340 (2026-11-26)
 
-Phạm vi: `git diff 2168feb..a586464` (PREMISE, task-breakdown, backlog.yaml, 6 script). Người dùng đã xác nhận ngày 2026-11-26: L5-D08 theo rolling-wave; L5-D05 làm thiết kế trước sprint ở 設計第1波 (khách duyệt 2027-01-22).
+Phạm vi: `git diff af68e90..5dd580f` (PREMISE, task-breakdown, backlog.yaml, 6 script). Người dùng đã xác nhận ngày 2026-11-26: L5-D08 theo rolling-wave; L5-D05 làm thiết kế trước sprint ở 設計第1波 (khách duyệt 2027-01-22).
 
 Chạy lại từ gốc repo với `-X utf8`: `check-backlog.py --counts` cho 0 lỗi, 1 cảnh báo (vẫn là cảnh báo cũ ở A-FG01-09.3, đúng ngữ cảnh). Số liệu: 477 issue (261 + 216), 398 lá; theo loại lá: dev 161, test 42, rough 100, clarify 41, design 54. Tổng 4.751 giờ. Iteration 1 có 26 lá / 253 giờ. `render-task-breakdown-tables.py` chạy lại không đổi byte nào trong `task-breakdown.md`, tức bảng khớp yaml. Tôi lỡ chạy script này một lần, nhưng `git status` sạch nên repo không bị sửa.
 
@@ -123,7 +123,7 @@ Expert chỉ cần kiểm lại phần diff của N-01.
 
 ---
 
-## Kiểm diff `a586464..390011d` — sửa N-01..N-03, áp L5-S01..S04 vào spec LAB-4 (2026-11-26) — verdict cuối Gate A
+## Kiểm diff `5dd580f..15a1be9` — sửa N-01..N-03, áp L5-S01..S04 vào spec LAB-4 (2026-11-26) — verdict cuối Gate A
 
 Chạy lại từ gốc repo với `-X utf8`:
 - `check-backlog.py --counts`: 0 lỗi, 1 cảnh báo cũ (A-FG01-09.3, đúng ngữ cảnh). Số liệu: 481 issue (262 + 219), 401 lá. Iteration 1 có 26 lá / 254 giờ; FE dùng 78 / 80 giờ; người nhiều nhất 40 giờ.

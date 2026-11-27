@@ -1,6 +1,6 @@
 # Expert review — LAB-4 Gate 1 — 2026-11-25
 
-Phạm vi review (theo chỉ định của người dùng): repo `lab-wholesale-market`, nhánh `ver/lab-4`, commit `eb41c1c` — `PREMISE.md` 0.4.0 · `README.md` (§1–4, 6 ngoại lệ QC-01) · `architecture/ARCHITECTURE.md` + `adr/ADR-001..010` · `specs/system-design/database-design/MKT_DB.md` 0.1.1 · `wireframes/SCREEN-LIST.md`, `_common-layout.md`, 14 wireframe · các `_index.md`. Không review screen spec / function / technical / API design (P3), AI-report (P4).
+Phạm vi review (theo chỉ định của người dùng): repo `lab-wholesale-market`, nhánh `ver/lab-4`, commit `e50bf05` — `PREMISE.md` 0.4.0 · `README.md` (§1–4, 6 ngoại lệ QC-01) · `architecture/ARCHITECTURE.md` + `adr/ADR-001..010` · `specs/system-design/database-design/MKT_DB.md` 0.1.1 · `wireframes/SCREEN-LIST.md`, `_common-layout.md`, 14 wireframe · các `_index.md`. Không review screen spec / function / technical / API design (P3), AI-report (P4).
 
 Tiêu chí:
 1. Mục tiêu học tập LAB-4 (`plans/lab/Lab 4/Requirement.txt`, `Output.txt`) + dùng được làm input break task LAB-5 (完納奨励金 tách task riêng — `plans/lab/Lab 5/Requirement.txt`).

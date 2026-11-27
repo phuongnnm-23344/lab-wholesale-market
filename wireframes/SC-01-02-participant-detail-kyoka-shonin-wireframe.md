@@ -148,7 +148,7 @@ Hai khối không bao giờ hiện cùng lúc; tiêu đề khối chữ to, khun
 | 1 | 0.1.0 | Add new | Bản đầu | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Update | Gate 1 M-07: trạng thái tư cách đưa vào từng khối đúng enum (mức người tham gia chỉ 取引中 / 退会); thể hiện thủ tục khác nhau (許可 có 審査 + 運用部門長 決裁, 承認 届出 + 照合部門長 確認); 参加上限 có lịch sử LIMIT_CHANGED [22]; giả định 失効 tự động. Khách #18 (khối tách bằng mắt), #19 (C-27 không dùng 承認待ち), #20 (hộp thoại 保証金 báo 参加上限), #21 (MFA 期限前更新). Ảnh prototype giữ nguyên | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.2.1 | Update | Gate 1 recheck N-03: cấp mới 許可 = 審査 + 運用部門長 決裁 (giả định PL); gia hạn bình thường theo PRM-121 (照合部門長 確認); 承認 xét nhẹ | 2026-11-25 | phuongnnm-23344 | |
-| 4 | 0.2.2 | Update | Gate 1 recheck D-01 (kiểm diff 5b0ef16): bảng §5 theo N-03 / PRM-121 — gia hạn 許可 và 承認 đều 照合事務局 nhập + 照合部門長 確認 (MFA); 運用部門長 chỉ 決裁 cấp mới 許可 (giả định [PL]) và 再審査 / 一時停止 / phục hồi | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.2.2 | Update | Gate 1 recheck D-01 (kiểm diff 470cf2e): bảng §5 theo N-03 / PRM-121 — gia hạn 許可 và 承認 đều 照合事務局 nhập + 照合部門長 確認 (MFA); 運用部門長 chỉ 決裁 cấp mới 許可 (giả định [PL]) và 再審査 / 一時停止 / phục hồi | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.2.3 | Update | P3 gộp (D-01 còn lệch nhỏ): hình vẽ [17] thêm nút 「期限前更新を入力」 cho khối 許可 và chú thích thủ tục, khớp bảng §5 và SC-01-02_SPEC | 2026-11-25 | phuongnnm-23344 | |
 | 6 | 0.2.4 | Update | Khách Q-PTY-06 (chỉ 照合部門長 đổi 保証金 / 参加上限), Q-TRD-02 (税込 / 税抜) | 2026-11-25 | phuongnnm-23344 |  |
 | 7 | 0.2.5 | Update | LAB-4 wireframe HTML: nguồn hình `html/SC-01-02.html`, nhúng `png/SC-01-02.png`; [19] nút đổi trạng thái ẩn khi có yêu cầu chờ, thêm 「再開を起案」 ở [17]/[21] (khớp SPEC §6); 失効まで tính từ 業務日 (448日) | 2026-11-25 | phuongnnm-23344 | |

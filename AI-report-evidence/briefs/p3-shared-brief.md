@@ -3,10 +3,10 @@
 Đọc file này trước. Luồng của bạn (phạm vi màn + file được sửa) nằm trong prompt giao việc.
 
 ## Bối cảnh
-- Repo: `C:\Users\<user>\Desktop\Project lab\lab-wholesale-market`, nhánh `ver/lab-4` (HEAD `5b0ef16`, Gate 1 đã RELEASE).
+- Repo: `C:\Users\<user>\Desktop\Project lab\lab-wholesale-market`, nhánh `ver/lab-4` (HEAD `470cf2e`, Gate 1 đã RELEASE).
 - Plan: `plans/lab/Lab 4/plan-lab4-draft.md`. Đề: `plans/lab/Lab 4/Requirement.txt`, `Output.txt`. 7 luật: `CLAUDE.md` gốc workspace.
 - Nguồn thiết kế đã duyệt (Gate 1): `PREMISE.md`, `architecture/ARCHITECTURE.md`, `architecture/adr/ADR-001..010`, `specs/system-design/database-design/*.md` (MKT_DB tổng + 9 cụm), `wireframes/SCREEN-LIST.md`, `wireframes/_common-layout.md`, `wireframes/SC-*-wireframe.md`.
-- Review đã có: `project/07_feedbacks/expert-review-lab4-gate1-261125.md`, `...-gate1-recheck-261125.md` (có mục Kiểm diff 5b0ef16, D-01..D-05), `customer-feedback-lab4-wireframes-261125.md`.
+- Review đã có: `project/07_feedbacks/expert-review-lab4-gate1-261125.md`, `...-gate1-recheck-261125.md` (có mục Kiểm diff 470cf2e, D-01..D-05), `customer-feedback-lab4-wireframes-261125.md`.
 - Danh sách feature (thư mục `specs/{feature}/`): bảng ở `specs/_index.md`.
 - Code prototype (chỉ ĐỌC, để biết as-is và nhánh lỗi RPC): `prototype/src/**`, `prototype/supabase/migrations/**`. Báo cáo as-built: `plans/reports/pl-261125-lab4-p1-prototype-as-built-extraction.md`.
 

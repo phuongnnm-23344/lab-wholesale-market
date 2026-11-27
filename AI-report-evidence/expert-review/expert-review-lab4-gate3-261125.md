@@ -1,6 +1,6 @@
 # Expert review — LAB-4 Gate 3 (toàn bộ bộ nộp) — 2026-11-25
 
-Phạm vi review (theo chỉ định của người dùng): toàn bộ bộ nộp LAB-4 ở repo `lab-wholesale-market`, nhánh `ver/lab-4`, HEAD `f8042f2` (working tree sạch, chỉ có `prototype/plans/` untracked). Đối chiếu nguyên văn `plans/lab/Lab 4/Requirement.txt` và `Output.txt`. Gate cuối trước khi dịch JA và đóng gói nộp.
+Phạm vi review (theo chỉ định của người dùng): toàn bộ bộ nộp LAB-4 ở repo `lab-wholesale-market`, nhánh `ver/lab-4`, HEAD `d1dbf12` (working tree sạch, chỉ có `prototype/plans/` untracked). Đối chiếu nguyên văn `plans/lab/Lab 4/Requirement.txt` và `Output.txt`. Gate cuối trước khi dịch JA và đóng gói nộp.
 
 Tiêu chí:
 1. Đủ và đúng từng mục Output.txt; README §4 bảng kế thừa / mới đúng với `spec-standards/03-specs`; PREMISE chốt 1 hướng, truy vết được.
@@ -93,7 +93,7 @@ Không còn finding cũ nào mở ngoài W-m07 (để LAB-5, đã ghi ở `wiref
 
 **(b) README §4.3 "người dùng quyết không mở rộng" chưa có DEC / dòng PREMISE.** Cần thêm — xem G3-M01 (kèm sửa gán vai L4-D07 ở AI-report).
 
-**(c) Commit `9d5d031` không chứa PDF tổng.** Không phải lỗi: commit message của `9d5d031` đã nói rõ "The combined PDF is re-rendered in the follow-up commit", và `e8288ea` có PDF đủ 15 trang. QC-01 không đòi từng commit trung gian đầy đủ; bản release là HEAD. Không cần sửa lịch sử.
+**(c) Commit `bbd8cea` không chứa PDF tổng.** Không phải lỗi: commit message của `bbd8cea` đã nói rõ "The combined PDF is re-rendered in the follow-up commit", và `c28d904` có PDF đủ 15 trang. QC-01 không đòi từng commit trung gian đầy đủ; bản release là HEAD. Không cần sửa lịch sử.
 
 ## 6. Khuyến nghị cho bản JA và gói nộp
 
@@ -133,9 +133,9 @@ Không còn finding cũ nào mở ngoài W-m07 (để LAB-5, đã ghi ở `wiref
 
 ---
 
-## Kiểm diff 6594832 (2026-11-26)
+## Kiểm diff 68bc277 (2026-11-26)
 
-Phạm vi (theo chỉ định của người dùng): `git diff f8042f2..6594832` ở `lab-wholesale-market`, nhánh `ver/lab-4` (27 file, +1.576 / −40). Kiểm điều kiện release ở trên: G3-M01, G3-M02, G3-m01..m06, m08..m10. G3-M03 và G3-m07 người dùng quyết — không tính vào verdict.
+Phạm vi (theo chỉ định của người dùng): `git diff d1dbf12..68bc277` ở `lab-wholesale-market`, nhánh `ver/lab-4` (27 file, +1.576 / −40). Kiểm điều kiện release ở trên: G3-M01, G3-M02, G3-m01..m06, m08..m10. G3-M03 và G3-m07 người dùng quyết — không tính vào verdict.
 
 Soi kỹ theo yêu cầu: (1) §6.1 "Trạng thái màn" mới ở SC-03-01, 03-05, 04-01, 05-02 so từng dòng với §5 Event + bảng mã lỗi §3 của LOT_FUNC / TRADE_FUNC; (2) AI-report §3.2 so với cột "Người quyết" của PREMISE §5 và `decision.md`; (3) `AI-report-evidence/` — bí mật, dữ liệu thật, trích đúng phần LAB-4; (4) link gãy mới.
 
@@ -184,7 +184,7 @@ Soi kỹ theo yêu cầu: (1) §6.1 "Trạng thái màn" mới ở SC-03-01, 03-
 | D3-n02 | `SC-04-01_SPEC.md` §6.1 dòng "Vượt 参加上限", "Lỗi nhập" | Dòng vượt hạn mức không ghi mã server `422 E-TRD-007` (§5 có); dòng lỗi nhập không nhắc lỗi client `E-TRD-009..011` ở §4.2 (SC-03-01 §6.1 có ghi "mã lỗi ở §4.2") | Thêm "(server: 422 `E-TRD-007` → mở [13] với số server trả)"; thêm "lỗi client ở §4.2" |
 | D3-n03 | `SC-05-02_SPEC.md` §6.1 dòng "Xung đột" | Gộp 409 `E-TRD-013/018` và 422 `E-TRD-015/016` thành "C-23 + nạp lại". Theo §5: `E-TRD-015` **tô các dòng chưa xử lý** (không nói nạp lại — nạp lại thì mất chỗ tô); `E-TRD-013` → chỉ đọc; `E-TRD-018` → dòng chuyển [5] | Tách 2 dòng: 409 (`013` → nạp lại, chỉ đọc; `018` → nạp lại, dòng sang [5]) và 422 (`015` → tô dòng chưa xử lý; `016` → C-23) |
 | D3-n04 | `AI-report.md` §3.2 "PL quyết" | Không nêu DEC-048 (phần thêm do sửa Gate 1 nằm trong buffer, **không đổi giá** — PL quyết), DEC-055, DEC-057. Không sai (câu dẫn nói "phần còn lại PL tự quyết"), nhưng DEC-048 là quyết định về giá — người chấm sẽ hỏi ai chốt | Thêm "giữ giá R1, phần thêm nằm trong buffer (DEC-048)" vào danh sách PL quyết |
-| D3-n05 | `AI-report-evidence/expert-review/expert-review-lab4-gate3-261125.md` | Bản sao chụp trước mục "Kiểm diff 6594832" này, nên gói nộp không có bằng chứng Gate 3 đã đóng — trong khi AI-report §3.1 dòng Gate 3 ghi "Sửa 2 Major + 9 Minor" | Chép lại file này vào `AI-report-evidence/` sau khi có mục này; thêm vào AI-report §3.1 dòng "Gate 3 kiểm diff → RELEASE" khi cập nhật sau dịch (cùng lượt với điểm 5 mục 6) |
+| D3-n05 | `AI-report-evidence/expert-review/expert-review-lab4-gate3-261125.md` | Bản sao chụp trước mục "Kiểm diff 68bc277" này, nên gói nộp không có bằng chứng Gate 3 đã đóng — trong khi AI-report §3.1 dòng Gate 3 ghi "Sửa 2 Major + 9 Minor" | Chép lại file này vào `AI-report-evidence/` sau khi có mục này; thêm vào AI-report §3.1 dòng "Gate 3 kiểm diff → RELEASE" khi cập nhật sau dịch (cùng lượt với điểm 5 mục 6) |
 
 Ngoài phạm vi diff (có từ trước, không tính): SC-05-02 §5 không có dòng `409 E-TRD-012` (trước giờ chốt) dù TRADE_FUNC §3 gán mã này cho SC-05-02 [9] — để LAB-5 khi tách task.
 

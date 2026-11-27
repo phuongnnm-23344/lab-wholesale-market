@@ -1,6 +1,6 @@
 # PREMISE — tiền đề của backlog LAB-5 (Product A, 桜水産市場)
 
-Backlog LAB-5 break từ bộ thiết kế LAB-4 nộp 2026-11-26 (tag `lab-4`, commit `0c19b61`; tiền đề LAB-4 ở [`lab-4/PREMISE.md`](lab-4/PREMISE.md), dòng `L4-…`). File này ghi **chỗ backlog khác bản LAB-4**: spec đề xuất sửa, giả định thêm, hướng đã chốt. Dòng `L5-…` được trỏ từ [`task-breakdown.md`](task-breakdown.md) và từ trường của issue trong [`backlog/backlog.yaml`](backlog/backlog.yaml); cột "ID nguồn" là ID lúc 3 luồng break song song (`A-`, `B-`, `C-`) hoặc PL lúc gộp (`PL-`).
+Backlog LAB-5 break từ bộ thiết kế LAB-4 nộp 2026-11-26 (tag `lab-4`, commit `58b084f`; tiền đề LAB-4 ở [`lab-4/PREMISE.md`](lab-4/PREMISE.md), dòng `L4-…`). File này ghi **chỗ backlog khác bản LAB-4**: spec đề xuất sửa, giả định thêm, hướng đã chốt. Dòng `L5-…` được trỏ từ [`task-breakdown.md`](task-breakdown.md) và từ trường của issue trong [`backlog/backlog.yaml`](backlog/backlog.yaml); cột "ID nguồn" là ID lúc 3 luồng break song song (`A-`, `B-`, `C-`) hoặc PL lúc gộp (`PL-`).
 
 **Trạng thái:** bản sau Expert Gate A (RELEASE CÓ ĐIỀU KIỆN, sửa theo FB-EXP-327..340). Các dòng mục 1 **đã áp** vào spec LAB-4 ngày 2026-11-26 (bản tiếng Việt và `ja/` cùng commit, mỗi file có dòng History và tăng version patch); cột "Trước → sau" ghi cả version. Câu trả lời của khách ghi `[Customer giả lập, ngày]` là giả định có căn cứ, không phải đã chốt.
 

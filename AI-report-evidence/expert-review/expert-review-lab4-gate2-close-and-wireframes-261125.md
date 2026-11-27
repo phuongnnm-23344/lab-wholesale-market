@@ -1,8 +1,8 @@
 # Expert review — LAB-4 đóng Gate 2 + wireframe HTML — 2026-11-25
 
 Phạm vi review (theo chỉ định của người dùng): repo `lab-wholesale-market`, nhánh `ver/lab-4`.
-- **Phần 1 — Đóng Gate 2:** `git diff 20bea92..HEAD`, gồm các commit 378c713, fc24f55, b1b9113, f83c791, ab9569a, 21b707c, 671c17e (fabc771 là pilot HTML, xét ở Phần 2). Đối chiếu với báo cáo gốc `expert-review-lab4-gate2-261125.md` và 31 câu trả lời khách ở `customer-feedback-lab4-p3-questions-261125.md`.
-- **Phần 2 — Wireframe HTML:** phần **chưa commit** trong working tree (HEAD fabc771): `wireframes/html/*.html` (15 màn), `_shared/`, `wireframes/pdf/wireframes-all.pdf`, `wireframes/png/`, 12 `specs/*/screen-specification/assets/*_annotated.png`, `scripts/render-wireframes.py`, WF MD và SPEC đã đồng bộ; ghi chú gộp `plans/lab/Lab 4/wireframe-html-consolidation-notes.md`. Mẫu phong cách: `Downloads/wireframes-all.pdf` (đề khác, chỉ so phong cách).
+- **Phần 1 — Đóng Gate 2:** `git diff f14418c..HEAD`, gồm các commit fa13064, 0bb4da7, f15274e, 759c33f, 8e960ce, 49a1ff9, 6166a54 (de74a63 là pilot HTML, xét ở Phần 2). Đối chiếu với báo cáo gốc `expert-review-lab4-gate2-261125.md` và 31 câu trả lời khách ở `customer-feedback-lab4-p3-questions-261125.md`.
+- **Phần 2 — Wireframe HTML:** phần **chưa commit** trong working tree (HEAD de74a63): `wireframes/html/*.html` (15 màn), `_shared/`, `wireframes/pdf/wireframes-all.pdf`, `wireframes/png/`, 12 `specs/*/screen-specification/assets/*_annotated.png`, `scripts/render-wireframes.py`, WF MD và SPEC đã đồng bộ; ghi chú gộp `plans/lab/Lab 4/wireframe-html-consolidation-notes.md`. Mẫu phong cách: `Downloads/wireframes-all.pdf` (đề khác, chỉ so phong cách).
 
 Tiêu chí: mục tiêu học tập LAB-4, RFP, 7 luật CLAUDE.md, spec-standards 03-specs (BM-2-901-51..54).
 
@@ -33,8 +33,8 @@ Kiểm bằng máy (script tạm trong scratchpad, không ghi vào repo): grep l
 | G2-m06 | Minor | **Closed** (có ghi chú mới) | `README.md:50-52` ngoại lệ #9..#11 | Ngoại lệ #11 nay **lỗi thời** sau khi chuyển sang HTML — xem W-m05 ở Phần 2. |
 | G2-m07 | Minor | **Closed** | `SC-04-01_SPEC.md:151`, `SC-03-01_SPEC.md:149`, `API-DEL-001_API.md:71` có nhãn "[PL] mục tiêu nội bộ" | — |
 | G2-m08 | Minor | **Closed** | `API-RULE-004_API.md` không còn `X-MFA-Token`; quy tắc khai báo ở `api-conventions.md:107`; API-RULE-005 khai header có điều kiện | — |
-| G2-m09 | Minor | **Closed** | `.gitignore:50` `__pycache__/`; `scripts/annotated_screens/` đã tách theo feature ở ab9569a, rồi bị thay hẳn bằng `render-wireframes.py` (152 dòng) trong working tree | — |
-| FB-EXP-236 | Điều kiện | **Closed** | 15/15 TECH nhúng `./assets/{DESIGN_ID}_sequence.png` ở §2 (671c17e), Mermaid giữ làm nguồn; `scripts/export-mermaid-png.py`; feedback-list dòng 788 = Fixed | — |
+| G2-m09 | Minor | **Closed** | `.gitignore:50` `__pycache__/`; `scripts/annotated_screens/` đã tách theo feature ở 8e960ce, rồi bị thay hẳn bằng `render-wireframes.py` (152 dòng) trong working tree | — |
+| FB-EXP-236 | Điều kiện | **Closed** | 15/15 TECH nhúng `./assets/{DESIGN_ID}_sequence.png` ở §2 (6166a54), Mermaid giữ làm nguồn; `scripts/export-mermaid-png.py`; feedback-list dòng 788 = Fixed | — |
 
 ### 1.2 Câu trả lời khách P3 — kiểm áp dụng
 

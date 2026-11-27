@@ -41,7 +41,7 @@
 |---|---|---|---|
 | 1 | §1: specは独立したManagement Repositoryに置き、**コードリポジトリには置かない** | Specを `prototype/` と同じリポジトリに置く | 演習上の理由: レビュアーがプロトタイプと設計を並べて見て、LAB-2の実データ表と照合できるように1リポジトリにまとめる。実プロジェクトでは2つのリポジトリに分け、READMEで相互参照する |
 | 2 | §2: 標準のグループは `requirements/`、`specs/` のみ | `architecture/`、`wireframes/`、`ja/` と、ルートに `PREMISE.md`、`AI-report.md` を追加 | §1 では、READMEに行があれば同階層のグループを追加できる。LAB-4の課題がこれらのグループを要求している。`ja/` は正本のベトナム語版から生成した日本語版 — 規則は4.1節末尾の注記を参照 |
-| 3 | §2: `main` から分岐した `ver/{名称}` で作業し、リリース時に `main` へマージ | `ver/lab-4` を `main`（LAB-2の `0a99d10`）から分岐し、LAB-4提出時に `main` へマージ | ブランチ規則どおり。ここでの「リリース」は提出時点を指す。**一点だけ異なる:** QC-01では `ver/{名称}` が `feature/spec-{slug}` / `cr/{slug}` からの変更を **PR経由** でのみ受け入れる。演習は一人で行うため、`ver/lab-4` へ直接コミットし、`feature/spec-*` とPRは作成しない。実プロジェクトではQC-01に従う |
+| 3 | §2: `main` から分岐した `ver/{名称}` で作業し、リリース時に `main` へマージ | `ver/lab-4` を `main`（LAB-2の `d82a2d5`）から分岐し、LAB-4提出時に `main` へマージ | ブランチ規則どおり。ここでの「リリース」は提出時点を指す。**一点だけ異なる:** QC-01では `ver/{名称}` が `feature/spec-{slug}` / `cr/{slug}` からの変更を **PR経由** でのみ受け入れる。演習は一人で行うため、`ver/lab-4` へ直接コミットし、`feature/spec-*` とPRは作成しない。実プロジェクトではQC-01に従う |
 | 4 | §4: Screen IDは `{接頭辞}_{名称}` 形式 | `SC-xx-yy` を維持 | LAB-1 → LAB-2 → LAB-4 → LAB-5のタスクまで1つのIDで追跡する |
 | 5 | §2: 見本名 `sample-AUTH_DB.md`、`sample-AUTH_FUNC.md`、`sample-AUTH_LOGIN_TECH.md` | `spec-standards/03-specs/02-samples/` の実名を維持（`sample-AUTH_DATABASE.md`、`sample-AUTH_FUNCTIONS.md`、`sample-AUTH_LOGIN_DETAIL.md`） | 制約5: ひな形・見本はその場で修正しない。QC-01 §2 の構成と、標準リポジトリの実際の見本セットが食い違っている |
 | 6 | 種類ごとにひな形は1つだけ | Screen Specificationは `sample-LOGIN_SPEC.md`（`BM-2-901-51` の見本）を使用。`BM-01-spec-template.md` と `sample-AD_LOGIN_SPEC.md` はコピーしない | プロジェクトはISOのひな形 `BM-2-901-51` を使う。BM-01は同じ用途の2つ目のひな形で、標準側でどちらを残すか未確定 |
@@ -98,7 +98,7 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 
 文書数: `specs/_index.md` の38件（4 `_common` + 12 Screen Specification + 7 Function Specifications + 15 Technical Design）· 10 Database Design · 42 API Design · アーキテクチャ1件 + ADR 10件 · ワイヤーフレーム / 画面一覧 17件 · PREMISE · AI-report.
 
-**日本語版 `ja/`：** 初回は commit `9367490` 時点のベトナム語版から生成（パス・各ファイルの行数は同一）。**正本はベトナム語版：** ベトナム語版を修正したら、同じ commit で `ja/` の対応する行も修正する。翻訳にだけある誤りは `ja/` を直接修正し、ベトナム語版の版は変えない。すべてのコードブロック（Mermaid、ワイヤーフレームの ASCII、フォルダツリー、SQL、JSON の例）と PNG 画像（sequence、annotated）はベトナム語のまま。画像・HTML・PDF・`_templates/`・`AI-report-evidence/`・`prototype/` へのリンクは `ja/` 外の元ファイルを指す。リンク検査: `python scripts/check-markdown-links.py ja`。
+**日本語版 `ja/`：** 初回は commit `f0a2948` 時点のベトナム語版から生成（パス・各ファイルの行数は同一）。**正本はベトナム語版：** ベトナム語版を修正したら、同じ commit で `ja/` の対応する行も修正する。翻訳にだけある誤りは `ja/` を直接修正し、ベトナム語版の版は変えない。すべてのコードブロック（Mermaid、ワイヤーフレームの ASCII、フォルダツリー、SQL、JSON の例）と PNG 画像（sequence、annotated）はベトナム語のまま。画像・HTML・PDF・`_templates/`・`AI-report-evidence/`・`prototype/` へのリンクは `ja/` 外の元ファイルを指す。リンク検査: `python scripts/check-markdown-links.py ja`。
 
 ### 4.2 spec-standardsからの継承と新規作成
 

@@ -33,7 +33,7 @@ related: [SPEC-MKT_DB-001, DOC-PREMISE-001]
 | 1 | 0.1.0 | Add new | — | 初版は `MKT_DB.md` 0.1.0 の中にあった（スキーマ全体で1ファイル） | 2026-11-25 | phuongnnm-23344 | |
 | 2 | 0.2.0 | Add new | 全ファイル | `MKT_DB.md` 0.1.1 から ER クラスタ単位に分割（Gate 1 M-09）。Gate 1 に従い修正: DELTA の再計算の範囲を締め済みのすべての期に拡大、年 TC の制限は CARRY にのみ適用、`CARRY_EXPIRED` を追加（C-01, m-05）; 入力は元の取引の期 `period_id` による（C-02）; 修正申請 KANNO / INCENTIVE 用の `correction_id`（M-10, M-04）; 「手数料差引の疑い」用の `kanno_basis`、`judgement_note`（顧客 #7）; 試算は監査に記録（顧客 #6, M-02）; §5 のテストベクターを追加 | 2026-11-25 | phuongnnm-23344 | |
 | 3 | 0.3.0 | Update | 4.52, §5 | Gate 1 再確認: ラベル INC-EDGE を C.3 に合わせる（N-01）+ TV-12 INC-EDGE-01; GD `LATE_ENTRY` を DELTA の入力に追加 + TV-13（N-02）; `CARRY_EXPIRED`（正の値）で残高を閉じ、TV-04 で負の値を二重に数えない（n-01）; TV-14 修正申請 INCENTIVE（n-02）; 仲卸の仮の交付率表; TV-06 への参照（n-04） | 2026-11-25 | phuongnnm-23344 | |
-| 4 | 0.3.1 | Update | §5 TV-14 | diff 5b0ef16 D-05 を確認: 期 10 / 11 / 12 の締め日と、TRADE の決裁日 2027-12-20 を固定; INCENTIVE の金額は固定であることを明記。決裁が締めより前の変異ケースは、合計 +2,990 を 2 行に分ける（+2,000 は correction_id 付き、+990）。（D-04: TV-13 の DB 版は 09-21 で正しい。ADR-007 側を修正） | 2026-11-25 | phuongnnm-23344 | |
+| 4 | 0.3.1 | Update | §5 TV-14 | diff 470cf2e D-05 を確認: 期 10 / 11 / 12 の締め日と、TRADE の決裁日 2027-12-20 を固定; INCENTIVE の金額は固定であることを明記。決裁が締めより前の変異ケースは、合計 +2,990 を 2 行に分ける（+2,000 は correction_id 付き、+990）。（D-04: TV-13 の DB 版は 09-21 で正しい。ADR-007 側を修正） | 2026-11-25 | phuongnnm-23344 | |
 | 5 | 0.3.2 | Update | — | 顧客 Q-INC-01/02: `incentive_runs` に `payment_csv_confirmed_at`、`payment_csv_latest_paid_on` を追加; TV-13 を書き直し、TV-15 を追加 | 2026-11-25 | phuongnnm-23344 |  |
 | 6 | 0.3.3 | Update | §4.52 | LAB-5 PREMISE L5-S02（L5-G05）: Overview 4.52 の DELTA の入力から取引 `LATE_ENTRY` を外し、INC_ENGINE_TECH §3.4 と ADR-007（Q-INC-02）に合わせる | 2026-11-26 | phuongnnm-23344 |  |
 

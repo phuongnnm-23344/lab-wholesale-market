@@ -1,8 +1,8 @@
 # Expert review — LAB-4 bản tiếng Nhật `ja/` + 2 commit hậu kỳ — 2026-11-26
 
-Phạm vi review: repo `lab-wholesale-market`, nhánh `ver/lab-4`, commit `9367490` (sửa nguồn VI) và `05c8cf8` (135 file `ja/`, README §4.1, AI-report 0.2.2, `scripts/check-markdown-links.py`). Diff đối chiếu `f910c8b..05c8cf8`.
+Phạm vi review: repo `lab-wholesale-market`, nhánh `ver/lab-4`, commit `f0a2948` (sửa nguồn VI) và `9b76f4d` (135 file `ja/`, README §4.1, AI-report 0.2.2, `scripts/check-markdown-links.py`). Diff đối chiếu `e6369cf..9b76f4d`.
 
-Tiêu chí (người dùng giao): mục tiêu học LAB-4 + RFP + 7 luật CLAUDE.md + spec-standards; riêng JA: (1) luật 2 / L4-D03 với 承認 và 許可; (2) glossary bắt buộc `plans/lab/Lab 4/ja-translation-brief-and-glossary.md`; (3) trung thành với bản VI (mẫu ≥ 8 file, số liệu / công thức / ID / version); (4) 0 link hỏng; (5) sửa nguồn VI ở `9367490` đúng L4-D03, có History, tăng version; (6) README §4.1 và AI-report trung thực.
+Tiêu chí (người dùng giao): mục tiêu học LAB-4 + RFP + 7 luật CLAUDE.md + spec-standards; riêng JA: (1) luật 2 / L4-D03 với 承認 và 許可; (2) glossary bắt buộc `plans/lab/Lab 4/ja-translation-brief-and-glossary.md`; (3) trung thành với bản VI (mẫu ≥ 8 file, số liệu / công thức / ID / version); (4) 0 link hỏng; (5) sửa nguồn VI ở `f0a2948` đúng L4-D03, có History, tăng version; (6) README §4.1 và AI-report trung thực.
 
 Không tính là lỗi (đã chốt với người dùng): mật khẩu demo ở `prototype/README.md` (G3-M03, đầu LAB-5); ADR-006 Proposed; E-14 mở; 12 màn có Screen Specification đầy đủ.
 
@@ -36,8 +36,8 @@ Không tính là lỗi (đã chốt với người dùng): mật khẩu demo ở
 2. **Glossary:** Đạt phần lớn — 前提 (161), 未決事項 (74), 【模擬】 (29), 顧客（模擬） (137), 日次締め, 期ロック (219), 差異表 (22), 継承 / 新規作成, 後入力 (151), 完了条件, 主要フロー, メーカー・チェッカー đều đúng. Còn lệch: C-01 (thiếu mục "bảng tỷ lệ" nên dịch sai), m-03.
 3. **Trung thành với bản VI:** Khung (số dòng, khối code, số cột, ID, version) đạt gần tuyệt đối. Công thức `floor(E × ρ × 110/1_000_000)`, `× 110/100`, 8%, TV-01..14, 適格金額 / 1,000,000 / 999,999 giữ đúng. Ô bảng dịch bằng bảng ánh xạ ở MKT_DB nhất quán: 欠落 17 / 誤り 7 / 意図的な簡略化 13 (+1 mock M13) / プロトタイプの動作を維持 2, khớp 1-1 với Thiếu / Sai / Giản lược có chủ đích / Giữ hành vi prototype; mức TB → 中. Frontmatter `function:` của DEL_RECORD_TECH chỉ dịch phần ghi chú trong ngoặc, giữ tên hàm; `title` API-LOT-002 「ロット本登録」 đúng. Lỗi nội dung: C-01, M-01, m-01, m-04, m-05.
 4. **Link:** 0 link hỏng (290 file toàn repo, 135 file `ja/`).
-5. **Sửa nguồn VI ở `9367490`:** Đạt. SC-04-01 0.1.5 và TRADE_AITAI_CONFIRM 0.1.3 (FIG-012 提出 / 確認 / 確定), STL_CORRECTION_DECIDE 0.1.3 (dòng `correction_approvals`), SC-01-02 0.1.3 (發效日 → 発効日), PREMISE 0.6.5 (L4-D02 dùng tên L4-D03, ghi tên LAB-1 ở L4-D03): mỗi file có dòng History, tăng version, đổi `updated`; `specs/_index.md` đồng bộ 4 dòng. Không lệch ý; enum `APPROVE` hiển thị 確認 vẫn khớp A-TRD-02.
-6. **README §4.1 / AI-report:** Đạt. README nói rõ VI là bản chuẩn, JA là bản sinh từ `9367490`, không sửa tay; Mermaid / ASCII / PNG giữ nhãn VI; link tài nguyên trỏ về file gốc. AI-report 0.2.2 (§4.2, History có dòng) ghi trung thực: dịch bằng AI (10 luồng), hậu kỳ bằng script, **chưa có người đọc tiếng Nhật rà nội dung nghiệp vụ** — C-01 cho thấy đúng rủi ro này. Còn m-08.
+5. **Sửa nguồn VI ở `f0a2948`:** Đạt. SC-04-01 0.1.5 và TRADE_AITAI_CONFIRM 0.1.3 (FIG-012 提出 / 確認 / 確定), STL_CORRECTION_DECIDE 0.1.3 (dòng `correction_approvals`), SC-01-02 0.1.3 (發效日 → 発効日), PREMISE 0.6.5 (L4-D02 dùng tên L4-D03, ghi tên LAB-1 ở L4-D03): mỗi file có dòng History, tăng version, đổi `updated`; `specs/_index.md` đồng bộ 4 dòng. Không lệch ý; enum `APPROVE` hiển thị 確認 vẫn khớp A-TRD-02.
+6. **README §4.1 / AI-report:** Đạt. README nói rõ VI là bản chuẩn, JA là bản sinh từ `f0a2948`, không sửa tay; Mermaid / ASCII / PNG giữ nhãn VI; link tài nguyên trỏ về file gốc. AI-report 0.2.2 (§4.2, History có dòng) ghi trung thực: dịch bằng AI (10 luồng), hậu kỳ bằng script, **chưa có người đọc tiếng Nhật rà nội dung nghiệp vụ** — C-01 cho thấy đúng rủi ro này. Còn m-08.
 
 ## Điều kiện để release
 
@@ -51,16 +51,16 @@ Sửa xong C-01 + M-01 thì tôi chỉ cần kiểm diff, không phải review l
 ## Điểm làm tốt
 
 - Kỷ luật khung rất chặt: 135/135 file cùng số dòng, khối code giống hệt từng byte, ID và version không lệch. Nhờ vậy kiểm máy đối chiếu được từng dòng.
-- Rà 承認 kỹ, và sửa ngược về bản VI (`9367490`) thay vì vá riêng bản JA — đúng nguyên tắc VI là bản chuẩn, có History và version cho từng file.
+- Rà 承認 kỹ, và sửa ngược về bản VI (`f0a2948`) thay vì vá riêng bản JA — đúng nguyên tắc VI là bản chuẩn, có History và version cho từng file.
 - Ô bảng phân loại (MKT_DB, README §4.2) dịch bằng bảng ánh xạ nên nhất quán 100%.
 - Có thêm `scripts/check-markdown-links.py` tính anchor theo slug kiểu GitHub cho tiêu đề tiếng Nhật, chạy lại được.
 - AI-report nói thẳng giới hạn "chưa có người đọc tiếng Nhật rà", không tô vẽ.
 
 ---
 
-## Kiểm diff `f1d0aec` (sửa FB-EXP-314..323) — 2026-11-26
+## Kiểm diff `22fbf4b` (sửa FB-EXP-314..323) — 2026-11-26
 
-Phạm vi: `git diff 05c8cf8..f1d0aec` (37 file: 35 file `ja/` + `README.md`, `specs/_index.md`, `specs/lot/technical-design/LOT_REGISTER_TECH.md`). Tiêu chí: như trên, và soi riêng đợt đổi "bậc" → 等級 theo yêu cầu của PL.
+Phạm vi: `git diff 9b76f4d..22fbf4b` (37 file: 35 file `ja/` + `README.md`, `specs/_index.md`, `specs/lot/technical-design/LOT_REGISTER_TECH.md`). Tiêu chí: như trên, và soi riêng đợt đổi "bậc" → 等級 theo yêu cầu của PL.
 
 **Verdict: RELEASE CÓ ĐIỀU KIỆN** — 0 Critical · 0 Major. Đóng đủ 10/10 lỗi cũ; có 3 Minor mới.
 
@@ -99,7 +99,7 @@ Có một điểm vướng (n-01): 等級 vốn đã được dùng cho **hạng
 |---|---|---|---|---|---|
 | n-01 | Minor | `ja/` ADR-006/007, ARCHITECTURE, RULE_DB, INC_ENGINE_TECH, INCENTIVE_DB, MKT_DB, PREMISE, wireframe SC-09-04 / SC-10-04 (bậc thưởng) và LOT_INSPECTION_RECORD_TECH, LOT_FUNC, SC-03-05 (hạng 目利き) | BR-INC-01; luật 3 | Cùng chữ 等級 cho hai khái niệm VI tách riêng: bậc 交付率 (máy tra) và hạng chất lượng 目利き (người quyết) | Đổi bậc thưởng thành 「交付率の等級」 ở lần đầu mỗi file + ghi chú trong glossary, hoặc dùng 「ランク」 cho bậc thưởng. Giữ 等級 cho 目利き. Đặt quy tắc vào glossary để lần sinh sau không lặp |
 | n-02 | Minor | `specs/lot/technical-design/LOT_REGISTER_TECH.md:30` và `ja/…:30` (dòng History 0.1.3) | — | Chính dòng History ghi việc sửa m-06 lại có dấu gạch đứng trong inline code mà không escape → hàng có 9 ô trong khi bảng có 8 cột; GFM cắt ô thừa, mô tả bị tách sang cột ngày, ngày và người sửa lệch cột. Cùng loại lỗi vừa sửa | Viết 「escape dấu gạch đứng」 thay cho ký tự, hoặc escape bằng `\|`; sửa cả JA |
-| n-03 | Minor | `README.md:100` và `ja/README.md:100` | — | Ghi chú tự mâu thuẫn: câu mới 「mỗi lần sửa bản tiếng Việt sau đó thì sửa đúng các dòng tương ứng ở `ja/` trong cùng commit」 nhưng câu sau vẫn 「sửa ở bản tiếng Việt rồi sinh lại, không sửa tay `ja/`」. Thực tế `f1d0aec` sửa tay `ja/` ở những dòng VI không đổi (C-01, M-01…) | Chọn một quy tắc và viết đúng như đang làm, vd: 「VI là bản chuẩn; sửa VI thì sửa dòng tương ứng ở `ja/` trong cùng commit; lỗi chỉ có ở bản dịch thì sửa `ja/` trực tiếp, không đổi version VI」 |
+| n-03 | Minor | `README.md:100` và `ja/README.md:100` | — | Ghi chú tự mâu thuẫn: câu mới 「mỗi lần sửa bản tiếng Việt sau đó thì sửa đúng các dòng tương ứng ở `ja/` trong cùng commit」 nhưng câu sau vẫn 「sửa ở bản tiếng Việt rồi sinh lại, không sửa tay `ja/`」. Thực tế `22fbf4b` sửa tay `ja/` ở những dòng VI không đổi (C-01, M-01…) | Chọn một quy tắc và viết đúng như đang làm, vd: 「VI là bản chuẩn; sửa VI thì sửa dòng tương ứng ở `ja/` trong cùng commit; lỗi chỉ có ở bản dịch thì sửa `ja/` trực tiếp, không đổi version VI」 |
 
 ### Điều kiện để release
 

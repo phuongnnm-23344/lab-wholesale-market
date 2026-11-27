@@ -23,7 +23,7 @@ Trích từ `plans/lab/Lab 4/progress-lab4.md`: mục "Ghi chú cho AI-report (P
 
 ### Từ mục: Gate 2 — sửa theo Expert + câu trả lời khách P3 (2026-11-25)
 
-- Ghi chú AI-report (P4): (9) chạy 3 fork song song theo quyền sở hữu file (incentive · settle+delivery · party+trade+lot), file chung (PREMISE, `_index`, `_common`, MKT_DB, TRADE_DB cho Q-INC-02) PL áp sau từ đoạn văn fork gửi về — không xung đột ghi; (10) lần gộp P3 bỏ sót `error_extra` vì chỉ quét khóa JSON, không quét văn xuôi TECH / SPEC → script mới quét toàn `specs/`; (11) commit đầu lỡ kèm một file xóa đã stage từ trước → reset mềm về `20bea92` và commit lại theo nhóm (chưa push).
+- Ghi chú AI-report (P4): (9) chạy 3 fork song song theo quyền sở hữu file (incentive · settle+delivery · party+trade+lot), file chung (PREMISE, `_index`, `_common`, MKT_DB, TRADE_DB cho Q-INC-02) PL áp sau từ đoạn văn fork gửi về — không xung đột ghi; (10) lần gộp P3 bỏ sót `error_extra` vì chỉ quét khóa JSON, không quét văn xuôi TECH / SPEC → script mới quét toàn `specs/`; (11) commit đầu lỡ kèm một file xóa đã stage từ trước → reset mềm về `f14418c` và commit lại theo nhóm (chưa push).
 
 ### Từ mục: FB-EXP-236 + Concern 4 Gate 2 (2026-11-25, PL)
 

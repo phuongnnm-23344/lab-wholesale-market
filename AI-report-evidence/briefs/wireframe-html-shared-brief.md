@@ -3,7 +3,7 @@
 Đọc file này trước. Màn của bạn nằm trong prompt giao việc.
 
 ## Bối cảnh
-- Repo: `C:\Users\<user>\Desktop\Project lab\lab-wholesale-market`, nhánh `ver/lab-4` (HEAD `fabc771`). Không sửa `prototype/**`.
+- Repo: `C:\Users\<user>\Desktop\Project lab\lab-wholesale-market`, nhánh `ver/lab-4` (HEAD `de74a63`). Không sửa `prototype/**`.
 - Mẫu phong cách (chỉ lấy phong cách, KHÔNG chép nội dung — đó là đề Product B): `C:\Users\<user>\Downloads\wireframes-all.pdf`. Ảnh 60dpi sẵn: `C:\Users\<user>\AppData\Local\Temp\claude\3d667017223783cd\e68582b0-b1c8-4635-91e5-f148f97c6c9a\scratchpad\wfpdf\p01..p35.png` (p01 PC danh sách+form+dialog; p13 PC nhiều tab; p17 smartphone nhiều biến thể).
 - **Pilot đã duyệt — làm theo y hệt:** `wireframes/html/SC-04-01.html` (6 biến thể A–F), CSS/JS chung `wireframes/html/_shared/` (catalogue class ở comment đầu `wireframe.css`).
 - Render: `C:\Users\<user>\.claude\skills\.venv\Scripts\python.exe -I scripts/render-wireframes.py SC-xx-yy` → `wireframes/png/SC-xx-yy.png` (+ PDF). Dùng Edge (Chrome 148/154 trong cache puppeteer bị treo). Read ảnh PNG để tự soát.
