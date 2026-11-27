@@ -48,7 +48,7 @@ for i in iss:
             E("depends_on sai", x, y)
     lab = set(i["labels"])
     for l in lab:
-        ok = (l in RULES or l == "needs-spec" or l == "constraint:完納奨励金" or re.fullmatch(r"fg:FG-\d\d", l)
+        ok = (l in RULES or l in ("needs-spec", "needs-split") or l == "constraint:完納奨励金" or re.fullmatch(r"fg:FG-\d\d", l)
               or l.split(":")[0] in ("kind", "role") or (l.startswith("feature:") and l[8:] in FEAT))
         if not ok:
             E("nhãn ngoài danh sách", x, l)
@@ -56,6 +56,8 @@ for i in iss:
         E("nhãn kind/role lệch trường", x)
     if (i["kind"] == "rough") != ("needs-spec" in lab):
         E("needs-spec chỉ và luôn cho rough", x)
+    if "needs-split" in lab and (i["kind"] == "rough" or x in kids):
+        E("needs-split chỉ cho lá đã có spec (không thô, không cha)", x)
     if i["epic"].startswith("EP-FG") and f"fg:FG-{i['epic'][5:]}" not in lab:
         E("thiếu nhãn fg của epic", x)
     inc = "constraint:完納奨励金" in lab
@@ -135,8 +137,25 @@ for i in iss:
 for i in iss:
     if i["kind"] == "rough" and i["id"] not in kids:
         src = i["depends_on"] + (by[i["parent"]]["depends_on"] if i["parent"] else [])
-        if not any(by[y]["kind"] == "design" for y in src if y in by):
+        # ngoại lệ: chỗ giữ giờ sửa lỗi của EP-TEST chờ issue test (tách theo lỗi thật, không theo spec) — PREMISE L5-D12
+        need = ("design", "test") if i["epic"] == "EP-TEST" else ("design",)
+        if not any(by[y]["kind"] in need for y in src if y in by):
             E("issue thô không chờ issue thiết kế nào", i["id"])
+
+# lá đã có spec mà Hours (SWP × k, estimate-swp-hours.csv) > 16 giờ phải mang nhãn needs-split (PREMISE L5-D08, ngoại lệ có tên)
+EST = os.path.join(ROOT, "backlog", "estimate-swp-hours.csv")
+if os.path.exists(EST) and "--file" not in sys.argv:
+    import csv
+    est = {r["id"]: r for r in csv.DictReader(open(EST, encoding="utf-8"))}
+    pend = set(d.get("rescore_pending") or [])
+    for i in iss:
+        r, x = est.get(i["id"]), i["id"]
+        over = bool(r) and r["level"] == "leaf" and float(r["hours"]) > 16
+        if i["kind"] != "rough" and x not in kids and x not in pend and over != ("needs-split" in i["labels"]):
+            E("needs-split lệch với Hours > 16 giờ", x, r and r["hours"])
+    for x in pend:
+        if x not in by:
+            E("rescore_pending trỏ issue không có", x)
 
 # Iteration 1: phụ thuộc không ra ngoài (trừ S0 nền tảng, thiết kế 第1波, câu hỏi khách); năng lực
 IT = d["iteration1"]["name"]

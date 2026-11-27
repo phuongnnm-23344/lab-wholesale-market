@@ -1,6 +1,10 @@
-# So LAB-5 với estimate LAB-1 (estimate.md §5). Số LAB-1 = 人日 ở 概算見積書 LAB-1 §4.2 (bảng 機能グループ別・工程別) × 8 giờ
+# So LAB-5 với estimate LAB-1 (estimate.md §4). Số LAB-1 = 人日 ở 概算見積書 LAB-1 §4.2 (bảng 機能グループ別・工程別) × 8 giờ
 # (PRM-001: 1 人日 = 8 giờ). LAB-5 = lá trong backlog/estimate-swp-hours.csv theo bộ lọc `lab5`.
 # render-estimate-tables.py tính cột LAB-5 / Chênh; cột "Vì sao" lấy từ `why`.
+# Cầu nối −71% (estimate.md §4.1, Gate B m-03): phần QA / デザイン nằm trong 15 dòng FG của LAB-1 (§4.2, cộng cột).
+bridge:
+  lab1_fg_qa_days: 189.2
+  lab1_fg_design_days: 41.6
 rows:
 - part: FG-01 参加者・資格管理
   lab1_days: 66.8
@@ -77,11 +81,11 @@ rows:
   lab1_days: 100.0
   lab1_note: CC 55,0 + IN 30,0 + BJ 15,0 人日
   lab5: {epics: [EP-PLAT]}
-  why: LAB-5 chỉ có 14 lá nền tảng (IaC, runtime, khung app, khung màn); LAB-1 còn design system 8 人日, component FE dùng chung 22 人日, định nghĩa 10 batch — chưa có issue riêng (batch nằm trong lá dev của FG). Rủi ro thiếu việc → xem §4.1
+  why: LAB-5 chỉ có 14 lá nền tảng (IaC, runtime, khung app, khung màn); LAB-1 còn design system 8 人日, component FE dùng chung 22 人日, định nghĩa 10 batch (batch nằm trong lá dev của FG). Design system / component dùng chung thêm thành issue thô #500 sau Gate B (L5-D12)
 - part: 総合テスト・UAT (QT)
   lab1_days: 110.0
   lab5: {epics: [EP-TEST]}
-  why: LAB-5 có kế hoạch test, kịch bản nghiệp vụ, 462 tổ hợp quyền, tải, bảo mật, diễn tập khôi phục, hỗ trợ UAT, cutover, bàn giao (11 lá); LAB-1 QT gồm cả sửa lỗi FE / BE 61 人日 — LAB-5 chưa có chỗ giữ giờ sửa lỗi
+  why: LAB-5 có kế hoạch test, kịch bản nghiệp vụ, 462 tổ hợp quyền, tải, bảo mật, diễn tập khôi phục, hỗ trợ UAT, cutover, bàn giao (11 lá); LAB-1 QT gồm cả sửa lỗi FE / BE 61 人日 — thêm issue thô giữ chỗ sửa lỗi #501 sau Gate B (L5-D12)
 - part: 要件定義 (RQ) ↔ làm rõ
   lab1_days: 30.0
   lab5: {epics: [EP-CLAR]}

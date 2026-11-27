@@ -15,7 +15,7 @@ import sys
 import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-K = 2.0  # giờ / SWP — một hệ số cho mọi issue; cách chốt: estimate.md §3
+K = 2.0  # giờ / SWP — một hệ số cho mọi issue; cách chốt: estimate.md §2.1
 OUT = os.path.join(ROOT, "backlog", "estimate-swp-hours.csv")
 FIELDS = ["id", "number", "level", "epic", "parent_id", "kind", "iteration", "hours_hint", "swp_initial", "swp_final", "hours"]
 

@@ -103,25 +103,30 @@ for g in d["gaps"]:
 EST_CSV = os.path.join(ROOT, "backlog", "estimate-swp-hours.csv")
 EST = {r["id"]: r for r in csv.DictReader(open(EST_CSV, encoding="utf-8"))} if os.path.exists(EST_CSV) else {}
 num = lambda x: f"{x:g}"
-cnt = collections.OrderedDict((e["id"], [e["title"], e["priority"], e["planned_sprint"], 0, 0, 0, 0, 0, 0.0]) for e in d["epics"])
+PENDING = set(d.get("rescore_pending") or [])
+cnt = collections.OrderedDict((e["id"], [e["title"], e["priority"], e["planned_sprint"], 0, 0, 0, 0, 0, 0.0, 0]) for e in d["epics"])
 for i in iss:
     r = cnt[i["epic"]]
     r[4 if i["parent"] else 3] += 1
     if i["id"] not in kids:
         r[5] += 1
         r[6] += i["hours_hint"]
-        if EST:
+        if EST and i["id"] in EST and i["id"] not in PENDING:
             r[7] += int(EST[i["id"]]["swp_final"])
             r[8] += float(EST[i["id"]]["hours"])
+        elif EST:
+            r[9] += 1  # lá mới / đổi phạm vi sau Gate B, chờ chấm SWP
 head = "| Epic | Tên | Ưu tiên (gốc) | Sprint (WBS LAB-1) | Issue cấp 1 | Sub-issue | Lá | Giờ sơ bộ (lá) |"
 if EST:
     head += " SWP chốt (P3) | Giờ = SWP × k (P3) |"
 ep_tbl = [head, "|" + "---|" * head.count(" |")]
 for e, r in cnt.items():
-    extra = f" {r[7]} | {num(r[8])} |" if EST else ""
+    wait = f" (+{r[9]} lá chờ chấm)" if r[9] else ""
+    extra = f" {r[7]}{wait} | {num(r[8])}{wait} |" if EST else ""
     ep_tbl.append(f"| {e} | {cell(r[0])} | {r[1]} | {r[2]} | {r[3]} | {r[4]} | {r[5]} | {r[6]} |" + extra)
-tot = [sum(r[k] for r in cnt.values()) for k in (3, 4, 5, 6, 7, 8)]
-extra = f" **{tot[4]}** | **{num(tot[5])}** |" if EST else ""
+tot = [sum(r[k] for r in cnt.values()) for k in (3, 4, 5, 6, 7, 8, 9)]
+wait = f" (+{tot[6]} lá chờ chấm)" if tot[6] else ""
+extra = f" **{tot[4]}**{wait} | **{num(tot[5])}**{wait} |" if EST else ""
 ep_tbl.append(f"| **Tổng** | 18 epic | | | **{tot[0]}** | **{tot[1]}** | **{tot[2]}** | **{tot[3]}** |" + extra)
 
 path = os.path.join(ROOT, "task-breakdown.md")

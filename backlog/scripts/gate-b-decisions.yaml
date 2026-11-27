@@ -1,0 +1,130 @@
+# Sửa backlog theo Expert Gate B (expert-review-lab5-gateB-261127.md), người dùng chốt 2026-11-27.
+# apply-gate-b-decisions.py chạy sau apply-gate-a-decisions.py trong build-backlog.py.
+#
+# M-01 (FB-EXP-348): tách ngay 4 lá 完納奨励金 > 16 giờ; 18 lá còn lại gắn nhãn needs-split (PREMISE L5-D08 ngoại lệ).
+# M-02 (FB-EXP-349): thêm 2 issue thô — design system / component FE dùng chung, sửa lỗi sau 総合テスト (PREMISE L5-D12).
+
+# Lá đã có spec, SWP × k > 16 giờ, không thuộc Iteration đang lập kế hoạch → tách và chấm lại trước buổi lập kế hoạch
+# của sprint dự kiến. Danh sách theo backlog/estimate-swp-hours.csv sau P3 (22 lá) trừ 4 lá tách ngay.
+needs_split: [C-PLAT-01.1, C-TEST-02, C-TEST-05, C-PLAT-01.2, C-TEST-07, C-FG15-06.2, C-PLAT-02, C-FG14-03, B-FG08-04,
+              B-FG08-05, C-FG14-04, B-FG07-03, B-FG08-07, C-TEST-06, A-FG06-11, B-FG07-06, C-TEST-08, A-FG04-10]
+
+# Lá đã đổi phạm vi, SWP cũ trong báo cáo HTML không còn đúng — chấm lại cùng các issue mới
+rescore_pending: [B-FG09-10.2]
+
+# Issue cấp 1 thành cha: tách thành sub-issue (giữ người phụ trách, nhãn, spec của cha)
+split_children:
+  B-FG09-08:
+  - title: K6 次期差分 — tính lại theo kỳ Q, D = I'' − R, lũy đẳng
+    title_en: '[FG-09][K6][BE] K6 next-period delta — recompute per period Q, D = I'''' - R, idempotent'
+    hours: 10
+    description: 'Phần 1 của #K6: với mỗi kỳ Q đã khóa (theo period_code) tính lại I'''' bằng V_Q, K'' = K của MAIN (không hồi tố) trừ 修正申請 KANNO;
+      C_INC cố định; D = I'''' − R. GD 後入力 không sinh DELTA (§3.4). Chưa tách dòng theo nguồn (phần 2).'
+    dod:
+    - 'TV-02 +1.980 (K kỳ 08 giữ true); TV-13 / TV-15 không sinh DELTA kỳ 08'
+    - Chạy 2 lần liên tiếp không đầu vào mới → lần 2 sinh 0 dòng (lũy đẳng); Q không có incentive_runs → E-INC-010
+  - title: K6 次期差分 — tách dòng theo nguồn, năm TC của dòng
+    title_en: '[FG-09][K6][BE] K6 next-period delta — split rows by source (incentive / KANNO / rest), fiscal year'
+    hours: 8
+    depends_on: [B-FG09-08.1]
+    description: 'Phần 2 của K6: tách D thành dòng theo nguồn (INCENTIVE mới, KANNO mới, phần còn lại) xác định bằng correction_id;
+      năm TC của dòng = năm TC của P.'
+    dod:
+    - 'TV-03 −15.400 ghi ở 2028-05, tra v3, năm TC 2028'
+    - 'TV-07: phân bổ sau khóa → DELTA 0; sau KANNO → +9.900 có correction_id, CORRECTION'
+    - TV-14 +2.000 kỳ 11, +990 kỳ 12, không sinh −2.000, biến thể tách 2 dòng
+  B-FG09-18:
+  - title: 期ロック 結合テスト — transaction, DoD K8 (a)–(e)
+    title_en: '[FG-09][K8][QA] Period lock integration test — transaction cases, DoD K8 (a)–(e)'
+    hours: 10
+    description: 'Test tích hợp transaction 期ロック: ép lỗi từng bước ghi, hai phiên đồng thời, đổi đầu vào giữa 試算 và khóa, quyền EXECUTE.'
+    dod:
+    - DoD K8 (a)(b)(c)(d)(d2)(e) đạt
+  - title: 期ロック E2E — SC-09-04 ma trận vai + Error Handling
+    title_en: '[FG-09][SC-09-04][QA] Period lock E2E — SC-09-04 role matrix and error handling'
+    hours: 8
+    depends_on: [B-FG09-18.1]
+    description: 'E2E màn SC-09-04 theo ma trận vai §4.4 và mọi dòng Error Handling §5.'
+    dod:
+    - Ma trận vai §4.4 (STL-HEAD / SETTLE / OPS-HEAD / vai khác) đạt; mọi dòng §5 có case
+  B-FG09-16:
+  - title: 差分・繰越 テスト — TV-02, 03, 04, 07
+    title_en: '[FG-09][K6-K7][QA] Delta / carry-over test — TV-02, 03, 04, 07'
+    hours: 8
+    description: 'Nhóm 3a — khóa kỳ theo ngày ghim ở TV; 修正申請 TRADE / KANNO / INCENTIVE duyệt giữa các lần khóa; kiểm lũy đẳng.'
+    dod:
+    - TV-02 +1.980; TV-03 −15.400 năm TC 2028; TV-04 CARRY_EXPIRED +2.200; TV-07 0 rồi +9.900 CORRECTION
+  - title: 後入力・複数期 テスト — TV-13, 14, 15
+    title_en: '[FG-09][K6-K7][QA] Late entry / multi-period test — TV-13, 14, 15'
+    hours: 8
+    description: 'Nhóm 3b — chuỗi nhiều kỳ (vd TV-14 kỳ 10 / 11 / 12), 修正申請 LATE_ENTRY giữa các lần khóa, các biến thể tách dòng.'
+    dod:
+    - TV-13 4.400 (biến thể 0), không DELTA kỳ 08; TV-14 +2.000 / +990 và biến thể +2.990 hai dòng; TV-15 3.300 (biến thể 0)
+
+# Lá đã là sub-issue (cấp 2): không thêm cấp 3 (task-breakdown §1.1) — thu hẹp lá gốc + thêm sub-issue anh em cùng cha
+split_siblings:
+  B-FG09-10.2:
+    narrow:
+      title: '[FG-09] K8 期ロック — khung transaction: khóa, kiểm điều kiện, rollback'
+      title_en: '[FG-09][K8][BE] K8 period lock — transaction frame: locks, ordered checks, full rollback'
+      hours: 10
+      description: 'Phần 1 của `lock_period`: FOR UPDATE NOWAIT + advisory lock; kiểm điều kiện theo thứ tự (E-INC-009/002/003/004/005/014/013/008);
+        lỗi bất kỳ → rollback toàn bộ. Bước ghi: B-FG09-10.4, B-FG09-10.5.'
+      dod:
+      - 'DoD K8 (b)(c)(d)(d2): 2 phiên → 1 phiên E-INC-009; đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014'
+    add:
+    - id: B-FG09-10.4
+      title: '[FG-09] K8 期ロック — chạy K1..K7 LOCK, ghi kết quả kỳ'
+      title_en: '[FG-09][K8][BE] K8 period lock — run K1..K7 in LOCK mode, write period results'
+      hours: 12
+      depends_on: [B-FG09-10.2]
+      description: 'Phần 2 của `lock_period` (trong cùng transaction của B-FG09-10.2): chạy K1..K7 chế độ LOCK; bảo đảm kỳ P+1 tồn tại TRƯỚC khi
+        ghi CARRY (B-PS-02); ghi period_billings LOCK, incentive_runs (+ chứng cứ tick CSV), incentive_results.'
+      dod:
+      - Kết quả kỳ khớp 試算 của B-FG09-10.1 với cùng đầu vào; CARRY chỉ ghi khi P+1 đã có
+    - id: B-FG09-10.5
+      title: '[FG-09] K8 期ロック — 端数調整, LOCKED, outbox, audit'
+      title_en: '[FG-09][K8][BE] K8 period lock — rounding adjustment, LOCKED status, outbox, audit'
+      hours: 10
+      depends_on: [B-FG09-10.4, C-FG11-08]
+      description: 'Phần 3 của `lock_period`: dòng 端数調整 theo suất vào accounting_export_lines (phạm vi theo trục kỳ — B-PA-01), trạng thái LOCKED,
+        outbox, audit PERIOD_LOCK; lỗi ở bất kỳ bước ghi nào → rollback toàn bộ.'
+      dod:
+      - 'DoD K8 (a): ép lỗi ở bước ghi outbox → không còn dòng incentive_results, P vẫn OPEN'
+
+# Issue phụ thuộc lá cũ B-FG09-10.2 thì phụ thuộc thêm bước cuối B-FG09-10.5
+redirect_depends: {B-FG09-10.2: B-FG09-10.5}
+
+# M-02: issue thô mới (giữ giờ LAB-1, PREMISE L5-A01 / L5-D12)
+new_rough:
+- id: C-PLAT-12
+  epic: EP-PLAT
+  role: FE
+  assignee: FE-2
+  hours: 216
+  title: '[PLAT][概算] Design system — component FE dùng chung, token, trạng thái'
+  title_en: '[PLAT][DesignSystem][FE] Design system — shared FE components, tokens, states (placeholder)'
+  spec: [_common-layout (khung màn, trạng thái C-20..C-31), 12 Screen Specification LAB-4]
+  rfp: [NFR-USE-01, SCOPE-01]
+  depends_on: [C-FG02-19, A-FG01-15, A-FG01-17]
+  description: 'Bộ component FE dùng chung (bảng, form, chọn ngày / 業務日, hộp xác nhận 決裁, thông báo lỗi), token màu / chữ cho PC và tablet.
+    Giờ giữ chỗ = LAB-1 CC: FE 22 + デザイン 8 人日 = 240 giờ, trừ 24 giờ khung màn / trạng thái đã có (C-PLAT-09..11). Tách thành lá
+    ≤ 16 giờ khi thiết kế 第1波 (C-FG02-19, A-FG01-15, A-FG01-17) xong; phần màn S1 cần thì tách trước S1.'
+  dod:
+  - Tách thành lá thiết kế / dev ≤ 16 giờ khi thiết kế 第1波 C-FG02-19, A-FG01-15, A-FG01-17 xong, trước buổi lập kế hoạch của sprint dự kiến (rolling-wave, L5-D08)
+  - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết
+- id: C-TEST-10
+  epic: EP-TEST
+  role: BE
+  assignee: BE-1
+  hours: 489
+  title: '[TEST][概算] Sửa lỗi sau 総合テスト / UAT — giữ chỗ FE + BE'
+  title_en: '[TEST][DefectFix][BE] Defect fixing after system test / UAT — FE + BE reserve (placeholder)'
+  spec: [task-breakdown.md §1.2 DoD chung]
+  rfp: [ACC-02, ACC-03]
+  depends_on: [C-TEST-01]
+  description: 'Chỗ giữ giờ sửa lỗi FE / BE phát hiện ở 総合テスト và UAT (#201 chỉ gồm phân loại lỗi và test lại). Giờ = LAB-1 QT: FE 19,3 + BE 41,8 人日
+    = 489 giờ. Không tách trước: mỗi sprint test tổng tách lá ≤ 16 giờ theo lỗi thật đã phân loại.'
+  dod:
+  - Tách thành lá sửa lỗi ≤ 16 giờ theo danh sách lỗi đã phân loại ở mỗi sprint test tổng (C-TEST-01 / C-TEST-07), không tách trước
+  - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết

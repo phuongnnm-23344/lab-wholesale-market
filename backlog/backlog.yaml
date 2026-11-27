@@ -4,7 +4,10 @@ meta:
   - backlog/p1-streams/{a,b,c}-backlog.yaml
   - backlog/scripts/p1-merge-decisions.yaml
   - backlog/scripts/gate-a-decisions.yaml
+  - backlog/scripts/gate-b-decisions.yaml
   note: Nguồn chuẩn của backlog LAB-5; dựng lại bằng build-backlog.py, không sửa tay.
+rescore_pending:
+- B-FG09-10.2
 iteration1:
   name: Iteration 1
   dates: 2027-02-01 → 2027-02-12 (S1 LAB-1)
@@ -3154,6 +3157,7 @@ issues:
   - role:QA
   - rule:aitai-main
   - rule:no-overwrite
+  - needs-split
   spec_refs:
   - specs/trade/technical-design/TRADE_AITAI_CONFIRM_TECH.md §5
   rfp_refs:
@@ -3169,6 +3173,7 @@ issues:
   description: Test tích hợp + UI SC-04-01; gồm hai request song song cùng lô, 01:59, lô về 0.
   dod:
   - Mỗi DoD (a)–(f) có ít nhất 1 ca; sổ SL không âm dưới tải song song
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: A-FG04-11
   epic: EP-FG04
   parent: null
@@ -4744,6 +4749,7 @@ issues:
   - kind:test
   - role:QA
   - rule:no-overwrite
+  - needs-split
   spec_refs:
   - specs/delivery/technical-design/DEL_RECORD_TECH.md §5 Điều kiện hoàn thành
   rfp_refs:
@@ -4760,6 +4766,7 @@ issues:
   description: Gồm gửi lại cùng clientRecordId, hai tablet cùng người mua, ngày khóa online / offline (HELD cần A-FG03-13).
   dod:
   - 'Mỗi dòng #1–#11 có 1 ca; DELIVERY_FUNC §4 mọi mã E-DEL ghi giao có 1 ca'
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: A-FG06-12
   epic: EP-FG06
   parent: null
@@ -5295,6 +5302,7 @@ issues:
   - role:BE
   - rule:no-overwrite
   - rule:human-decision
+  - needs-split
   spec_refs:
   - STL_DAY_CLOSE_TECH §4.1, §4.3, §4.4
   - SETTLE_FUNC §2.2
@@ -5322,6 +5330,7 @@ issues:
   dod:
   - 'STL_DAY_CLOSE DoD #2–#5, #7–#13 đạt (409 E-STL-002 detail.blocking mảng; 422 E-STL-003 / E-STL-013 / E-STL-001; 403 E-CMN-005; 409 E-STL-005 / E-STL-010 / E-STL-004 / E-STL-008)'
   - 'DoD #6: sau khóa mọi ghi vào ngày d → 423 E-CMN-003; không tồn tại endpoint reopen'
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: B-FG07-04
   epic: EP-FG07
   parent: null
@@ -5481,6 +5490,7 @@ issues:
   - kind:test
   - role:QA
   - rule:no-overwrite
+  - needs-split
   spec_refs:
   - STL_DAY_CLOSE_TECH §5 Điều kiện hoàn thành
   - STL_DEVICE_LOST_TECH §5 Điều kiện hoàn thành
@@ -5499,6 +5509,7 @@ issues:
     '
   dod:
   - 21 ca (13 + 8) có kịch bản, dữ liệu, kết quả chạy; case khóa xong ghi vào ngày d → 423 được kiểm ở ≥ 3 bảng (GD, lô, điều chỉnh)
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: B-FG07-07
   epic: EP-FG07
   parent: null
@@ -5893,6 +5904,7 @@ issues:
   - kind:dev
   - role:BE
   - rule:no-overwrite
+  - needs-split
   spec_refs:
   - STL_CORRECTION_DECIDE_TECH §4.4 No 1, 2, 5
   - ADR-004 §2.2
@@ -5913,6 +5925,7 @@ issues:
     '
   dod:
   - 'STL_CORRECTION_DECIDE DoD #1, #3, #10 đạt; so before / after dòng trades gốc giống hệt'
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: B-FG08-05
   epic: EP-FG08
   parent: null
@@ -5931,6 +5944,7 @@ issues:
   - kind:dev
   - role:BE
   - rule:no-overwrite
+  - needs-split
   spec_refs:
   - STL_CORRECTION_DECIDE_TECH §4.4 No 3, 4; §4.5
   - ADR-005 §2.8
@@ -5954,6 +5968,7 @@ issues:
     '
   dod:
   - 'STL_CORRECTION_DECIDE DoD #11, #12 đạt; KANNO / INCENTIVE APPROVED không ghi trade_adjustments'
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: B-FG08-06
   epic: EP-FG08
   parent: null
@@ -6074,6 +6089,7 @@ issues:
   - role:QA
   - rule:no-overwrite
   - rule:human-decision
+  - needs-split
   spec_refs:
   - STL_CORRECTION_DECIDE_TECH §5 Điều kiện hoàn thành
   - SC-08-03_SPEC §5
@@ -6094,6 +6110,7 @@ issues:
     '
   dod:
   - 14 ca có kịch bản + kết quả; ví dụ 相対-0005 (STL_CORRECTION_DECIDE §5) tái hiện đúng period_id 2027-08, business_date 2027-09-15
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: B-FG08-08
   epic: EP-FG08
   parent: null
@@ -6564,19 +6581,106 @@ issues:
   depends_on_spec:
   - STL_CORRECTION_DECIDE_TECH §4.4 No 4 (KANNO / INCENTIVE APPROVED — B-FG08-05)
   - 'FG-15 data migration: kỳ migrate phải có incentive_runs (DEC-005 — nhóm FG-02, 11–15)'
-  hours_hint: 16
+  hours_hint: 18
   stream: B
   description: 'Tính lại toàn bộ từng Q (theo period_code) bằng V_Q, K'' = K của MAIN (không hồi tố) trừ 修正申請 KANNO; C_INC cố định; D = I'' − R; tách dòng theo nguồn (INCENTIVE mới, KANNO mới, phần còn
     lại) xác định bằng correction_id; năm TC của dòng = năm TC của P.
 
     GD 後入力 không sinh DELTA (§3.4). Khối nặng nhất của đề — tách riêng để review lũy đẳng.
 
+
+    Tách thành 2 sub-issue sau Gate B (L5-D08, người dùng chốt 2026-11-27). Chỉ lá chấm SWP.
+
     '
   dod:
+  - 2 sub-issue xong
   - 'DoD K6: TV-02 +1.980 (K kỳ 08 giữ true); TV-03 −15.400 ghi ở 2028-05, tra v3, năm TC 2028'
   - 'TV-07: phân bổ sau khóa → DELTA 0; sau KANNO → +9.900 có correction_id, CORRECTION'
   - TV-13 / TV-15 không sinh DELTA kỳ 08; TV-14 +2.000 kỳ 11, +990 kỳ 12, không sinh −2.000, biến thể tách 2 dòng
   - Chạy 2 lần liên tiếp không đầu vào mới → lần 2 sinh 0 dòng (lũy đẳng); Q không có incentive_runs → E-INC-010
+- id: B-FG09-08.1
+  epic: EP-FG09
+  parent: B-FG09-08
+  kind: dev
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] K6 次期差分 — tính lại theo kỳ Q, D = I'''' − R, lũy đẳng'
+  title_en: '[FG-09][K6][BE] K6 next-period delta — recompute per period Q, D = I'''' - R, idempotent'
+  role: BE
+  assignee: BE-5
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:dev
+  - role:BE
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  - rule:versioned-rule
+  spec_refs:
+  - INC_ENGINE_TECH §4.6 (K6)
+  - INC_FUNC §2.8
+  - ADR-007 §2.4, §2.5
+  rfp_refs:
+  - FR-INC-03
+  - BR-INC-01
+  - FR-CORR-02
+  depends_on:
+  - B-FG09-03
+  - B-FG09-05
+  - B-FG09-06
+  - B-FG09-07
+  depends_on_spec:
+  - STL_CORRECTION_DECIDE_TECH §4.4 No 4 (KANNO / INCENTIVE APPROVED — B-FG08-05)
+  - 'FG-15 data migration: kỳ migrate phải có incentive_runs (DEC-005 — nhóm FG-02, 11–15)'
+  hours_hint: 10
+  stream: PL
+  description: 'Phần 1 của #K6: với mỗi kỳ Q đã khóa (theo period_code) tính lại I'''' bằng V_Q, K'' = K của MAIN (không hồi tố) trừ 修正申請 KANNO; C_INC cố định; D = I'''' − R. GD 後入力 không sinh DELTA (§3.4).
+    Chưa tách dòng theo nguồn (phần 2).'
+  dod:
+  - TV-02 +1.980 (K kỳ 08 giữ true); TV-13 / TV-15 không sinh DELTA kỳ 08
+  - Chạy 2 lần liên tiếp không đầu vào mới → lần 2 sinh 0 dòng (lũy đẳng); Q không có incentive_runs → E-INC-010
+- id: B-FG09-08.2
+  epic: EP-FG09
+  parent: B-FG09-08
+  kind: dev
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] K6 次期差分 — tách dòng theo nguồn, năm TC của dòng'
+  title_en: '[FG-09][K6][BE] K6 next-period delta — split rows by source (incentive / KANNO / rest), fiscal year'
+  role: BE
+  assignee: BE-5
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:dev
+  - role:BE
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  - rule:versioned-rule
+  spec_refs:
+  - INC_ENGINE_TECH §4.6 (K6)
+  - INC_FUNC §2.8
+  - ADR-007 §2.4, §2.5
+  rfp_refs:
+  - FR-INC-03
+  - BR-INC-01
+  - FR-CORR-02
+  depends_on:
+  - B-FG09-08.1
+  depends_on_spec:
+  - STL_CORRECTION_DECIDE_TECH §4.4 No 4 (KANNO / INCENTIVE APPROVED — B-FG08-05)
+  - 'FG-15 data migration: kỳ migrate phải có incentive_runs (DEC-005 — nhóm FG-02, 11–15)'
+  hours_hint: 8
+  stream: PL
+  description: 'Phần 2 của K6: tách D thành dòng theo nguồn (INCENTIVE mới, KANNO mới, phần còn lại) xác định bằng correction_id; năm TC của dòng = năm TC của P.'
+  dod:
+  - TV-03 −15.400 ghi ở 2028-05, tra v3, năm TC 2028
+  - 'TV-07: phân bổ sau khóa → DELTA 0; sau KANNO → +9.900 có correction_id, CORRECTION'
+  - TV-14 +2.000 kỳ 11, +990 kỳ 12, không sinh −2.000, biến thể tách 2 dòng
 - id: B-FG09-09
   epic: EP-FG09
   parent: null
@@ -6651,7 +6755,7 @@ issues:
   - B-FG09-08
   - B-FG09-09
   depends_on_spec: []
-  hours_hint: 32
+  hours_hint: 48
   stream: B
   description: 'Cha của 3 sub-issue theo bước (試算 / transaction khóa / route + MFA). K8 phụ thuộc tất cả khối. Chỉ lá chấm SWP.
 
@@ -6707,8 +6811,8 @@ issues:
   iteration: null
   milestone: null
   acceptance: []
-  title: '[FG-09] K8 期ロック — lock_period một transaction (khóa, ghi, 端数調整)'
-  title_en: '[FG-09][K8][BE] K8 period lock — `lock_period` in one transaction (lock, write, rounding adjustment)'
+  title: '[FG-09] K8 期ロック — khung transaction: khóa, kiểm điều kiện, rollback'
+  title_en: '[FG-09][K8][BE] K8 period lock — transaction frame: locks, ordered checks, full rollback'
   role: BE
   assignee: BE-4
   labels:
@@ -6734,17 +6838,90 @@ issues:
   - BILLING_DB 4.42 accounting_export_lines 端数調整 (FG-11 — nhóm FG-02, 11–15; B-PA-01, B-PA-02)
   - DEP-12 tạo kỳ P+1 (B-FG10-12)
   - DEP-13 outbox (nhóm FG-02, 11–15)
-  hours_hint: 16
+  hours_hint: 10
   stream: B
-  description: 'FOR UPDATE NOWAIT + advisory lock; kiểm điều kiện theo thứ tự (E-INC-009/002/003/004/005/014/013/008); chạy K1..K7 LOCK; bảo đảm P+1 tồn tại TRƯỚC khi ghi CARRY (B-PS-02);
-
-    ghi period_billings LOCK, incentive_runs (+ chứng cứ tick CSV), incentive_results, dòng 端数調整 theo suất (phạm vi theo trục kỳ — B-PA-01), LOCKED, outbox, audit PERIOD_LOCK. Lỗi bất kỳ → rollback toàn
-    bộ.
-
-    '
+  description: 'Phần 1 của `lock_period`: FOR UPDATE NOWAIT + advisory lock; kiểm điều kiện theo thứ tự (E-INC-009/002/003/004/005/014/013/008); lỗi bất kỳ → rollback toàn bộ. Bước ghi: B-FG09-10.4, B-FG09-10.5.'
+  dod:
+  - 'DoD K8 (b)(c)(d)(d2): 2 phiên → 1 phiên E-INC-009; đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014'
+- id: B-FG09-10.4
+  epic: EP-FG09
+  parent: B-FG09-10
+  kind: dev
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] K8 期ロック — chạy K1..K7 LOCK, ghi kết quả kỳ'
+  title_en: '[FG-09][K8][BE] K8 period lock — run K1..K7 in LOCK mode, write period results'
+  role: BE
+  assignee: BE-4
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:dev
+  - role:BE
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  spec_refs:
+  - INC_ENGINE_TECH §4.8 No 2–9
+  - INC_FUNC §2.12
+  - BILLING_DB 4.42, 4.49, 4.50
+  rfp_refs:
+  - FR-INC-01
+  - FR-INC-03
+  - BR-INC-01
+  depends_on:
+  - B-FG09-10.2
+  depends_on_spec:
+  - BILLING_DB 4.42 accounting_export_lines 端数調整 (FG-11 — nhóm FG-02, 11–15; B-PA-01, B-PA-02)
+  - DEP-12 tạo kỳ P+1 (B-FG10-12)
+  - DEP-13 outbox (nhóm FG-02, 11–15)
+  hours_hint: 12
+  stream: PL
+  description: 'Phần 2 của `lock_period` (trong cùng transaction của B-FG09-10.2): chạy K1..K7 chế độ LOCK; bảo đảm kỳ P+1 tồn tại TRƯỚC khi ghi CARRY (B-PS-02); ghi period_billings LOCK, incentive_runs
+    (+ chứng cứ tick CSV), incentive_results.'
+  dod:
+  - Kết quả kỳ khớp 試算 của B-FG09-10.1 với cùng đầu vào; CARRY chỉ ghi khi P+1 đã có
+- id: B-FG09-10.5
+  epic: EP-FG09
+  parent: B-FG09-10
+  kind: dev
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] K8 期ロック — 端数調整, LOCKED, outbox, audit'
+  title_en: '[FG-09][K8][BE] K8 period lock — rounding adjustment, LOCKED status, outbox, audit'
+  role: BE
+  assignee: BE-4
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:dev
+  - role:BE
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  spec_refs:
+  - INC_ENGINE_TECH §4.8 No 2–9
+  - INC_FUNC §2.12
+  - BILLING_DB 4.42, 4.49, 4.50
+  rfp_refs:
+  - FR-INC-01
+  - FR-INC-03
+  - BR-INC-01
+  depends_on:
+  - B-FG09-10.4
+  - C-FG11-08
+  depends_on_spec:
+  - BILLING_DB 4.42 accounting_export_lines 端数調整 (FG-11 — nhóm FG-02, 11–15; B-PA-01, B-PA-02)
+  - DEP-12 tạo kỳ P+1 (B-FG10-12)
+  - DEP-13 outbox (nhóm FG-02, 11–15)
+  hours_hint: 10
+  stream: PL
+  description: 'Phần 3 của `lock_period`: dòng 端数調整 theo suất vào accounting_export_lines (phạm vi theo trục kỳ — B-PA-01), trạng thái LOCKED, outbox, audit PERIOD_LOCK; lỗi ở bất kỳ bước ghi nào → rollback
+    toàn bộ.'
   dod:
   - 'DoD K8 (a): ép lỗi ở bước ghi outbox → không còn dòng incentive_results, P vẫn OPEN'
-  - 'DoD K8 (b)(c)(d)(d2): 2 phiên → 1 phiên E-INC-009; đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014'
 - id: B-FG09-10.3
   epic: EP-FG09
   parent: B-FG09-10
@@ -6775,6 +6952,7 @@ issues:
   - CAP-HUMAN-01
   depends_on:
   - B-FG09-10.2
+  - B-FG09-10.5
   depends_on_spec:
   - DEP-01 API MFA verify + tiêu thụ token (nhóm FG-02, 11–15)
   - DEP-14 delegations (nhóm FG-02, 11–15)
@@ -7113,15 +7291,95 @@ issues:
   - B-FG09-09
   - B-FG09-10.2
   - B-FG08-05
+  - B-FG09-10.5
   depends_on_spec:
   - DEP-06 fn_trade_late_entry (nhóm FG-01, 03–06) cho TV-13 / TV-15
-  hours_hint: 14
+  hours_hint: 16
   stream: B
   description: 'Nhóm 3 — chuỗi nhiều kỳ: khóa kỳ theo đúng ngày ghim ở TV (vd TV-14 kỳ 10 / 11 / 12), 修正申請 TRADE / KANNO / INCENTIVE / LATE_ENTRY duyệt giữa các lần khóa; kiểm lũy đẳng.
 
+
+    Tách thành 2 sub-issue sau Gate B (L5-D08, người dùng chốt 2026-11-27). Chỉ lá chấm SWP.
+
     '
   dod:
+  - 2 sub-issue xong
   - TV-02 +1.980; TV-03 −15.400 năm TC 2028; TV-04 CARRY_EXPIRED +2.200; TV-07 0 rồi +9.900 CORRECTION
+  - TV-13 4.400 (biến thể 0), không DELTA kỳ 08; TV-14 +2.000 / +990 và biến thể +2.990 hai dòng; TV-15 3.300 (biến thể 0)
+- id: B-FG09-16.1
+  epic: EP-FG09
+  parent: B-FG09-16
+  kind: test
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] 差分・繰越 テスト — TV-02, 03, 04, 07'
+  title_en: '[FG-09][K6-K7][QA] Delta / carry-over test — TV-02, 03, 04, 07'
+  role: QA
+  assignee: QA-2
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:test
+  - role:QA
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  - rule:versioned-rule
+  spec_refs:
+  - INCENTIVE_DB §5 TV-02, TV-03, TV-04, TV-07, TV-13, TV-14, TV-15
+  - INC_ENGINE_TECH §4.6, §4.7 DoD
+  rfp_refs:
+  - FR-INC-03
+  - BR-INC-01
+  - FR-CORR-02
+  depends_on:
+  - B-FG09-08
+  - B-FG09-09
+  - B-FG09-10.2
+  - B-FG08-05
+  - B-FG09-10.5
+  depends_on_spec:
+  - DEP-06 fn_trade_late_entry (nhóm FG-01, 03–06) cho TV-13 / TV-15
+  hours_hint: 8
+  stream: PL
+  description: Nhóm 3a — khóa kỳ theo ngày ghim ở TV; 修正申請 TRADE / KANNO / INCENTIVE duyệt giữa các lần khóa; kiểm lũy đẳng.
+  dod:
+  - TV-02 +1.980; TV-03 −15.400 năm TC 2028; TV-04 CARRY_EXPIRED +2.200; TV-07 0 rồi +9.900 CORRECTION
+- id: B-FG09-16.2
+  epic: EP-FG09
+  parent: B-FG09-16
+  kind: test
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] 後入力・複数期 テスト — TV-13, 14, 15'
+  title_en: '[FG-09][K6-K7][QA] Late entry / multi-period test — TV-13, 14, 15'
+  role: QA
+  assignee: QA-2
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:test
+  - role:QA
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  - rule:versioned-rule
+  spec_refs:
+  - INCENTIVE_DB §5 TV-02, TV-03, TV-04, TV-07, TV-13, TV-14, TV-15
+  - INC_ENGINE_TECH §4.6, §4.7 DoD
+  rfp_refs:
+  - FR-INC-03
+  - BR-INC-01
+  - FR-CORR-02
+  depends_on: []
+  depends_on_spec:
+  - DEP-06 fn_trade_late_entry (nhóm FG-01, 03–06) cho TV-13 / TV-15
+  hours_hint: 8
+  stream: PL
+  description: Nhóm 3b — chuỗi nhiều kỳ (vd TV-14 kỳ 10 / 11 / 12), 修正申請 LATE_ENTRY giữa các lần khóa, các biến thể tách dòng.
+  dod:
   - TV-13 4.400 (biến thể 0), không DELTA kỳ 08; TV-14 +2.000 / +990 và biến thể +2.990 hai dòng; TV-15 3.300 (biến thể 0)
 - id: B-FG09-17
   epic: EP-FG09
@@ -7190,13 +7448,88 @@ issues:
   - B-FG09-10
   - B-FG09-13
   depends_on_spec: []
-  hours_hint: 12
+  hours_hint: 18
   stream: B
   description: 'Test tích hợp transaction (ép lỗi, hai phiên đồng thời, đổi đầu vào giữa 試算 và khóa, quyền EXECUTE) + E2E màn theo ma trận vai §4.4 và mọi dòng Error Handling §5.
 
+
+    Tách thành 2 sub-issue sau Gate B (L5-D08, người dùng chốt 2026-11-27). Chỉ lá chấm SWP.
+
     '
   dod:
+  - 2 sub-issue xong
   - DoD K8 (a)(b)(c)(d)(d2)(e) đạt; ma trận vai §4.4 (STL-HEAD / SETTLE / OPS-HEAD / vai khác) đạt
+- id: B-FG09-18.1
+  epic: EP-FG09
+  parent: B-FG09-18
+  kind: test
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] 期ロック 結合テスト — transaction, DoD K8 (a)–(e)'
+  title_en: '[FG-09][K8][QA] Period lock integration test — transaction cases, DoD K8 (a)–(e)'
+  role: QA
+  assignee: QA-2
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:test
+  - role:QA
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  - rule:human-decision
+  spec_refs:
+  - INC_ENGINE_TECH §4.8 DoD K8
+  - SC-09-04_SPEC §4.4, §5, §6
+  rfp_refs:
+  - FR-INC-01
+  - FR-INC-03
+  - NFR-SEC-01
+  depends_on:
+  - B-FG09-10
+  - B-FG09-13
+  depends_on_spec: []
+  hours_hint: 10
+  stream: PL
+  description: 'Test tích hợp transaction 期ロック: ép lỗi từng bước ghi, hai phiên đồng thời, đổi đầu vào giữa 試算 và khóa, quyền EXECUTE.'
+  dod:
+  - DoD K8 (a)(b)(c)(d)(d2)(e) đạt
+- id: B-FG09-18.2
+  epic: EP-FG09
+  parent: B-FG09-18
+  kind: test
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] 期ロック E2E — SC-09-04 ma trận vai + Error Handling'
+  title_en: '[FG-09][SC-09-04][QA] Period lock E2E — SC-09-04 role matrix and error handling'
+  role: QA
+  assignee: QA-2
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:test
+  - role:QA
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  - rule:human-decision
+  spec_refs:
+  - INC_ENGINE_TECH §4.8 DoD K8
+  - SC-09-04_SPEC §4.4, §5, §6
+  rfp_refs:
+  - FR-INC-01
+  - FR-INC-03
+  - NFR-SEC-01
+  depends_on:
+  - B-FG09-18.1
+  depends_on_spec: []
+  hours_hint: 8
+  stream: PL
+  description: E2E màn SC-09-04 theo ma trận vai §4.4 và mọi dòng Error Handling §5.
+  dod:
+  - Ma trận vai §4.4 (STL-HEAD / SETTLE / OPS-HEAD / vai khác) đạt; mọi dòng §5 có case
 - id: B-FG09-19
   epic: EP-FG09
   parent: null
@@ -9068,6 +9401,7 @@ issues:
   - feature:platform
   - kind:dev
   - role:INFRA
+  - needs-split
   spec_refs:
   - ADR-001 §2-2
   - ADR-009 §2.1-1,2
@@ -9088,6 +9422,7 @@ issues:
   dod:
   - RDS Multi-AZ chạy ở stg, PITR bật 35 ngày, storage mã hóa KMS
   - Maintenance window nằm ngoài 01:00–10:00 JST (PRM-081)
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-PLAT-01.2
   epic: EP-PLAT
   parent: C-PLAT-01
@@ -9104,6 +9439,7 @@ issues:
   - feature:platform
   - kind:dev
   - role:INFRA
+  - needs-split
   spec_refs:
   - ADR-001 §2-2,4
   - ARCHITECTURE §3 (CloudFront + WAF, ALB + ECS)
@@ -9124,6 +9460,7 @@ issues:
   dod:
   - Ứng dụng mẫu chạy qua CloudFront → ALB → 2 task ở 2 AZ; tắt 1 task không mất dịch vụ
   - Rule rate-based cho đường đăng nhập / PIN bật, có test vượt ngưỡng bị chặn
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-PLAT-01.3
   epic: EP-PLAT
   parent: C-PLAT-01
@@ -9211,6 +9548,7 @@ issues:
   - feature:platform
   - kind:dev
   - role:INFRA
+  - needs-split
   spec_refs:
   - ADR-001 §2-4
   - ARCHITECTURE §3 (deploy rolling)
@@ -9230,6 +9568,7 @@ issues:
   dod:
   - PR chạy đủ bước, đỏ thì không merge được
   - Thử deploy prod lúc 03:00 JST bị pipeline từ chối, có log lý do
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-PLAT-03
   epic: EP-PLAT
   parent: null
@@ -9543,6 +9882,42 @@ issues:
   dod:
   - Mỗi trạng thái có story / trang mẫu; banner 423 giữ nguyên nội dung đang nhập
   - Nhãn chờ duyệt dùng 決裁 / 確認, không dùng 「承認」 (L4-D03)
+- id: C-PLAT-12
+  epic: EP-PLAT
+  parent: null
+  kind: rough
+  priority: P1
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[PLAT][概算] Design system — component FE dùng chung, token, trạng thái'
+  title_en: '[PLAT][DesignSystem][FE] Design system — shared FE components, tokens, states (placeholder)'
+  role: FE
+  assignee: FE-2
+  labels:
+  - feature:platform
+  - kind:rough
+  - role:FE
+  - needs-spec
+  spec_refs:
+  - _common-layout (khung màn
+  - trạng thái C-20..C-31)
+  - 12 Screen Specification LAB-4
+  rfp_refs:
+  - NFR-USE-01
+  - SCOPE-01
+  depends_on:
+  - C-FG02-19
+  - A-FG01-15
+  - A-FG01-17
+  depends_on_spec: []
+  hours_hint: 216
+  stream: PL
+  description: 'Bộ component FE dùng chung (bảng, form, chọn ngày / 業務日, hộp xác nhận 決裁, thông báo lỗi), token màu / chữ cho PC và tablet. Giờ giữ chỗ = LAB-1 CC: FE 22 + デザイン 8 人日 = 240 giờ, trừ 24 giờ
+    khung màn / trạng thái đã có (C-PLAT-09..11). Tách thành lá ≤ 16 giờ khi thiết kế 第1波 (C-FG02-19, A-FG01-15, A-FG01-17) xong; phần màn S1 cần thì tách trước S1.'
+  dod:
+  - Tách thành lá thiết kế / dev ≤ 16 giờ khi thiết kế 第1波 C-FG02-19, A-FG01-15, A-FG01-17 xong, trước buổi lập kế hoạch của sprint dự kiến (rolling-wave, L5-D08)
+  - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết
 - id: C-FG02-01
   epic: EP-FG02
   parent: null
@@ -12198,6 +12573,7 @@ issues:
   - RPT-06
   depends_on:
   - B-FG09-10.2
+  - B-FG09-10.5
   depends_on_spec: []
   hours_hint: 16
   stream: C
@@ -12535,6 +12911,7 @@ issues:
   - feature:ops
   - kind:dev
   - role:INFRA
+  - needs-split
   spec_refs:
   - ADR-009 §2.1-2,3,5
   - SCREEN-LIST §4 SC-14-B2
@@ -12555,6 +12932,7 @@ issues:
     '
   dod:
   - Bản sao ở Osaka có log PITR mới nhất trễ ≤ 15 phút (đo trên stg)
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-FG14-04
   epic: EP-FG14
   parent: null
@@ -12572,6 +12950,7 @@ issues:
   - feature:ops
   - kind:dev
   - role:INFRA
+  - needs-split
   spec_refs:
   - ADR-009 §2.1-4
   rfp_refs:
@@ -12589,6 +12968,7 @@ issues:
     '
   dod:
   - Runbook đã được người không viết nó đi thử một lần trên stg
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-FG14-05
   epic: EP-FG14
   parent: null
@@ -13128,6 +13508,7 @@ issues:
   - role:QA
   - rule:aitai-main
   - rule:no-overwrite
+  - needs-split
   spec_refs:
   - ARCHITECTURE §4.1, §4.2
   rfp_refs:
@@ -13145,6 +13526,7 @@ issues:
     '
   dod:
   - Kịch bản chạy hết trên stg với dữ liệu seed, kết quả ghi vào báo cáo W4
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-TEST-03
   epic: EP-TEST
   parent: null
@@ -13356,6 +13738,7 @@ issues:
   - feature:test
   - kind:test
   - role:QA
+  - needs-split
   spec_refs:
   - ARCHITECTURE §11 (NFR-SEC-*)
   - ADR-002
@@ -13376,6 +13759,7 @@ issues:
     '
   dod:
   - Báo cáo chẩn đoán; lỗi mức cao đã sửa hoặc có quyết định chấp nhận ghi lại
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-TEST-06
   epic: EP-TEST
   parent: null
@@ -13392,6 +13776,7 @@ issues:
   - feature:test
   - kind:test
   - role:INFRA
+  - needs-split
   spec_refs:
   - ADR-009 §2.1-4
   rfp_refs:
@@ -13407,6 +13792,7 @@ issues:
     '
   dod:
   - Biên bản có RTO ≤ 4 giờ và RPO ≤ 15 phút đo được, hoặc ghi rõ phần chưa đạt
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-TEST-07
   epic: EP-TEST
   parent: null
@@ -13423,6 +13809,7 @@ issues:
   - feature:test
   - kind:test
   - role:QA
+  - needs-split
   spec_refs:
   - wbs-schedule-ja.md §2 W5
   - function-list §5 SV-01
@@ -13440,6 +13827,7 @@ issues:
     '
   dod:
   - Sổ lỗi UAT có trạng thái từng lỗi; dữ liệu UAT không chứa thông tin cá nhân thật
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-TEST-08
   epic: EP-TEST
   parent: null
@@ -13456,6 +13844,7 @@ issues:
   - feature:test
   - kind:test
   - role:INFRA
+  - needs-split
   spec_refs:
   - wbs-schedule-ja.md §2 W6, §2.1
   rfp_refs:
@@ -13473,6 +13862,7 @@ issues:
     '
   dod:
   - Kế hoạch được diễn tập ở rehearsal lần 2 (7/11), có biên bản
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: C-TEST-09
   epic: EP-TEST
   parent: null
@@ -13505,6 +13895,38 @@ issues:
     '
   dod:
   - Biên bản walkthrough runbook có chữ ký IT khách (ACC-05)
+- id: C-TEST-10
+  epic: EP-TEST
+  parent: null
+  kind: rough
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[TEST][概算] Sửa lỗi sau 総合テスト / UAT — giữ chỗ FE + BE'
+  title_en: '[TEST][DefectFix][BE] Defect fixing after system test / UAT — FE + BE reserve (placeholder)'
+  role: BE
+  assignee: BE-1
+  labels:
+  - feature:test
+  - kind:rough
+  - role:BE
+  - needs-spec
+  spec_refs:
+  - task-breakdown.md §1.2 DoD chung
+  rfp_refs:
+  - ACC-02
+  - ACC-03
+  depends_on:
+  - C-TEST-01
+  depends_on_spec: []
+  hours_hint: 489
+  stream: PL
+  description: 'Chỗ giữ giờ sửa lỗi FE / BE phát hiện ở 総合テスト và UAT (#201 chỉ gồm phân loại lỗi và test lại). Giờ = LAB-1 QT: FE 19,3 + BE 41,8 人日 = 489 giờ. Không tách trước: mỗi sprint test tổng tách
+    lá ≤ 16 giờ theo lỗi thật đã phân loại.'
+  dod:
+  - Tách thành lá sửa lỗi ≤ 16 giờ theo danh sách lỗi đã phân loại ở mỗi sprint test tổng (C-TEST-01 / C-TEST-07), không tách trước
+  - Giờ hiện tại là chỗ giữ effort theo LAB-1, không phải cam kết
 - id: C-CLR-01
   epic: EP-CLAR
   parent: null
@@ -15514,7 +15936,7 @@ issues:
   epic: EP-FG02
   parent: null
   kind: design
-  priority: P2
+  priority: P1
   iteration: null
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance:
@@ -15548,7 +15970,7 @@ issues:
   epic: EP-FG02
   parent: C-FG02-19
   kind: design
-  priority: P2
+  priority: P1
   iteration: null
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
@@ -15576,7 +15998,7 @@ issues:
   epic: EP-FG02
   parent: C-FG02-19
   kind: design
-  priority: P2
+  priority: P1
   iteration: null
   milestone: 設計第1波 (khách duyệt 2027-01-22)
   acceptance: []
@@ -16308,6 +16730,7 @@ issues:
   - feature:migrate
   - kind:design
   - role:BE
+  - needs-split
   spec_refs:
   - SCREEN-LIST
   rfp_refs: *id016
@@ -16319,6 +16742,7 @@ issues:
     ≈ 15% giờ BE.'
   dod:
   - Tài liệu theo khuôn spec-standards (BM-2-901-51 / 52 / 53 / 54), review nội bộ, khách duyệt ở 設計第4波 = G2 (khách duyệt 2027-03-05)
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: A-FG01-19
   epic: EP-FG01
   parent: null

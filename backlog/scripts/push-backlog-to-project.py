@@ -76,74 +76,80 @@ def set_field(item, name, value):
               p=cfg["project_id"], i=item, f=f["id"])
 
 
-n_new = 0
-for x in order:
-    if ONLY and x not in ONLY:
-        continue
-    r = M.setdefault(x, {"id": x})
-    if not r.get("number"):
-        if n_new >= LIMIT:
-            break
-        meta = iss.get(x) or eps[x]
-        labels = (["epic"] + meta["labels"]) if x in eps else meta["labels"]
-        title = meta.get("title_en") or meta["title"]
-        res = None
-        for attempt in range(6):
-            try:  # POST không tự thử lại: lỗi mạng có thể đã tạo issue → tìm theo backlog-id trước khi tạo lại
-                res = H.gh(["api", f"repos/{H.OWNER}/{H.REPO}/issues", "-X", "POST", "--input", "-"],
-                           {"title": title, "body": body(x), "labels": sorted(set(labels))}, retries=1)
+
+def main():
+    n_new = 0
+    for x in order:
+        if ONLY and x not in ONLY:
+            continue
+        r = M.setdefault(x, {"id": x})
+        if not r.get("number"):
+            if n_new >= LIMIT:
                 break
-            except ConnectionError:
-                time.sleep(20)
-                recent = H.gh(["api", f"repos/{H.OWNER}/{H.REPO}/issues?state=all&per_page=5&sort=created&direction=desc"])
-                hit = [i for i in recent if f"<!-- backlog-id: {x} -->" in (i.get("body") or "")]
-                if hit:
-                    res = hit[0]
+            meta = iss.get(x) or eps[x]
+            labels = (["epic"] + meta["labels"]) if x in eps else meta["labels"]
+            title = meta.get("title_en") or meta["title"]
+            res = None
+            for attempt in range(6):
+                try:  # POST không tự thử lại: lỗi mạng có thể đã tạo issue → tìm theo backlog-id trước khi tạo lại
+                    res = H.gh(["api", f"repos/{H.OWNER}/{H.REPO}/issues", "-X", "POST", "--input", "-"],
+                               {"title": title, "body": body(x), "labels": sorted(set(labels))}, retries=1)
                     break
-        assert res, f"không tạo được {x}"
-        r.update(number=str(res["number"]), node_id=res["node_id"])
-        H.save_map(M)
-        n_new += 1
-        print(f"created #{res['number']} {x}", flush=True)
-        time.sleep(GAP)
-    p = parent_of(x)
-    if p and not r.get("linked"):
-        H.graphql("mutation($p:ID!,$c:ID!){addSubIssue(input:{issueId:$p,subIssueId:$c}){issue{id}}}", sub_issues=True,
-                  p=M[p]["node_id"], c=r["node_id"])
-        r["linked"] = "1"
-        H.save_map(M)
-    if not r.get("item_id"):
-        # Project tự thêm sub-issue khi nối cha (auto-add sub-issues) hoặc lần chạy trước đã thêm → tra lại, có độ trễ
-        def lookup():
-            nodes = H.graphql("query($c:ID!){node(id:$c){... on Issue{projectItems(first:10){nodes{id project{id}}}}}}",
-                              c=r["node_id"])["node"]["projectItems"]["nodes"]
-            return [n["id"] for n in nodes if n["project"]["id"] == cfg["project_id"]]
-        have = lookup()
-        if not have:
-            try:
-                have = [H.graphql("mutation($p:ID!,$c:ID!){addProjectV2ItemById(input:{projectId:$p,contentId:$c}){item{id}}}",
-                                  p=cfg["project_id"], c=r["node_id"])["addProjectV2ItemById"]["item"]["id"]]
-            except RuntimeError as ex:
-                if "already exists" not in str(ex):
-                    raise
-                for _ in range(10):
-                    time.sleep(3)
-                    have = lookup()
-                    if have:
+                except ConnectionError:
+                    time.sleep(20)
+                    recent = H.gh(["api", f"repos/{H.OWNER}/{H.REPO}/issues?state=all&per_page=5&sort=created&direction=desc"])
+                    hit = [i for i in recent if f"<!-- backlog-id: {x} -->" in (i.get("body") or "")]
+                    if hit:
+                        res = hit[0]
                         break
-                assert have, f"không tìm được item của {x}"
-        r["item_id"] = have[0]
-        H.save_map(M)
-    if not r.get("fields_set"):
-        meta = iss.get(x) or eps[x]
-        set_field(r["item_id"], "Status", "Todo")
-        set_field(r["item_id"], "Priority", meta["priority"])
-        if x in iss:
-            set_field(r["item_id"], "Người phụ trách (giả định)", meta["assignee"])
-            if meta["iteration"]:
-                set_field(r["item_id"], "Iteration", meta["iteration"])
-            if meta.get("milestone"):
-                set_field(r["item_id"], "Đợt / mốc", meta["milestone"])
-        r["fields_set"] = "1"
-        H.save_map(M)
-print("done; mapped", sum(1 for v in M.values() if v.get("number")), "/", len(order))
+            assert res, f"không tạo được {x}"
+            r.update(number=str(res["number"]), node_id=res["node_id"])
+            H.save_map(M)
+            n_new += 1
+            print(f"created #{res['number']} {x}", flush=True)
+            time.sleep(GAP)
+        p = parent_of(x)
+        if p and not r.get("linked"):
+            H.graphql("mutation($p:ID!,$c:ID!){addSubIssue(input:{issueId:$p,subIssueId:$c}){issue{id}}}", sub_issues=True,
+                      p=M[p]["node_id"], c=r["node_id"])
+            r["linked"] = "1"
+            H.save_map(M)
+        if not r.get("item_id"):
+            # Project tự thêm sub-issue khi nối cha (auto-add sub-issues) hoặc lần chạy trước đã thêm → tra lại, có độ trễ
+            def lookup():
+                nodes = H.graphql("query($c:ID!){node(id:$c){... on Issue{projectItems(first:10){nodes{id project{id}}}}}}",
+                                  c=r["node_id"])["node"]["projectItems"]["nodes"]
+                return [n["id"] for n in nodes if n["project"]["id"] == cfg["project_id"]]
+            have = lookup()
+            if not have:
+                try:
+                    have = [H.graphql("mutation($p:ID!,$c:ID!){addProjectV2ItemById(input:{projectId:$p,contentId:$c}){item{id}}}",
+                                      p=cfg["project_id"], c=r["node_id"])["addProjectV2ItemById"]["item"]["id"]]
+                except RuntimeError as ex:
+                    if "already exists" not in str(ex):
+                        raise
+                    for _ in range(10):
+                        time.sleep(3)
+                        have = lookup()
+                        if have:
+                            break
+                    assert have, f"không tìm được item của {x}"
+            r["item_id"] = have[0]
+            H.save_map(M)
+        if not r.get("fields_set"):
+            meta = iss.get(x) or eps[x]
+            set_field(r["item_id"], "Status", "Todo")
+            set_field(r["item_id"], "Priority", meta["priority"])
+            if x in iss:
+                set_field(r["item_id"], "Người phụ trách (giả định)", meta["assignee"])
+                if meta["iteration"]:
+                    set_field(r["item_id"], "Iteration", meta["iteration"])
+                if meta.get("milestone"):
+                    set_field(r["item_id"], "Đợt / mốc", meta["milestone"])
+            r["fields_set"] = "1"
+            H.save_map(M)
+    print("done; mapped", sum(1 for v in M.values() if v.get("number")), "/", len(order))
+
+
+if __name__ == "__main__":
+    main()

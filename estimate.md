@@ -2,7 +2,11 @@
 
 **Báo cáo HTML của skill chấm SWP (`tkm:sun-estimate`):** [`reports/sun-estimate-lab5-project1-20261127-0216.html`](reports/sun-estimate-lab5-project1-20261127-0216.html)
 
-Phạm vi: 499 item trên GitHub Project 1 (18 epic + 481 issue) — 401 lá được chấm, 98 cha / epic lấy tổng con. Point = SWP đã chốt, Hours = SWP × 2,0 (§2). Số trong các bảng §2.2, §3, §4 sinh bằng script từ payload nhúng trong báo cáo HTML, không gõ tay (`backlog/scripts/build-estimate-swp-hours.py` → `backlog/estimate-swp-hours.csv` → `render-estimate-tables.py`).
+Phạm vi: GitHub Project 1 — lần chấm P3: 499 item (18 epic + 481 issue), 401 lá được chấm, 98 cha / epic lấy tổng con; sau Gate B thêm 10 issue (#500–#509, tách lá > 16 giờ + 2 issue thô, PREMISE L5-D08, L5-D12). Point = SWP đã chốt, Hours = SWP × 2,0 (§2). Số trong các bảng §2.2, §3, §4 sinh bằng script từ payload nhúng trong báo cáo HTML, không gõ tay (`backlog/scripts/build-estimate-swp-hours.py` → `backlog/estimate-swp-hours.csv` → `render-estimate-tables.py`).
+
+<!-- BEGIN GEN pending -->
+> **Đang chờ chấm SWP (11 lá, sau Gate B):** B-FG09-08.1, B-FG09-08.2, B-FG09-10.2, B-FG09-10.4, B-FG09-10.5, B-FG09-16.1, B-FG09-16.2, B-FG09-18.1, B-FG09-18.2, C-PLAT-12, C-TEST-10. Các bảng dưới là số của lần chấm P3: lá mới chưa có trong bảng, lá đổi phạm vi còn SWP cũ; người dùng chốt điểm rồi chạy lại build → ghi field → render.
+<!-- END GEN pending -->
 
 ## 1. Issue mẫu skill chọn để kiểm
 
@@ -30,6 +34,7 @@ Kết quả: 393 lá giữ nguyên, 4 lá mẫu (#24, #69, #486, #116) và 1 lá
 | Cách đã chọn | **Quy ước đổi SWP → giờ**, không ước giờ trực tiếp từ từng issue |
 | Vì sao | `tkm:sun-estimate` không sinh giờ; ước trực tiếp 401 lá thì không kiểm được giờ có đi cùng SWP hay không. Một hệ số chung giữ đúng thứ tự lớn / nhỏ mà người dùng đã chốt ở §1; muốn đổi giờ của một issue phải đổi SWP qua người chốt (plan §4, người dùng đồng ý một hệ số — Q3) |
 | Quy tắc | **Hours = SWP × k, k = 2,0 giờ / SWP**, làm tròn 0,5 giờ (với k = 2,0 luôn ra số nguyên). Lá: Point = SWP, Hours = SWP × 2,0. Cha / epic: Point = SWP cộng dồn của lá con cháu, Hours = tổng Hours con. Không sửa tay Point / Hours trên Project |
+| Giờ trong thân issue | Dòng "Giờ sơ bộ N" trong thân issue là giờ ước khi break (P1) hoặc chỗ giữ giờ LAB-1 của issue thô — chỉ để đối chiếu. **Số dùng để lập kế hoạch là trường Hours** (vd. #116 thân 16, Hours 40) |
 | Áp dụng nhất quán | Một nguồn: payload nhúng trong báo cáo HTML → `build-estimate-swp-hours.py` (kiểm SWP cha = tổng lá, đủ 499 dòng) → `backlog/estimate-swp-hours.csv` → `write-point-hours-to-project.py` (chỉ ghi ô khác, giãn 2 giây / lần ghi, đọc lại cả 499 item so từng dòng). Đổi SWP → chạy lại ba bước |
 
 ### 2.1 Chốt k = 2,0 thế nào
@@ -38,13 +43,13 @@ Kết quả: 393 lá giữ nguyên, 4 lá mẫu (#24, #69, #486, #116) và 1 lá
 
 | Nguồn | Giờ / SWP | Ghi chú |
 |---|---|---|
-| Issue mẫu người dùng chốt, so giờ của chức năng tương ứng | #24: 2 giờ / 1 = **2,0** · #69: 12 giờ (cách tính 基本設計 LAB-1: 8 giờ / màn + 15% công BE phần sync) / 4 = **3,0** · #486: FT-09-07 期ロック của LAB-1 BE 3 人日 = 24 giờ / 15 = **1,6** · #97: 6 giờ (giữ chỗ theo LAB-1) / 4 = **1,5** · #116: 16 giờ / 20 = 0,8 — bỏ, vì giờ sơ bộ bị chặn ở trần 16 giờ / lá trong khi người dùng nói việc lớn hơn | Trung vị 4 mẫu dùng được: **1,8** |
+| Issue mẫu người dùng chốt, so giờ của chức năng tương ứng | Một nguồn cho cả 4 mẫu: giờ sơ bộ P1 của chính issue (`hours_hint`). #24: 2 giờ / 1 = **2,0** · #69: 12 giờ / 4 = **3,0** (giờ sơ bộ của issue thiết kế tính theo 基本設計 LAB-1: 8 giờ / màn + 15% công BE phần sync) · #486: 16 giờ / 15 = **1,07** · #97: 6 giờ (giữ chỗ theo LAB-1) / 4 = **1,5** · #116: 16 giờ / 20 = 0,8 — bỏ, vì giờ sơ bộ bị chặn ở trần 16 giờ / lá trong khi người dùng nói việc lớn hơn. Đối chiếu thêm (không tính vào trung vị): #486 so với LAB-1 FT-09-07 期ロック BE 3 人日 = 24 giờ / 15 = 1,6 | Trung vị 4 mẫu: **1,75** |
 | Giờ sơ bộ P1 (ước theo issue, `hours_hint`) của 304 lá không phải thô | Bình quân gia quyền **2,07**; dev (167 lá) trung vị **2,0**; nhóm SWP 3–5 (190 lá) 2,0–3,0 | Lá SWP ≥ 8 chỉ còn 0,8–1,8 vì giờ sơ bộ bị chặn 16 giờ |
 | Estimate LAB-1 theo nhóm chức năng (FG-01..15, 738,6 人日 = 5.909 giờ) / SWP các lá không phải thiết kế của FG-01..15 (1.250) | 4,7 | Chỉ dùng để kiểm trần: dòng FG của LAB-1 gồm QA 30–50% công FE + BE, FE × 1,3 cho 2 bố cục, thiết kế màn — không phải giờ của một issue. Lấy 4,7 thì gần hết lá dev > 16 giờ, trái nguyên tắc độ hạt §1.1 của task-breakdown |
 
-**Chốt k = 2,0**: nằm giữa trung vị issue mẫu (1,8) và giờ sơ bộ theo issue (2,07), là số tròn dễ áp. Hệ quả kiểm được: việc "dễ" 3–5 SWP = 6–10 giờ, đúng cỡ lá 4–16 giờ; Iteration 1 (26 lá, 112 SWP) = **224 giờ** so với 254 giờ sơ bộ, không lá nào > 16 giờ, vẫn trong năng lực 360 giờ (task-breakdown §1.3).
+**Chốt k = 2,0**: nằm giữa trung vị issue mẫu (1,75) và giờ sơ bộ theo issue (2,07), là số tròn dễ áp. Hệ quả kiểm được: việc "dễ" 3–5 SWP = 6–10 giờ, đúng cỡ lá 4–16 giờ; Iteration 1 (26 lá, 112 SWP) = **224 giờ** so với 254 giờ sơ bộ, không lá nào > 16 giờ, vẫn trong năng lực 360 giờ (task-breakdown §1.3).
 
-### 2.2 Chỗ một k chung lệch theo loại việc — để Expert chấm ở Gate B
+### 2.2 Chỗ một k chung lệch theo loại việc (Expert Gate B: giữ một k = 2,0)
 
 <!-- BEGIN GEN kind-check -->
 | Loại lá | Số lá | SWP | Giờ sơ bộ (P1) | Giờ sơ bộ / SWP | Giờ = SWP × 2 | Chênh so với giờ sơ bộ |
@@ -55,13 +60,15 @@ Kết quả: 393 lá giữ nguyên, 4 lá mẫu (#24, #69, #486, #116) và 1 lá
 | làm rõ | 41 | 55 | 60 | 1,09 | 110 | +50 (+83%) |
 | thô (giữ chỗ) | 97 | 348 | 1.955 | 5,62 | 696 | −1.259 (−64%) |
 | **Tổng** | **401** | **1.701** | **4.751** | **2,79** | **3.402** | **−1.349 (−28%)** |
+| **Giờ dự báo cả đợt** (đo tải mốc S2–S8) | | | | | **4.661** | = lá không thô SWP × 2 (2.706) + lá thô theo giờ giữ chỗ (1.955) |
 <!-- END GEN kind-check -->
 
 - **Thô (giữ chỗ) −64%**: 97 lá thô giữ giờ LAB-1 (PREMISE L5-A01) nhưng skill chấm theo đơn vị tự nhiên thiếu spec (độ tin cậy thấp — caveat trong báo cáo HTML). Đây là lệch lớn nhất. Không đổi: giờ giữ chỗ LAB-1 vẫn ghi trong thân issue và ở cột Ghi chú §3; khi issue thiết kế xong, issue thô tách thành lá dev / test ≤ 16 giờ và **lá mới được chấm lại** — lúc đó giờ theo spec thay cho cả hai con số.
 - **Thiết kế −35%**: SWP chấm viết tài liệu thấp hơn cách tính 8 giờ / màn của LAB-1 (giờ sơ bộ / SWP = 3,1). Ảnh hưởng mốc 設計第1–4波 — xem §4 dòng thiết kế.
 - **Test +47%, làm rõ +83%**: SWP chấm test nặng hơn giờ sơ bộ (sau hiệu chỉnh `cal-001`); làm rõ lệch nhiều về tỷ lệ nhưng chỉ 50 giờ.
-- **Không thêm k thứ hai**: người dùng chốt một hệ số (plan §0 dòng 12); k riêng cho thô thực chất là quay lại giờ LAB-1, bỏ phép chấm. Nếu Gate B thấy cần, phương án PL đề xuất là k riêng cho thiết kế = 3,0 (theo cách tính 基本設計 LAB-1), +213 giờ — chờ Expert quyết.
-- **22 lá không phải thô có Hours > 16 giờ** (SWP ≥ 9: test kịch bản / UAT / 決裁 / 日次締め, migration nền tảng, #486 期ロック 30 giờ, #116 40 giờ). Không lá nào trong Iteration 1. Quy tắc: tách thành lá ≤ 16 giờ trước buổi lập kế hoạch của sprint dự kiến (cùng quy tắc issue thô, task-breakdown §1.1); danh sách theo epic ở §3.
+- **Không thêm k thứ hai** (Expert Gate B quyết giữ một k): người dùng chốt một hệ số (plan §0 dòng 12); bảng trên so với giờ sơ bộ PL tự ước, chưa phải giờ thật — sửa riêng thiết kế (+213 giờ) mà không sửa test / làm rõ theo chiều ngược lại là chọn lọc. Thiết kế xem lại riêng ở lần hiệu chỉnh sau Iteration 1; tải 設計第4波 đo bằng **giờ sơ bộ 311 giờ**, không bằng SWP × 2.
+- **Giờ dự báo cả đợt** (dòng cuối bảng): Hours của lá thô = SWP × 2 thấp hơn giờ giữ chỗ có hệ thống (chấm không nâng điểm khi thiếu spec), nên tổng Hours không dùng để dự báo tải S2–S8. Rủi ro mốc ở progress-report dùng **giờ dự báo cả đợt**; Hours trên Project dùng cho sprint đang lập kế hoạch.
+- **22 lá đã có spec có Hours > 16 giờ** (SWP ≥ 9), không lá nào trong Iteration 1 — xử lý theo **ngoại lệ có tên ở PREMISE L5-D08, người dùng xác nhận 2026-11-27**: 4 lá 完納奨励金 tách ngay (#381 → #502, #503; #486 thu hẹp + #504, #506 cùng cha #466; #489 → #505, #507; #494 → #508, #509), chờ chấm SWP; 18 lá còn lại mang nhãn `needs-split` trên Project, tách và chấm lại trước buổi lập kế hoạch sprint dự kiến (danh sách theo epic ở §3).
 - **Hiệu chỉnh k sau Iteration 1**: k = 2,0 là giả định trước khi có giờ thật. Hết sprint giả lập, so giờ đốt với SWP đã xong; lệch > 20% thì đề xuất k mới qua người dùng, chạy lại build + ghi field.
 
 ## 3. Tổng theo epic
@@ -73,21 +80,21 @@ Số issue = lá / tất cả issue trong epic (gồm cha). SWP và giờ cộng
 |---|---|---|---|---|
 | #5 EP-FG01 — [FG-01][EPIC] Participants and qualifications: permit (wholesaler) / approval (trading participant) | 35 / 43 | 141 | 282 | 2 lá thô: giữ chỗ 22 giờ LAB-1 → 12 giờ |
 | #6 EP-FG03 — [FG-03][EPIC] Lot intake and inspection records — intake, quality inspection, offline / sync | 31 / 39 | 123 | 246 | 8 lá thô: giữ chỗ 141 giờ LAB-1 → 66 giờ |
-| #7 EP-FG04 — [FG-04][EPIC] Negotiated (aitai) trades — main flow | 30 / 37 | 118 | 236 | 8 lá thô: giữ chỗ 119 giờ LAB-1 → 50 giờ; > 16 giờ, tách trước sprint: #432 |
+| #7 EP-FG04 — [FG-04][EPIC] Negotiated (aitai) trades — main flow | 30 / 37 | 118 | 236 | 8 lá thô: giữ chỗ 119 giờ LAB-1 → 50 giờ; needs-split (> 16 giờ, tách trước sprint planning): #432 |
 | #8 EP-FG05 — [FG-05][EPIC] Auction result recording — secondary flow | 12 / 15 | 40 | 80 | 2 lá thô: giữ chỗ 42 giờ LAB-1 → 16 giờ |
-| #9 EP-FG06 — [FG-06][EPIC] Delivery management — deliveries, exceptions, disputes | 22 / 30 | 94 | 188 | 2 lá thô: giữ chỗ 31 giờ LAB-1 → 14 giờ; > 16 giờ, tách trước sprint: #377 |
-| #10 EP-FG07 — [FG-07][EPIC] Reconciliation and daily close — reconciliation, day lock, disputes / SLA | 16 / 20 | 81 | 162 | 6 lá thô: giữ chỗ 176 giờ LAB-1 → 42 giờ; > 16 giờ, tách trước sprint: #328, #379 |
-| #11 EP-FG08 — [FG-08][EPIC] Correction requests and sign-off — post-confirmation adjustments (REVERSE / DELTA) | 13 / 16 | 72 | 144 | 3 lá thô: giữ chỗ 80 giờ LAB-1 → 18 giờ; > 16 giờ, tách trước sprint: #281, #282, #331 |
-| #12 EP-FG09 — [FG-09][EPIC] On-time full-payment incentive | 36 / 42 | 184 | 368 | 7 lá thô: giữ chỗ 136 giờ LAB-1 → 50 giờ; > 16 giờ, tách trước sprint: #381, #486, #489, #494 |
+| #9 EP-FG06 — [FG-06][EPIC] Delivery management — deliveries, exceptions, disputes | 22 / 30 | 94 | 188 | 2 lá thô: giữ chỗ 31 giờ LAB-1 → 14 giờ; needs-split (> 16 giờ, tách trước sprint planning): #377 |
+| #10 EP-FG07 — [FG-07][EPIC] Reconciliation and daily close — reconciliation, day lock, disputes / SLA | 16 / 20 | 81 | 162 | 6 lá thô: giữ chỗ 176 giờ LAB-1 → 42 giờ; needs-split (> 16 giờ, tách trước sprint planning): #328, #379 |
+| #11 EP-FG08 — [FG-08][EPIC] Correction requests and sign-off — post-confirmation adjustments (REVERSE / DELTA) | 13 / 16 | 72 | 144 | 3 lá thô: giữ chỗ 80 giờ LAB-1 → 18 giờ; needs-split (> 16 giờ, tách trước sprint planning): #281, #282, #331 |
+| #12 EP-FG09 — [FG-09][EPIC] On-time full-payment incentive | 36 / 42 | 184 | 368 | 7 lá thô: giữ chỗ 136 giờ LAB-1 → 50 giờ |
 | #13 EP-FG10 — [FG-10][EPIC] Rule versions, incentive rates, masters, calendar | 30 / 36 | 125 | 250 | 13 lá thô: giữ chỗ 292 giờ LAB-1 → 88 giờ |
 | #14 EP-FG02 — [FG-02][EPIC] Accounts, authentication, authorization — accounts, MFA, proxy, PIN | 32 / 40 | 130 | 260 | 5 lá thô: giữ chỗ 96 giờ LAB-1 → 34 giờ |
 | #15 EP-FG11 — [FG-11][EPIC] Reports and data export — 12 reports, accounting CSV | 35 / 41 | 138 | 276 | 21 lá thô: giữ chỗ 468 giờ LAB-1 → 140 giờ |
 | #16 EP-FG12 — [FG-12][EPIC] Notifications — in-app + email | 9 / 11 | 37 | 74 | 4 lá thô: giữ chỗ 56 giờ LAB-1 → 20 giờ |
 | #17 EP-FG13 — [FG-13][EPIC] Audit and security — audit log, security, 7-year retention | 16 / 20 | 66 | 132 | 8 lá thô: giữ chỗ 132 giờ LAB-1 → 54 giờ |
-| #18 EP-FG14 — [FG-14][EPIC] Operations monitoring and availability — monitoring, backup, RTO / RPO | 8 / 8 | 48 | 96 | 1 lá thô: giữ chỗ 16 giờ LAB-1 → 6 giờ; > 16 giờ, tách trước sprint: #257, #294 |
-| #19 EP-FG15 — [FG-15][EPIC] Data migration | 10 / 14 | 66 | 132 | 7 lá thô: giữ chỗ 148 giờ LAB-1 → 86 giờ; > 16 giờ, tách trước sprint: #223 |
-| #1 EP-PLAT — [PLAT][EPIC] Platform — AWS foundation, CI/CD, app skeleton, shared conventions | 14 / 15 | 82 | 164 | > 16 giờ, tách trước sprint: #4, #190, #253 |
-| #20 EP-TEST — [TEST][EPIC] System testing, UAT and release | 11 / 13 | 101 | 202 | > 16 giờ, tách trước sprint: #116, #119, #201, #355, #422 |
+| #18 EP-FG14 — [FG-14][EPIC] Operations monitoring and availability — monitoring, backup, RTO / RPO | 8 / 8 | 48 | 96 | 1 lá thô: giữ chỗ 16 giờ LAB-1 → 6 giờ; needs-split (> 16 giờ, tách trước sprint planning): #257, #294 |
+| #19 EP-FG15 — [FG-15][EPIC] Data migration | 10 / 14 | 66 | 132 | 7 lá thô: giữ chỗ 148 giờ LAB-1 → 86 giờ; needs-split (> 16 giờ, tách trước sprint planning): #223 |
+| #1 EP-PLAT — [PLAT][EPIC] Platform — AWS foundation, CI/CD, app skeleton, shared conventions | 14 / 15 | 82 | 164 | needs-split (> 16 giờ, tách trước sprint planning): #4, #190, #253 |
+| #20 EP-TEST — [TEST][EPIC] System testing, UAT and release | 11 / 13 | 101 | 202 | needs-split (> 16 giờ, tách trước sprint planning): #116, #119, #201, #355, #422 |
 | #21 EP-CLAR — [CLAR][EPIC] To clarify — open points with the customer / internal | 41 / 41 | 55 | 110 | — |
 | **Tổng** (18 epic) | **401 / 481** | **1.701** | **3.402** | giờ sơ bộ 4.751; cha / epic = tổng con |
 <!-- END GEN epic-totals -->
@@ -116,14 +123,32 @@ LAB-1 = 概算見積書 第1期 §4.2 (bảng 機能グループ別・工程別,
 | FG-15 データ移行 + MG 移行作業 | 535,2 (FG-15 23,9 + MG 43,0 人日) | 160 | 102 | −433,2 (−81%) | LAB-5 gộp chuyển đổi / làm sạch / diễn tập vào FG-15; 7 lá thô 148 → 86 giờ; phần BrSE của MG (9 人日, làm việc với khách về dữ liệu) không thành issue |
 | Thiết kế (基本設計, phần còn lại sau LAB-4) | 606,1 (BD 132,1 人日 (1.057 giờ) − phần LAB-4 đã làm ≈ 451 giờ = 606 giờ; trừ thêm ~6 giờ デザイン của 3 màn đã có wireframe (SC-03-02, SC-03-07, SC-04-05) → ≈ 600 giờ) | 653 | 426 | −180,1 (−30%) | FB-EXP-344 / N-04: so riêng, không cộng vào FG. Phần còn lại theo cách tính LAB-1: 58 màn × 8 giờ = 464 giờ + thiết kế logic 15% công BE của FG chưa có FUNC / TECH (FG-02, 11–15: 118,4 人日) = 142 giờ. Giờ sơ bộ 653 giờ (+8%: thêm API Design iam, sync DEP-04 — L5-D05) nhưng SWP × 2 chỉ 426 giờ: SWP chấm tài liệu thấp hơn cách tính 8 giờ / màn (giờ sơ bộ / SWP = 3,1). Tải 設計第4波 311 giờ sơ bộ (02-19 → 03-05) song song S2–S3 → rủi ro trễ ở progress-report |
 | Thiết kế đã làm ở LAB-4 (phần 基本設計 không còn trong backlog) | 450,7 (BD 132,1 − 75,76 人日) | — | — | −450,7 | Bộ thiết kế LAB-4 (nộp 2026-11-26) — 12 Screen Specification, kiến trúc + ADR, 10 Database Design, 42 API, 7 FUNC, 15 TECH; không có issue LAB-5 (FB-EXP-344: không thiết kế lại phần đã có) |
-| 共通基盤 + インフラ + バッチ定義 (CC + IN + BJ) | 800 (CC 55,0 + IN 30,0 + BJ 15,0 人日) | 142 | 164 | −636 (−80%) | LAB-5 chỉ có 14 lá nền tảng (IaC, runtime, khung app, khung màn); LAB-1 còn design system 8 人日, component FE dùng chung 22 人日, định nghĩa 10 batch — chưa có issue riêng (batch nằm trong lá dev của FG). Rủi ro thiếu việc → xem §4.1 |
-| 総合テスト・UAT (QT) | 880 | 140 | 202 | −678 (−77%) | LAB-5 có kế hoạch test, kịch bản nghiệp vụ, 462 tổ hợp quyền, tải, bảo mật, diễn tập khôi phục, hỗ trợ UAT, cutover, bàn giao (11 lá); LAB-1 QT gồm cả sửa lỗi FE / BE 61 人日 — LAB-5 chưa có chỗ giữ giờ sửa lỗi |
+| 共通基盤 + インフラ + バッチ定義 (CC + IN + BJ) | 800 (CC 55,0 + IN 30,0 + BJ 15,0 人日) | 142 | 164 | −636 (−80%) | LAB-5 chỉ có 14 lá nền tảng (IaC, runtime, khung app, khung màn); LAB-1 còn design system 8 人日, component FE dùng chung 22 人日, định nghĩa 10 batch (batch nằm trong lá dev của FG). Design system / component dùng chung thêm thành issue thô |
+| 総合テスト・UAT (QT) | 880 | 140 | 202 | −678 (−77%) | LAB-5 có kế hoạch test, kịch bản nghiệp vụ, 462 tổ hợp quyền, tải, bảo mật, diễn tập khôi phục, hỗ trợ UAT, cutover, bàn giao (11 lá); LAB-1 QT gồm cả sửa lỗi FE / BE 61 人日 — thêm issue thô giữ chỗ sửa lỗi |
 | 要件定義 (RQ) ↔ làm rõ | 240 | 60 | 110 | −130 (−54%) | RQ của LAB-1 là workshop + 要件定義書 + 受入基準 (W1); LAB-5 chỉ còn 41 câu hỏi khách / nội bộ (1–4 giờ / câu), phần workshop coi như đã làm trước sprint |
 | Không có trong backlog — dịch vụ SV-01..09, 会計ソフト連携試験, quản lý PM / BrSE | 2.660,8 (SV 94,0 + AC 7,0 + MN 231,6 人日) | — | — | −2.660,8 | Không phải issue sản phẩm — PM, BrSE cầu nối, đào tạo, hỗ trợ vận hành; sprint không đốt các giờ này (một phần SV như hỗ trợ UAT, cutover, bàn giao đã nằm ở EP-TEST) |
 | **Tổng (trước buffer 15%)** | **11.890,4** | **4.751** | **3.402** | **−8.488,4 (−71%)** | LAB-1 1.486,3 人日; buffer 15% (11,15 人月 ≈ 1.784 giờ) không so |
 <!-- END GEN lab1-compare -->
 
 ### 4.1 Vì sao LAB-5 thấp hơn LAB-1 nhiều — và hệ quả
+
+Cầu nối bằng số (Gate B m-03) — cộng các khoản ra đúng tổng chênh §4:
+
+<!-- BEGIN GEN lab1-bridge -->
+| Khoản | Giờ (LAB-1 − LAB-5) | Nguồn |
+|---|---|---|
+| FG-01..15: issue thô quy đổi (giờ giữ chỗ LAB-1 → SWP × 2) | 1.259 | §2.2; PREMISE L5-A01 |
+| FG-01..15: QA nằm trong dòng FG LAB-1, LAB-5 không có lá (chạy case theo DoD 4) | 1.085,6 | QA 189,2 人日 − lá test FG; giữ 30% năng lực QA (L5-D12) |
+| FG-01..15: cột デザイン trong dòng FG LAB-1 (hình màn, ngoài 基本設計) | 332,8 | 41,6 人日 |
+| FG-01..15: **chưa giải thích bằng số** (FE × 1,3 cho 2 bố cục, giờ dev / test LAB-5 ước thấp hơn LAB-1) | 1.075,4 | phần còn lại của chênh 15 dòng FG |
+| Thiết kế (基本設計, phần còn lại sau LAB-4) | 180,1 | dòng cùng tên ở §4 |
+| Thiết kế đã làm ở LAB-4 (phần 基本設計 không còn trong backlog) | 450,7 | BD 132,1 − 75,76 人日 — **số còn lại theo phép trừ**, không đo độc lập |
+| 共通基盤 + インフラ + バッチ定義 (CC + IN + BJ) | 636 | dòng cùng tên ở §4 |
+| 総合テスト・UAT (QT) | 678 | dòng cùng tên ở §4 |
+| 要件定義 (RQ) ↔ làm rõ | 130 | dòng cùng tên ở §4 |
+| Không có trong backlog — dịch vụ SV-01..09, 会計ソフト連携試験, quản lý PM / BrSE | 2.660,8 | SV 94,0 + AC 7,0 + MN 231,6 人日 |
+| **Tổng = chênh dòng Tổng §4** | **8.488,4** | |
+<!-- END GEN lab1-bridge -->
 
 Ba nguyên nhân chung cho mọi dòng FG, theo thứ tự độ lớn:
 
@@ -134,5 +159,5 @@ Ba nguyên nhân chung cho mọi dòng FG, theo thứ tự độ lớn:
 Hệ quả cho người đọc estimate này:
 
 - **Giờ trên Project dùng để lập kế hoạch sprint, không thay số hợp đồng.** Estimate LAB-1 (74,31 人月 trước buffer) vẫn là căn cứ giá; tổng Hours của LAB-5 không được dùng để đề xuất giảm giá.
-- **Rủi ro thiếu việc trong backlog** (đưa vào rủi ro trễ của progress-report P4): (a) design system và component FE dùng chung (LAB-1 CC 30 人日) chưa có issue; (b) chưa có chỗ giữ giờ sửa lỗi sau test tổng (LAB-1 QT 61 人日 FE + BE); (c) QA chạy case theo DoD 4 chưa có giờ.
+- **Việc thiếu trong backlog — đã xử lý sau Gate B (PREMISE L5-D12, người dùng chốt 2026-11-27)**: (a) thêm issue thô #500 design system / component FE dùng chung (giữ 216 giờ theo LAB-1 CC); (b) thêm issue thô #501 sửa lỗi sau 総合テスト / UAT (giữ 489 giờ theo LAB-1 QT); hai issue chờ chấm SWP. (c) QA chạy case theo DoD 4: không tạo issue — giữ 30% năng lực QA mỗi sprint (task-breakdown §1.3), ghi vào rủi ro trễ của progress-report P4.
 - **Thiết kế (N-04)**: giờ sơ bộ 653 giờ khớp phần còn lại của 基本設計 LAB-1 (≈ 606 giờ, +8%; ≈ 600 giờ nếu trừ 6 giờ デザイン của 3 màn đã có wireframe); không làm lại phần LAB-4 đã có (≈ 451 giờ theo cách tính LAB-1: 12 màn × 8 giờ, kiến trúc / Database Design / IF 8 人日, thiết kế logic của 9 nhóm chức năng FG-01, 03–10 có FUNC / TECH). **Tải 設計第4波 = 311 giờ sơ bộ trong 2027-02-19 → 03-05, chạy song song S2–S3** — đưa vào rủi ro trễ của progress-report (P4).
