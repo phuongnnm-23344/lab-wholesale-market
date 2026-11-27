@@ -81,11 +81,11 @@ rows:
   lab1_days: 100.0
   lab1_note: CC 55,0 + IN 30,0 + BJ 15,0 人日
   lab5: {epics: [EP-PLAT]}
-  why: LAB-5 chỉ có 14 lá nền tảng (IaC, runtime, khung app, khung màn); LAB-1 còn design system 8 人日, component FE dùng chung 22 人日, định nghĩa 10 batch (batch nằm trong lá dev của FG). Design system / component dùng chung thêm thành issue thô #500 sau Gate B (L5-D12)
+  why: LAB-5 có 14 lá nền tảng (IaC, runtime, khung app, khung màn) + issue thô #500; LAB-1 còn design system 8 人日, component FE dùng chung 22 人日, định nghĩa 10 batch (batch nằm trong lá dev của FG). Design system / component dùng chung thêm thành issue thô #500 sau Gate B (L5-D12)
 - part: 総合テスト・UAT (QT)
   lab1_days: 110.0
   lab5: {epics: [EP-TEST]}
-  why: LAB-5 có kế hoạch test, kịch bản nghiệp vụ, 462 tổ hợp quyền, tải, bảo mật, diễn tập khôi phục, hỗ trợ UAT, cutover, bàn giao (11 lá); LAB-1 QT gồm cả sửa lỗi FE / BE 61 人日 — thêm issue thô giữ chỗ sửa lỗi #501 sau Gate B (L5-D12)
+  why: LAB-5 có kế hoạch test, kịch bản nghiệp vụ, 462 tổ hợp quyền, tải, bảo mật, diễn tập khôi phục, hỗ trợ UAT, cutover, bàn giao (11 lá) + issue thô #501; LAB-1 QT gồm cả sửa lỗi FE / BE 61 人日 — thêm issue thô giữ chỗ sửa lỗi #501 sau Gate B (L5-D12)
 - part: 要件定義 (RQ) ↔ làm rõ
   lab1_days: 30.0
   lab5: {epics: [EP-CLAR]}

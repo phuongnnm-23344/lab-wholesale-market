@@ -6,8 +6,7 @@ meta:
   - backlog/scripts/gate-a-decisions.yaml
   - backlog/scripts/gate-b-decisions.yaml
   note: Nguồn chuẩn của backlog LAB-5; dựng lại bằng build-backlog.py, không sửa tay.
-rescore_pending:
-- B-FG09-10.2
+rescore_pending: []
 iteration1:
   name: Iteration 1
   dates: 2027-02-01 → 2027-02-12 (S1 LAB-1)
@@ -6822,6 +6821,7 @@ issues:
   - role:BE
   - constraint:完納奨励金
   - rule:no-overwrite
+  - needs-split
   spec_refs:
   - INC_ENGINE_TECH §4.8 No 2–9
   - INC_FUNC §2.12
@@ -6843,6 +6843,7 @@ issues:
   description: 'Phần 1 của `lock_period`: FOR UPDATE NOWAIT + advisory lock; kiểm điều kiện theo thứ tự (E-INC-009/002/003/004/005/014/013/008); lỗi bất kỳ → rollback toàn bộ. Bước ghi: B-FG09-10.4, B-FG09-10.5.'
   dod:
   - 'DoD K8 (b)(c)(d)(d2): 2 phiên → 1 phiên E-INC-009; đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014'
+  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
 - id: B-FG09-10.4
   epic: EP-FG09
   parent: B-FG09-10

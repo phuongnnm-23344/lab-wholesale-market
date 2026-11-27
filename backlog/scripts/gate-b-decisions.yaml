@@ -7,11 +7,10 @@
 # Lá đã có spec, SWP × k > 16 giờ, không thuộc Iteration đang lập kế hoạch → tách và chấm lại trước buổi lập kế hoạch
 # của sprint dự kiến. Danh sách theo backlog/estimate-swp-hours.csv sau P3 (22 lá) trừ 4 lá tách ngay.
 needs_split: [C-PLAT-01.1, C-TEST-02, C-TEST-05, C-PLAT-01.2, C-TEST-07, C-FG15-06.2, C-PLAT-02, C-FG14-03, B-FG08-04,
-              B-FG08-05, C-FG14-04, B-FG07-03, B-FG08-07, C-TEST-06, A-FG06-11, B-FG07-06, C-TEST-08, A-FG04-10]
+              B-FG08-05, C-FG14-04, B-FG07-03, B-FG08-07, C-TEST-06, A-FG06-11, B-FG07-06, C-TEST-08, A-FG04-10,
+              B-FG09-10.2]  # #486 sau khi thu hẹp: người dùng giữ 9 SWP = 18 giờ (chấm lại Gate B)
 
-# Lá đã đổi phạm vi, SWP cũ trong báo cáo HTML không còn đúng — chấm lại cùng các issue mới
-rescore_pending: [B-FG09-10.2]
-
+# Lá đổi phạm vi (B-FG09-10.2) và lá mới đã chấm lại ở báo cáo reports/sun-estimate-lab5-gate-b-rescore-20261127.html (2026-11-27).
 # Issue cấp 1 thành cha: tách thành sub-issue (giữ người phụ trách, nhãn, spec của cha)
 split_children:
   B-FG09-08:

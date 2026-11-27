@@ -2,7 +2,7 @@
 
 M-01: tách 4 lá 完納奨励金 > 16 giờ (issue cấp 1 → cha + sub-issue; lá cấp 2 → thu hẹp + sub-issue anh em, giữ tối đa 2 cấp);
 nhãn `needs-split` cho lá đã có spec còn > 16 giờ. M-02: thêm issue thô design system và sửa lỗi sau 総合テスト.
-Hàm apply(doc) sửa tại chỗ, trả về dict cho backlog.yaml (rescore_pending).
+Hàm apply(doc) sửa tại chỗ, trả về dict cho backlog.yaml (rescore_pending: lá đổi phạm vi chờ chấm lại; rỗng khi đã chấm).
 """
 import os
 import yaml
@@ -85,4 +85,4 @@ def apply(doc, title_en):
             kids.setdefault(i["parent"], []).append(i)
     for p, ks in kids.items():
         by[p]["hours_hint"] = sum(k["hours_hint"] for k in ks)
-    return {"rescore_pending": list(G["rescore_pending"])}
+    return {"rescore_pending": list(G.get("rescore_pending") or [])}
