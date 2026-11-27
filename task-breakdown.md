@@ -193,22 +193,22 @@ Một con số thưởng phụ thuộc ~10 biến độc lập: kỳ tính thư�
 
 | Ràng buộc (biến / quy tắc) | Issue | Vì sao tách riêng |
 |---|---|---|
-| Bảng thưởng, kết quả, lần chạy chỉ thêm (append-only) | B-FG09-01 (INCENTIVE_DB), B-FG09-02 (BILLING_DB 4.44–4.50) | Migration riêng có quyền EXECUTE; bảng IF-ACC-01 (4.40–4.42) thuộc FG-11 (C-FG11-08, PREMISE L5-A14) |
-| K1 thu thập đầu vào + `input_hash` (kỳ của giao dịch, 後入力 chuyển kỳ) | B-FG09-03 | Sai tập đầu vào → mọi khối sau sai; DoD K1 (a)–(d), gồm TV-13 / TV-15. Sửa DB Design theo L5-S02 |
-| K2 phân bổ 入金 FIFO theo 入金日 (chạy ngoài engine) | B-FG09-04; nhánh 請求番号 B-FG09-12 (chặn bởi E-02) | Chạy lúc nhập CSV / hủy / gán tay, song song K1 / K3; nhánh 請求番号 tách để không code trước câu trả lời E-02 (L5-D03) |
-| K3 期のお支払額 + 完納 / 要確認 (phí chuyển khoản) | B-FG09-05 | Quy tắc thuế (E-06) và ngưỡng nghi phí (file cấu hình DEP-16) đổi độc lập với các khối khác |
-| K4 tra bậc theo version quy chế của kỳ | B-FG09-06 | Phụ thuộc quy chế có version (luật 5); kiểm biên 以上 / 未満 riêng |
-| K5 tiền thưởng số nguyên, làm tròn xuống ×110/100 | B-FG09-07 | Lệch 1 yên là khiếu nại (BR-INC-01); hàm thuần, test biên riêng |
-| K6 DELTA cho mọi kỳ đã khóa, tách dòng theo nguồn | B-FG09-08 | Luật 4: điều chỉnh thưởng = delta kỳ sau, không sửa kỳ đã khóa |
-| K7 CARRY / CARRY_EXPIRED theo năm tài chính | B-FG09-09 | Phần âm mang sang có vòng đời riêng (Q-ARCH-08) |
-| K8 試算 / 期ロック một transaction (MFA, người quyết, 端数調整) | B-FG09-10 (.1 試算 · .2 期ロック · .3 API) | Điểm người quyết, khóa kỳ không làm lại được; sửa thứ tự tạo kỳ P+1 theo L5-S03; dòng 端数調整 theo L5-A02, L5-A03 |
-| K9 đọc kết quả, cảnh báo (過入金, 前期以前の調整) | B-FG09-11 | Hiển thị cho 照合 / người mua, không tính lại |
-| Màn SC-09-04 奨励金計算・期ロック | B-FG09-13 (.1–.3) | Màn có spec đầy đủ; tách theo nhóm item để FE song song với engine |
-| Test vector TV-01..15 | B-FG09-14 (TV-01, 05, 06, 10) · B-FG09-15 (TV-11, 12) · B-FG09-16 (TV-02, 03, 04, 07, 13, 14, 15) · B-FG09-17 (TV-08, 09) · B-FG09-18 (kết hợp K8 + E2E) | Mỗi nhóm biến một bộ test; `check-backlog.py` kiểm đủ 15 TV có trong issue test |
-| 支払期日 theo lịch ngân hàng · tạo kỳ P+1 (Q-INC-03) | B-FG10-12.3 (期作成・支払期日, thô) + thiết kế B-FG10-16; test B-FG09-17 (TV-08, TV-09) | Một hàm tạo kỳ dùng chung cho mọi module nên đặt ở FG-10 (L5-D04); nhưng là biến của 完納 nên có test riêng trong FG-09 |
-| Điểm kiểm tra số cuối S4 (khách yêu cầu bắt buộc), mốc `milestone` S4 | B-FG09-21 (.1 bảng tính K1–K8 · .2 ca biên / FIFO / 後入力 / phân bổ lại · .3 đối chiếu + biên bản · .4 buổi kiểm với khách) | Kiểm quy tắc bằng bảng tính trước khi code engine (S6–S7); cần ≥ 2 vai nên tách sub-issue; chờ câu trả lời E-02, E-03, E-06, Q-INC-01, Q-INC-02 và B-CLR-24; 照合部門長 ký [Customer giả lập, 2026-11-26] |
-| Màn chưa spec: 入金CSV取込 · コード対応 · 期別入金状況 · 奨励金明細 · 通知 | B-FG09-19 (5 sub), B-FG09-20 (2 sub); thiết kế B-FG09-22, B-FG09-23 (第4波) | Thô theo màn / nhóm API (L4-D08, rolling-wave L5-D08) |
-| Câu hỏi chặn số thưởng | B-CLR-02 (E-02), B-CLR-03 (E-01), B-CLR-06 (Q-INC-03), B-CLR-07 (Q-INC-01), B-CLR-08 (Q-INC-02), B-CLR-10 (E-06), B-CLR-11 (Q-ARCH-08), B-CLR-12 (OPEN-DB-08), B-CLR-13 (phí chuyển khoản), B-CLR-14 (Q-ARCH-11), B-CLR-24 (phân bổ lại 入金, L5-A04), C-CLR-14 (E-03 bảng 交付率 thật), C-CLR-17 (Q-ARCH-12 税区分 khi xuất IF-ACC-01) | Mỗi câu đổi một biến; tách để thấy câu nào chặn khối nào |
+| Bảng thưởng, kết quả, lần chạy chỉ thêm (append-only) | #106 B-FG09-01 (INCENTIVE_DB), #107 B-FG09-02 (BILLING_DB 4.44–4.50) | Migration riêng có quyền EXECUTE; bảng IF-ACC-01 (4.40–4.42) thuộc FG-11 (C-FG11-08, PREMISE L5-A14) |
+| K1 thu thập đầu vào + `input_hash` (kỳ của giao dịch, 後入力 chuyển kỳ) | #177 B-FG09-03 | Sai tập đầu vào → mọi khối sau sai; DoD K1 (a)–(d), gồm TV-13 / TV-15. Sửa DB Design theo L5-S02 |
+| K2 phân bổ 入金 FIFO theo 入金日 (chạy ngoài engine) | #178 B-FG09-04; nhánh 請求番号 #239 B-FG09-12 (chặn bởi E-02) | Chạy lúc nhập CSV / hủy / gán tay, song song K1 / K3; nhánh 請求番号 tách để không code trước câu trả lời E-02 (L5-D03) |
+| K3 期のお支払額 + 完納 / 要確認 (phí chuyển khoản) | #238 B-FG09-05 | Quy tắc thuế (E-06) và ngưỡng nghi phí (file cấu hình DEP-16) đổi độc lập với các khối khác |
+| K4 tra bậc theo version quy chế của kỳ | #284 B-FG09-06 | Phụ thuộc quy chế có version (luật 5); kiểm biên 以上 / 未満 riêng |
+| K5 tiền thưởng số nguyên, làm tròn xuống ×110/100 | #332 B-FG09-07 | Lệch 1 yên là khiếu nại (BR-INC-01); hàm thuần, test biên riêng |
+| K6 DELTA cho mọi kỳ đã khóa, tách dòng theo nguồn | #381 B-FG09-08 | Luật 4: điều chỉnh thưởng = delta kỳ sau, không sửa kỳ đã khóa |
+| K7 CARRY / CARRY_EXPIRED theo năm tài chính | #443 B-FG09-09 | Phần âm mang sang có vòng đời riêng (Q-ARCH-08) |
+| K8 試算 / 期ロック một transaction (MFA, người quyết, 端数調整) | #466 B-FG09-10 (.1 試算 · .2 期ロック · .3 API) | Điểm người quyết, khóa kỳ không làm lại được; sửa thứ tự tạo kỳ P+1 theo L5-S03; dòng 端数調整 theo L5-A02, L5-A03 |
+| K9 đọc kết quả, cảnh báo (過入金, 前期以前の調整) | #285 B-FG09-11 | Hiển thị cho 照合 / người mua, không tính lại |
+| Màn SC-09-04 奨励金計算・期ロック | #480 B-FG09-13 (.1–.3) | Màn có spec đầy đủ; tách theo nhóm item để FE song song với engine |
+| Test vector TV-01..15 | #488 B-FG09-14 (TV-01, 05, 06, 10) · #382 B-FG09-15 (TV-11, 12) · #494 B-FG09-16 (TV-02, 03, 04, 07, 13, 14, 15) · #240 B-FG09-17 (TV-08, 09) · #489 B-FG09-18 (kết hợp K8 + E2E) | Mỗi nhóm biến một bộ test; `check-backlog.py` kiểm đủ 15 TV có trong issue test |
+| 支払期日 theo lịch ngân hàng · tạo kỳ P+1 (Q-INC-03) | #250 B-FG10-12.3 (期作成・支払期日, thô) + thiết kế #140 B-FG10-16; test #240 B-FG09-17 (TV-08, TV-09) | Một hàm tạo kỳ dùng chung cho mọi module nên đặt ở FG-10 (L5-D04); nhưng là biến của 完納 nên có test riêng trong FG-09 |
+| Điểm kiểm tra số cuối S4 (khách yêu cầu bắt buộc), mốc `milestone` S4 | #121 B-FG09-21 (.1 bảng tính K1–K8 · .2 ca biên / FIFO / 後入力 / phân bổ lại · .3 đối chiếu + biên bản · .4 buổi kiểm với khách) | Kiểm quy tắc bằng bảng tính trước khi code engine (S6–S7); cần ≥ 2 vai nên tách sub-issue; chờ câu trả lời E-02, E-03, E-06, Q-INC-01, Q-INC-02 và B-CLR-24; 照合部門長 ký [Customer giả lập, 2026-11-26] |
+| Màn chưa spec: 入金CSV取込 · コード対応 · 期別入金状況 · 奨励金明細 · 通知 | #179 B-FG09-19 (5 sub), #180 B-FG09-20 (2 sub); thiết kế #136 B-FG09-22, #137 B-FG09-23 (第4波) | Thô theo màn / nhóm API (L4-D08, rolling-wave L5-D08) |
+| Câu hỏi chặn số thưởng | #37 B-CLR-02 (E-02), #38 B-CLR-03 (E-01), #40 B-CLR-06 (Q-INC-03), #41 B-CLR-07 (Q-INC-01), #42 B-CLR-08 (Q-INC-02), #43 B-CLR-10 (E-06), #44 B-CLR-11 (Q-ARCH-08), #45 B-CLR-12 (OPEN-DB-08), #46 B-CLR-13 (phí chuyển khoản), #47 B-CLR-14 (Q-ARCH-11), #87 B-CLR-24 (phân bổ lại 入金, L5-A04), #63 C-CLR-14 (E-03 bảng 交付率 thật), #85 C-CLR-17 (Q-ARCH-12 税区分 khi xuất IF-ACC-01) | Mỗi câu đổi một biến; tách để thấy câu nào chặn khối nào |
 
 Báo cáo kết quả thưởng theo kỳ (RPT-07, C-FG11-03.1–.3) thuộc FG-11 và chỉ đọc kết quả engine — không mang nhãn ràng buộc.
 

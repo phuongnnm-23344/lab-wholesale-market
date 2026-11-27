@@ -1,6 +1,6 @@
 # Estimate LAB-5 — SWP và giờ của backlog Product A
 
-**Báo cáo HTML của skill chấm SWP (`tkm:sun-estimate`):**
+**Báo cáo HTML của skill chấm SWP (`tkm:sun-estimate`)** — GitHub hiện `.html` dưới dạng mã nguồn; mở file, bấm *Download raw file* rồi mở file đã tải bằng trình duyệt:
 
 - Lần chấm P3 (401 lá): [`reports/sun-estimate-lab5-project1-20261127-0216.html`](reports/sun-estimate-lab5-project1-20261127-0216.html)
 - Lần chấm lại sau Gate B (11 lá: 10 issue mới #500–#509 + #486 thu hẹp; bản r2 — hiệu chỉnh lại theo quyết định R-01, số không đổi): [`reports/sun-estimate-lab5-gate-b-rescore-20261127-r2.html`](reports/sun-estimate-lab5-gate-b-rescore-20261127-r2.html)
@@ -107,7 +107,7 @@ Tổng SWP lá: 1.737 + 2 (#507) = **1.739**.
 
 - **Thô (giữ chỗ) −72%**: 99 lá thô (gồm #500, #501 thêm sau Gate B) giữ giờ LAB-1 (PREMISE L5-A01) nhưng skill chấm theo đơn vị tự nhiên thiếu spec (độ tin cậy thấp — caveat trong báo cáo HTML). Đây là lệch lớn nhất. Không đổi: giờ giữ chỗ LAB-1 vẫn ghi trong thân issue và ở cột Ghi chú §3; khi issue thiết kế xong, issue thô tách thành lá dev / test ≤ 16 giờ và **lá mới được chấm lại** — lúc đó giờ theo spec thay cho cả hai con số.
 - **Thiết kế −35%**: SWP chấm viết tài liệu thấp hơn cách tính 8 giờ / màn của LAB-1 (giờ sơ bộ / SWP = 3,1). Ảnh hưởng mốc 設計第1–4波 — xem §4 dòng thiết kế.
-- **Test +44%, làm rõ +83%**: SWP chấm test nặng hơn giờ sơ bộ (sau hiệu chỉnh `cal-001`); làm rõ lệch nhiều về tỷ lệ nhưng chỉ 50 giờ.
+- **Test +45%, làm rõ +83%**: SWP chấm test nặng hơn giờ sơ bộ (sau hiệu chỉnh `cal-001`); làm rõ lệch nhiều về tỷ lệ nhưng chỉ 50 giờ.
 - **Không thêm k thứ hai** (Expert Gate B quyết giữ một k): người dùng chốt một hệ số (plan §0 dòng 12); bảng trên so với giờ sơ bộ PL tự ước, chưa phải giờ thật — sửa riêng thiết kế (+213 giờ) mà không sửa test / làm rõ theo chiều ngược lại là chọn lọc. Thiết kế xem lại riêng ở lần hiệu chỉnh sau Iteration 1; tải 設計第4波 đo bằng **giờ sơ bộ 311 giờ**, không bằng SWP × 2.
 - **Giờ dự báo cả đợt** (dòng cuối bảng): Hours của lá thô = SWP × 2 thấp hơn giờ giữ chỗ có hệ thống (chấm không nâng điểm khi thiếu spec), nên tổng Hours không dùng để dự báo tải S2–S8. Rủi ro mốc ở progress-report dùng **giờ dự báo cả đợt**; Hours trên Project dùng cho sprint đang lập kế hoạch.
 - **22 lá đã có spec có Hours > 16 giờ** (SWP ≥ 9), không lá nào trong Iteration 1 — xử lý theo **ngoại lệ có tên ở PREMISE L5-D08, người dùng xác nhận 2026-11-27**: 4 lá 完納奨励金 tách ngay (#381 → #502, #503; #486 thu hẹp + #504, #506 cùng cha #466; #489 → #505, #507; #494 → #508, #509), đã chấm lại (§1.1): 8 lá mới ≤ 16 giờ; #486 còn 9 SWP = 18 giờ (người dùng giữ) nên người dùng quyết **tách tiếp ngay**: #486 còn khung khóa + 2 phiên đồng thời (4 SWP = 8 giờ), thêm anh em #510 kiểm điều kiện theo thứ tự + rollback (8 SWP = 16 giờ), cùng cha #466 (§1.2) — mọi lá tách ra nay ≤ 16 giờ; 18 lá còn lại mang nhãn `needs-split` trên Project, tách và chấm lại trước buổi lập kế hoạch sprint dự kiến (danh sách theo epic ở §3).

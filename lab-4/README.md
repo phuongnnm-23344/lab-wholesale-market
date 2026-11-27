@@ -24,7 +24,7 @@ Repo này giữ hai thứ của dự án luyện tập Product A (hệ thống h
 | [`AI-report.md`](AI-report.md) | Cách dùng AI trong LAB-4: skill, prompt, cách review, lỗi AI và cách sửa, tự đánh giá | Frontmatter + History theo quy ước chuẩn | **Mới** (yêu cầu đề) | PL | — |
 | [`prototype/`](../prototype/) | Code prototype LAB-2 (Next.js + Supabase), README demo | — | Có từ LAB-2 | PL | [`prototype/README.md`](../prototype/README.md) |
 
-Nhóm thư mục mức repo khác (`.github/`) là phần của template quản lý dự án Sun* (bản public LAB-5 đã gỡ 3 script `*.sh` trong `scripts/`, `webhook/`, `wiki-template/`, `images/`, `.bot-test/`, `CHANGELOG.md` và phần README của template); script của bộ thiết kế LAB-4 ở mục 5 — xem từ mục "GitHub Project Management Template" trở xuống. Template gốc còn có `docs/` (đặc tả chuyển trạng thái) và `scripts/bootstrap-project.sh`; bản copy trong repo này **không kèm** hai thứ đó, nên các chỗ nhắc tới chúng ở phần README template bên dưới không mở được (giữ nguyên chữ của template).
+Nhóm thư mục mức repo khác (`.github/`) là phần của template quản lý dự án Sun* (bản public LAB-5 đã gỡ 3 script `*.sh` trong `scripts/`, `webhook/`, `wiki-template/`, `images/`, `.bot-test/`, `CHANGELOG.md` và phần README của template — bản LAB-4 đầy đủ xem ở tag `lab-4`); script của bộ thiết kế LAB-4 ở mục 5.
 
 ## 2. Quy ước của dự án theo QC-01
 
@@ -33,7 +33,7 @@ Nhóm thư mục mức repo khác (`.github/`) là phần của template quản 
 | Kiểu tên nhánh version (§2) | Theo **milestone / phase** của khóa học: `ver/lab-4`, `ver/lab-5`, … — không trộn kiểu version sản phẩm |
 | Chia `specs/{screen-or-feature}/` (§2 ghi chú) | Theo **feature** (cụm nghiệp vụ, kebab-case tiếng Anh), trùng tên module ở `architecture/ARCHITECTURE.md` §2. Danh sách feature và feature của 12 màn có Screen Specification (10 màn đại diện + SC-06-04, SC-06-05 — PREMISE L4-D07) đã chốt ở [`specs/_index.md`](../specs/_index.md) (Gate 1 m-03) |
 | Screen ID | Giữ ID màn hình của LAB-1 (`SC-xx-yy`) để truy được về 画面一覧 LAB-1 và prototype LAB-2; tên file `SC-xx-yy_SPEC.md`. *Lệch quy tắc §4 (`{tiền tố}_{TÊN}` viết HOA) — xem §3* |
-| Nguồn khuôn `_templates/` | `spec-standards` nhánh `main`, commit `72c1dda` (2026-11-05). Hai thư mục `_templates/` copy cùng một lượt |
+| Nguồn khuôn `_templates/` | `spec-standards` nhánh `main`, commit `72c1dda` (2026-11-05). Hai thư mục `_templates/` copy cùng một lượt (bản public LAB-5 đã gỡ cả hai; xem tag `lab-4`) |
 
 ## 3. Ngoại lệ có chủ đích so với QC-01
 
@@ -56,7 +56,7 @@ Link tương đối bên trong các file bản mẫu (`../01-templates/…`) tr�
 
 ## 4. Cấu trúc bộ thiết kế, phần kế thừa và phần tạo mới
 
-**Nguồn chuẩn:** repo `spec-standards` (repo nội bộ của công ty, không công khai), nhánh `main`, commit **`72c1dda`** (2026-11-05) — QC-01 `0.32.1`, khuôn ở `03-specs/01-templates/`, bản mẫu ở `03-specs/02-samples/`. Đã đối chiếu lại: thư mục `03-specs/` **không đổi** từ `72c1dda` tới `ae45211`, nên khuôn trong repo này vẫn là bản mới nhất lúc nộp.
+**Nguồn chuẩn:** repo `spec-standards` (repo nội bộ của công ty, không công khai), nhánh `main`, commit **`72c1dda`** (2026-11-05) — QC-01 `0.32.1`, khuôn ở `03-specs/01-templates/`, bản mẫu ở `03-specs/02-samples/`. Đã đối chiếu lại: thư mục `03-specs/` **không đổi** từ `72c1dda` tới `ae45211`, nên khuôn trong repo này vẫn là bản mới nhất lúc nộp. **Bản public LAB-5 đã gỡ hai thư mục `_templates/`**; các dòng nhắc `_templates/` ở 4.1 và 4.2 mô tả bản nộp LAB-4 (tag `lab-4`).
 
 ### 4.1 Cây thư mục nộp (phần LAB-4)
 

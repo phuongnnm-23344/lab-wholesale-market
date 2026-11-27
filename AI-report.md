@@ -17,7 +17,7 @@ Bằng chứng ở [`AI-report-evidence/lab-5/`](AI-report-evidence/lab-5/README
 
 **Chỗ chạy lệch khỏi skill `tkm:sun-estimate`** (Expert Gate B ghi nhận, không làm sai số nhưng cần nói rõ):
 
-- Theo hợp đồng của skill, worker **không có công cụ, nhận bằng chứng inline**. Ở đây worker được **đọc file** (rubric + lô của mình) và **ghi file** kết quả. Lời dặn "chỉ đọc 3 file" không chặn được việc worker mở `backlog.yaml` có giờ sơ bộ; không thấy dấu hiệu neo giờ (test +47%, issue thô −64% so với giờ sơ bộ), nhưng đó là may, không phải kiểm soát.
+- Theo hợp đồng của skill, worker **không có công cụ, nhận bằng chứng inline**. Ở đây worker được **đọc file** (rubric + lô của mình) và **ghi file** kết quả. Lời dặn "chỉ đọc 3 file" không chặn được việc worker mở `backlog.yaml` có giờ sơ bộ; không thấy dấu hiệu neo giờ (test +45%, issue thô −72% so với giờ sơ bộ — estimate §2.2), nhưng đó là may, không phải kiểm soát.
 - **Che cả mục phụ thuộc và ID RFP** để tránh neo; đổi lại việc nối nhiều module có thể bị chấm thấp, hiệu chỉnh 5 mẫu chỉ bù một phần.
 - **Ba lần chấm lại nhỏ** (11 lá sau Gate B, 2 lá khi tách #486, 1 lá chấm chéo #507) chấm inline ở phiên chính, không qua worker.
 - Hiệu chỉnh của skill chỉ lan **trong một lần chấm**. Áp quy tắc của lần trước sang lần sau (#507 theo quy tắc #116) là **quyết định của người dùng**, ghi ở [`estimate.md`](estimate.md) §1.3.
@@ -65,7 +65,7 @@ Danh sách đầy đủ ở plan (§0, 20 dòng) và các dòng `L5-D…` của 
 
 | Hạng mục | Số đo | Ghi chú |
 |---|---|---|
-| Khoảng thời gian LAB-5 | 2026-11-26 16:22 → 2026-11-27 17:45 JST | |
+| Khoảng thời gian LAB-5 | 2026-11-26 16:22 → 2026-11-27 17:45 JST | Đo tới lúc viết AI-report ở P5; chưa gồm lượt sửa P5 (`94a1448`), Gate C và lượt sửa theo Gate C |
 | Thời gian AI chạy thực (wall-clock) | khoảng 8,8 giờ | Chưa tính phần lớn thời gian chờ script ghi GitHub chạy nền (giãn 7,5–15 giây / lần, có lúc kéo vài giờ): log không có hoạt động trong lúc đó nên bị loại |
 | Tổng thời gian chạy của agent | khoảng 22,1 agent-giờ, 18 subagent | Lớn hơn wall-clock vì chạy song song: 3 luồng break, 5 worker chấm SWP, 2 PL cùng lúc ở P3 / P4 |
 | Thời gian người review | khoảng 2 giờ | Người làm bài tự báo: chốt điểm mẫu, quyết định ở Gate A / B và P4 |
@@ -83,7 +83,7 @@ Danh sách đầy đủ ở plan (§0, 20 dòng) và các dòng `L5-D…` của 
 ### 3.2 Chỗ chưa tốt và cách làm khi làm thật
 
 - **Worker chấm SWP chưa đúng hợp đồng của skill** (đọc file thay vì nhận inline). Làm thật: truyền lô inline, chỉ che giờ và người phụ trách, giữ mục phụ thuộc.
-- **Một k chung lệch theo loại việc** (issue thô −64%, thiết kế −35%, test +47% so với giờ sơ bộ); tổng giờ thấp hơn LAB-1 71%, còn khoảng 1.050 giờ chưa giải thích bằng số. Làm thật: hiệu chỉnh k bằng giờ thật sau 1–2 sprint, không dùng Hours thay số hợp đồng.
+- **Một k chung lệch theo loại việc** (issue thô −72%, thiết kế −35%, test +45% so với giờ sơ bộ — estimate §2.2); tổng giờ thấp hơn LAB-1 71%, còn khoảng 1.050 giờ chưa giải thích bằng số. Làm thật: hiệu chỉnh k bằng giờ thật sau 1–2 sprint, không dùng Hours thay số hợp đồng.
 - **Đổi quy ước giữa chừng tốn kém:** đổi tiêu đề sang tiếng Anh khi đã tạo 285 issue, thêm một lượt đổi tên. Làm thật: chốt quy ước tiêu đề, nhãn, trường trên 1 epic mẫu trước khi tạo hàng loạt.
 - **Expert đọc mẫu, không đọc hết 510 issue**; máy kiểm được cấu trúc, chưa kiểm được nội dung DoD từng issue có đúng nghiệp vụ không.
 - **Khách vẫn là AI đóng vai**; sprint là giả lập nên burndown chỉ kiểm được cách lập kế hoạch, không kiểm được tốc độ thật.

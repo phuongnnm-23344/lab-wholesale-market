@@ -1,5 +1,6 @@
 """P4: đặt Status cuối sprint trên GitHub Project cho các item Iteration 1, theo nhật ký giả lập progress/iteration-1-daily.csv
-(trạng thái cuối của 26 lá + cha A-FG01-19). Không đóng issue (sprint là giả lập 2027; đóng bây giờ thì closedAt = 2026, lệch lịch).
+(trạng thái cuối của 26 lá + cha A-FG01-19). Script không đóng issue. Lưu ý: lần chạy P4 (2026-11-27) workflow "Auto-close issue"
+của Project còn bật nên 21 issue Done đã bị đóng, closedAt 2026-11-27 (sprint là giả lập 2027); workflow đã tắt, người dùng quyết giữ đóng.
 Không đụng Point / Hours / item ngoài Iteration 1.
 
 Chạy lại được: đọc Status hiện có, chỉ ghi ô khác, giãn --gap giây; xong thì đọc lại toàn bộ Project, so từng item và in bảng

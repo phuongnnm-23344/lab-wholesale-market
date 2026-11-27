@@ -124,6 +124,8 @@ def plan(doc):
     for p, ks in kids.items():
         if all(k in chosen for k in ks):
             by[p]["iteration"] = it["name"]
+            # Cha không có giờ riêng: người phụ trách = người của lá con đầu tiên, để không lọt người ngoài đội Iteration (Gate C m-06)
+            by[p]["assignee"] = by[ks[0]]["assignee"]
     for i in iss:
         i["acceptance"] = [ac["id"] for ac in G["acceptance_s1"] if i["id"] in ac["issues"]]
     for e in doc["epics"]:

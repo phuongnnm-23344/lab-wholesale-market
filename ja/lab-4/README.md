@@ -24,7 +24,7 @@
 | [`AI-report.md`](AI-report.md) | LAB-4におけるAIの使い方: スキル、プロンプト、レビュー方法、AIの誤りと修正方法、自己評価 | 標準規約どおりのFrontmatter + History | **新規**（課題要件） | PL | — |
 | [`prototype/`](../../prototype) | LAB-2プロトタイプのコード (Next.js + Supabase)、デモ用README | — | LAB-2から存在 | PL | [`prototype/README.md`](../../prototype/README.md) |
 
-リポジトリ直下のその他のフォルダ（`.github/`）はSun*のプロジェクト管理テンプレートの一部です（LAB-5 公開版では `scripts/` 内の `*.sh` 3本、`webhook/`、`wiki-template/`、`images/`、`.bot-test/`、`CHANGELOG.md` とテンプレートの README 部分を削除済み）。LAB-4設計一式のスクリプトは5節にあり、「GitHub Project Management Template」の節以降を参照してください。元のテンプレートには `docs/`（ステータス遷移仕様）と `scripts/bootstrap-project.sh` もありますが、本リポジトリのコピーには **含まれていません**。そのため、下記のテンプレートREADMEでこれらに言及している箇所は開けません（テンプレートの記述はそのまま残しています）。
+リポジトリ直下のその他のフォルダ（`.github/`）はSun*のプロジェクト管理テンプレートの一部です（LAB-5 公開版では `scripts/` 内の `*.sh` 3本、`webhook/`、`wiki-template/`、`images/`、`.bot-test/`、`CHANGELOG.md` とテンプレートの README 部分を削除済み。LAB-4 提出時の全体はタグ `lab-4` を参照）。LAB-4設計一式のスクリプトは5節にあります。
 
 ## 2. QC-01に対するプロジェクトの取り決め
 
@@ -33,7 +33,7 @@
 | バージョン・ブランチ名の形式（§2） | 講座の **マイルストーン / フェーズ** に従う: `ver/lab-4`、`ver/lab-5`、… — 製品版の形式とは混在させない |
 | `specs/{screen-or-feature}/` の分け方（§2 注記） | **feature**（業務のまとまり、英語のkebab-case）単位。`architecture/ARCHITECTURE.md` §2 のモジュール名と一致させる。featureの一覧と、Screen Specificationを持つ12画面（代表10画面 + SC-06-04、SC-06-05 — PREMISE L4-D07）のfeatureは [`specs/_index.md`](../specs/_index.md) で確定済み（Gate 1 m-03） |
 | Screen ID | LAB-1の画面ID（`SC-xx-yy`）を維持し、LAB-1の画面一覧とLAB-2プロトタイプまで追跡できるようにする。ファイル名は `SC-xx-yy_SPEC.md`。*§4の規則（`{接頭辞}_{名称}` を大文字）から逸脱 — §3参照* |
-| `_templates/` の出典 | `spec-standards` の `main` ブランチ、コミット `72c1dda`（2026-11-05）。`_templates/` の2フォルダは同時にコピー |
+| `_templates/` の出典 | `spec-standards` の `main` ブランチ、コミット `72c1dda`（2026-11-05）。`_templates/` の2フォルダは同時にコピー（LAB-5 公開版では2フォルダとも削除済み。タグ `lab-4` を参照） |
 
 ## 3. QC-01からの意図的な例外
 
@@ -56,7 +56,7 @@
 
 ## 4. 設計一式の構成、継承部分と新規作成部分
 
-**標準の出典:** リポジトリ `spec-standards`（社内リポジトリ、非公開）、ブランチ `main`、コミット **`72c1dda`**（2026-11-05）— QC-01 `0.32.1`、ひな形は `03-specs/01-templates/`、見本は `03-specs/02-samples/`。再照合済み: `03-specs/` フォルダは `72c1dda` から `ae45211` まで **変更なし**。そのため、本リポジトリのひな形は提出時点でも最新版です。
+**標準の出典:** リポジトリ `spec-standards`（社内リポジトリ、非公開）、ブランチ `main`、コミット **`72c1dda`**（2026-11-05）— QC-01 `0.32.1`、ひな形は `03-specs/01-templates/`、見本は `03-specs/02-samples/`。再照合済み: `03-specs/` フォルダは `72c1dda` から `ae45211` まで **変更なし**。そのため、本リポジトリのひな形は提出時点でも最新版です。**LAB-5 公開版では `_templates/` の2フォルダを削除しました。** 4.1・4.2 の `_templates/` に関する行は LAB-4 提出版（タグ `lab-4`）の説明です。
 
 ### 4.1 提出用フォルダツリー（LAB-4の部分）
 
