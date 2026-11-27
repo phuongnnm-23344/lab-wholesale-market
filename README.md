@@ -26,11 +26,13 @@ Khách hàng, số liệu và dữ liệu trong repo đều hư cấu (bài luy�
 | Link | Địa chỉ |
 |---|---|
 | Repo | https://github.com/phuongnnm-23344/lab-wholesale-market (nhánh nộp: `ver/lab-5`) |
-| GitHub Project | https://github.com/users/phuongnnm-23344/projects/1 — epic / issue / sub-issue, Status, Priority, Iteration, Người phụ trách (giả định), **Point** (SWP đã review), **Hours** (giờ ước lượng). Mở view **Backlog** (bảng đủ các trường trên) hoặc **Iteration 1** (board sprint giả lập theo Status) |
+| GitHub Project | https://github.com/users/phuongnnm-23344/projects/1 — epic / issue / sub-issue, Status, Priority, Iteration, Người phụ trách (giả định), **Point** (SWP đã review), **Hours** (giờ ước lượng). Mở view **Backlog** (bảng đủ các trường trên), **Iteration 1** (board sprint giả lập theo Status) hoặc **完納奨励金** (66 issue, group theo Parent issue) |
 | Báo cáo HTML của skill chấm SWP (`tkm:sun-estimate`) | [`reports/sun-estimate-lab5-project1-20261127-0216.html`](reports/sun-estimate-lab5-project1-20261127-0216.html) (lần chấm chính, 401 lá) · [`reports/sun-estimate-lab5-gate-b-rescore-20261127-r2.html`](reports/sun-estimate-lab5-gate-b-rescore-20261127-r2.html) (chấm lại 11 lá sau Gate B) · [`reports/sun-estimate-lab5-486-split-rescore-20261127.html`](reports/sun-estimate-lab5-486-split-rescore-20261127.html) (#486 tách tiếp, 2 lá) · [`reports/sun-estimate-lab5-507-cross-run-20261127.html`](reports/sun-estimate-lab5-507-cross-run-20261127.html) (chấm chéo #507). **Cách mở:** GitHub hiện file `.html` dưới dạng mã nguồn — mở file, bấm *Download raw file* rồi mở file đã tải bằng trình duyệt (không cần đăng nhập) |
 | Burndown | [`progress/iteration-1-burndown.png`](progress/iteration-1-burndown.png) |
 
-**Mở thử không đăng nhập:** `<chờ xác nhận — người làm bài mở repo, Project và báo cáo HTML bằng cửa sổ ẩn danh sau khi chuyển public, ghi ngày ở đây>`
+**Mở thử không đăng nhập:** Đã mở thử bằng cửa sổ ẩn danh (không đăng nhập) ngày 2026-11-27: repo, các file gốc, báo cáo HTML, Project (view Backlog / Iteration 1 / 完納奨励金).
+
+**Còn lại:** yêu cầu GitHub Support xóa bản cache của các commit cũ (trước khi làm sạch lịch sử) do người làm bài gửi; repo đã public không chờ kết quả.
 
 ## 3. Cấu trúc repo
 
