@@ -6,7 +6,9 @@ meta:
   - backlog/scripts/gate-a-decisions.yaml
   - backlog/scripts/gate-b-decisions.yaml
   note: Nguồn chuẩn của backlog LAB-5; dựng lại bằng build-backlog.py, không sửa tay.
-rescore_pending: []
+rescore_pending:
+- B-FG09-10.2
+- B-FG09-10.6
 iteration1:
   name: Iteration 1
   dates: 2027-02-01 → 2027-02-12 (S1 LAB-1)
@@ -6754,7 +6756,7 @@ issues:
   - B-FG09-08
   - B-FG09-09
   depends_on_spec: []
-  hours_hint: 48
+  hours_hint: 50
   stream: B
   description: 'Cha của 3 sub-issue theo bước (試算 / transaction khóa / route + MFA). K8 phụ thuộc tất cả khối. Chỉ lá chấm SWP.
 
@@ -6810,8 +6812,8 @@ issues:
   iteration: null
   milestone: null
   acceptance: []
-  title: '[FG-09] K8 期ロック — khung transaction: khóa, kiểm điều kiện, rollback'
-  title_en: '[FG-09][K8][BE] K8 period lock — transaction frame: locks, ordered checks, full rollback'
+  title: '[FG-09] K8 期ロック — khung khóa NOWAIT + advisory lock, 2 phiên đồng thời'
+  title_en: '[FG-09][K8][BE] K8 period lock — lock frame: NOWAIT + advisory lock, concurrent sessions'
   role: BE
   assignee: BE-4
   labels:
@@ -6821,7 +6823,6 @@ issues:
   - role:BE
   - constraint:完納奨励金
   - rule:no-overwrite
-  - needs-split
   spec_refs:
   - INC_ENGINE_TECH §4.8 No 2–9
   - INC_FUNC §2.12
@@ -6838,12 +6839,52 @@ issues:
   - BILLING_DB 4.42 accounting_export_lines 端数調整 (FG-11 — nhóm FG-02, 11–15; B-PA-01, B-PA-02)
   - DEP-12 tạo kỳ P+1 (B-FG10-12)
   - DEP-13 outbox (nhóm FG-02, 11–15)
-  hours_hint: 10
+  hours_hint: 6
   stream: B
-  description: 'Phần 1 của `lock_period`: FOR UPDATE NOWAIT + advisory lock; kiểm điều kiện theo thứ tự (E-INC-009/002/003/004/005/014/013/008); lỗi bất kỳ → rollback toàn bộ. Bước ghi: B-FG09-10.4, B-FG09-10.5.'
+  description: 'Phần 1 của `lock_period`: mở transaction, FOR UPDATE NOWAIT + advisory lock trên kỳ P; phiên thứ hai bị từ chối ngay (E-INC-009), không chờ khóa. Kiểm điều kiện + rollback: B-FG09-10.6;
+    bước ghi: B-FG09-10.4, B-FG09-10.5.'
   dod:
-  - 'DoD K8 (b)(c)(d)(d2): 2 phiên → 1 phiên E-INC-009; đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014'
-  - Tách thành lá ≤ 16 giờ và chấm lại SWP trước buổi lập kế hoạch của sprint dự kiến (needs-split, L5-D08)
+  - 'DoD K8 (b): 2 phiên đồng thời → 1 phiên chạy, phiên kia E-INC-009 ngay (NOWAIT), không có dòng nào được ghi bởi phiên bị từ chối'
+- id: B-FG09-10.6
+  epic: EP-FG09
+  parent: B-FG09-10
+  kind: dev
+  priority: P2
+  iteration: null
+  milestone: null
+  acceptance: []
+  title: '[FG-09] K8 期ロック — kiểm điều kiện theo thứ tự, rollback toàn bộ'
+  title_en: '[FG-09][K8][BE] K8 period lock — ordered condition checks and full rollback on error'
+  role: BE
+  assignee: BE-4
+  labels:
+  - fg:FG-09
+  - feature:incentive
+  - kind:dev
+  - role:BE
+  - constraint:完納奨励金
+  - rule:no-overwrite
+  spec_refs:
+  - INC_ENGINE_TECH §4.8 No 2–9
+  - INC_FUNC §2.12
+  - BILLING_DB 4.42, 4.49, 4.50
+  rfp_refs:
+  - FR-INC-01
+  - FR-INC-03
+  - BR-INC-01
+  depends_on:
+  - B-FG09-10.2
+  depends_on_spec:
+  - BILLING_DB 4.42 accounting_export_lines 端数調整 (FG-11 — nhóm FG-02, 11–15; B-PA-01, B-PA-02)
+  - DEP-12 tạo kỳ P+1 (B-FG10-12)
+  - DEP-13 outbox (nhóm FG-02, 11–15)
+  hours_hint: 6
+  stream: PL
+  description: 'Phần 2 của `lock_period` (trong transaction của B-FG09-10.2): kiểm điều kiện theo đúng thứ tự E-INC-002 / 003 / 004 / 005 / 014 / 013 / 008; lỗi bất kỳ ở kiểm hay ở bước ghi sau đó → rollback
+    toàn bộ, kỳ P vẫn OPEN.'
+  dod:
+  - 'DoD K8 (c)(d)(d2): đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014'
+  - Thứ tự kiểm đúng spec (lỗi đầu tiên gặp được trả về); mọi lỗi → rollback toàn bộ
 - id: B-FG09-10.4
   epic: EP-FG09
   parent: B-FG09-10
@@ -6872,14 +6913,14 @@ issues:
   - FR-INC-03
   - BR-INC-01
   depends_on:
-  - B-FG09-10.2
+  - B-FG09-10.6
   depends_on_spec:
   - BILLING_DB 4.42 accounting_export_lines 端数調整 (FG-11 — nhóm FG-02, 11–15; B-PA-01, B-PA-02)
   - DEP-12 tạo kỳ P+1 (B-FG10-12)
   - DEP-13 outbox (nhóm FG-02, 11–15)
   hours_hint: 12
   stream: PL
-  description: 'Phần 2 của `lock_period` (trong cùng transaction của B-FG09-10.2): chạy K1..K7 chế độ LOCK; bảo đảm kỳ P+1 tồn tại TRƯỚC khi ghi CARRY (B-PS-02); ghi period_billings LOCK, incentive_runs
+  description: 'Phần 3 của `lock_period` (trong cùng transaction của B-FG09-10.2): chạy K1..K7 chế độ LOCK; bảo đảm kỳ P+1 tồn tại TRƯỚC khi ghi CARRY (B-PS-02); ghi period_billings LOCK, incentive_runs
     (+ chứng cứ tick CSV), incentive_results.'
   dod:
   - Kết quả kỳ khớp 試算 của B-FG09-10.1 với cùng đầu vào; CARRY chỉ ghi khi P+1 đã có
@@ -6919,7 +6960,7 @@ issues:
   - DEP-13 outbox (nhóm FG-02, 11–15)
   hours_hint: 10
   stream: PL
-  description: 'Phần 3 của `lock_period`: dòng 端数調整 theo suất vào accounting_export_lines (phạm vi theo trục kỳ — B-PA-01), trạng thái LOCKED, outbox, audit PERIOD_LOCK; lỗi ở bất kỳ bước ghi nào → rollback
+  description: 'Phần 4 của `lock_period`: dòng 端数調整 theo suất vào accounting_export_lines (phạm vi theo trục kỳ — B-PA-01), trạng thái LOCKED, outbox, audit PERIOD_LOCK; lỗi ở bất kỳ bước ghi nào → rollback
     toàn bộ.'
   dod:
   - 'DoD K8 (a): ép lỗi ở bước ghi outbox → không còn dòng incentive_results, P vẫn OPEN'

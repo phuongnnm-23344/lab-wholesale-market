@@ -7,10 +7,13 @@
 # Lá đã có spec, SWP × k > 16 giờ, không thuộc Iteration đang lập kế hoạch → tách và chấm lại trước buổi lập kế hoạch
 # của sprint dự kiến. Danh sách theo backlog/estimate-swp-hours.csv sau P3 (22 lá) trừ 4 lá tách ngay.
 needs_split: [C-PLAT-01.1, C-TEST-02, C-TEST-05, C-PLAT-01.2, C-TEST-07, C-FG15-06.2, C-PLAT-02, C-FG14-03, B-FG08-04,
-              B-FG08-05, C-FG14-04, B-FG07-03, B-FG08-07, C-TEST-06, A-FG06-11, B-FG07-06, C-TEST-08, A-FG04-10,
-              B-FG09-10.2]  # #486 sau khi thu hẹp: người dùng giữ 9 SWP = 18 giờ (chấm lại Gate B)
+              B-FG08-05, C-FG14-04, B-FG07-03, B-FG08-07, C-TEST-06, A-FG06-11, B-FG07-06, C-TEST-08, A-FG04-10]
 
-# Lá đổi phạm vi (B-FG09-10.2) và lá mới đã chấm lại ở báo cáo reports/sun-estimate-lab5-gate-b-rescore-20261127.html (2026-11-27).
+# Lá đổi phạm vi / lá mới chưa có SWP — chấm bằng skill, người dùng chốt, rồi mới ghi Point / Hours.
+# #486 chấm lại 9 SWP = 18 giờ > 16 → người dùng quyết tách tiếp ngay (2026-11-27): #486 thu hẹp + anh em B-FG09-10.6.
+rescore_pending: [B-FG09-10.2, B-FG09-10.6]
+
+# Lần chấm lại thứ nhất (11 lá): báo cáo reports/sun-estimate-lab5-gate-b-rescore-20261127.html (2026-11-27).
 # Issue cấp 1 thành cha: tách thành sub-issue (giữ người phụ trách, nhãn, spec của cha)
 split_children:
   B-FG09-08:
@@ -64,20 +67,30 @@ split_children:
 split_siblings:
   B-FG09-10.2:
     narrow:
-      title: '[FG-09] K8 期ロック — khung transaction: khóa, kiểm điều kiện, rollback'
-      title_en: '[FG-09][K8][BE] K8 period lock — transaction frame: locks, ordered checks, full rollback'
-      hours: 10
-      description: 'Phần 1 của `lock_period`: FOR UPDATE NOWAIT + advisory lock; kiểm điều kiện theo thứ tự (E-INC-009/002/003/004/005/014/013/008);
-        lỗi bất kỳ → rollback toàn bộ. Bước ghi: B-FG09-10.4, B-FG09-10.5.'
+      title: '[FG-09] K8 期ロック — khung khóa NOWAIT + advisory lock, 2 phiên đồng thời'
+      title_en: '[FG-09][K8][BE] K8 period lock — lock frame: NOWAIT + advisory lock, concurrent sessions'
+      hours: 6
+      description: 'Phần 1 của `lock_period`: mở transaction, FOR UPDATE NOWAIT + advisory lock trên kỳ P; phiên thứ hai bị từ chối ngay
+        (E-INC-009), không chờ khóa. Kiểm điều kiện + rollback: B-FG09-10.6; bước ghi: B-FG09-10.4, B-FG09-10.5.'
       dod:
-      - 'DoD K8 (b)(c)(d)(d2): 2 phiên → 1 phiên E-INC-009; đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014'
+      - 'DoD K8 (b): 2 phiên đồng thời → 1 phiên chạy, phiên kia E-INC-009 ngay (NOWAIT), không có dòng nào được ghi bởi phiên bị từ chối'
     add:
+    - id: B-FG09-10.6
+      title: '[FG-09] K8 期ロック — kiểm điều kiện theo thứ tự, rollback toàn bộ'
+      title_en: '[FG-09][K8][BE] K8 period lock — ordered condition checks and full rollback on error'
+      hours: 6
+      depends_on: [B-FG09-10.2]
+      description: 'Phần 2 của `lock_period` (trong transaction của B-FG09-10.2): kiểm điều kiện theo đúng thứ tự E-INC-002 / 003 / 004 / 005 / 014 /
+        013 / 008; lỗi bất kỳ ở kiểm hay ở bước ghi sau đó → rollback toàn bộ, kỳ P vẫn OPEN.'
+      dod:
+      - 'DoD K8 (c)(d)(d2): đổi phân bổ giữa 試算 và khóa → E-INC-008; kỳ trước OPEN → E-INC-003; tick false → 422 E-INC-014'
+      - Thứ tự kiểm đúng spec (lỗi đầu tiên gặp được trả về); mọi lỗi → rollback toàn bộ
     - id: B-FG09-10.4
       title: '[FG-09] K8 期ロック — chạy K1..K7 LOCK, ghi kết quả kỳ'
       title_en: '[FG-09][K8][BE] K8 period lock — run K1..K7 in LOCK mode, write period results'
       hours: 12
-      depends_on: [B-FG09-10.2]
-      description: 'Phần 2 của `lock_period` (trong cùng transaction của B-FG09-10.2): chạy K1..K7 chế độ LOCK; bảo đảm kỳ P+1 tồn tại TRƯỚC khi
+      depends_on: [B-FG09-10.6]
+      description: 'Phần 3 của `lock_period` (trong cùng transaction của B-FG09-10.2): chạy K1..K7 chế độ LOCK; bảo đảm kỳ P+1 tồn tại TRƯỚC khi
         ghi CARRY (B-PS-02); ghi period_billings LOCK, incentive_runs (+ chứng cứ tick CSV), incentive_results.'
       dod:
       - Kết quả kỳ khớp 試算 của B-FG09-10.1 với cùng đầu vào; CARRY chỉ ghi khi P+1 đã có
@@ -86,7 +99,7 @@ split_siblings:
       title_en: '[FG-09][K8][BE] K8 period lock — rounding adjustment, LOCKED status, outbox, audit'
       hours: 10
       depends_on: [B-FG09-10.4, C-FG11-08]
-      description: 'Phần 3 của `lock_period`: dòng 端数調整 theo suất vào accounting_export_lines (phạm vi theo trục kỳ — B-PA-01), trạng thái LOCKED,
+      description: 'Phần 4 của `lock_period`: dòng 端数調整 theo suất vào accounting_export_lines (phạm vi theo trục kỳ — B-PA-01), trạng thái LOCKED,
         outbox, audit PERIOD_LOCK; lỗi ở bất kỳ bước ghi nào → rollback toàn bộ.'
       dod:
       - 'DoD K8 (a): ép lỗi ở bước ghi outbox → không còn dòng incentive_results, P vẫn OPEN'

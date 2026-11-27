@@ -8,6 +8,7 @@
 Phạm vi: GitHub Project 1 — **509 item (18 epic + 491 issue), 408 lá được chấm, 101 cha / epic lấy tổng con**. Lần chấm P3: 499 item / 401 lá; sau Gate B thêm 10 issue (#500–#509: tách lá > 16 giờ + 2 issue thô, PREMISE L5-D08, L5-D12) và chấm lại 11 lá; 3 lá P3 (#381, #489, #494) nay là cha. Point = SWP đã chốt, Hours = SWP × 2,0 (§2). Số trong các bảng §2.2, §3, §4 sinh bằng script từ payload nhúng trong hai báo cáo HTML (lá chấm lại thay lá cùng số), không gõ tay (`backlog/scripts/build-estimate-swp-hours.py` → `backlog/estimate-swp-hours.csv` → `render-estimate-tables.py`).
 
 <!-- BEGIN GEN pending -->
+> **Đang chờ chấm SWP (2 lá, sau Gate B):** B-FG09-10.2, B-FG09-10.6. Các bảng dưới là số của các lần chấm đã có: lá mới chưa có trong bảng, lá đổi phạm vi còn SWP cũ; người dùng chốt điểm rồi chạy lại build → ghi field → render.
 <!-- END GEN pending -->
 
 ## 1. Issue mẫu skill chọn để kiểm
@@ -85,7 +86,7 @@ Sau Gate B (PREMISE L5-D08, L5-D12) có 10 issue mới và #486 thu hẹp phạm
 - **Test +44%, làm rõ +83%**: SWP chấm test nặng hơn giờ sơ bộ (sau hiệu chỉnh `cal-001`); làm rõ lệch nhiều về tỷ lệ nhưng chỉ 50 giờ.
 - **Không thêm k thứ hai** (Expert Gate B quyết giữ một k): người dùng chốt một hệ số (plan §0 dòng 12); bảng trên so với giờ sơ bộ PL tự ước, chưa phải giờ thật — sửa riêng thiết kế (+213 giờ) mà không sửa test / làm rõ theo chiều ngược lại là chọn lọc. Thiết kế xem lại riêng ở lần hiệu chỉnh sau Iteration 1; tải 設計第4波 đo bằng **giờ sơ bộ 311 giờ**, không bằng SWP × 2.
 - **Giờ dự báo cả đợt** (dòng cuối bảng): Hours của lá thô = SWP × 2 thấp hơn giờ giữ chỗ có hệ thống (chấm không nâng điểm khi thiếu spec), nên tổng Hours không dùng để dự báo tải S2–S8. Rủi ro mốc ở progress-report dùng **giờ dự báo cả đợt**; Hours trên Project dùng cho sprint đang lập kế hoạch.
-- **22 lá đã có spec có Hours > 16 giờ** (SWP ≥ 9), không lá nào trong Iteration 1 — xử lý theo **ngoại lệ có tên ở PREMISE L5-D08, người dùng xác nhận 2026-11-27**: 4 lá 完納奨励金 tách ngay (#381 → #502, #503; #486 thu hẹp + #504, #506 cùng cha #466; #489 → #505, #507; #494 → #508, #509), đã chấm lại (§1.1): 8 lá mới ≤ 16 giờ, riêng #486 còn 9 SWP = 18 giờ (người dùng giữ) nên cũng mang nhãn `needs-split`; 18 lá còn lại mang nhãn `needs-split` trên Project, tách và chấm lại trước buổi lập kế hoạch sprint dự kiến (danh sách theo epic ở §3).
+- **22 lá đã có spec có Hours > 16 giờ** (SWP ≥ 9), không lá nào trong Iteration 1 — xử lý theo **ngoại lệ có tên ở PREMISE L5-D08, người dùng xác nhận 2026-11-27**: 4 lá 完納奨励金 tách ngay (#381 → #502, #503; #486 thu hẹp + #504, #506 cùng cha #466; #489 → #505, #507; #494 → #508, #509), đã chấm lại (§1.1): 8 lá mới ≤ 16 giờ; #486 còn 9 SWP = 18 giờ (người dùng giữ) nên người dùng quyết **tách tiếp ngay**: #486 còn khung khóa + 2 phiên đồng thời, thêm anh em #510 kiểm điều kiện theo thứ tự + rollback (cùng cha #466) — hai lá chờ chấm SWP; 18 lá còn lại mang nhãn `needs-split` trên Project, tách và chấm lại trước buổi lập kế hoạch sprint dự kiến (danh sách theo epic ở §3).
 - **Hiệu chỉnh k sau Iteration 1**: k = 2,0 là giả định trước khi có giờ thật. Hết sprint giả lập, so giờ đốt với SWP đã xong; lệch > 20% thì đề xuất k mới qua người dùng, chạy lại build + ghi field.
 
 ## 3. Tổng theo epic
@@ -102,7 +103,7 @@ Số issue = lá / tất cả issue trong epic (gồm cha). SWP và giờ cộng
 | #9 EP-FG06 — [FG-06][EPIC] Delivery management — deliveries, exceptions, disputes | 22 / 30 | 94 | 188 | 2 lá thô: giữ chỗ 31 giờ LAB-1 → 14 giờ; needs-split (> 16 giờ, tách trước sprint planning): #377 |
 | #10 EP-FG07 — [FG-07][EPIC] Reconciliation and daily close — reconciliation, day lock, disputes / SLA | 16 / 20 | 81 | 162 | 6 lá thô: giữ chỗ 176 giờ LAB-1 → 42 giờ; needs-split (> 16 giờ, tách trước sprint planning): #328, #379 |
 | #11 EP-FG08 — [FG-08][EPIC] Correction requests and sign-off — post-confirmation adjustments (REVERSE / DELTA) | 13 / 16 | 72 | 144 | 3 lá thô: giữ chỗ 80 giờ LAB-1 → 18 giờ; needs-split (> 16 giờ, tách trước sprint planning): #281, #282, #331 |
-| #12 EP-FG09 — [FG-09][EPIC] On-time full-payment incentive | 41 / 50 | 194 | 388 | 7 lá thô: giữ chỗ 136 giờ LAB-1 → 50 giờ; needs-split (> 16 giờ, tách trước sprint planning): #486 |
+| #12 EP-FG09 — [FG-09][EPIC] On-time full-payment incentive | 41 / 50 | 194 | 388 | 7 lá thô: giữ chỗ 136 giờ LAB-1 → 50 giờ |
 | #13 EP-FG10 — [FG-10][EPIC] Rule versions, incentive rates, masters, calendar | 30 / 36 | 125 | 250 | 13 lá thô: giữ chỗ 292 giờ LAB-1 → 88 giờ |
 | #14 EP-FG02 — [FG-02][EPIC] Accounts, authentication, authorization — accounts, MFA, proxy, PIN | 32 / 40 | 130 | 260 | 5 lá thô: giữ chỗ 96 giờ LAB-1 → 34 giờ |
 | #15 EP-FG11 — [FG-11][EPIC] Reports and data export — 12 reports, accounting CSV | 35 / 41 | 138 | 276 | 21 lá thô: giữ chỗ 468 giờ LAB-1 → 140 giờ |

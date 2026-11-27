@@ -43,7 +43,7 @@ def pct(a, b):
 is_fg = lambda sel: bool(sel) and all(e.startswith("EP-FG") for e in sel.get("epics", ["x"]))
 
 # 0. Lá đang chờ chấm
-pend_tbl = [f"> **Đang chờ chấm SWP ({len(pending)} lá, sau Gate B):** {', '.join(pending)}. Các bảng dưới là số của lần chấm P3: lá mới chưa có trong bảng, lá đổi phạm vi còn SWP cũ; "
+pend_tbl = [f"> **Đang chờ chấm SWP ({len(pending)} lá, sau Gate B):** {', '.join(pending)}. Các bảng dưới là số của các lần chấm đã có: lá mới chưa có trong bảng, lá đổi phạm vi còn SWP cũ; "
             "người dùng chốt điểm rồi chạy lại build → ghi field → render."] if pending else []
 
 # 1. Giờ sơ bộ / SWP theo loại việc — kiểm một hệ số k
