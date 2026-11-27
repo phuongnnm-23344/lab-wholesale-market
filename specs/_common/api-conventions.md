@@ -13,7 +13,7 @@ related: ["BM-2-901-52", "SPEC-ERROR_CODES-001", "SPEC-API_LIST-001", "ADR-002",
 
 # Quy ước chung của API
 
-> Nội dung tương ứng các sheet `Common Conventions`, `Status code`, `Appendix` của biểu mẫu ISO **BM-2-901-52**. Khuôn [BM-2-901-52](../_templates/BM-2-901-52-api-design-template.md) trỏ về file này (ISS-36: ba file `_common/` của API Design chưa có ở repo chuẩn — dự án viết bản của mình). Áp cho **mọi** file trong [`system-design/api-design/`](../system-design/api-design/_index.md).
+> Nội dung tương ứng các sheet `Common Conventions`, `Status code`, `Appendix` của biểu mẫu ISO **BM-2-901-52**. Khuôn BM-2-901-52 (theo chuẩn nội bộ spec-standards, không công khai) trỏ về file này (ISS-36: ba file `_common/` của API Design chưa có ở repo chuẩn — dự án viết bản của mình). Áp cho **mọi** file trong [`system-design/api-design/`](../system-design/api-design/_index.md).
 >
 > Danh mục API: [`api-list.md`](api-list.md) · mã lỗi: [`error-codes.md`](error-codes.md).
 

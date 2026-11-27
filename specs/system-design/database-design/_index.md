@@ -2,7 +2,7 @@
 
 **10 tài liệu**
 
-Tên file `{DB_ID}_DB.md`, đặt trong `{screen-or-feature}/`; dùng từ hai feature trở lên thì đặt thẳng ở thư mục này. Viết theo khuôn [`specs/_templates/BM-2-901-50-database-design-template.md`](../../_templates/BM-2-901-50-database-design-template.md). Thêm, sửa hoặc xoá dòng **trong cùng lượt** tạo file, tăng version hay xoá file. Bộ Database Design tách theo cụm ER (Gate 1 M-09): mọi file dùng chung nên đặt ở gốc thư mục; `MKT_DB.md` là file tổng (ngoại lệ #7, README §3).
+Tên file `{DB_ID}_DB.md`, đặt trong `{screen-or-feature}/`; dùng từ hai feature trở lên thì đặt thẳng ở thư mục này. Viết theo khuôn `specs/_templates/BM-2-901-50-database-design-template.md` (theo chuẩn nội bộ spec-standards, không công khai). Thêm, sửa hoặc xoá dòng **trong cùng lượt** tạo file, tăng version hay xoá file. Bộ Database Design tách theo cụm ER (Gate 1 M-09): mọi file dùng chung nên đặt ở gốc thư mục; `MKT_DB.md` là file tổng (ngoại lệ #7, README §3).
 
 | ID | Tên tài liệu | Feature | Version | Updated by | Updated | Link |
 |---|---|---|---|---|---|---|

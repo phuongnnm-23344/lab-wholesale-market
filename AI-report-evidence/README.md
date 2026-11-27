@@ -1,6 +1,8 @@
-# Bằng chứng cho AI-report (LAB-4)
+# Bằng chứng cho AI-report (LAB-4, LAB-5)
 
 Thư mục này chứa bản sao các ghi chép mà [`../lab-4/AI-report.md`](../lab-4/AI-report.md) lấy số liệu: báo cáo review của Expert, góp ý / trả lời của Customer, sổ feedback, nhật ký quyết định, ghi chú tiến độ, brief giao việc khi chạy song song. Bản gốc nằm trong workspace làm bài (ngoài repo); ở đây là bản sao ngày 2026-11-25, sau Expert Gate 3, để người chấm kiểm được số liệu mà không cần workspace.
+
+**Bằng chứng LAB-5** ở thư mục con [`lab-5/`](lab-5/README.md) (cho [`../AI-report.md`](../AI-report.md) ở gốc repo). Phần dưới đây là của LAB-4.
 
 **Lưu ý khi đọc**
 
@@ -9,7 +11,7 @@ Thư mục này chứa bản sao các ghi chép mà [`../lab-4/AI-report.md`](..
 - ID trong file (`FB-EXP-`, `FB-CUS-`, `DEC-`, `G1-`, `G2-`, `G3-`…) là ID của sổ theo dõi; ID của RFP (`FR-`, `NFR-`, `BR-`…) xem ở `lab-4/PREMISE.md`.
 - Đường dẫn trong file (`project/…`, `plans/…`, `lab-wholesale-market/…`) tính từ gốc workspace làm bài, không phải từ repo này. Đường dẫn máy cá nhân đã che thành `<user>`.
 - Trước khi chép đã quét `password|pass|key|secret|token|@sun-asterisk|@gmail` và địa chỉ email: không có mật khẩu, khóa, email hay dữ liệu thật; chữ "token" trong file là tên cơ chế thiết kế (`X-MFA-Token`), `<DEMO_ACCOUNT_PASSWORD>` ở DEC-030 là chỗ giữ chỗ.
-- Người dùng quyết giữ thư mục này trong gói nộp LAB-4; có giữ khi public repo ở LAB-5 hay không: quyết ở LAB-5.
+- Người dùng quyết giữ thư mục này trong gói nộp LAB-4; LAB-5 quyết giữ khi public repo (plan LAB-5 §0 dòng 2), sau khi quét lại.
 
 ## Nguồn gốc từng file
 

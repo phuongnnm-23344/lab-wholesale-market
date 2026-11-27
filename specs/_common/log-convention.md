@@ -13,7 +13,7 @@ related: ["BM-2-901-53"]
 
 # Quy ước ghi log
 
-> **Nội dung giữ nguyên từ sheet `Logs` của biểu mẫu ISO BM-2-901-53 v01.** Tách ra thành file dùng chung vì quy ước log áp cho **cả dự án**, không thuộc riêng một function — template [BM-2-901-53](../_templates/BM-2-901-53-technical-design-template.md) vì thế không còn mục `Log`.
+> **Nội dung giữ nguyên từ sheet `Logs` của biểu mẫu ISO BM-2-901-53 v01.** Tách ra thành file dùng chung vì quy ước log áp cho **cả dự án**, không thuộc riêng một function — template BM-2-901-53 (theo chuẩn nội bộ spec-standards, không công khai) vì thế không còn mục `Log`.
 >
 > **Chưa dùng làm chuẩn được.** File đang chờ confirm với chuyên gia — xem [mục 3](#3-cần-confirm-với-chuyên-gia). Biểu mẫu gốc có ít nhất một lỗi nội dung đã kiểm chứng được (mục 2).
 

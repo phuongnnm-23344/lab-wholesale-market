@@ -2,7 +2,7 @@
 
 **42 tài liệu** (party 7 · lot 6 · trade 8 · delivery 6 · settle 5 · incentive 4 · rule 6) — danh mục theo API ID và màn gọi: [`_common/api-list.md`](../../_common/api-list.md); quy ước chung: [`_common/api-conventions.md`](../../_common/api-conventions.md)
 
-Tên file `{API_ID}_API.md`, đặt trong `{screen-or-feature}/`; dùng từ hai feature trở lên thì đặt thẳng ở thư mục này. Viết theo khuôn [`specs/_templates/BM-2-901-52-api-design-template.md`](../../_templates/BM-2-901-52-api-design-template.md). Thêm, sửa hoặc xoá dòng **trong cùng lượt** tạo file, tăng version hay xoá file.
+Tên file `{API_ID}_API.md`, đặt trong `{screen-or-feature}/`; dùng từ hai feature trở lên thì đặt thẳng ở thư mục này. Viết theo khuôn `specs/_templates/BM-2-901-52-api-design-template.md` (theo chuẩn nội bộ spec-standards, không công khai). Thêm, sửa hoặc xoá dòng **trong cùng lượt** tạo file, tăng version hay xoá file.
 
 | ID | Tên tài liệu | Feature | Version | Updated by | Updated | Link |
 |---|---|---|---|---|---|---|

@@ -1,13 +1,13 @@
  > **LAB-2 プロトタイプ（Product A — 桜水産市場、模擬データ）:** 参照 [`prototype/README.md`](../../prototype/README.md).
-> アプリ: https://lab-wholesale-market-fup2.vercel.app/ · デモ用アカウント、パスワード、デモシナリオはすべて上記READMEにあります。
-> 直下はLAB-4設計一式のナビゲーションです。「GitHub Project Management Template」の節以降は、本リポジトリの元になったSun*のプロジェクト管理テンプレートのREADMEです。
+> アプリ: https://lab-wholesale-market-fup2.vercel.app/ · デモ用アカウントとデモシナリオは上記READMEにあります（パスワードは別途連絡）。
+> LAB-4 提出時の README です（全文はタグ `lab-4`）。LAB-5 の公開版では、下部にあった Sun* プロジェクト管理テンプレートの README（自作ではない部分）を削除しています。
 
 # Product A — 桜水産市場: LAB-4 設計ドキュメント（ブランチ `ver/lab-4`）
 
 本リポジトリには、Product A演習プロジェクト（水産卸売市場の運営支援システム、株式会社 桜水産市場向け — 顧客、数値、データはすべてフィクション）の次の2点を格納しています:
 
 - **LAB-2プロトタイプ** が `prototype/` で実際に動作しています（LAB-4では変更しません）。
-- **LAB-4設計一式**（要件、仕様、アーキテクチャ、ADR、ワイヤーフレーム）。社内標準 [`sun-asterisk-internal/spec-standards`](https://github.com/sun-asterisk-internal/spec-standards) — QC-01 *GitHub上のSpecフォルダ構成基準* (`0.32.1`) に従います。
+- **LAB-4設計一式**（要件、仕様、アーキテクチャ、ADR、ワイヤーフレーム）。社内標準 `spec-standards`（社内リポジトリ、非公開） — QC-01 *GitHub上のSpecフォルダ構成基準* (`0.32.1`) に従います。
 
 読む順番は **`PREMISE.md` → `architecture/` → `wireframes/` → `specs/`** です。フォルダ構成のうち社内標準を継承した部分と新規作成した部分は **4節** を、AIの使い方は **`AI-report.md`** を参照してください。本設計一式はLAB-5でタスクに分解する際の入力になります。
 
@@ -24,7 +24,7 @@
 | [`AI-report.md`](AI-report.md) | LAB-4におけるAIの使い方: スキル、プロンプト、レビュー方法、AIの誤りと修正方法、自己評価 | 標準規約どおりのFrontmatter + History | **新規**（課題要件） | PL | — |
 | [`prototype/`](../../prototype) | LAB-2プロトタイプのコード (Next.js + Supabase)、デモ用README | — | LAB-2から存在 | PL | [`prototype/README.md`](../../prototype/README.md) |
 
-リポジトリ直下のその他のフォルダ（`.github/`、`webhook/`、`scripts/` 内の `*.sh`）はSun*のプロジェクト管理テンプレートの一部です。LAB-4設計一式のスクリプトは5節にあり、「GitHub Project Management Template」の節以降を参照してください。元のテンプレートには `docs/`（ステータス遷移仕様）と `scripts/bootstrap-project.sh` もありますが、本リポジトリのコピーには **含まれていません**。そのため、下記のテンプレートREADMEでこれらに言及している箇所は開けません（テンプレートの記述はそのまま残しています）。
+リポジトリ直下のその他のフォルダ（`.github/`、`scripts/` 内の `*.sh`）はSun*のプロジェクト管理テンプレートの一部です（LAB-5 公開版では `webhook/`、`wiki-template/`、`images/`、`.bot-test/`、`CHANGELOG.md` とテンプレートの README 部分を削除済み）。LAB-4設計一式のスクリプトは5節にあり、「GitHub Project Management Template」の節以降を参照してください。元のテンプレートには `docs/`（ステータス遷移仕様）と `scripts/bootstrap-project.sh` もありますが、本リポジトリのコピーには **含まれていません**。そのため、下記のテンプレートREADMEでこれらに言及している箇所は開けません（テンプレートの記述はそのまま残しています）。
 
 ## 2. QC-01に対するプロジェクトの取り決め
 
@@ -56,7 +56,7 @@
 
 ## 4. 設計一式の構成、継承部分と新規作成部分
 
-**標準の出典:** リポジトリ [`sun-asterisk-internal/spec-standards`](https://github.com/sun-asterisk-internal/spec-standards)、ブランチ `main`、コミット **`72c1dda`**（2026-11-05）— QC-01 `0.32.1`、ひな形は `03-specs/01-templates/`、見本は `03-specs/02-samples/`。再照合済み: `03-specs/` フォルダは `72c1dda` から `ae45211` まで **変更なし**。そのため、本リポジトリのひな形は提出時点でも最新版です。
+**標準の出典:** リポジトリ `spec-standards`（社内リポジトリ、非公開）、ブランチ `main`、コミット **`72c1dda`**（2026-11-05）— QC-01 `0.32.1`、ひな形は `03-specs/01-templates/`、見本は `03-specs/02-samples/`。再照合済み: `03-specs/` フォルダは `72c1dda` から `ae45211` まで **変更なし**。そのため、本リポジトリのひな形は提出時点でも最新版です。
 
 ### 4.1 提出用フォルダツリー（LAB-4の部分）
 
@@ -174,225 +174,4 @@ ja/                               bản tiếng Nhật: cùng cây thư mục, s
 
 `python scripts/check-markdown-links.py [フォルダ / ファイル …]`（ルートで実行。標準ライブラリのみ使用）— `.md` ファイル内の相対リンクとアンカー `#…`（GitHub 方式のスラッグ。日本語の見出しにも対応）を検査する。引数なしの場合は `prototype/`・`wiki-template/`・`webhook/`・`_templates/` を除くリポジトリ全体を走査。コードブロックとインラインコード内のリンクは対象外。例: `python scripts/check-markdown-links.py ja`。リンク切れがあれば終了コード 1。
 
----
-
-# GitHub Project Management Template
-
-**Version 1.0** — 保守: Sun Asterisk の PEC（Process Elevation Consultant）
-
-Sun Asterisk のエンジニアリングチーム向けの標準化されたプロジェクト管理テンプレートです。Pherusa に代わり、GitHub Projects を統一された作業管理基盤とすることを目的としています。
-
-本リポジトリは、すべての新規プロジェクトの **元テンプレート** として使われます。Infra チームが新しいリポジトリを立ち上げる際、このテンプレートを使って、設定済みの GitHub Project ボード、issue テンプレート、ワークフロー自動化を数分でそろえます。
-
----
-
-## 📖 ドキュメント
-
-詳細なガイドラインは専用ページにあります。対象に合ったものを使ってください:
-
-| 👤 Audience | 📚 Docs | 🔗 Link |
-| :--- | :--- | :--- |
-| **社内（Sun\* メンバー）** | Wiki — 社員向けの完全なガイドライン | **[📘 GitHub Wiki](https://github.com/framgia/management_template/wiki)** |
-| **外部 / 顧客** | 公開 GitHub Page（EN / VI / Customer） | **[🌐 GitHub Page](https://framgia.github.io/management_template/)** |
-
-> 💡 顧客または外部パートナーの場合は **GitHub Page** を、Sun\* のメンバーの場合は **Wiki** を使ってください。以下のセクションは、本テンプレートの簡単な技術リファレンスです。
-
----
-
-## 含まれるもの 
-
-### Issue テンプレート（トラッカー14種）
-
-| # | Template | Purpose |
-|---|---|---|
-| 01 | Epic | 複数のストーリーをまとめる大規模な取り組み |
-| 02 | Story | ユーザー向けの機能または要件 |
-| 03 | Change Request | 進行中のプロジェクトにおけるスコープ変更 |
-| 04 | UI Design | デザインタスク |
-| 05 | Dev Task | 開発の実装タスク |
-| 06 | Test Design | テストケースの設計 |
-| 07 | Test Execution | テスト実行の記録 |
-| 08 | QA Bug | QAテスト中に見つかったバグ |
-| 09 | UAT Bug | UATで見つかったバグ |
-| 10 | Production Bug | 本番環境で見つかったバグ |
-| 11 | Documentation | ドキュメント作成タスク |
-| 12 | Investigation | 調査またはスパイク |
-| 13 | Operation | 運用またはインフラのタスク |
-| 14 | Feedback | 一般的なフィードバックや改善案 |
-
-### 要件・Spec文書
-
-フォルダ構成は **QC-01 — GitHub上のSpecフォルダ構成基準** に従います。各フォルダには文書を一覧する `_index.md` があります。`_templates/` には空のひな形を置いています — コピーして使い、その場で編集しないでください。
-
-| Folder | Contains | Template | Index |
-|---|---|---|---|
-| [`requirements/`](../../requirements) | **WHAT** — 要件文書、`REQ-{ストーリー番号}-{slug}.md` | `BM-2-901-63` | [`requirements/_index.md`](../requirements/_index.md) |
-| [`specs/`](../../specs) | **HOW** — Screen Specification · Function Specifications · Technical Design を `specs/{screen-or-feature}/` に、Database Design · API Design を `specs/system-design/` に、共有文書を `specs/_common/` に配置 | `BM-2-901-50` … `BM-2-901-54` | [`specs/_index.md`](../specs/_index.md) |
-
-### GitHub Actions ワークフロー
-
-| Workflow | Trigger | Purpose |
-|---|---|---|
-| `issue-triage-labels.yml` | Issue opened | テンプレートの項目に基づき、担当チーム、重大度、テスト種別のラベルを自動付与 |
-| `project-bootstrap.yml` | Manual (workflow_dispatch) | テンプレートのプロジェクトボードをコピーし、リポジトリに紐付け、ラベルを作成 |
-| `pr-auto-label.yml` | PR opened/edited | チェックリストに基づいて PR に自動でラベル付与（db-migration、breaking-change など） |
-| `pr-validation.yml` | PR opened/edited | PR説明に必須セクションがあるか検証 |
-| `release-checklist-gate.yml` | PR to main, tag push | main へのマージ前にリリース準備チェックリストを強制 |
-| `dsx-quality-gate.yml` | PR to main/develop | すべてのワークフローとテンプレートファイルの YAML 構文を検証 |
-
-### プロジェクトステータス自動化（n8n Webhook）
-
-`webhook/`フォルダには n8n の Code Node スクリプトが入っており、GitHub App のイベントに基づいて GitHub Project v2 の **Status** と **Quality Gate** のカスタムフィールドをリアルタイムに自動更新します。
-
-ステータス遷移は `docs/status-transition-spec/tracker-status.csv` で定義されています。
-
-詳細な設定手順は [`webhook/README.md`](../../webhook/README.md) を参照してください。
-
----
-
-## プロジェクト構成
-
-```
-.github/
-  ISSUE_TEMPLATE/         ← 14 issue templates
-  workflows/              ← 6 GitHub Actions workflows
-  pull_request_template.md
-requirements/
-  _index.md               ← Requirement document index
-  _templates/             ← BM-2-901-63 requirement document template
-specs/
-  _index.md               ← Spec index (SPEC · FUNC · TECH)
-  _common/                ← Docs shared by two or more features
-  _templates/             ← BM-2-901-50 … BM-2-901-54 spec templates
-  system-design/
-    database-design/      ← Database Design (+ _index.md)
-    api-design/           ← API Design (+ _index.md)
-docs/
-  status-transition-spec/
-    tracker-status.csv    ← Status transition rules
-    github_action_spec.md ← Technical spec for automation
-scripts/
-  setup-labels.sh         ← Create all labels in a repo (CLI)
-  bootstrap-project.sh    ← Bootstrap a new project board (CLI)
-webhook/
-  step-2-validate-signature.js
-  step-3-route-event.js
-  step-4-fetch-issue-context.js
-  step-5-apply-spec.js
-  step-6-execute-mutation.js
-  README.md               ← n8n webhook setup guide
-```
-
----
-
-## 新しいプロジェクトのセットアップ
-
-### ステップ 1 — テンプレートからリポジトリを作成
-
-GitHub でこのリポジトリを開き、**「Use this template」** をクリックして新しいリポジトリを作成してください。
-
-手動でクローンしてコピーしないでください — テンプレートボタンを使うと、正しいリポジトリ構成と設定が保たれます。
-
-### ステップ 2 — プロジェクトボードのブートストラップ
-
-GitHub Actions の UI から **Project Bootstrap** ワークフローを実行してください:
-
-```
-Actions → Project Bootstrap → Run workflow
-  - repo_name: <new-repo-name>
-  - project_board_name: <display name for the board>
-```
-
-または CLI を使用:
-
-```bash
-export GH_TOKEN=<PROJECT_TOKEN>
-./scripts/bootstrap-project.sh \
-  --org sun-asterisk \
-  --repo <repo-name> \
-  --project-name "<Board Name>" \
-  --template-project-number <TEMPLATE_PROJECT_NUMBER>
-```
-
-Bootstrap は次の処理を行います:
-1. テンプレートの GitHub Project ボードをコピー（すべてのビューとカスタムフィールド）
-2. 新しいボードをリポジトリに紐付け
-3. 必要なラベルをすべて作成（約30個）
-
-### ステップ 3 — Webhook 自動化の有効化（任意）
-
-プロジェクトのステータス遷移をリアルタイムで有効にするには、新しいリポジトリ向けに n8n の webhook 連携を設定してください。
-手順は [`webhook/README.md`](../../webhook/README.md) を参照してください。
-
----
-
-## ステータス遷移
-
-プロジェクトの Status と Quality Gate のフィールドは、pull request と issue のイベントに基づいて自動更新されます。
-
-| Tracker | Event | Transition |
-|---|---|---|
-| Dev Task | PR 作成 | In Progress → In Review |
-| Dev Task | PR マージ | In Review → Closed + Quality Gate: Technical Review Passed |
-| Dev Task | PR 却下 | In Review → In Progress + Quality Gate: Technical Review Failed |
-| QA / UAT / Production Bug | PR マージ | → QA Testing + Quality Gate: Technical Review Passed |
-| 任意のトラッカー | main への PR マージ | → Closed |
-| Story / Change Request | すべての Dev Task が close | In Progress → QA Testing |
-| Story / Change Request | すべてのサブタスクが close | QA Testing → UAT In Progress + Quality Gate: QA Testing Passed |
-| Story / Change Request | QA Bug 作成 | QA Testing → In Progress + Quality Gate: QA Testing Failed |
-| Epic | Story が In Progress | New → In Progress |
-| Epic | すべての Story が close | In Progress → Closed |
-| 任意のトラッカー | Issue が completed で close | → Closed (guarded) |
-| 任意のトラッカー | Issue が not planned で close | → Cancelled (guarded) |
-
-完全な仕様: `docs/status-transition-spec/tracker-status.csv`（元のテンプレートにあり、本リポジトリには含まれない）
-
----
-
-## ラベル体系
-
-ラベルは bootstrap ワークフローが自動作成し、`scripts/setup-labels.sh` で管理されます。
-
-| Group | Labels |
-|---|---|
-| 種別 | `type:epic`, `type:story`, `type:changerequest`, `type:devtask`, `type:qabug`, `type:uatbug`, `type:productionbug`, `type:uidesign`, `type:testdesign`, `type:testexecution`, `type:documentation`, `type:investigation`, `type:operation`, `type:feedback` |
-| チーム | `team:frontend`, `team:backend`, `team:native-ios`, `team:native-android`, `team:native-multiPF`, `team:ai`, `team:infrastructure` |
-| 重大度 | `severity:low`, `severity:medium`, `severity:high`, `severity:critical` |
-| テスト種別 | `testtype:functionaltest`, `testtype:layouttest`, `testtype:performancetest`, `testtype:stresstest`, `testtype:accesscontrol&securitytest` |
----
-
-## 組織の初期設定（一度だけ）
-
-以下は、どのプロジェクトでもこのテンプレートを使えるようになる前に、Infra が組織レベルで一度だけ設定する必要があります。
-
-**このリポジトリを Template Repository に設定:**
-Repository Settings → 「Template repository」にチェック
-
-**Organization Secret: `PROJECT_TOKEN`**
-次の権限を持つ Fine-grained PAT:
-- Repository: Issues (Write)、Pull requests (Read)、Variables (Write)
-- Organization: Projects（読み取りと書き込み）
-
-設定場所: Org Settings → Secrets → Actions → New organization secret → Access: All repositories
-
-**Organization Variable: `TEMPLATE_PROJECT_NUMBER`**
-コピー元となるマスターの GitHub Project の番号（URL で確認可能: `github.com/orgs/sun-asterisk/projects/NUMBER`）。
-
-設定場所: Org Settings → Variables → Actions → New organization variable
-
----
-
-## サポートと連絡先
-
-本テンプレートに関する質問、課題、改善提案は次へ:
-
-- **Slack:** [#con_pec-github-project-support](https://sun-asterisk.slack.com/channels/con_pec-github-project-support)
-- **GitHub Issues:** 問題または要望の内容を記載して、本リポジトリに issue を作成
-
-本テンプレートは Sun Asterisk の **PEC（Process Elevation Consultant）** チームが所有・保守しています。プロジェクトチームからの貢献は pull request で歓迎します。
-
----
-
-## 変更履歴
-
-バージョン履歴は [CHANGELOG.md](../../CHANGELOG.md) を参照してください。
+_Sun* プロジェクト管理テンプレートの README 部分（自作ではない）は LAB-5 公開版で削除しました。全文はタグ `lab-4` にあります。_

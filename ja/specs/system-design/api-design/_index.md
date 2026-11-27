@@ -2,7 +2,7 @@
 
 **42件のドキュメント**（party 7 · lot 6 · trade 8 · delivery 6 · settle 5 · incentive 4 · rule 6）— API ID と呼び出し画面別の一覧: [`_common/api-list.md`](../../_common/api-list.md)；共通ルール: [`_common/api-conventions.md`](../../_common/api-conventions.md)
 
-ファイル名は `{API_ID}_API.md` とし、`{screen-or-feature}/` に置きます。2つ以上の feature で使う場合は、このフォルダ直下に置きます。テンプレート [`specs/_templates/BM-2-901-52-api-design-template.md`](../../../../specs/_templates/BM-2-901-52-api-design-template.md) に従って書きます。ファイルを作成するのと同じ作業の中で、行を追加・修正・削除し、version を上げ、またはファイルを削除してください。
+ファイル名は `{API_ID}_API.md` とし、`{screen-or-feature}/` に置きます。2つ以上の feature で使う場合は、このフォルダ直下に置きます。テンプレート `specs/_templates/BM-2-901-52-api-design-template.md`（社内標準 spec-standards に準拠、非公開） に従って書きます。ファイルを作成するのと同じ作業の中で、行を追加・修正・削除し、version を上げ、またはファイルを削除してください。
 
 | ID | 資料名 | Feature | Version | Updated by | Updated | Link |
 |---|---|---|---|---|---|---|

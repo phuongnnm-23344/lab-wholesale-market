@@ -13,7 +13,7 @@ related: ["BM-2-901-52", "SPEC-ERROR_CODES-001", "SPEC-API_LIST-001", "ADR-002",
 
 # API 共通規約
 
-> 内容は ISO 様式 **BM-2-901-52** の sheet `Common Conventions`、`Status code`、`Appendix` に対応する。ひな形 [BM-2-901-52](../../../specs/_templates/BM-2-901-52-api-design-template.md) はこのファイルを参照している（ISS-36: API Design の `_common/` の3ファイルは標準リポジトリにまだないため、プロジェクトが独自に書いた）。[`system-design/api-design/`](../system-design/api-design/_index.md) の **すべての** ファイルに適用する。
+> 内容は ISO 様式 **BM-2-901-52** の sheet `Common Conventions`、`Status code`、`Appendix` に対応する。ひな形 BM-2-901-52（社内標準 spec-standards に準拠、非公開） はこのファイルを参照している（ISS-36: API Design の `_common/` の3ファイルは標準リポジトリにまだないため、プロジェクトが独自に書いた）。[`system-design/api-design/`](../system-design/api-design/_index.md) の **すべての** ファイルに適用する。
 >
 > API 一覧: [`api-list.md`](api-list.md) · エラーコード: [`error-codes.md`](error-codes.md).
 

@@ -2,7 +2,7 @@
 
 **10 文書**
 
-ファイル名は `{DB_ID}_DB.md`、`{screen-or-feature}/` の下に置く。2つ以上の feature で使う場合は、このフォルダー直下に置く。ひな型 [`specs/_templates/BM-2-901-50-database-design-template.md`](../../../../specs/_templates/BM-2-901-50-database-design-template.md) に従って書く。行の追加・修正・削除は、ファイルを作成する**同じ作業の中で**行い、version を上げるか、ファイルを削除する。Database Design 一式は ER クラスタ単位で分割している（Gate 1 M-09）: 共有するファイルはすべてフォルダー直下に置く; `MKT_DB.md` は総括ファイル（例外 #7、README §3）。
+ファイル名は `{DB_ID}_DB.md`、`{screen-or-feature}/` の下に置く。2つ以上の feature で使う場合は、このフォルダー直下に置く。ひな型 `specs/_templates/BM-2-901-50-database-design-template.md`（社内標準 spec-standards に準拠、非公開） に従って書く。行の追加・修正・削除は、ファイルを作成する**同じ作業の中で**行い、version を上げるか、ファイルを削除する。Database Design 一式は ER クラスタ単位で分割している（Gate 1 M-09）: 共有するファイルはすべてフォルダー直下に置く; `MKT_DB.md` は総括ファイル（例外 #7、README §3）。
 
 | ID | 資料名 | Feature | Version | Updated by | Updated | Link |
 |---|---|---|---|---|---|---|
