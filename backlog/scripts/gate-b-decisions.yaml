@@ -9,9 +9,12 @@
 needs_split: [C-PLAT-01.1, C-TEST-02, C-TEST-05, C-PLAT-01.2, C-TEST-07, C-FG15-06.2, C-PLAT-02, C-FG14-03, B-FG08-04,
               B-FG08-05, C-FG14-04, B-FG07-03, B-FG08-07, C-TEST-06, A-FG06-11, B-FG07-06, C-TEST-08, A-FG04-10]
 
-# Lá đổi phạm vi / lá mới chưa có SWP — chấm bằng skill, người dùng chốt, rồi mới ghi Point / Hours.
-# #486 chấm lại 9 SWP = 18 giờ > 16 → người dùng quyết tách tiếp ngay (2026-11-27): #486 thu hẹp + anh em B-FG09-10.6.
-rescore_pending: [B-FG09-10.2, B-FG09-10.6]
+# Lá đổi phạm vi / lá mới chưa có SWP — chấm bằng skill, người dùng chốt, rồi mới ghi Point / Hours. Rỗng = đã chấm hết.
+rescore_pending: []
+
+# Báo cáo chấm lại trong reports/, theo thứ tự thời gian (lần sau thay lần trước cho cùng số issue):
+# 1) 11 lá sau Gate B; 2) #486 tách tiếp + #510 (người dùng quyết 2026-11-27, #486 9 SWP = 18 giờ > 16).
+rescore_reports: [sun-estimate-lab5-gate-b-rescore-20261127.html, sun-estimate-lab5-486-split-rescore-20261127.html]
 
 # Lần chấm lại thứ nhất (11 lá): báo cáo reports/sun-estimate-lab5-gate-b-rescore-20261127.html (2026-11-27).
 # Issue cấp 1 thành cha: tách thành sub-issue (giữ người phụ trách, nhãn, spec của cha)

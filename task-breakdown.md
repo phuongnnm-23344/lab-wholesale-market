@@ -68,7 +68,7 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 | EP-FG06 | [FG-06] 引渡し管理 — giao hàng, ngoại lệ, tranh chấp | P3 | S4–S5 | 14 | 16 | 22 | 225 | 94 | 188 |
 | EP-FG07 | [FG-07] 照合・日次締め — đối soát, khóa ngày, tranh chấp / SLA | P2 | S5 | 9 | 11 | 16 | 292 | 81 | 162 |
 | EP-FG08 | [FG-08] 修正申請・決裁 — điều chỉnh sau chốt (REVERSE / DELTA) | P3 | S6 | 9 | 7 | 13 | 184 | 72 | 144 |
-| EP-FG09 | [FG-09] 完納奨励金 — tiền thưởng thanh toán đúng hạn | P2 | S4 (試算表) · S6–S7 | 23 | 28 | 42 | 469 | 185 (+2 lá chờ chấm) | 370 (+2 lá chờ chấm) |
+| EP-FG09 | [FG-09] 完納奨励金 — tiền thưởng thanh toán đúng hạn | P2 | S4 (試算表) · S6–S7 | 23 | 28 | 42 | 469 | 197 | 394 |
 | EP-FG10 | [FG-10] 規則版・交付率・マスタ・カレンダー — quy chế có version, master, lịch | P4 | S2 | 18 | 18 | 30 | 467 | 125 | 250 |
 | EP-FG02 | [FG-02] アカウント・認証・権限 — tài khoản, MFA, 代行, PIN | P3 | S1 | 23 | 17 | 32 | 377 | 130 | 260 |
 | EP-FG11 | [FG-11] 帳票・データ出力 — 12 báo cáo, CSV kế toán | P3 | S8 | 9 | 32 | 35 | 656 | 138 | 276 |
@@ -79,7 +79,7 @@ Vì sao ≤ 16 giờ cho việc làm được ngay: một người làm xong tro
 | EP-PLAT | [PLAT] 基盤 — nền tảng AWS, CI/CD, khung app, quy ước chung | P1 | S0 | 12 | 4 | 15 | 358 | 92 | 184 |
 | EP-TEST | [TEST] 総合テスト・UAT・リリース | P2 | sau S8 | 10 | 4 | 12 | 629 | 114 | 228 |
 | EP-CLAR | [CLAR] 要確認 — các điểm cần làm rõ với khách / nội bộ | P3 | trước G1 (2027-01-15) | 41 | 0 | 41 | 60 | 55 | 110 |
-| **Tổng** | 18 epic | | | **264** | **228** | **409** | **5484** | **1725** (+2 lá chờ chấm) | **3450** (+2 lá chờ chấm) |
+| **Tổng** | 18 epic | | | **264** | **228** | **409** | **5484** | **1737** | **3474** |
 <!-- END GEN epic-counts -->
 
 ## 2. Spec → issue

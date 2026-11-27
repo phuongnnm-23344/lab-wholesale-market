@@ -6,9 +6,7 @@ meta:
   - backlog/scripts/gate-a-decisions.yaml
   - backlog/scripts/gate-b-decisions.yaml
   note: Nguồn chuẩn của backlog LAB-5; dựng lại bằng build-backlog.py, không sửa tay.
-rescore_pending:
-- B-FG09-10.2
-- B-FG09-10.6
+rescore_pending: []
 iteration1:
   name: Iteration 1
   dates: 2027-02-01 → 2027-02-12 (S1 LAB-1)
