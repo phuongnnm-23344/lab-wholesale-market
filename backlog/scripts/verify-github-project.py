@@ -1,4 +1,5 @@
-"""P2 bước 3: đếm qua API và so với backlog/backlog.yaml — issue, item trong Project, quan hệ cha / con, field.
+"""P2 bước 3: đếm qua API và so với backlog/backlog.yaml — issue, item trong Project, quan hệ cha / con, field
+(Status: Todo, trừ item Iteration 1 lấy trạng thái cuối sprint từ progress/iteration-1-daily.csv — P4).
 
     python -X utf8 backlog/scripts/verify-github-project.py
 """
@@ -15,6 +16,11 @@ doc = yaml.safe_load(open(os.path.join(H.ROOT, "backlog", "backlog.yaml"), encod
 iss = {i["id"]: i for i in doc["issues"]}
 want = {e["id"]: None for e in doc["epics"]} | {x: (i["parent"] or i["epic"]) for x, i in iss.items()}
 cfg, M = H.load_config(), H.load_map()
+# Status mong đợi: trạng thái cuối sprint theo nhật ký giả lập (P4) cho item Iteration 1, còn lại Todo
+spec = importlib.util.spec_from_file_location("daily_log", os.path.join(os.path.dirname(__file__), "iteration-daily-log.py"))
+L = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(L)
+SPRINT_STATUS = L.final_status() if os.path.exists(L.LOG) else {}
 
 # issue trong repo (đọc ID backlog từ thân), cha
 found, cursor = {}, None
@@ -60,7 +66,7 @@ for x, p in want.items():
         err.append(f"không có trong Project {x}")
         continue
     meta = iss.get(x) or next(e for e in doc["epics"] if e["id"] == x)
-    exp = {"Status": "Todo", "Priority": meta["priority"]}
+    exp = {"Status": SPRINT_STATUS.get(x, "Todo"), "Priority": meta["priority"]}
     if x in iss:
         exp["Người phụ trách (giả định)"] = meta["assignee"]
         if meta["iteration"]:

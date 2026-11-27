@@ -1,0 +1,84 @@
+date,issue,backlog_id,who,event,status,hours,note
+2027-02-01,,,BrSE-1,external,,,"[Giả lập] Lập kế hoạch Iteration 1: cam kết 26 lá / 112 SWP / 224 giờ (Hours trên Project). Theo Hours trên Project: BE-6 44 giờ > 40, QA-1 34 giờ > 28 (40 trừ 30% giữ cho DoD 4) — nhận, theo dõi hằng ngày"
+2027-02-01,22,A-FG01-01,BE-3,status,In Progress,0,
+2027-02-01,88,A-FG01-02,BE-6,status,In Progress,0,Viết migration theo thiết kế; chạy thử khi A-FG01-01 xong
+2027-02-01,255,C-FG02-01,BE-1,status,In Progress,0,
+2027-02-01,256,C-FG13-01,BE-2,status,In Progress,0,
+2027-02-01,423,C-FG02-21.1,FE-1,status,In Progress,0,
+2027-02-01,358,A-FG01-19.2,FE-4,status,In Progress,0,
+2027-02-01,427,A-FG01-10,QA-1,status,In Progress,0,Thiết kế case 許可 lifecycle (dùng chung khuôn cho A-FG01-11)
+2027-02-02,22,A-FG01-01,BE-3,status,In Review,7,
+2027-02-02,22,A-FG01-01,BE-2,status,Done,1,
+2027-02-02,423,C-FG02-21.1,FE-1,status,In Review,4,
+2027-02-02,423,C-FG02-21.1,FE-4,status,Done,0,
+2027-02-02,471,C-FG02-22.1,FE-1,status,In Progress,0,
+2027-02-02,89,A-FG01-03,BE-6,status,In Progress,0,
+2027-02-02,225,A-FG01-07.1,BE-3,status,In Progress,0,
+2027-02-03,,,BrSE-1,external,,,"[Giả lập] IT của chợ hỏi lại một điểm trong thiết kế 第1波 IAM (#81): thời hạn phiên đăng nhập thiết bị dùng chung (giả định PREMISE L5-A06). Hẹn trả lời 02-05"
+2027-02-03,255,C-FG02-01,BE-1,status,In Review,11,
+2027-02-03,255,C-FG02-01,BE-2,status,Done,1,
+2027-02-03,256,C-FG13-01,BE-2,status,In Review,10,
+2027-02-03,256,C-FG13-01,BE-3,status,Done,0.5,
+2027-02-03,88,A-FG01-02,BE-6,status,In Review,9,
+2027-02-03,306,A-FG01-13.1,FE-4,status,In Progress,0,Dựng màn với API giả theo API Design; nối API thật khi A-FG01-07.2 xong
+2027-02-04,88,A-FG01-02,BE-3,status,Done,1,
+2027-02-04,286,C-FG02-02,BE-1,status,In Progress,0,
+2027-02-04,358,A-FG01-19.2,FE-4,status,In Review,6,
+2027-02-04,225,A-FG01-07.1,BE-3,status,In Review,9,
+2027-02-04,300,A-FG01-14,BE-6,status,In Progress,0,
+2027-02-04,300,A-FG01-14,BE-6,status,Blocked,3,"[Giả lập] Kiểm actors.csv đợt 1 (chợ gửi trong hạn 01-15): một số dòng 承認 thiếu 失効日, mã người tham gia khác định dạng mô tả ở C.1. Hỏi IT chợ qua C-CLR-14 (#63); không tự sửa, không bịa dữ liệu"
+2027-02-05,89,A-FG01-03,BE-6,status,In Review,9,
+2027-02-05,89,A-FG01-03,BE-3,status,Done,1,
+2027-02-05,225,A-FG01-07.1,BE-1,status,Done,1,
+2027-02-05,358,A-FG01-19.2,FE-1,status,Done,0,
+2027-02-05,471,C-FG02-22.1,FE-1,status,In Review,7,
+2027-02-05,471,C-FG02-22.1,FE-4,status,Done,0,
+2027-02-05,151,A-FG01-04,BE-2,status,In Progress,0,
+2027-02-05,227,A-FG01-08.1,BE-3,status,In Progress,0,
+2027-02-05,333,C-FG02-03,BE-6,status,Blocked,0,"Chờ IT chợ xác nhận thời hạn phiên thiết bị (hẹn 02-05, chưa có); C-FG02-02 cũng chưa xong"
+2027-02-05,425,A-FG01-20.1,FE-4,status,In Progress,0,
+2027-02-05,357,A-FG01-19.1,FE-1,status,In Progress,0,
+2027-02-05,,,BrSE-1,external,,,Nhắc câu hỏi phiên thiết bị qua đầu mối của chợ (照合部門長)
+2027-02-08,,,BrSE-1,external,,,"[Giả lập] IT chợ xác nhận: giữ giả định L5-A06 (thiết bị đăng nhập đầu ca, phiên kết thúc khi hết ca). Không đổi thiết kế"
+2027-02-08,333,C-FG02-03,BE-6,status,In Progress,0,
+2027-02-08,151,A-FG01-04,BE-2,status,In Review,5,
+2027-02-08,151,A-FG01-04,BE-3,status,Done,1,
+2027-02-08,286,C-FG02-02,BE-1,status,In Review,10,
+2027-02-08,286,C-FG02-02,BE-6,status,Done,0.5,
+2027-02-08,263,A-FG01-07.2,BE-1,status,In Progress,0,
+2027-02-08,224,A-FG01-05,BE-2,status,In Progress,0,
+2027-02-08,357,A-FG01-19.1,FE-1,status,In Review,6,
+2027-02-08,227,A-FG01-08.1,BE-3,status,In Review,9,
+2027-02-09,227,A-FG01-08.1,BE-6,status,Done,1,
+2027-02-09,357,A-FG01-19.1,FE-4,status,Done,0,
+2027-02-09,333,C-FG02-03,BE-6,status,In Review,7,
+2027-02-09,264,A-FG01-08.3,BE-6,status,In Progress,0,
+2027-02-09,289,C-FG13-02,BE-3,status,In Progress,0,
+2027-02-09,500,C-PLAT-12,FE-1,unplanned,,4,"Việc ngoài cam kết: dựng component dùng chung (ô ngày 有効日 / 失効日, ô giờ phút, danh sách chọn bằng bàn phím) cho #306, #307, #425. Thuộc issue thô #500 (design system), chưa có lá"
+2027-02-10,,,BrSE-1,external,,,"[Giả lập] IT chợ trả lời về actors.csv: tạm loại các dòng thiếu 失効日 khỏi đợt 1, gửi bổ sung cùng đợt 2 (sau Iteration 1)"
+2027-02-10,300,A-FG01-14,BE-6,status,In Progress,0,
+2027-02-10,333,C-FG02-03,BE-2,status,Done,1,
+2027-02-10,384,C-FG02-04,BE-2,status,In Progress,0,
+2027-02-10,224,A-FG01-05,BE-2,status,In Review,10,
+2027-02-10,224,A-FG01-05,BE-3,status,Done,1,
+2027-02-10,263,A-FG01-07.2,BE-1,status,In Review,11,Bước 決裁 nhận token MFA ký bằng khóa test (L5-D10); kiểm token thật ở S2 (#114)
+2027-02-10,263,A-FG01-07.2,BE-3,status,Done,1,
+2027-02-10,289,C-FG13-02,BE-3,status,In Review,6,
+2027-02-10,289,C-FG13-02,BE-2,status,Done,0.5,
+2027-02-10,264,A-FG01-08.3,BE-6,status,Blocked,7,"Nhánh 確認 đã xong. Nhánh 却下 của 承認 cần biết có bước 弁明 trước khi 却下 không — câu hỏi OPEN-DB-09 (#24) chưa có trả lời; không tự chọn"
+2027-02-10,307,A-FG01-13.2,FE-4,status,In Progress,0,
+2027-02-10,500,C-PLAT-12,FE-1,unplanned,,4,Tiếp component dùng chung (ô giờ phút cho 一時停止)
+2027-02-11,,,BrSE-1,external,,,2027-02-11 là ngày lễ ở Nhật (建国記念の日): phía chợ không trả lời câu hỏi trong ngày
+2027-02-11,384,C-FG02-04,BE-2,status,In Review,10,
+2027-02-11,384,C-FG02-04,BE-1,status,Done,1,
+2027-02-11,306,A-FG01-13.1,FE-4,status,In Review,8,Tự dựng ô ngày trước khi có component chung: vượt 2 giờ
+2027-02-11,306,A-FG01-13.1,FE-1,status,Done,0.5,
+2027-02-11,484,C-FG02-23,QA-1,status,In Progress,0,
+2027-02-11,500,C-PLAT-12,FE-1,unplanned,,2,
+2027-02-12,484,C-FG02-23,QA-1,status,In Review,2,
+2027-02-12,484,C-FG02-23,BE-2,status,Done,0,
+2027-02-12,300,A-FG01-14,BE-6,status,In Review,7,"Nạp các dòng hợp lệ của đợt 1 vào stg + báo cáo dòng bị loại; vượt 4 giờ (thêm bước kiểm dữ liệu vào). Chờ IT chợ xác nhận danh sách dòng bị loại"
+2027-02-12,307,A-FG01-13.2,FE-4,status,In Review,6,Nhánh 確認 chạy với API thật; nhánh 却下 chờ #264
+2027-02-12,425,A-FG01-20.1,FE-4,status,In Progress,9,Còn bước gửi 決裁 và lưu giờ phút; chậm vì tự dựng ô giờ phút trước khi có component chung
+2027-02-12,427,A-FG01-10,QA-1,status,In Progress,12,Chạy được phần đăng ký / 決裁 許可; phần 一時停止 chờ #425
+2027-02-12,,,QA-1,reserve,,12,Giữ 30% năng lực QA: chạy case theo DoD 4 cho các issue dev đã Done
